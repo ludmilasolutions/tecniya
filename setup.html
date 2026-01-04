@@ -1,0 +1,294 @@
+<!-- setup.html -->
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecniYa - Setup Inicial</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; }
+        body { background-color: #f8f9fa; color: #333; line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        .warning { background: #fff3cd; border: 2px solid #ffc107; color: #856404; padding: 30px; border-radius: 12px; margin-bottom: 40px; }
+        .card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { color: #dc3545; margin-bottom: 20px; text-align: center; }
+        h2 { color: #333; margin: 30px 0 20px; }
+        .form-group { margin-bottom: 25px; }
+        .form-label { display: block; font-weight: 600; margin-bottom: 10px; color: #444; }
+        .form-input { width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 1rem; }
+        .btn { padding: 15px 30px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.3s; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-danger:hover { background-color: #c82333; }
+        .btn-success { background-color: #1db954; color: white; }
+        .btn-success:hover { background-color: #17a344; }
+        .btn-block { width: 100%; }
+        .message { padding: 20px; border-radius: 12px; margin: 20px 0; font-weight: 600; display: none; }
+        .message-success { background-color: #d4edda; color: #155724; }
+        .message-error { background-color: #f8d7da; color: #721c24; }
+        .message-info { background-color: #d1ecf1; color: #0c5460; }
+        .loader { border: 5px solid #f3f3f3; border-top: 5px solid #dc3545; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 40px auto; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .step { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .step-number { display: inline-block; background: #0a4fd8; color: white; width: 30px; height: 30px; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="warning">
+            <h1>⚠ ADVERTENCIA CRÍTICA</h1>
+            <p>Este setup debe ejecutarse UNA SOLA VEZ después de configurar Firebase.</p>
+            <p>Creará las colecciones base, configuraciones y usuario admin inicial.</p>
+            <p><strong>Ejecutar solo en entorno de desarrollo o en la primera instalación.</strong></p>
+        </div>
+        
+        <div class="card">
+            <h2>Configuración Inicial TecniYa</h2>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <strong>Verificar conexión Firebase</strong>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <strong>Crear estructura Firestore</strong>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <strong>Crear usuario administrador</strong>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Email del administrador</label>
+                <input type="email" id="adminEmail" class="form-input" placeholder="admin@tecniya.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Contraseña</label>
+                <input type="password" id="adminPassword" class="form-input" placeholder="Mínimo 6 caracteres" required minlength="6">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Clave secreta de setup</label>
+                <input type="password" id="secretKey" class="form-input" placeholder="Ingresá la clave de seguridad" required>
+                <small style="color: #666;">Debe coincidir con ADMIN_SECRET_KEY en Netlify</small>
+            </div>
+            
+            <button id="setupBtn" class="btn btn-danger btn-block">🚀 EJECUTAR SETUP COMPLETO</button>
+            
+            <div id="message" class="message"></div>
+            <div id="loader" class="loader"></div>
+            
+            <div id="results" style="margin-top: 40px; display: none;">
+                <h2>Resultados del Setup</h2>
+                <div id="resultsContent"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // CONFIGURACIÓN FIREBASE (USAR LA MISMA QUE EN OTROS ARCHIVOS)
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_PROYECTO.firebaseapp.com",
+            projectId: "TU_PROYECTO",
+            storageBucket: "TU_PROYECTO.appspot.com",
+            messagingSenderId: "TU_SENDER_ID",
+            appId: "TU_APP_ID",
+            measurementId: "TU_MEASUREMENT_ID"
+        };
+        
+        // INICIALIZAR FIREBASE
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        // ELEMENTOS
+        const setupBtn = document.getElementById('setupBtn');
+        const message = document.getElementById('message');
+        const loader = document.getElementById('loader');
+        const results = document.getElementById('results');
+        const resultsContent = document.getElementById('resultsContent');
+        
+        setupBtn.addEventListener('click', async () => {
+            const adminEmail = document.getElementById('adminEmail').value;
+            const adminPassword = document.getElementById('adminPassword').value;
+            const secretKey = document.getElementById('secretKey').value;
+            
+            if (!adminEmail || !adminPassword || !secretKey) {
+                showMessage('Completá todos los campos', 'error');
+                return;
+            }
+            
+            // VERIFICAR CLAVE SECRETA (EN PRODUCCIÓN SE VERIFICA EN FUNCIÓN NETLIFY)
+            if (secretKey !== 'TU_CLAVE_SECRETA') {
+                showMessage('Clave secreta incorrecta', 'error');
+                return;
+            }
+            
+            setupBtn.disabled = true;
+            loader.style.display = 'block';
+            message.style.display = 'none';
+            results.style.display = 'none';
+            
+            let log = '';
+            
+            try {
+                // 1. CREAR USUARIO ADMIN
+                log += '<h3>1. Creando usuario administrador...</h3>';
+                let adminUser;
+                
+                try {
+                    const userCredential = await auth.createUserWithEmailAndPassword(adminEmail, adminPassword);
+                    adminUser = userCredential.user;
+                    log += `<p>✅ Usuario creado: ${adminEmail}</p>`;
+                } catch (error) {
+                    if (error.code === 'auth/email-already-in-use') {
+                        // INTENTAR INICIAR SESIÓN
+                        const userCredential = await auth.signInWithEmailAndPassword(adminEmail, adminPassword);
+                        adminUser = userCredential.user;
+                        log += `<p>✅ Usuario ya existente: ${adminEmail}</p>`;
+                    } else {
+                        throw error;
+                    }
+                }
+                
+                // 2. CREAR COLECCIÓN ADMIN_USERS
+                log += '<h3>2. Configurando permisos de administrador...</h3>';
+                await db.collection('admin_users').doc(adminUser.uid).set({
+                    email: adminEmail,
+                    role: 'superadmin',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                log += '<p>✅ Permisos de administrador asignados</p>';
+                
+                // 3. CREAR CONFIGURACIÓN INICIAL
+                log += '<h3>3. Creando configuración del sistema...</h3>';
+                await db.collection('admin_config').doc('config').set({
+                    featuredPrice: 9000,
+                    bannersEnabled: true,
+                    cityActive: true,
+                    defaultCity: 'Rosario',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                log += '<p>✅ Configuración creada</p>';
+                
+                // 4. CREAR RUBROS POR DEFECTO
+                log += '<h3>4. Creando rubros por defecto...</h3>';
+                const rubros = ['plomeria', 'gas', 'electricidad', 'aire', 'albanileria', 'pintura', 'cerrajeria', 'otros'];
+                await db.collection('system_config').doc('rubros').set({ rubros });
+                log += `<p>✅ ${rubros.length} rubros creados</p>`;
+                
+                // 5. CREAR ZONAS DE ROSARIO
+                log += '<h3>5. Creando zonas de Rosario...</h3>';
+                const zonas = ['centro', 'norte', 'sur', 'oeste', 'nor_oeste', 'toda'];
+                await db.collection('system_config').doc('zonas_rosario').set({ zonas });
+                log += `<p>✅ ${zonas.length} zonas creadas</p>`;
+                
+                // 6. CREAR COLECCIONES VACÍAS SI NO EXISTEN
+                log += '<h3>6. Inicializando colecciones...</h3>';
+                
+                // PROFESSIONALS (ya existe implícitamente al crear documentos)
+                await db.collection('professionals').doc('sample').set({
+                    _note: 'Colección de profesionales inicializada',
+                    _timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                await db.collection('professionals').doc('sample').delete();
+                
+                // QUOTES
+                await db.collection('quotes').doc('sample').set({
+                    _note: 'Colección de presupuestos inicializada',
+                    _timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                await db.collection('quotes').doc('sample').delete();
+                
+                // BANNERS
+                await db.collection('banners').doc('sample').set({
+                    _note: 'Colección de banners inicializada',
+                    _timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                await db.collection('banners').doc('sample').delete();
+                
+                // ADS_CLICKS
+                await db.collection('ads_clicks').doc('sample').set({
+                    _note: 'Colección de clicks inicializada',
+                    _timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                await db.collection('ads_clicks').doc('sample').delete();
+                
+                log += '<p>✅ Todas las colecciones inicializadas</p>';
+                
+                // 7. CREAR DOCUMENTO DE EJEMPLO PARA TEST
+                log += '<h3>7. Creando datos de ejemplo...</h3>';
+                
+                // PROFESIONAL DE EJEMPLO
+                await db.collection('professionals').add({
+                    name: 'Juan Pérez (Ejemplo)',
+                    phone: '5493411234567',
+                    email: 'ejemplo@tecniya.com',
+                    photoUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80',
+                    rubros: ['plomeria', 'gas'],
+                    zonas: ['centro', 'norte'],
+                    rating: 4.5,
+                    reviewsCount: 12,
+                    jobsCompleted: 45,
+                    lastActive: new Date(),
+                    profileCompleted: true,
+                    isFeatured: true,
+                    featuredUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 días
+                    rankingScore: 85,
+                    blocked: false,
+                    userId: 'example_user_id',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                log += '<p>✅ Profesional de ejemplo creado</p>';
+                
+                // BANNER DE EJEMPLO
+                await db.collection('banners').add({
+                    title: 'Ferretería Rosario (Ejemplo)',
+                    imageUrl: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&h=300&q=80',
+                    link: 'https://ejemplo.com',
+                    rubros: ['todos'],
+                    city: 'Rosario',
+                    position: 'home',
+                    active: true,
+                    startDate: new Date(),
+                    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 días
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                log += '<p>✅ Banner de ejemplo creado</p>';
+                
+                log += '<h3 style="color: #1db954; margin-top: 30px;">🎉 SETUP COMPLETADO EXITOSAMENTE</h3>';
+                log += '<p>Ahora podés:</p>';
+                log += '<ul>';
+                log += '<li>🔧 Acceder al panel admin con el usuario creado</li>';
+                log += '<li>👨‍🔧 Ver el profesional de ejemplo en la búsqueda</li>';
+                log += '<li>📢 Ver el banner de ejemplo en la home</li>';
+                log += '<li>⚙ Configurar precios y opciones en panel admin</li>';
+                log += '</ul>';
+                log += '<p><strong>⚠ ELIMINAR ESTE ARCHIVO (setup.html) DEL SERVIDOR DE PRODUCCIÓN</strong></p>';
+                
+                resultsContent.innerHTML = log;
+                results.style.display = 'block';
+                showMessage('Setup completado exitosamente', 'success');
+                
+            } catch (error) {
+                console.error('Error en setup:', error);
+                resultsContent.innerHTML = `<p style="color: #dc3545;">❌ ERROR: ${error.message}</p>`;
+                results.style.display = 'block';
+                showMessage('Error: ' + error.message, 'error');
+            } finally {
+                setupBtn.disabled = false;
+                loader.style.display = 'none';
+            }
+        });
+        
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = `message message-${type}`;
+            message.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
