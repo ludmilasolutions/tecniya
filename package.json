@@ -1,0 +1,9 @@
+{
+  "name": "tecniya",
+  "version": "1.0.0",
+  "description": "TecniYa - Conecta clientes con técnicos",
+  "dependencies": {
+    "firebase-admin": "^12.0.0",
+    "node-fetch": "^2.6.7"
+  }
+}
