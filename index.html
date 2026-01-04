@@ -1,0 +1,362 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecniYa - Encontrá técnicos en Rosario</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* RESET & BASE */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; }
+        body { background-color: #f8f9fa; color: #333; line-height: 1.6; max-width: 100vw; overflow-x: hidden; }
+        a { text-decoration: none; color: #0a4fd8; }
+        ul { list-style: none; }
+        .container { width: 100%; padding: 20px 15px; }
+
+        /* HEADER */
+        .header { background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); color: white; padding: 25px 20px; text-align: center; box-shadow: 0 4px 12px rgba(10, 79, 216, 0.2); }
+        .header h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 800; }
+        .header p { font-size: 1.1rem; opacity: 0.95; }
+
+        /* BANNER */
+        .banner-container { margin: 20px auto; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .banner-link { display: block; }
+        .banner-img { width: 100%; height: auto; display: block; }
+
+        /* SEARCH */
+        .search-card { background: white; border-radius: 16px; padding: 25px; margin: 25px auto; max-width: 800px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+        .search-title { font-size: 1.6rem; margin-bottom: 20px; color: #0a4fd8; text-align: center; font-weight: 700; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-weight: 600; margin-bottom: 8px; color: #444; }
+        .form-select { width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 1rem; background-color: white; transition: border 0.3s; }
+        .form-select:focus { border-color: #0a4fd8; outline: none; }
+        .btn-primary { background-color: #0a4fd8; color: white; border: none; padding: 16px 30px; border-radius: 10px; font-size: 1.1rem; font-weight: 700; width: 100%; cursor: pointer; transition: background 0.3s; }
+        .btn-primary:hover { background-color: #083bb5; }
+        .btn-secondary { background-color: #1db954; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.3s; }
+        .btn-secondary:hover { background-color: #17a344; }
+
+        /* LOADER */
+        .loader { border: 5px solid #f3f3f3; border-top: 5px solid #0a4fd8; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 40px auto; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* PROFESSIONAL LIST */
+        .list-container { max-width: 1000px; margin: 0 auto; }
+        .professional-card { background: white; border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 6px 18px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 20px; }
+        @media (min-width: 768px) { .professional-card { flex-direction: row; align-items: center; } }
+        .professional-photo { width: 140px; height: 140px; border-radius: 12px; object-fit: cover; flex-shrink: 0; align-self: center; }
+        .professional-info { flex-grow: 1; }
+        .professional-name { font-size: 1.5rem; color: #0a4fd8; margin-bottom: 6px; font-weight: 700; }
+        .professional-badge { display: inline-block; background: linear-gradient(90deg, #ffc107, #ff9800); color: #333; font-size: 0.85rem; font-weight: 700; padding: 5px 12px; border-radius: 20px; margin-left: 10px; }
+        .professional-details { margin: 12px 0; color: #555; }
+        .professional-details span { background: #f1f6ff; padding: 5px 10px; border-radius: 6px; margin-right: 8px; font-size: 0.9rem; }
+        .professional-stats { color: #666; font-size: 0.95rem; }
+        .professional-contact { display: flex; justify-content: space-between; align-items: center; }
+        .professional-whatsapp { background-color: #1db954; color: white; padding: 12px 24px; border-radius: 8px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .professional-whatsapp:hover { background-color: #17a344; }
+
+        /* MESSAGES */
+        .message { padding: 20px; border-radius: 12px; margin: 20px 0; text-align: center; font-weight: 600; }
+        .message-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .message-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .message-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+        /* FOOTER */
+        .footer { background-color: #333; color: #aaa; text-align: center; padding: 30px 20px; margin-top: 50px; }
+        .footer a { color: #aaa; }
+        .footer-links { display: flex; justify-content: center; gap: 25px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <h1>👨‍🔧 TecniYa</h1>
+        <p>Encontrá técnicos certificados en Rosario. Contacto directo por WhatsApp.</p>
+    </header>
+
+    <!-- BANNER -->
+    <div id="bannerContainer" class="container banner-container"></div>
+
+    <!-- SEARCH -->
+    <section class="container search-card">
+        <h2 class="search-title">¿Qué servicio necesitás?</h2>
+        <div class="form-group">
+            <label class="form-label">Rubro</label>
+            <select id="rubroSelect" class="form-select">
+                <option value="">Seleccioná un rubro</option>
+                <option value="plomeria">Plomería</option>
+                <option value="gas">Gas</option>
+                <option value="electricidad">Electricidad</option>
+                <option value="aire">Aire acondicionado</option>
+                <option value="albanileria">Albañilería</option>
+                <option value="pintura">Pintura</option>
+                <option value="cerrajeria">Cerrajería</option>
+                <option value="otros">Otros</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Zona de Rosario</label>
+            <select id="zonaSelect" class="form-select">
+                <option value="">Seleccioná una zona</option>
+                <option value="centro">Centro</option>
+                <option value="norte">Norte</option>
+                <option value="sur">Sur</option>
+                <option value="oeste">Oeste</option>
+                <option value="nor_oeste">NorOeste</option>
+                <option value="toda">Toda la ciudad</option>
+            </select>
+        </div>
+        <button id="searchBtn" class="btn-primary">🔍 Buscar técnico</button>
+    </section>
+
+    <!-- LOADER -->
+    <div id="loader" class="loader"></div>
+
+    <!-- RESULTS -->
+    <section id="resultsContainer" class="container list-container"></section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="profesional.html">Soy Profesional</a>
+            <a href="admin.html">Admin</a>
+            <a href="#legal">Aviso Legal</a>
+        </div>
+        <p>© 2023 TecniYa - Rosario, Argentina. Contacto directo vía WhatsApp.</p>
+        <p><small>No realizamos trabajos. Conectamos clientes con profesionales.</small></p>
+    </footer>
+
+    <script>
+        // CONFIGURACIÓN FIREBASE (REEMPLAZAR CON TUS DATOS)
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_PROYECTO.firebaseapp.com",
+            projectId: "TU_PROYECTO",
+            storageBucket: "TU_PROYECTO.appspot.com",
+            messagingSenderId: "TU_SENDER_ID",
+            appId: "TU_APP_ID",
+            measurementId: "TU_MEASUREMENT_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // ELEMENTOS DOM
+        const bannerContainer = document.getElementById('bannerContainer');
+        const rubroSelect = document.getElementById('rubroSelect');
+        const zonaSelect = document.getElementById('zonaSelect');
+        const searchBtn = document.getElementById('searchBtn');
+        const loader = document.getElementById('loader');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        // CARGAR BANNER ACTIVO
+        async function loadBanner() {
+            try {
+                const now = new Date();
+                const bannersSnapshot = await db.collection('banners')
+                    .where('active', '==', true)
+                    .where('city', '==', 'Rosario')
+                    .where('startDate', '<=', now)
+                    .where('endDate', '>=', now)
+                    .limit(1)
+                    .get();
+                
+                if (!bannersSnapshot.empty) {
+                    const banner = bannersSnapshot.docs[0].data();
+                    bannerContainer.innerHTML = `
+                        <a href="${banner.link}" target="_blank" class="banner-link" onclick="trackClick('${bannersSnapshot.docs[0].id}')">
+                            <img src="${banner.imageUrl}" alt="${banner.title}" class="banner-img">
+                        </a>
+                    `;
+                } else {
+                    bannerContainer.innerHTML = '';
+                }
+            } catch (error) {
+                console.error("Error cargando banner:", error);
+                bannerContainer.innerHTML = '';
+            }
+        }
+
+        // RASTREAR CLICK EN BANNER
+        async function trackClick(bannerId) {
+            try {
+                await fetch('/.netlify/functions/api/trackClick', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ bannerId, city: 'Rosario' })
+                });
+            } catch (error) {
+                console.error("Error registrando click:", error);
+            }
+        }
+
+        // BUSCAR PROFESIONALES
+        async function searchProfessionals() {
+            const rubro = rubroSelect.value;
+            const zona = zonaSelect.value;
+            
+            if (!rubro || !zona) {
+                showMessage('Por favor seleccioná rubro y zona.', 'error');
+                return;
+            }
+
+            loader.style.display = 'block';
+            resultsContainer.innerHTML = '';
+
+            try {
+                // OBTENER CONFIGURACIÓN
+                const configDoc = await db.collection('admin_config').doc('config').get();
+                const config = configDoc.exists ? configDoc.data() : {};
+
+                // CONSULTA BASE: ACTIVOS, CON FOTO, NO BLOQUEADOS, ZONA COINCIDE
+                let query = db.collection('professionals')
+                    .where('profileCompleted', '==', true)
+                    .where('blocked', '==', false)
+                    .where('photoUrl', '!=', '')
+                    .where('rubros', 'array-contains', rubro);
+
+                if (zona !== 'toda') {
+                    query = query.where('zonas', 'array-contains', zona);
+                }
+
+                const snapshot = await query.get();
+                
+                if (snapshot.empty) {
+                    showMessage('No se encontraron profesionales para tu búsqueda.', 'info');
+                    loader.style.display = 'none';
+                    return;
+                }
+
+                // PROCESAR Y ORDENAR
+                const professionals = [];
+                const now = new Date();
+                
+                snapshot.forEach(doc => {
+                    const prof = { id: doc.id, ...doc.data() };
+                    
+                    // CALCULAR PUNTAJE DE RANKING
+                    let rankingScore = 0;
+                    
+                    // RATING
+                    rankingScore += (prof.rating || 0) * 5;
+                    
+                    // TRABAJOS COMPLETADOS
+                    rankingScore += (prof.jobsCompleted || 0) * 2;
+                    
+                    // ACTIVIDAD RECIENTE
+                    if (prof.lastActive) {
+                        const lastActiveDate = prof.lastActive.toDate();
+                        const daysDiff = Math.floor((now - lastActiveDate) / (1000 * 60 * 60 * 24));
+                        if (daysDiff <= 7) rankingScore += 3;
+                        else if (daysDiff <= 15) rankingScore += 2;
+                    }
+                    
+                    // PERFIL COMPLETO
+                    if (prof.profileCompleted) rankingScore += 5;
+                    
+                    // DESTACADO ACTIVO
+                    if (prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now) {
+                        rankingScore += 1000; // PRIORIDAD MÁXIMA
+                        prof.isFeaturedActive = true;
+                    }
+                    
+                    prof.rankingScore = rankingScore;
+                    professionals.push(prof);
+                });
+
+                // ORDENAR: PRIMERO DESTACADOS ACTIVOS, LUEGO POR SCORE
+                professionals.sort((a, b) => {
+                    if (a.isFeaturedActive && !b.isFeaturedActive) return -1;
+                    if (!a.isFeaturedActive && b.isFeaturedActive) return 1;
+                    return b.rankingScore - a.rankingScore;
+                });
+
+                // MOSTRAR RESULTADOS
+                displayProfessionals(professionals);
+                
+            } catch (error) {
+                console.error("Error buscando profesionales:", error);
+                showMessage('Error en la búsqueda. Intentá nuevamente.', 'error');
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        // MOSTRAR PROFESIONALES
+        function displayProfessionals(professionals) {
+            resultsContainer.innerHTML = '';
+            
+            if (professionals.length === 0) {
+                showMessage('No se encontraron profesionales.', 'info');
+                return;
+            }
+
+            professionals.forEach(prof => {
+                const now = new Date();
+                const featuredActive = prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now;
+                
+                const card = document.createElement('div');
+                card.className = 'professional-card';
+                
+                card.innerHTML = `
+                    <img src="${prof.photoUrl}" alt="${prof.name}" class="professional-photo" onerror="this.src='https://via.placeholder.com/140x140?text=SIN+FOTO'">
+                    <div class="professional-info">
+                        <h3 class="professional-name">
+                            ${prof.name}
+                            ${featuredActive ? '<span class="professional-badge">⭐ DESTACADO</span>' : ''}
+                        </h3>
+                        <div class="professional-details">
+                            <span>${prof.rubros[0]}</span>
+                            <span>${prof.zonas.join(', ')}</span>
+                        </div>
+                        <div class="professional-stats">
+                            ⭐ ${prof.rating ? prof.rating.toFixed(1) : 'Nuevo'} 
+                            | ✅ ${prof.jobsCompleted || 0} trabajos 
+                            | 📅 ${prof.lastActive ? 'Activo recientemente' : 'Sin actividad'}
+                        </div>
+                    </div>
+                    <div class="professional-contact">
+                        <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa por el servicio de ${rubroSelect.options[rubroSelect.selectedIndex].text}" 
+                           target="_blank" class="professional-whatsapp">
+                            📱 Contactar por WhatsApp
+                        </a>
+                    </div>
+                `;
+                
+                resultsContainer.appendChild(card);
+            });
+        }
+
+        // MOSTRAR MENSAJES
+        function showMessage(text, type) {
+            const message = document.createElement('div');
+            message.className = `message message-${type}`;
+            message.textContent = text;
+            resultsContainer.innerHTML = '';
+            resultsContainer.appendChild(message);
+            
+            setTimeout(() => {
+                message.remove();
+            }, 5000);
+        }
+
+        // EVENT LISTENERS
+        document.addEventListener('DOMContentLoaded', loadBanner);
+        searchBtn.addEventListener('click', searchProfessionals);
+        
+        // PWA INSTALL
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed:', err));
+            });
+        }
+        
+        // DETECTAR ENTER EN SELECTS
+        [rubroSelect, zonaSelect].forEach(select => {
+            select.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchProfessionals();
+            });
+        });
+    </script>
+</body>
+</html>
