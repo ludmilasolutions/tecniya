@@ -1,0 +1,145 @@
+{
+  "firestore_structure.json"
+}
+{
+  "collections": {
+    "professionals": {
+      "fields": {
+        "userId": "string (Firebase Auth UID)",
+        "email": "string",
+        "name": "string",
+        "phone": "string (formato: 5493411234567)",
+        "photoUrl": "string (URL de Firebase Storage)",
+        "rubros": "array de strings",
+        "zonas": "array de strings",
+        "rating": "number (0-5)",
+        "reviewsCount": "number",
+        "jobsCompleted": "number",
+        "lastActive": "timestamp",
+        "profileCompleted": "boolean",
+        "isFeatured": "boolean",
+        "featuredUntil": "timestamp",
+        "rankingScore": "number",
+        "blocked": "boolean",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      },
+      "indexes": [
+        "profileCompleted ASC, blocked ASC",
+        "rubros ASC, zonas ASC",
+        "rankingScore DESC",
+        "isFeatured DESC, rankingScore DESC"
+      ]
+    },
+    "quotes": {
+      "fields": {
+        "professionalId": "string (reference to professionals)",
+        "clientName": "string",
+        "clientPhone": "string",
+        "items": "array de strings",
+        "total": "number",
+        "status": "string (creado, enviado, aceptado, rechazado)",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      },
+      "indexes": [
+        "professionalId ASC, createdAt DESC",
+        "status ASC"
+      ]
+    },
+    "banners": {
+      "fields": {
+        "title": "string",
+        "imageUrl": "string",
+        "link": "string (URL)",
+        "rubros": "array de strings (o ['todos'])",
+        "city": "string (ej: 'Rosario')",
+        "position": "string (home, results)",
+        "active": "boolean",
+        "startDate": "timestamp",
+        "endDate": "timestamp",
+        "clicksCount": "number",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      },
+      "indexes": [
+        "active ASC, city ASC",
+        "startDate ASC, endDate ASC"
+      ]
+    },
+    "ads_clicks": {
+      "fields": {
+        "bannerId": "string (reference to banners)",
+        "city": "string",
+        "timestamp": "timestamp",
+        "userAgent": "string (opcional)"
+      },
+      "indexes": [
+        "bannerId ASC, timestamp DESC",
+        "city ASC"
+      ]
+    },
+    "admin_config": {
+      "documents": {
+        "config": {
+          "featuredPrice": "number (9000)",
+          "bannersEnabled": "boolean (true)",
+          "cityActive": "boolean (true)",
+          "defaultCity": "string ('Rosario')",
+          "updatedAt": "timestamp"
+        }
+      }
+    },
+    "admin_users": {
+      "fields": {
+        "email": "string",
+        "role": "string (superadmin, admin)",
+        "createdAt": "timestamp"
+      }
+    },
+    "system_config": {
+      "documents": {
+        "rubros": {
+          "rubros": "array de strings (plomeria, gas, electricidad, aire, albanileria, pintura, cerrajeria, otros)"
+        },
+        "zonas_rosario": {
+          "zonas": "array de strings (centro, norte, sur, oeste, nor_oeste, toda)"
+        }
+      }
+    }
+  },
+  "security_rules": {
+    "rules_version": "2",
+    "service cloud.firestore": {
+      "match /databases/{database}/documents": {
+        "match /professionals/{professionalId}": {
+          "allow read: if true;",
+          "allow write: if request.auth != null && (request.auth.uid == resource.data.userId || exists(/databases/$(database)/documents/admin_users/$(request.auth.uid)));"
+        },
+        "match /quotes/{quoteId}": {
+          "allow read: if request.auth != null;",
+          "allow write: if request.auth != null && (resource.data.professionalId == request.auth.uid || exists(/databases/$(database)/documents/admin_users/$(request.auth.uid)));"
+        },
+        "match /banners/{bannerId}": {
+          "allow read: if true;",
+          "allow write: if exists(/databases/$(database)/documents/admin_users/$(request.auth.uid));"
+        },
+        "match /ads_clicks/{clickId}": {
+          "allow read: if exists(/databases/$(database)/documents/admin_users/$(request.auth.uid));",
+          "allow write: if true;"
+        },
+        "match /admin_config/{document}": {
+          "allow read: if true;",
+          "allow write: if exists(/databases/$(database)/documents/admin_users/$(request.auth.uid));"
+        },
+        "match /admin_users/{userId}": {
+          "allow read, write: if exists(/databases/$(database)/documents/admin_users/$(request.auth.uid));"
+        },
+        "match /system_config/{document}": {
+          "allow read: if true;",
+          "allow write: if exists(/databases/$(database)/documents/admin_users/$(request.auth.uid));"
+        }
+      }
+    }
+  }
+}
