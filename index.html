@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="es-AR">
 <head>
@@ -6,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TecniYa - Encontrá técnicos en Rosario</title>
     <link rel="manifest" href="manifest.json">
+    <!-- Favicon simple para evitar error 404 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>">
+    
     <style>
         /* RESET & BASE */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; }
@@ -126,27 +128,47 @@
         <p><small>No realizamos trabajos. Conectamos clientes con profesionales.</small></p>
     </footer>
 
+    <!-- SCRIPTS DE FIREBASE (IMPORTANTE: NO ELIMINAR) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
+    <!-- SCRIPT PRINCIPAL -->
     <script>
-        // CONFIGURACIÓN FIREBASE (REEMPLAZAR CON TUS DATOS)
+        // ============================================
+        // CONFIGURACIÓN FIREBASE - ¡REEMPLAZAR CON TUS DATOS!
+        // ============================================
         const firebaseConfig = {
-          apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
-          authDomain: "tecniya-b4206.firebaseapp.com",
-          projectId: "tecniya-b4206",
-          storageBucket: "tecniya-b4206.firebasestorage.app",
-          messagingSenderId: "166424133304",
-          appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
+            apiKey: "TU_API_KEY_REAL_AQUI",  // Reemplazar con tu apiKey
+            authDomain: "TU_PROYECTO_REAL.firebaseapp.com",  // Reemplazar con tu authDomain
+            projectId: "TU_PROYECTO_REAL",  // Reemplazar con tu projectId
+            storageBucket: "TU_PROYECTO_REAL.appspot.com",  // Reemplazar con tu storageBucket
+            messagingSenderId: "TU_SENDER_ID_REAL",  // Reemplazar con tu messagingSenderId
+            appId: "TU_APP_ID_REAL",  // Reemplazar con tu appId
+            measurementId: "TU_MEASUREMENT_ID_REAL"  // Reemplazar con tu measurementId (si no tienes, déjalo vacío "")
         };
+
+        // ============================================
+        // INICIALIZACIÓN DE FIREBASE
+        // ============================================
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
 
+        // ============================================
         // ELEMENTOS DOM
+        // ============================================
         const bannerContainer = document.getElementById('bannerContainer');
         const rubroSelect = document.getElementById('rubroSelect');
         const zonaSelect = document.getElementById('zonaSelect');
         const searchBtn = document.getElementById('searchBtn');
         const loader = document.getElementById('loader');
         const resultsContainer = document.getElementById('resultsContainer');
+
+        // ============================================
+        // FUNCIONES PRINCIPALES
+        // ============================================
 
         // CARGAR BANNER ACTIVO
         async function loadBanner() {
@@ -203,10 +225,6 @@
             resultsContainer.innerHTML = '';
 
             try {
-                // OBTENER CONFIGURACIÓN
-                const configDoc = await db.collection('admin_config').doc('config').get();
-                const config = configDoc.exists ? configDoc.data() : {};
-
                 // CONSULTA BASE: ACTIVOS, CON FOTO, NO BLOQUEADOS, ZONA COINCIDE
                 let query = db.collection('professionals')
                     .where('profileCompleted', '==', true)
@@ -339,16 +357,11 @@
             }, 5000);
         }
 
-        // EVENT LISTENERS
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
         document.addEventListener('DOMContentLoaded', loadBanner);
         searchBtn.addEventListener('click', searchProfessionals);
-        
-        // PWA INSTALL
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed:', err));
-            });
-        }
         
         // DETECTAR ENTER EN SELECTS
         [rubroSelect, zonaSelect].forEach(select => {
