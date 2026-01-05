@@ -4,46 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TecniYa - Panel del Profesional</title>
+    <!-- Favicon inline -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>">
+    
     <style>
-        /* RESET & BASE */
+        /* ESTILOS ORIGINALES - SIN CAMBIOS */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; }
         body { background-color: #f8f9fa; color: #333; line-height: 1.6; }
         .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px; }
         a { text-decoration: none; color: #0a4fd8; }
         ul { list-style: none; }
         
-        /* HEADER */
         .header { background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); color: white; padding: 25px 20px; text-align: center; }
         .header h1 { font-size: 2rem; margin-bottom: 8px; font-weight: 800; }
         
-        /* TABS */
         .tabs { display: flex; background: white; border-bottom: 2px solid #eaeaea; overflow-x: auto; }
         .tab { padding: 18px 30px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
         .tab.active { border-bottom-color: #0a4fd8; color: #0a4fd8; background-color: #f1f6ff; }
         
-        /* PANELS */
         .panel { display: none; background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .panel.active { display: block; }
         
-        /* FORMS */
         .form-group { margin-bottom: 25px; }
         .form-label { display: block; font-weight: 600; margin-bottom: 10px; color: #444; }
         .form-input, .form-select, .form-textarea { width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 1rem; transition: border 0.3s; }
         .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: #0a4fd8; outline: none; }
         .form-textarea { min-height: 120px; resize: vertical; }
         
-        /* CHECKBOX GROUP */
         .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px; }
         .checkbox-label { display: flex; align-items: center; gap: 8px; background: #f8f9fa; padding: 12px 20px; border-radius: 8px; cursor: pointer; }
         .checkbox-label input { width: 18px; height: 18px; }
         
-        /* PHOTO UPLOAD */
         .photo-upload { text-align: center; border: 3px dashed #e1e5e9; padding: 40px; border-radius: 12px; margin-bottom: 25px; }
-        .photo-preview { width: 200px; height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; display: none; }
-        .btn-upload { background: #0a4fd8; color: white; padding: 12px 30px; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-block; }
+        .photo-preview { width: 200px; height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; }
         .photo-warning { color: #dc3545; font-weight: 600; margin-top: 15px; }
         
-        /* BUTTONS */
         .btn { padding: 15px 30px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.3s; }
         .btn-primary { background-color: #0a4fd8; color: white; }
         .btn-primary:hover { background-color: #083bb5; }
@@ -54,37 +49,30 @@
         .btn-block { width: 100%; }
         .btn-group { display: flex; gap: 15px; }
         
-        /* STATUS */
         .status-card { background: #f8f9fa; padding: 25px; border-radius: 12px; margin-bottom: 30px; }
         .status-badge { display: inline-block; padding: 8px 20px; border-radius: 20px; font-weight: 700; }
         .status-complete { background: #d4edda; color: #155724; }
         .status-incomplete { background: #fff3cd; color: #856404; }
         
-        /* FEATURED SECTION */
         .featured-card { background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); padding: 30px; border-radius: 12px; margin-bottom: 30px; border: 2px solid #ffc107; }
         .featured-title { font-size: 1.5rem; color: #856404; margin-bottom: 15px; font-weight: 700; }
         
-        /* QUOTES TABLE */
         .quotes-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         .quotes-table th, .quotes-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eaeaea; }
         .quotes-table th { background-color: #f8f9fa; font-weight: 700; }
         .quotes-table tr:hover { background-color: #f8f9fa; }
         
-        /* MESSAGES */
         .message { padding: 20px; border-radius: 12px; margin-bottom: 25px; font-weight: 600; }
         .message-success { background-color: #d4edda; color: #155724; }
         .message-error { background-color: #f8d7da; color: #721c24; }
         .message-info { background-color: #d1ecf1; color: #0c5460; }
         
-        /* LOADER */
         .loader { border: 5px solid #f3f3f3; border-top: 5px solid #0a4fd8; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 40px auto; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* LOGIN */
         .login-container { max-width: 500px; margin: 60px auto; padding: 40px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .login-title { text-align: center; font-size: 1.8rem; margin-bottom: 30px; color: #0a4fd8; }
         
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .tabs { flex-direction: column; }
             .tab { text-align: center; }
@@ -200,14 +188,23 @@
                     </div>
                 </div>
                 
+                <!-- CAMBIO IMPORTANTE: URL en lugar de subir archivo -->
                 <div class="form-group">
-                    <label class="form-label">Foto profesional *</label>
+                    <label class="form-label">Foto profesional (URL) *</label>
                     <div class="photo-upload">
-                        <img id="photoPreview" class="photo-preview" alt="Vista previa">
-                        <input type="file" id="photoInput" accept="image/*" style="display: none;">
-                        <div id="uploadBtn" class="btn-upload">📷 Subir foto</div>
+                        <img id="photoPreview" class="photo-preview" 
+                             src="https://via.placeholder.com/200x200/0a4fd8/ffffff?text=NO+FOTO"
+                             alt="Vista previa" 
+                             onerror="this.src='https://via.placeholder.com/200x200/0a4fd8/ffffff?text=ERROR'">
+                        <input type="url" id="photoUrl" class="form-input" 
+                               placeholder="https://ejemplo.com/foto.jpg" required>
                         <p class="photo-warning">⚠ La foto es obligatoria para aparecer en búsquedas</p>
-                        <p id="photoInfo" style="margin-top: 10px; font-size: 0.9rem; color: #666;"></p>
+                        <p id="photoInfo" style="margin-top: 10px; font-size: 0.9rem; color: #666;">
+                            🌟 <strong>Servicios GRATIS para subir tu foto:</strong><br>
+                            1. <a href="https://imgur.com" target="_blank">Imgur.com</a> - Sube, luego copia "Direct Link"<br>
+                            2. <a href="https://postimages.org" target="_blank">Postimages.org</a> - Sube, copia "Direct Link"<br>
+                            3. <a href="https://imgbb.com" target="_blank">ImgBB.com</a> - Sin registro necesario
+                        </p>
                     </div>
                 </div>
                 
@@ -322,678 +319,629 @@
     
     <div id="loader" class="loader"></div>
     
-    <!-- PRIMERO: SCRIPTS DE FIREBASE -->
+    <!-- SCRIPTS DE FIREBASE - SIN STORAGE -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <!-- NO CARGAMOS firebase-storage.js -->
 
-    <!-- SEGUNDO: SCRIPT PRINCIPAL -->
+    <!-- SCRIPT PRINCIPAL MODIFICADO -->
     <script>
         // ============================================
-        // CONFIGURACIÓN FIREBASE - MISMA QUE EN ADMIN.HTML
+        // CONFIGURACIÓN FIREBASE - SIN STORAGE
         // ============================================
         const firebaseConfig = {
-          apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
-          authDomain: "tecniya-b4206.firebaseapp.com",
-          projectId: "tecniya-b4206",
-          storageBucket: "tecniya-b4206.firebasestorage.app",
-          messagingSenderId: "166424133304",
-          appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
+            apiKey: "AIzaSyCB_aik9aLpCH3OeF6_S28kVIfkQDDx6G4",
+            authDomain: "tecniya-b4206.firebaseapp.com",
+            projectId: "tecniya-b4206",
+            storageBucket: "", // ← VACÍO, NO USAMOS STORAGE
+            messagingSenderId: "640723724521",
+            appId: "1:640723724521:web:354ef5d47e63fdc7179150",
+            measurementId: "G-TT0J8RTCME"
         };
 
         // ============================================
-        // INICIALIZACIÓN DE FIREBASE (con verificación)
+        // INICIALIZACIÓN DE FIREBASE
         // ============================================
-        if (typeof firebase === 'undefined') {
-            console.error('Firebase no se ha cargado correctamente');
-            alert('Error: Firebase no se cargó. Recargá la página.');
-            document.getElementById('loginMessage').textContent = 'Error cargando Firebase. Recargá la página.';
-            document.getElementById('loginMessage').className = 'message message-error';
-            document.getElementById('loginMessage').style.display = 'block';
-        } else {
-            console.log('Firebase cargado correctamente');
-            
-            try {
-                // INICIALIZAR FIREBASE
-                firebase.initializeApp(firebaseConfig);
-                const db = firebase.firestore();
-                const auth = firebase.auth();
-                const storage = firebase.storage();
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        // NO inicializamos storage
+
+        // ============================================
+        // ELEMENTOS DOM
+        // ============================================
+        const loginContainer = document.getElementById('loginContainer');
+        const mainPanel = document.getElementById('mainPanel');
+        const userEmail = document.getElementById('userEmail');
+        
+        // LOGIN/REGISTRO
+        const loginEmail = document.getElementById('loginEmail');
+        const loginPassword = document.getElementById('loginPassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const showRegister = document.getElementById('showRegister');
+        const registerSection = document.getElementById('registerSection');
+        const registerName = document.getElementById('registerName');
+        const registerPhone = document.getElementById('registerPhone');
+        const registerEmail = document.getElementById('registerEmail');
+        const registerPassword = document.getElementById('registerPassword');
+        const registerBtn = document.getElementById('registerBtn');
+        const cancelRegister = document.getElementById('cancelRegister');
+        const loginMessage = document.getElementById('loginMessage');
+        
+        // VARIABLES GLOBALES
+        let currentUser = null;
+        let professionalId = null;
+        
+        // ============================================
+        // INICIALIZAR AUTENTICACIÓN
+        // ============================================
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                userEmail.textContent = user.email;
+                loginContainer.style.display = 'none';
+                mainPanel.style.display = 'block';
                 
-                // ============================================
-                // ELEMENTOS DOM
-                // ============================================
-                const loginContainer = document.getElementById('loginContainer');
-                const mainPanel = document.getElementById('mainPanel');
-                const userEmail = document.getElementById('userEmail');
-                
-                // LOGIN/REGISTRO
-                const loginEmail = document.getElementById('loginEmail');
-                const loginPassword = document.getElementById('loginPassword');
-                const loginBtn = document.getElementById('loginBtn');
-                const showRegister = document.getElementById('showRegister');
-                const registerSection = document.getElementById('registerSection');
-                const registerName = document.getElementById('registerName');
-                const registerPhone = document.getElementById('registerPhone');
-                const registerEmail = document.getElementById('registerEmail');
-                const registerPassword = document.getElementById('registerPassword');
-                const registerBtn = document.getElementById('registerBtn');
-                const cancelRegister = document.getElementById('cancelRegister');
-                const loginMessage = document.getElementById('loginMessage');
-                
-                // VARIABLES GLOBALES
-                let currentUser = null;
-                let professionalId = null;
-                
-                // ============================================
-                // INICIALIZAR AUTENTICACIÓN
-                // ============================================
-                auth.onAuthStateChanged(async (user) => {
-                    if (user) {
-                        currentUser = user;
-                        userEmail.textContent = user.email;
-                        loginContainer.style.display = 'none';
-                        mainPanel.style.display = 'block';
-                        
-                        // VERIFICAR SI ES PROFESIONAL
-                        const profSnapshot = await db.collection('professionals').where('userId', '==', user.uid).get();
-                        if (!profSnapshot.empty) {
-                            professionalId = profSnapshot.docs[0].id;
-                            loadProfessionalData();
-                            if (window.location.hash === '#quotes') {
-                                switchTab('quotes');
-                            }
-                        } else {
-                            // CREAR PERFIL PROFESIONAL BÁSICO
-                            await db.collection('professionals').add({
-                                userId: user.uid,
-                                email: user.email,
-                                name: user.displayName || '',
-                                phone: '',
-                                photoUrl: '',
-                                rubros: [],
-                                zonas: [],
-                                rating: 0,
-                                reviewsCount: 0,
-                                jobsCompleted: 0,
-                                lastActive: null,
-                                profileCompleted: false,
-                                isFeatured: false,
-                                featuredUntil: null,
-                                rankingScore: 0,
-                                blocked: false,
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                            
-                            // RECARGAR
-                            const newSnapshot = await db.collection('professionals').where('userId', '==', user.uid).get();
-                            professionalId = newSnapshot.docs[0].id;
-                            loadProfessionalData();
-                        }
-                    } else {
-                        loginContainer.style.display = 'block';
-                        mainPanel.style.display = 'none';
+                // VERIFICAR SI ES PROFESIONAL
+                const profSnapshot = await db.collection('professionals').where('userId', '==', user.uid).get();
+                if (!profSnapshot.empty) {
+                    professionalId = profSnapshot.docs[0].id;
+                    loadProfessionalData();
+                    if (window.location.hash === '#quotes') {
+                        switchTab('quotes');
                     }
-                });
-                
-                // ============================================
-                // LOGIN
-                // ============================================
-                loginBtn.addEventListener('click', async () => {
-                    try {
-                        await auth.signInWithEmailAndPassword(loginEmail.value, loginPassword.value);
-                        showLoginMessage('Ingreso exitoso', 'success');
-                    } catch (error) {
-                        showLoginMessage('Error: ' + error.message, 'error');
-                    }
-                });
-                
-                // ============================================
-                // REGISTRO
-                // ============================================
-                showRegister.addEventListener('click', () => {
-                    registerSection.style.display = 'block';
-                });
-                
-                cancelRegister.addEventListener('click', () => {
-                    registerSection.style.display = 'none';
-                });
-                
-                registerBtn.addEventListener('click', async () => {
-                    if (!registerName.value || !registerPhone.value || !registerEmail.value || !registerPassword.value) {
-                        showLoginMessage('Completá todos los campos', 'error');
-                        return;
-                    }
-                    
-                    if (registerPassword.value.length < 6) {
-                        showLoginMessage('La contraseña debe tener al menos 6 caracteres', 'error');
-                        return;
-                    }
-                    
-                    try {
-                        // CREAR USUARIO
-                        const userCredential = await auth.createUserWithEmailAndPassword(registerEmail.value, registerPassword.value);
-                        await userCredential.user.updateProfile({ displayName: registerName.value });
-                        
-                        // CREAR DOCUMENTO PROFESIONAL
-                        await db.collection('professionals').add({
-                            userId: userCredential.user.uid,
-                            email: registerEmail.value,
-                            name: registerName.value,
-                            phone: registerPhone.value,
-                            photoUrl: '',
-                            rubros: [],
-                            zonas: [],
-                            rating: 0,
-                            reviewsCount: 0,
-                            jobsCompleted: 0,
-                            lastActive: null,
-                            profileCompleted: false,
-                            isFeatured: false,
-                            featuredUntil: null,
-                            rankingScore: 0,
-                            blocked: false,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        
-                        showLoginMessage('Registro exitoso. Ya podés iniciar sesión.', 'success');
-                        registerSection.style.display = 'none';
-                    } catch (error) {
-                        showLoginMessage('Error en registro: ' + error.message, 'error');
-                    }
-                });
-                
-                // ============================================
-                // CARGAR DATOS DEL PROFESIONAL
-                // ============================================
-                async function loadProfessionalData() {
-                    if (!professionalId) return;
-                    
-                    const doc = await db.collection('professionals').doc(professionalId).get();
-                    if (doc.exists) {
-                        const data = doc.data();
-                        
-                        // PERFIL
-                        document.getElementById('profileName').value = data.name || '';
-                        document.getElementById('profilePhone').value = data.phone || '';
-                        
-                        // RUBROS
-                        document.querySelectorAll('#rubrosCheckbox input').forEach(cb => {
-                            cb.checked = data.rubros && data.rubros.includes(cb.value);
-                        });
-                        
-                        // ZONAS
-                        document.querySelectorAll('#zonasCheckbox input').forEach(cb => {
-                            cb.checked = data.zonas && data.zonas.includes(cb.value);
-                        });
-                        
-                        // FOTO
-                        const photoPreview = document.getElementById('photoPreview');
-                        const photoInfo = document.getElementById('photoInfo');
-                        if (data.photoUrl) {
-                            photoPreview.src = data.photoUrl;
-                            photoPreview.style.display = 'block';
-                            photoInfo.textContent = 'Foto actualmente cargada';
-                        } else {
-                            photoPreview.style.display = 'none';
-                            photoInfo.textContent = '';
-                        }
-                        
-                        // ESTADO PERFIL
-                        const isComplete = data.profileCompleted;
-                        const statusEl = document.getElementById('profileStatus');
-                        const statusText = document.getElementById('statusText');
-                        
-                        if (isComplete) {
-                            statusEl.className = 'status-badge status-complete';
-                            statusEl.textContent = 'COMPLETO';
-                            statusText.textContent = 'Tu perfil está completo y visible en las búsquedas.';
-                        } else {
-                            statusEl.className = 'status-badge status-incomplete';
-                            statusEl.textContent = 'INCOMPLETO';
-                            statusText.textContent = 'Completá todos los campos y subí tu foto para aparecer en las búsquedas.';
-                        }
-                        
-                        // DESTACADO
-                        const now = new Date();
-                        const featuredUntil = data.featuredUntil ? data.featuredUntil.toDate() : null;
-                        const isFeaturedActive = data.isFeatured && featuredUntil && featuredUntil > now;
-                        
-                        const featuredStatus = document.getElementById('featuredStatus');
-                        const featuredUntilEl = document.getElementById('featuredUntil');
-                        
-                        if (isFeaturedActive) {
-                            featuredStatus.innerHTML = '<span style="color: #ff9800; font-weight: 700;">⭐ SOS PROFESIONAL DESTACADO</span>';
-                            featuredUntilEl.textContent = `Válido hasta: ${featuredUntil.toLocaleDateString('es-AR')}`;
-                        } else {
-                            featuredStatus.textContent = 'No sos profesional destacado.';
-                            featuredUntilEl.textContent = '';
-                        }
-                        
-                        // ESTADÍSTICAS
-                        document.getElementById('statsRating').textContent = data.rating ? data.rating.toFixed(1) : '0.0';
-                        document.getElementById('statsJobs').textContent = data.jobsCompleted || 0;
-                        document.getElementById('statsReviews').textContent = data.reviewsCount || 0;
-                        
-                        // CARGAR PRESUPUESTOS
-                        loadQuotes();
-                        loadStats();
-                    }
-                }
-                
-                // ============================================
-                // SWITCH TABS
-                // ============================================
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        if (tab.id === 'logoutBtn') {
-                            auth.signOut();
-                            return;
-                        }
-                        
-                        const tabId = tab.getAttribute('data-tab');
-                        switchTab(tabId);
-                    });
-                });
-                
-                function switchTab(tabId) {
-                    // REMOVER ACTIVE
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-                    
-                    // AGREGAR ACTIVE
-                    const tabElement = document.querySelector(`.tab[data-tab="${tabId}"]`);
-                    const panelElement = document.getElementById(`${tabId}Panel`);
-                    
-                    if (tabElement) tabElement.classList.add('active');
-                    if (panelElement) panelElement.classList.add('active');
-                }
-                
-                // ============================================
-                // SUBIR FOTO
-                // ============================================
-                document.getElementById('uploadBtn').addEventListener('click', () => {
-                    document.getElementById('photoInput').click();
-                });
-                
-                document.getElementById('photoInput').addEventListener('change', async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    
-                    // VALIDAR
-                    if (file.size > 5 * 1024 * 1024) {
-                        alert('La imagen debe ser menor a 5MB');
-                        return;
-                    }
-                    
-                    if (!file.type.startsWith('image/')) {
-                        alert('Solo se permiten imágenes');
-                        return;
-                    }
-                    
-                    try {
-                        showLoader();
-                        
-                        // SUBIR A STORAGE
-                        const storageRef = storage.ref();
-                        const fileRef = storageRef.child(`professionals/${professionalId}/${Date.now()}_${file.name}`);
-                        await fileRef.put(file);
-                        const downloadURL = await fileRef.getDownloadURL();
-                        
-                        // ACTUALIZAR FIRESTORE
-                        await db.collection('professionals').doc(professionalId).update({
-                            photoUrl: downloadURL
-                        });
-                        
-                        // ACTUALIZAR VISTA
-                        const photoPreview = document.getElementById('photoPreview');
-                        photoPreview.src = downloadURL;
-                        photoPreview.style.display = 'block';
-                        document.getElementById('photoInfo').textContent = 'Foto actualizada correctamente';
-                        
-                        // VERIFICAR COMPLETITUD PERFIL
-                        await verifyProfileCompletion();
-                        
-                        hideLoader();
-                        showMessage('profileMessage', '✅ Foto subida correctamente', 'success');
-                    } catch (error) {
-                        hideLoader();
-                        showMessage('profileMessage', '❌ Error subiendo foto: ' + error.message, 'error');
-                    }
-                });
-                
-                // ============================================
-                // GUARDAR PERFIL
-                // ============================================
-                document.getElementById('profileForm').addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    
-                    const name = document.getElementById('profileName').value.trim();
-                    const phone = document.getElementById('profilePhone').value.trim();
-                    
-                    if (!name || !phone) {
-                        showMessage('profileMessage', '❌ Nombre y teléfono son obligatorios', 'error');
-                        return;
-                    }
-                    
-                    // OBTENER RUBROS SELECCIONADOS
-                    const rubros = [];
-                    document.querySelectorAll('#rubrosCheckbox input:checked').forEach(cb => {
-                        rubros.push(cb.value);
+                } else {
+                    // CREAR PERFIL PROFESIONAL BÁSICO
+                    await db.collection('professionals').add({
+                        userId: user.uid,
+                        email: user.email,
+                        name: user.displayName || '',
+                        phone: '',
+                        photoUrl: '',
+                        rubros: [],
+                        zonas: [],
+                        rating: 0,
+                        reviewsCount: 0,
+                        jobsCompleted: 0,
+                        lastActive: null,
+                        profileCompleted: false,
+                        isFeatured: false,
+                        featuredUntil: null,
+                        rankingScore: 0,
+                        blocked: false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     
-                    // OBTENER ZONAS SELECCIONADAS
-                    const zonas = [];
-                    document.querySelectorAll('#zonasCheckbox input:checked').forEach(cb => {
-                        zonas.push(cb.value);
-                    });
-                    
-                    if (rubros.length === 0 || zonas.length === 0) {
-                        showMessage('profileMessage', '❌ Seleccioná al menos un rubro y una zona', 'error');
-                        return;
-                    }
-                    
-                    try {
-                        showLoader();
-                        
-                        await db.collection('professionals').doc(professionalId).update({
-                            name,
-                            phone,
-                            rubros,
-                            zonas,
-                            lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        
-                        await verifyProfileCompletion();
-                        hideLoader();
-                        showMessage('profileMessage', '✅ Perfil guardado correctamente', 'success');
-                    } catch (error) {
-                        hideLoader();
-                        showMessage('profileMessage', '❌ Error guardando perfil: ' + error.message, 'error');
-                    }
-                });
-                
-                // ============================================
-                // MARCAR COMO ACTIVO
-                // ============================================
-                document.getElementById('updateActivityBtn').addEventListener('click', async () => {
-                    try {
-                        await db.collection('professionals').doc(professionalId).update({
-                            lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        showMessage('profileMessage', '✅ Marcado como activo', 'success');
-                    } catch (error) {
-                        showMessage('profileMessage', '❌ Error actualizando actividad', 'error');
-                    }
-                });
-                
-                // ============================================
-                // VERIFICAR COMPLETITUD PERFIL
-                // ============================================
-                async function verifyProfileCompletion() {
-                    const doc = await db.collection('professionals').doc(professionalId).get();
-                    const data = doc.data();
-                    
-                    const isComplete = data.name && data.phone && data.photoUrl && 
-                                      data.rubros.length > 0 && data.zonas.length > 0;
-                    
-                    await db.collection('professionals').doc(professionalId).update({
-                        profileCompleted: isComplete
-                    });
-                    
-                    // ACTUALIZAR UI
+                    // RECARGAR
+                    const newSnapshot = await db.collection('professionals').where('userId', '==', user.uid).get();
+                    professionalId = newSnapshot.docs[0].id;
                     loadProfessionalData();
                 }
-                
-                // ============================================
-                // CREAR PRESUPUESTO
-                // ============================================
-                document.getElementById('createQuoteBtn').addEventListener('click', async () => {
-                    const clientName = document.getElementById('quoteClientName').value.trim();
-                    const clientPhone = document.getElementById('quoteClientPhone').value.trim();
-                    const itemsText = document.getElementById('quoteItems').value.trim();
-                    const total = parseFloat(document.getElementById('quoteTotal').value);
-                    
-                    if (!clientName || !clientPhone || !itemsText || !total) {
-                        showMessage('quoteMessage', '❌ Completá todos los campos del presupuesto', 'error');
-                        return;
-                    }
-                    
-                    if (isNaN(total) || total <= 0) {
-                        showMessage('quoteMessage', '❌ El total debe ser un número mayor a 0', 'error');
-                        return;
-                    }
-                    
-                    const items = itemsText.split('\n').filter(item => item.trim() !== '');
-                    
-                    try {
-                        showLoader();
-                        
-                        await db.collection('quotes').add({
-                            professionalId,
-                            clientName,
-                            clientPhone,
-                            items,
-                            total,
-                            status: 'creado',
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        
-                        // LIMPIAR FORM
-                        document.getElementById('quoteClientName').value = '';
-                        document.getElementById('quoteClientPhone').value = '';
-                        document.getElementById('quoteItems').value = '';
-                        document.getElementById('quoteTotal').value = '';
-                        
-                        // RECARGAR LISTA
-                        loadQuotes();
-                        loadStats();
-                        hideLoader();
-                        showMessage('quoteMessage', '✅ Presupuesto creado correctamente', 'success');
-                    } catch (error) {
-                        hideLoader();
-                        showMessage('quoteMessage', '❌ Error creando presupuesto: ' + error.message, 'error');
-                    }
-                });
-                
-                // ============================================
-                // VISTA PREVIA PRESUPUESTO
-                // ============================================
-                document.getElementById('previewQuoteBtn').addEventListener('click', () => {
-                    const clientName = document.getElementById('quoteClientName').value.trim();
-                    const itemsText = document.getElementById('quoteItems').value.trim();
-                    const total = document.getElementById('quoteTotal').value;
-                    
-                    if (!clientName || !itemsText || !total) {
-                        showMessage('quoteMessage', '❌ Completá los campos para ver vista previa', 'error');
-                        return;
-                    }
-                    
-                    const items = itemsText.split('\n').filter(item => item.trim() !== '');
-                    const now = new Date();
-                    
-                    let html = `
-                        <h4>📋 Presupuesto TecniYa</h4>
-                        <p><strong>Fecha:</strong> ${now.toLocaleDateString('es-AR')}</p>
-                        <p><strong>Cliente:</strong> ${clientName}</p>
-                        <p><strong>Profesional:</strong> ${document.getElementById('profileName').value || 'No especificado'}</p>
-                        <hr>
-                        <h5>Detalle del presupuesto:</h5>
-                        <ul>
-                    `;
-                    
-                    items.forEach(item => {
-                        html += `<li>${item}</li>`;
-                    });
-                    
-                    html += `
-                        </ul>
-                        <hr>
-                        <h4><strong>Total: $${parseFloat(total).toLocaleString('es-AR')} ARS</strong></h4>
-                        <p style="color: #666; font-size: 0.9rem; margin-top: 20px;">
-                            <em>Este presupuesto no es comprobante fiscal. Es una estimación de costos para el servicio.</em>
-                        </p>
-                        <div class="btn-group" style="margin-top: 20px;">
-                            <button onclick="printQuote()" class="btn btn-primary">🖨 Imprimir</button>
-                            <button onclick="sendQuoteViaWhatsApp()" class="btn btn-success">📱 Enviar por WhatsApp</button>
-                        </div>
-                    `;
-                    
-                    document.getElementById('quotePreview').innerHTML = html;
-                    document.getElementById('quotePreview').style.display = 'block';
-                });
-                
-                // ============================================
-                // CARGAR PRESUPUESTOS
-                // ============================================
-                async function loadQuotes() {
-                    const tbody = document.getElementById('quotesTableBody');
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Cargando...</td></tr>';
-                    
-                    try {
-                        const snapshot = await db.collection('quotes')
-                            .where('professionalId', '==', professionalId)
-                            .orderBy('createdAt', 'desc')
-                            .limit(20)
-                            .get();
-                        
-                        tbody.innerHTML = '';
-                        
-                        if (snapshot.empty) {
-                            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay presupuestos creados</td></tr>';
-                            document.getElementById('statsQuotes').textContent = '0';
-                            return;
-                        }
-                        
-                        document.getElementById('statsQuotes').textContent = snapshot.size;
-                        
-                        snapshot.forEach(doc => {
-                            const quote = doc.data();
-                            const date = quote.createdAt ? quote.createdAt.toDate().toLocaleDateString('es-AR') : '-';
-                            
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${date}</td>
-                                <td>${quote.clientName}</td>
-                                <td>$${quote.total ? quote.total.toLocaleString('es-AR') : '0'}</td>
-                                <td>
-                                    <button onclick="viewQuote('${doc.id}')" class="btn" style="padding: 5px 10px; font-size: 0.9rem;">👁 Ver</button>
-                                    <button onclick="deleteQuote('${doc.id}')" class="btn btn-danger" style="padding: 5px 10px; font-size: 0.9rem;">🗑 Eliminar</button>
-                                </td>
-                            `;
-                            tbody.appendChild(row);
-                        });
-                    } catch (error) {
-                        console.error('Error cargando presupuestos:', error);
-                        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #dc3545;">Error cargando presupuestos</td></tr>';
-                    }
-                }
-                
-                // ============================================
-                // CARGAR ESTADÍSTICAS
-                // ============================================
-                async function loadStats() {
-                    const recentActivity = document.getElementById('recentActivity');
-                    
-                    try {
-                        // OBTENER ÚLTIMOS PRESUPUESTOS
-                        const quotesSnapshot = await db.collection('quotes')
-                            .where('professionalId', '==', professionalId)
-                            .orderBy('createdAt', 'desc')
-                            .limit(5)
-                            .get();
-                        
-                        if (quotesSnapshot.empty) {
-                            recentActivity.innerHTML = '<p>No hay actividad reciente</p>';
-                            return;
-                        }
-                        
-                        let html = '';
-                        quotesSnapshot.forEach(doc => {
-                            const quote = doc.data();
-                            const date = quote.createdAt ? quote.createdAt.toDate().toLocaleDateString('es-AR') : '-';
-                            html += `
-                                <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                                    <div><strong>${quote.clientName}</strong> - $${quote.total ? quote.total.toLocaleString('es-AR') : '0'}</div>
-                                    <div style="font-size: 0.9rem; color: #666;">${date} - ${quote.items ? quote.items.length : 0} ítems</div>
-                                </div>
-                            `;
-                        });
-                        
-                        recentActivity.innerHTML = html;
-                    } catch (error) {
-                        console.error('Error cargando estadísticas:', error);
-                        recentActivity.innerHTML = '<p>Error cargando actividad</p>';
-                    }
-                }
-                
-                // ============================================
-                // FUNCIONES AUXILIARES
-                // ============================================
-                function showLoginMessage(text, type) {
-                    loginMessage.textContent = text;
-                    loginMessage.className = `message message-${type}`;
-                    loginMessage.style.display = 'block';
-                    setTimeout(() => { loginMessage.style.display = 'none'; }, 5000);
-                }
-                
-                function showMessage(elementId, text, type) {
-                    const el = document.getElementById(elementId);
-                    el.textContent = text;
-                    el.className = `message message-${type}`;
-                    el.style.display = 'block';
-                    setTimeout(() => { el.style.display = 'none'; }, 5000);
-                }
-                
-                function showLoader() {
-                    document.getElementById('loader').style.display = 'block';
-                }
-                
-                function hideLoader() {
-                    document.getElementById('loader').style.display = 'none';
-                }
-                
-                // ============================================
-                // FUNCIONES GLOBALES PARA BOTONES
-                // ============================================
-                window.viewQuote = async function(quoteId) {
-                    const doc = await db.collection('quotes').doc(quoteId).get();
-                    if (doc.exists) {
-                        const quote = doc.data();
-                        alert(`Presupuesto para ${quote.clientName}\nTotal: $${quote.total}\nÍtems:\n${quote.items.join('\n')}`);
-                    }
-                };
-                
-                window.deleteQuote = async function(quoteId) {
-                    if (confirm('¿Estás seguro de eliminar este presupuesto?')) {
-                        await db.collection('quotes').doc(quoteId).delete();
-                        loadQuotes();
-                        loadStats();
-                    }
-                };
-                
-                window.printQuote = function() {
-                    window.print();
-                };
-                
-                window.sendQuoteViaWhatsApp = function() {
-                    const clientPhone = document.getElementById('quoteClientPhone').value.trim();
-                    if (clientPhone) {
-                        const message = encodeURIComponent(`Hola! Te envío el presupuesto solicitado. Podés verlo en el panel de TecniYa.`);
-                        window.open(`https://wa.me/${clientPhone}?text=${message}`, '_blank');
-                    } else {
-                        alert('Agregá el teléfono del cliente para enviar por WhatsApp');
-                    }
-                };
-                
-                console.log('Panel del profesional inicializado correctamente');
-                
+            } else {
+                loginContainer.style.display = 'block';
+                mainPanel.style.display = 'none';
+            }
+        });
+        
+        // ============================================
+        // LOGIN
+        // ============================================
+        loginBtn.addEventListener('click', async () => {
+            try {
+                await auth.signInWithEmailAndPassword(loginEmail.value, loginPassword.value);
+                showLoginMessage('Ingreso exitoso', 'success');
             } catch (error) {
-                console.error('Error inicializando Firebase:', error);
-                alert('Error inicializando la aplicación. Recargá la página.');
+                showLoginMessage('Error: ' + error.message, 'error');
+            }
+        });
+        
+        // ============================================
+        // REGISTRO
+        // ============================================
+        showRegister.addEventListener('click', () => {
+            registerSection.style.display = 'block';
+        });
+        
+        cancelRegister.addEventListener('click', () => {
+            registerSection.style.display = 'none';
+        });
+        
+        registerBtn.addEventListener('click', async () => {
+            if (!registerName.value || !registerPhone.value || !registerEmail.value || !registerPassword.value) {
+                showLoginMessage('Completá todos los campos', 'error');
+                return;
+            }
+            
+            if (registerPassword.value.length < 6) {
+                showLoginMessage('La contraseña debe tener al menos 6 caracteres', 'error');
+                return;
+            }
+            
+            try {
+                // CREAR USUARIO
+                const userCredential = await auth.createUserWithEmailAndPassword(registerEmail.value, registerPassword.value);
+                await userCredential.user.updateProfile({ displayName: registerName.value });
+                
+                // CREAR DOCUMENTO PROFESIONAL
+                await db.collection('professionals').add({
+                    userId: userCredential.user.uid,
+                    email: registerEmail.value,
+                    name: registerName.value,
+                    phone: registerPhone.value,
+                    photoUrl: '',
+                    rubros: [],
+                    zonas: [],
+                    rating: 0,
+                    reviewsCount: 0,
+                    jobsCompleted: 0,
+                    lastActive: null,
+                    profileCompleted: false,
+                    isFeatured: false,
+                    featuredUntil: null,
+                    rankingScore: 0,
+                    blocked: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showLoginMessage('Registro exitoso. Ya podés iniciar sesión.', 'success');
+                registerSection.style.display = 'none';
+            } catch (error) {
+                showLoginMessage('Error en registro: ' + error.message, 'error');
+            }
+        });
+        
+        // ============================================
+        // CARGAR DATOS DEL PROFESIONAL
+        // ============================================
+        async function loadProfessionalData() {
+            if (!professionalId) return;
+            
+            const doc = await db.collection('professionals').doc(professionalId).get();
+            if (doc.exists) {
+                const data = doc.data();
+                
+                // PERFIL
+                document.getElementById('profileName').value = data.name || '';
+                document.getElementById('profilePhone').value = data.phone || '';
+                
+                // RUBROS
+                document.querySelectorAll('#rubrosCheckbox input').forEach(cb => {
+                    cb.checked = data.rubros && data.rubros.includes(cb.value);
+                });
+                
+                // ZONAS
+                document.querySelectorAll('#zonasCheckbox input').forEach(cb => {
+                    cb.checked = data.zonas && data.zonas.includes(cb.value);
+                });
+                
+                // FOTO - MOSTRAR PREVIEW
+                const photoPreview = document.getElementById('photoPreview');
+                if (data.photoUrl) {
+                    photoPreview.src = data.photoUrl;
+                    document.getElementById('photoUrl').value = data.photoUrl;
+                } else {
+                    photoPreview.src = 'https://via.placeholder.com/200x200/0a4fd8/ffffff?text=NO+FOTO';
+                    document.getElementById('photoUrl').value = '';
+                }
+                
+                // ESTADO PERFIL
+                const isComplete = data.profileCompleted;
+                const statusEl = document.getElementById('profileStatus');
+                const statusText = document.getElementById('statusText');
+                
+                if (isComplete) {
+                    statusEl.className = 'status-badge status-complete';
+                    statusEl.textContent = 'COMPLETO';
+                    statusText.textContent = 'Tu perfil está completo y visible en las búsquedas.';
+                } else {
+                    statusEl.className = 'status-badge status-incomplete';
+                    statusEl.textContent = 'INCOMPLETO';
+                    statusText.textContent = 'Completá todos los campos y subí tu foto para aparecer en las búsquedas.';
+                }
+                
+                // DESTACADO
+                const now = new Date();
+                const featuredUntil = data.featuredUntil ? data.featuredUntil.toDate() : null;
+                const isFeaturedActive = data.isFeatured && featuredUntil && featuredUntil > now;
+                
+                const featuredStatus = document.getElementById('featuredStatus');
+                const featuredUntilEl = document.getElementById('featuredUntil');
+                
+                if (isFeaturedActive) {
+                    featuredStatus.innerHTML = '<span style="color: #ff9800; font-weight: 700;">⭐ SOS PROFESIONAL DESTACADO</span>';
+                    featuredUntilEl.textContent = `Válido hasta: ${featuredUntil.toLocaleDateString('es-AR')}`;
+                } else {
+                    featuredStatus.textContent = 'No sos profesional destacado.';
+                    featuredUntilEl.textContent = '';
+                }
+                
+                // ESTADÍSTICAS
+                document.getElementById('statsRating').textContent = data.rating ? data.rating.toFixed(1) : '0.0';
+                document.getElementById('statsJobs').textContent = data.jobsCompleted || 0;
+                document.getElementById('statsReviews').textContent = data.reviewsCount || 0;
+                
+                // CARGAR PRESUPUESTOS
+                loadQuotes();
+                loadStats();
             }
         }
+        
+        // ============================================
+        // PREVIEW DE FOTO EN TIEMPO REAL
+        // ============================================
+        document.getElementById('photoUrl').addEventListener('input', function(e) {
+            const url = e.target.value.trim();
+            const preview = document.getElementById('photoPreview');
+            
+            if (url && url.startsWith('http')) {
+                preview.src = url;
+            } else {
+                preview.src = 'https://via.placeholder.com/200x200/0a4fd8/ffffff?text=INGRESA+URL';
+            }
+        });
+        
+        // ============================================
+        // SWITCH TABS
+        // ============================================
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                if (tab.id === 'logoutBtn') {
+                    auth.signOut();
+                    return;
+                }
+                
+                const tabId = tab.getAttribute('data-tab');
+                switchTab(tabId);
+            });
+        });
+        
+        function switchTab(tabId) {
+            // REMOVER ACTIVE
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            
+            // AGREGAR ACTIVE
+            const tabElement = document.querySelector(`.tab[data-tab="${tabId}"]`);
+            const panelElement = document.getElementById(`${tabId}Panel`);
+            
+            if (tabElement) tabElement.classList.add('active');
+            if (panelElement) panelElement.classList.add('active');
+        }
+        
+        // ============================================
+        // GUARDAR PERFIL (SIN SUBIR ARCHIVOS)
+        // ============================================
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('profileName').value.trim();
+            const phone = document.getElementById('profilePhone').value.trim();
+            const photoUrl = document.getElementById('photoUrl').value.trim();
+            
+            if (!name || !phone || !photoUrl) {
+                showMessage('profileMessage', '❌ Nombre, teléfono y foto son obligatorios', 'error');
+                return;
+            }
+            
+            // Validar URL de foto
+            try {
+                new URL(photoUrl);
+            } catch {
+                showMessage('profileMessage', '❌ La URL de la foto no es válida. Debe comenzar con http:// o https://', 'error');
+                return;
+            }
+            
+            // OBTENER RUBROS SELECCIONADOS
+            const rubros = [];
+            document.querySelectorAll('#rubrosCheckbox input:checked').forEach(cb => {
+                rubros.push(cb.value);
+            });
+            
+            // OBTENER ZONAS SELECCIONADAS
+            const zonas = [];
+            document.querySelectorAll('#zonasCheckbox input:checked').forEach(cb => {
+                zonas.push(cb.value);
+            });
+            
+            if (rubros.length === 0 || zonas.length === 0) {
+                showMessage('profileMessage', '❌ Seleccioná al menos un rubro y una zona', 'error');
+                return;
+            }
+            
+            try {
+                showLoader();
+                
+                await db.collection('professionals').doc(professionalId).update({
+                    name,
+                    phone,
+                    photoUrl,
+                    rubros,
+                    zonas,
+                    lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                await verifyProfileCompletion();
+                hideLoader();
+                showMessage('profileMessage', '✅ Perfil guardado correctamente', 'success');
+            } catch (error) {
+                hideLoader();
+                showMessage('profileMessage', '❌ Error guardando perfil: ' + error.message, 'error');
+            }
+        });
+        
+        // ============================================
+        // MARCAR COMO ACTIVO
+        // ============================================
+        document.getElementById('updateActivityBtn').addEventListener('click', async () => {
+            try {
+                await db.collection('professionals').doc(professionalId).update({
+                    lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showMessage('profileMessage', '✅ Marcado como activo', 'success');
+            } catch (error) {
+                showMessage('profileMessage', '❌ Error actualizando actividad', 'error');
+            }
+        });
+        
+        // ============================================
+        // VERIFICAR COMPLETITUD PERFIL
+        // ============================================
+        async function verifyProfileCompletion() {
+            const doc = await db.collection('professionals').doc(professionalId).get();
+            const data = doc.data();
+            
+            const isComplete = data.name && data.phone && data.photoUrl && 
+                              data.rubros.length > 0 && data.zonas.length > 0;
+            
+            await db.collection('professionals').doc(professionalId).update({
+                profileCompleted: isComplete
+            });
+            
+            // ACTUALIZAR UI
+            loadProfessionalData();
+        }
+        
+        // ============================================
+        // CREAR PRESUPUESTO
+        // ============================================
+        document.getElementById('createQuoteBtn').addEventListener('click', async () => {
+            const clientName = document.getElementById('quoteClientName').value.trim();
+            const clientPhone = document.getElementById('quoteClientPhone').value.trim();
+            const itemsText = document.getElementById('quoteItems').value.trim();
+            const total = parseFloat(document.getElementById('quoteTotal').value);
+            
+            if (!clientName || !clientPhone || !itemsText || !total) {
+                showMessage('quoteMessage', '❌ Completá todos los campos del presupuesto', 'error');
+                return;
+            }
+            
+            if (isNaN(total) || total <= 0) {
+                showMessage('quoteMessage', '❌ El total debe ser un número mayor a 0', 'error');
+                return;
+            }
+            
+            const items = itemsText.split('\n').filter(item => item.trim() !== '');
+            
+            try {
+                showLoader();
+                
+                await db.collection('quotes').add({
+                    professionalId,
+                    clientName,
+                    clientPhone,
+                    items,
+                    total,
+                    status: 'creado',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // LIMPIAR FORM
+                document.getElementById('quoteClientName').value = '';
+                document.getElementById('quoteClientPhone').value = '';
+                document.getElementById('quoteItems').value = '';
+                document.getElementById('quoteTotal').value = '';
+                
+                // RECARGAR LISTA
+                loadQuotes();
+                loadStats();
+                hideLoader();
+                showMessage('quoteMessage', '✅ Presupuesto creado correctamente', 'success');
+            } catch (error) {
+                hideLoader();
+                showMessage('quoteMessage', '❌ Error creando presupuesto: ' + error.message, 'error');
+            }
+        });
+        
+        // ============================================
+        // VISTA PREVIA PRESUPUESTO
+        // ============================================
+        document.getElementById('previewQuoteBtn').addEventListener('click', () => {
+            const clientName = document.getElementById('quoteClientName').value.trim();
+            const itemsText = document.getElementById('quoteItems').value.trim();
+            const total = document.getElementById('quoteTotal').value;
+            
+            if (!clientName || !itemsText || !total) {
+                showMessage('quoteMessage', '❌ Completá los campos para ver vista previa', 'error');
+                return;
+            }
+            
+            const items = itemsText.split('\n').filter(item => item.trim() !== '');
+            const now = new Date();
+            
+            let html = `
+                <h4>📋 Presupuesto TecniYa</h4>
+                <p><strong>Fecha:</strong> ${now.toLocaleDateString('es-AR')}</p>
+                <p><strong>Cliente:</strong> ${clientName}</p>
+                <p><strong>Profesional:</strong> ${document.getElementById('profileName').value || 'No especificado'}</p>
+                <hr>
+                <h5>Detalle del presupuesto:</h5>
+                <ul>
+            `;
+            
+            items.forEach(item => {
+                html += `<li>${item}</li>`;
+            });
+            
+            html += `
+                </ul>
+                <hr>
+                <h4><strong>Total: $${parseFloat(total).toLocaleString('es-AR')} ARS</strong></h4>
+                <p style="color: #666; font-size: 0.9rem; margin-top: 20px;">
+                    <em>Este presupuesto no es comprobante fiscal. Es una estimación de costos para el servicio.</em>
+                </p>
+                <div class="btn-group" style="margin-top: 20px;">
+                    <button onclick="printQuote()" class="btn btn-primary">🖨 Imprimir</button>
+                    <button onclick="sendQuoteViaWhatsApp()" class="btn btn-success">📱 Enviar por WhatsApp</button>
+                </div>
+            `;
+            
+            document.getElementById('quotePreview').innerHTML = html;
+            document.getElementById('quotePreview').style.display = 'block';
+        });
+        
+        // ============================================
+        // CARGAR PRESUPUESTOS
+        // ============================================
+        async function loadQuotes() {
+            const tbody = document.getElementById('quotesTableBody');
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Cargando...</td></tr>';
+            
+            try {
+                const snapshot = await db.collection('quotes')
+                    .where('professionalId', '==', professionalId)
+                    .orderBy('createdAt', 'desc')
+                    .limit(20)
+                    .get();
+                
+                tbody.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay presupuestos creados</td></tr>';
+                    document.getElementById('statsQuotes').textContent = '0';
+                    return;
+                }
+                
+                document.getElementById('statsQuotes').textContent = snapshot.size;
+                
+                snapshot.forEach(doc => {
+                    const quote = doc.data();
+                    const date = quote.createdAt ? quote.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${date}</td>
+                        <td>${quote.clientName}</td>
+                        <td>$${quote.total ? quote.total.toLocaleString('es-AR') : '0'}</td>
+                        <td>
+                            <button onclick="viewQuote('${doc.id}')" class="btn" style="padding: 5px 10px; font-size: 0.9rem;">👁 Ver</button>
+                            <button onclick="deleteQuote('${doc.id}')" class="btn btn-danger" style="padding: 5px 10px; font-size: 0.9rem;">🗑 Eliminar</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error cargando presupuestos:', error);
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #dc3545;">Error cargando presupuestos</td></tr>';
+            }
+        }
+        
+        // ============================================
+        // CARGAR ESTADÍSTICAS
+        // ============================================
+        async function loadStats() {
+            const recentActivity = document.getElementById('recentActivity');
+            
+            try {
+                // OBTENER ÚLTIMOS PRESUPUESTOS
+                const quotesSnapshot = await db.collection('quotes')
+                    .where('professionalId', '==', professionalId)
+                    .orderBy('createdAt', 'desc')
+                    .limit(5)
+                    .get();
+                
+                if (quotesSnapshot.empty) {
+                    recentActivity.innerHTML = '<p>No hay actividad reciente</p>';
+                    return;
+                }
+                
+                let html = '';
+                quotesSnapshot.forEach(doc => {
+                    const quote = doc.data();
+                    const date = quote.createdAt ? quote.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                    html += `
+                        <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                            <div><strong>${quote.clientName}</strong> - $${quote.total ? quote.total.toLocaleString('es-AR') : '0'}</div>
+                            <div style="font-size: 0.9rem; color: #666;">${date} - ${quote.items ? quote.items.length : 0} ítems</div>
+                        </div>
+                    `;
+                });
+                
+                recentActivity.innerHTML = html;
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+                recentActivity.innerHTML = '<p>Error cargando actividad</p>';
+            }
+        }
+        
+        // ============================================
+        // FUNCIONES AUXILIARES
+        // ============================================
+        function showLoginMessage(text, type) {
+            loginMessage.textContent = text;
+            loginMessage.className = `message message-${type}`;
+            loginMessage.style.display = 'block';
+            setTimeout(() => { loginMessage.style.display = 'none'; }, 5000);
+        }
+        
+        function showMessage(elementId, text, type) {
+            const el = document.getElementById(elementId);
+            el.textContent = text;
+            el.className = `message message-${type}`;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        }
+        
+        function showLoader() {
+            document.getElementById('loader').style.display = 'block';
+        }
+        
+        function hideLoader() {
+            document.getElementById('loader').style.display = 'none';
+        }
+        
+        // ============================================
+        // FUNCIONES GLOBALES PARA BOTONES
+        // ============================================
+        window.viewQuote = async function(quoteId) {
+            const doc = await db.collection('quotes').doc(quoteId).get();
+            if (doc.exists) {
+                const quote = doc.data();
+                alert(`Presupuesto para ${quote.clientName}\nTotal: $${quote.total}\nÍtems:\n${quote.items.join('\n')}`);
+            }
+        };
+        
+        window.deleteQuote = async function(quoteId) {
+            if (confirm('¿Estás seguro de eliminar este presupuesto?')) {
+                await db.collection('quotes').doc(quoteId).delete();
+                loadQuotes();
+                loadStats();
+            }
+        };
+        
+        window.printQuote = function() {
+            window.print();
+        };
+        
+        window.sendQuoteViaWhatsApp = function() {
+            const clientPhone = document.getElementById('quoteClientPhone').value.trim();
+            if (clientPhone) {
+                const message = encodeURIComponent(`Hola! Te envío el presupuesto solicitado. Podés verlo en el panel de TecniYa.`);
+                window.open(`https://wa.me/${clientPhone}?text=${message}`, '_blank');
+            } else {
+                alert('Agregá el teléfono del cliente para enviar por WhatsApp');
+            }
+        };
     </script>
 </body>
 </html>
