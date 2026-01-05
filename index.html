@@ -987,6 +987,7 @@
             }
         }
 
+        // FUNCIÓN MEJORADA PARA CARGAR BANNERS CON ROTACIÓN ALEATORIA
         async function loadBanner() {
             try {
                 const provincia = document.getElementById('provinciaSelect').value;
@@ -1006,97 +1007,118 @@
                 const now = new Date();
                 
                 // Buscar TODOS los banners activos
-                let bannersSnapshot = await db.collection('banners').get();
+                let bannersSnapshot = await db.collection('banners')
+                    .where('active', '==', true)
+                    .get();
                 
                 if (bannersSnapshot.empty) {
                     // Mostrar banner por defecto
                     bannerContainer.innerHTML = `
-                        <div style="padding: 2rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                            <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🔧 TecniYa Argentina</h3>
-                            <p>Conectamos clientes con técnicos certificados</p>
-                            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">Publicitá tu negocio aquí</p>
-                        </div>
+                        <a href="#" target="_blank" class="banner-link">
+                            <div style="padding: 2rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                                <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🔧 TecniYa Argentina</h3>
+                                <p>Conectamos clientes con técnicos certificados</p>
+                                <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">Publicitá tu negocio aquí</p>
+                            </div>
+                        </a>
                     `;
                     return;
                 }
                 
-                // Filtrar banners manualmente
-                const banners = [];
+                // Filtrar banners manualmente según ubicación y rubro
+                const bannersDisponibles = [];
+                const nowTimestamp = now.getTime();
+                
                 bannersSnapshot.forEach(doc => {
                     const banner = { id: doc.id, ...doc.data() };
                     
-                    // Verificar que esté activo
-                    if (!banner.active) return;
-                    
-                    // Verificar fecha
+                    // Verificar fechas
                     const startDate = banner.startDate ? banner.startDate.toDate() : null;
                     const endDate = banner.endDate ? banner.endDate.toDate() : null;
                     
                     if (!startDate || !endDate) return;
                     if (startDate > now || endDate < now) return;
                     
-                    // Verificar ubicación - CORRECCIÓN AQUÍ
-                    let pasaUbicacion = false;
+                    // Verificar si el banner aplica a la ubicación actual
+                    let aplicaUbicacion = false;
                     
-                    if (provincia && ciudad) {
-                        // Si hay provincia y ciudad seleccionadas
-                        if (banner.provincia === provincia && banner.ciudad === ciudad) {
-                            // Banner local específico
-                            pasaUbicacion = true;
-                        } else if (banner.provincia === provincia && banner.ciudad === 'toda') {
-                            // Banner provincial
-                            pasaUbicacion = true;
-                        } else if (banner.provincia === 'toda' && banner.ciudad === 'toda') {
-                            // Banner nacional
-                            pasaUbicacion = true;
-                        }
-                    } else if (provincia && !ciudad) {
-                        // Si solo hay provincia seleccionada
-                        if (banner.provincia === provincia && banner.ciudad === 'toda') {
-                            // Banner provincial
-                            pasaUbicacion = true;
-                        } else if (banner.provincia === 'toda' && banner.ciudad === 'toda') {
-                            // Banner nacional
-                            pasaUbicacion = true;
-                        }
-                    } else {
-                        // Si no hay nada seleccionado, solo banners nacionales
-                        if (banner.provincia === 'toda' && banner.ciudad === 'toda') {
-                            pasaUbicacion = true;
-                        }
+                    // 1. Banners nacionales (toda, toda) siempre aplican
+                    if (banner.provincia === 'toda' && banner.ciudad === 'toda') {
+                        aplicaUbicacion = true;
+                    }
+                    // 2. Banners provinciales (provincia específica, toda)
+                    else if (provincia && banner.provincia === provincia && banner.ciudad === 'toda') {
+                        aplicaUbicacion = true;
+                    }
+                    // 3. Banners locales (provincia y ciudad específicas)
+                    else if (provincia && ciudad && banner.provincia === provincia && banner.ciudad === ciudad) {
+                        aplicaUbicacion = true;
+                    }
+                    // 4. Si no hay provincia seleccionada, solo banners nacionales
+                    else if (!provincia && banner.provincia === 'toda' && banner.ciudad === 'toda') {
+                        aplicaUbicacion = true;
                     }
                     
-                    if (!pasaUbicacion) return;
+                    if (!aplicaUbicacion) return;
                     
                     // Verificar rubro
                     if (rubro && rubro !== '') {
                         if (!banner.rubros || !Array.isArray(banner.rubros)) return;
                         
-                        // Verificar si el banner aplica para "todos" los rubros o para este rubro específico
+                        // El banner debe incluir "todos" o el rubro específico
                         if (!banner.rubros.includes('todos') && !banner.rubros.includes(rubro)) {
                             return;
                         }
                     }
                     
-                    banners.push(banner);
+                    // Calcular peso del banner basado en prioridad y tiempo restante
+                    const priority = banner.priority || 5;
+                    const daysRemaining = Math.ceil((endDate.getTime() - nowTimestamp) / (1000 * 60 * 60 * 24));
+                    
+                    // Banners con más prioridad y más tiempo restante tienen más peso
+                    const peso = priority * Math.max(1, daysRemaining / 30);
+                    
+                    // Agregar banner con su peso
+                    bannersDisponibles.push({
+                        ...banner,
+                        peso: peso
+                    });
                 });
                 
-                if (banners.length === 0) {
+                if (bannersDisponibles.length === 0) {
                     // Mostrar banner por defecto
                     bannerContainer.innerHTML = `
-                        <div style="padding: 2rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                            <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🔧 TecniYa Argentina</h3>
-                            <p>Conectamos clientes con técnicos certificados</p>
-                        </div>
+                        <a href="#" target="_blank" class="banner-link">
+                            <div style="padding: 2rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                                <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🔧 TecniYa Argentina</h3>
+                                <p>Conectamos clientes con técnicos certificados</p>
+                            </div>
+                        </a>
                     `;
                     return;
                 }
                 
-                // Ordenar por prioridad (mayor primero)
-                banners.sort((a, b) => (b.priority || 5) - (a.priority || 5));
+                // SELECCIÓN ALEATORIA CON PESOS
+                // Calcular la suma total de pesos
+                const totalPeso = bannersDisponibles.reduce((sum, banner) => sum + banner.peso, 0);
                 
-                // Tomar el banner con mayor prioridad
-                const selectedBanner = banners[0];
+                // Generar un número aleatorio entre 0 y totalPeso
+                let random = Math.random() * totalPeso;
+                
+                let selectedBanner = null;
+                for (let i = 0; i < bannersDisponibles.length; i++) {
+                    const banner = bannersDisponibles[i];
+                    random -= banner.peso;
+                    if (random <= 0) {
+                        selectedBanner = banner;
+                        break;
+                    }
+                }
+                
+                // Si por alguna razón no se seleccionó, tomar el primero
+                if (!selectedBanner) {
+                    selectedBanner = bannersDisponibles[0];
+                }
                 
                 // Crear contenedor del banner
                 bannerContainer.innerHTML = `
@@ -1104,7 +1126,7 @@
                         <img src="${selectedBanner.imageUrl}" 
                              alt="${selectedBanner.title || 'Banner'}" 
                              class="banner-img"
-                             onerror="this.onerror=null; this.src='https://via.placeholder.com/900x180/0a4fd8/ffffff?text=BANNER+TECNIYA'">
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/900x180/0a4fd8/ffffff?text=TECNIYA+PUBLICIDAD'">
                     </a>
                 `;
                 
@@ -1115,8 +1137,8 @@
                         await db.collection('ads_clicks').add({
                             bannerId: selectedBanner.id,
                             bannerTitle: selectedBanner.title,
-                            provincia: provincia || 'nacional',
-                            ciudad: ciudad || 'todas',
+                            provincia: provincia || 'toda',
+                            ciudad: ciudad || 'toda',
                             rubro: rubro || 'todos',
                             clickedAt: firebase.firestore.FieldValue.serverTimestamp(),
                             userAgent: navigator.userAgent,
@@ -1131,10 +1153,12 @@
                 console.error('Error cargando banner:', error);
                 const bannerContainer = document.getElementById('bannerContent');
                 bannerContainer.innerHTML = `
-                    <div style="padding: 2rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                        <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🔧 TecniYa Argentina</h3>
-                        <p>Encontrá técnicos certificados en tu ciudad</p>
-                    </div>
+                    <a href="#" target="_blank" class="banner-link">
+                        <div style="padding: 2rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🔧 TecniYa Argentina</h3>
+                            <p>Encontrá técnicos certificados en tu ciudad</p>
+                        </div>
+                    </a>
                 `;
             }
         }
