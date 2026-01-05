@@ -8,7 +8,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>">
     
     <style>
-        /* RESET & BASE */
+        /* MANTENER TODOS LOS ESTILOS ORIGINALES */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; }
         body { background-color: #f8f9fa; color: #333; line-height: 1.6; }
         .container { width: 100%; max-width: 1400px; margin: 0 auto; padding: 20px; }
@@ -268,10 +268,17 @@
                             </div>
                         </div>
                         
+                        <!-- CAMBIO IMPORTANTE: URL de imagen en lugar de subir archivo -->
                         <div class="form-group">
-                            <label class="form-label">Imagen del banner</label>
-                            <input type="file" id="bannerImage" accept="image/*" class="form-input">
-                            <small style="color: #666;">Tamaño recomendado: 1200x300px, máximo 2MB</small>
+                            <label class="form-label">URL de la imagen del banner</label>
+                            <input type="url" id="bannerImageUrl" class="form-input" required 
+                                   placeholder="https://ejemplo.com/banner.jpg">
+                            <small style="color: #666;">
+                                🌟 <strong>Servicios GRATIS para subir imágenes:</strong><br>
+                                1. <a href="https://imgur.com" target="_blank">Imgur.com</a> - Sube, luego copia "Direct Link"<br>
+                                2. <a href="https://postimages.org" target="_blank">Postimages.org</a> - Sube, copia "Direct Link"<br>
+                                3. <a href="https://imgbb.com" target="_blank">ImgBB.com</a> - Sin registro necesario
+                            </small>
                             <div id="bannerImagePreview" style="margin-top: 15px;"></div>
                         </div>
                         
@@ -422,24 +429,25 @@
     
     <div id="loader" class="loader"></div>
     
-    <!-- SCRIPTS DE FIREBASE (CRÍTICO - DEBEN IR ANTES DEL SCRIPT PRINCIPAL) -->
+    <!-- SCRIPTS DE FIREBASE - SIN STORAGE -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <!-- NO CARGAMOS firebase-storage.js -->
 
-    <!-- SCRIPT PRINCIPAL -->
+    <!-- SCRIPT PRINCIPAL MODIFICADO -->
     <script>
         // ============================================
-        // CONFIGURACIÓN FIREBASE - TUS DATOS
+        // CONFIGURACIÓN FIREBASE - SIN STORAGE
         // ============================================
         const firebaseConfig = {
-          apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
-          authDomain: "tecniya-b4206.firebaseapp.com",
-          projectId: "tecniya-b4206",
-          storageBucket: "tecniya-b4206.firebasestorage.app",
-          messagingSenderId: "166424133304",
-          appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
+            apiKey: "AIzaSyCB_aik9aLpCH3OeF6_S28kVIfkQDDx6G4",
+            authDomain: "tecniya-b4206.firebaseapp.com",
+            projectId: "tecniya-b4206",
+            storageBucket: "", // ← VACÍO, NO USAMOS STORAGE
+            messagingSenderId: "640723724521",
+            appId: "1:640723724521:web:354ef5d47e63fdc7179150",
+            measurementId: "G-TT0J8RTCME"
         };
 
         // ============================================
@@ -448,7 +456,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
-        const storage = firebase.storage();
+        // NO inicializamos storage
 
         // ============================================
         // ELEMENTOS DOM
@@ -648,11 +656,12 @@
                     }
                     
                     const featuredActive = data.isFeatured && data.featuredUntil && data.featuredUntil.toDate() > now;
-                    const photoUrl = data.photoUrl || 'https://via.placeholder.com/50x50?text=SIN+FOTO';
+                    // Usar placeholder si no hay foto
+                    const photoUrl = data.photoUrl || 'https://via.placeholder.com/50x50/0a4fd8/ffffff?text=NO+FOTO';
                     
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td><img src="${photoUrl}" class="table-photo" alt="Foto"></td>
+                        <td><img src="${photoUrl}" class="table-photo" alt="Foto" onerror="this.src='https://via.placeholder.com/50x50/0a4fd8/ffffff?text=NO+FOTO'"></td>
                         <td>${data.name || 'Sin nombre'}</td>
                         <td>${data.phone || 'Sin teléfono'}<br>${data.email || ''}</td>
                         <td>${data.rubros ? data.rubros.join(', ') : ''}</td>
@@ -711,7 +720,9 @@
             let html = `
                 <div style="display: flex; gap: 30px; margin-bottom: 30px;">
                     <div>
-                        <img src="${data.photoUrl || 'https://via.placeholder.com/150x150?text=SIN+FOTO'}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 12px;">
+                        <img src="${data.photoUrl || 'https://via.placeholder.com/150x150/0a4fd8/ffffff?text=NO+FOTO'}" 
+                             style="width: 150px; height: 150px; object-fit: cover; border-radius: 12px;"
+                             onerror="this.src='https://via.placeholder.com/150x150/0a4fd8/ffffff?text=NO+FOTO'">
                     </div>
                     <div>
                         <h4>${data.name || 'Sin nombre'}</h4>
@@ -841,8 +852,9 @@
                     row.innerHTML = `
                         <td>
                             ${data.imageUrl ? 
-                                `<img src="${data.imageUrl}" style="width: 100px; height: 50px; object-fit: cover; border-radius: 6px;">` : 
-                                'Sin imagen'
+                                `<img src="${data.imageUrl}" style="width: 100px; height: 50px; object-fit: cover; border-radius: 6px;" 
+                                      onerror="this.src='https://via.placeholder.com/100x50/0a4fd8/ffffff?text=BANNER'">` : 
+                                '<img src="https://via.placeholder.com/100x50/0a4fd8/ffffff?text=SIN+IMAGEN" style="border-radius: 6px;">'
                             }
                         </td>
                         <td>${data.title || 'Sin título'}</td>
@@ -909,6 +921,7 @@
             document.getElementById('bannerId').value = bannerId;
             document.getElementById('bannerTitle').value = data.title || '';
             document.getElementById('bannerLink').value = data.link || '';
+            document.getElementById('bannerImageUrl').value = data.imageUrl || '';
             document.getElementById('bannerPosition').value = data.position || 'home';
             document.getElementById('bannerCity').value = data.city || 'Rosario';
             document.getElementById('bannerActive').checked = data.active || false;
@@ -931,13 +944,32 @@
             // IMAGEN PREVIEW
             if (data.imageUrl) {
                 document.getElementById('bannerImagePreview').innerHTML = `
-                    <img src="${data.imageUrl}" style="max-width: 300px; border-radius: 8px;">
+                    <img src="${data.imageUrl}" style="max-width: 300px; border-radius: 8px;"
+                         onerror="this.style.display='none'">
                 `;
             }
         }
 
         // ============================================
-        // GUARDAR BANNER
+        // PREVIEW DE IMAGEN EN TIEMPO REAL
+        // ============================================
+        document.getElementById('bannerImageUrl').addEventListener('input', function(e) {
+            const url = e.target.value.trim();
+            const preview = document.getElementById('bannerImagePreview');
+            
+            if (url && url.startsWith('http')) {
+                preview.innerHTML = `
+                    <p><small>Vista previa:</small></p>
+                    <img src="${url}" style="max-width: 300px; border-radius: 8px;"
+                         onerror="this.src='https://via.placeholder.com/300x100/0a4fd8/ffffff?text=URL+INVÁLIDA'">
+                `;
+            } else {
+                preview.innerHTML = '';
+            }
+        });
+
+        // ============================================
+        // GUARDAR BANNER (SIN SUBIR ARCHIVOS)
         // ============================================
         document.getElementById('bannerFormElement').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -945,6 +977,7 @@
             const bannerId = document.getElementById('bannerId').value;
             const title = document.getElementById('bannerTitle').value.trim();
             const link = document.getElementById('bannerLink').value.trim();
+            const imageUrl = document.getElementById('bannerImageUrl').value.trim();
             const position = document.getElementById('bannerPosition').value;
             const city = document.getElementById('bannerCity').value;
             const startDate = document.getElementById('bannerStartDate').value;
@@ -957,8 +990,16 @@
                 rubros.push(cb.value);
             });
             
-            if (!title || !link || !startDate || !endDate) {
+            if (!title || !link || !startDate || !endDate || !imageUrl) {
                 alert('Completá todos los campos obligatorios');
+                return;
+            }
+            
+            // Validar URL de imagen
+            try {
+                new URL(imageUrl);
+            } catch {
+                alert('La URL de la imagen no es válida. Debe comenzar con http:// o https://');
                 return;
             }
             
@@ -973,6 +1014,7 @@
                 const bannerData = {
                     title,
                     link,
+                    imageUrl,
                     rubros: rubros.length > 0 ? rubros : ['todos'],
                     position,
                     city,
@@ -981,30 +1023,6 @@
                     endDate: new Date(endDate),
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
-                
-                // SUBIR IMAGEN SI HAY
-                const imageFile = document.getElementById('bannerImage').files[0];
-                if (imageFile) {
-                    // VALIDAR
-                    if (imageFile.size > 2 * 1024 * 1024) {
-                        alert('La imagen debe ser menor a 2MB');
-                        hideLoader();
-                        return;
-                    }
-                    
-                    // SUBIR
-                    const storageRef = storage.ref();
-                    const fileRef = storageRef.child(`banners/${bannerId || Date.now()}_${imageFile.name}`);
-                    await fileRef.put(imageFile);
-                    const downloadURL = await fileRef.getDownloadURL();
-                    bannerData.imageUrl = downloadURL;
-                } else if (bannerId) {
-                    // MANTENER IMAGEN EXISTENTE SI NO SE SUBE NUEVA
-                    const existingDoc = await db.collection('banners').doc(bannerId).get();
-                    if (existingDoc.exists && existingDoc.data().imageUrl) {
-                        bannerData.imageUrl = existingDoc.data().imageUrl;
-                    }
-                }
                 
                 // GUARDAR EN FIRESTORE
                 if (bannerId) {
@@ -1146,7 +1164,7 @@
             snapshot.forEach(doc => {
                 const data = doc.data();
                 
-                // CALCULAR RANKING (MISMO ALGORITMO QUE INDEX.HTML)
+                // CALCULAR RANKING
                 let rankingScore = 0;
                 rankingScore += (data.rating || 0) * 5;
                 rankingScore += (data.jobsCompleted || 0) * 2;
