@@ -53,7 +53,7 @@
         .header {
             background: linear-gradient(135deg, var(--primary) 0%, #1a60f0 100%);
             color: white;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -79,21 +79,16 @@
             z-index: 1;
         }
         
-        .logo-icon {
-            font-size: 2.5rem;
-            background: white;
-            width: 60px;
+        .logo-img {
             height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            box-shadow: var(--shadow);
+            width: auto;
+            max-width: 180px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
         
         .logo-text {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             font-weight: 800;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
@@ -116,7 +111,7 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.12);
             transition: var(--transition);
             background: white;
-            min-height: 150px;
+            height: 200px; /* Altura fija para el banner */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -129,14 +124,18 @@
         
         .banner-content {
             width: 100%;
+            height: 100%;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .banner-img {
             width: 100%;
-            height: auto;
-            display: block;
-            border-radius: var(--radius);
+            height: 100%;
+            object-fit: contain; /* Cambiado de cover a contain para que no se estire */
+            background-color: #f8f9fa; /* Fondo por si la imagen es más pequeña */
         }
         
         .banner-link {
@@ -558,6 +557,11 @@
                 text-align: center;
             }
             
+            .logo-img {
+                height: 50px;
+                max-width: 150px;
+            }
+            
             .logo-text {
                 font-size: 2rem;
             }
@@ -570,6 +574,26 @@
                 flex-direction: column;
                 text-align: center;
             }
+            
+            .banner-container {
+                height: 150px;
+                margin: 1rem auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .banner-container {
+                height: 120px;
+            }
+            
+            .logo-text {
+                font-size: 1.8rem;
+            }
+            
+            .logo-img {
+                height: 40px;
+                max-width: 120px;
+            }
         }
     </style>
 </head>
@@ -578,7 +602,7 @@
     <header class="header">
         <div class="container">
             <div class="logo">
-                <div class="logo-icon">🔧</div>
+                <img src="logo.png" class="logo-img" alt="TecniYa Logo">
                 <h1 class="logo-text">TecniYa</h1>
             </div>
             <p class="tagline">Encontrá técnicos certificados en toda Argentina. Contacto directo por WhatsApp.</p>
@@ -604,24 +628,18 @@
             <div class="form-group">
                 <label class="form-label">Provincia</label>
                 <select id="provinciaSelect" class="form-select">
-                    <option value="">Seleccioná una provincia</option>
+                    <option value="">Todas las provincias</option>
                     <!-- Se llena dinámicamente -->
                 </select>
             </div>
             <div class="form-group">
                 <label class="form-label">Ciudad</label>
                 <select id="ciudadSelect" class="form-select" disabled>
-                    <option value="">Seleccioná primero una provincia</option>
+                    <option value="">Todas las ciudades</option>
                 </select>
             </div>
         </div>
         <div class="search-grid">
-            <div class="form-group">
-                <label class="form-label">Zona/Barrio</label>
-                <select id="zonaSelect" class="form-select" disabled>
-                    <option value="">Seleccioná primero una ciudad</option>
-                </select>
-            </div>
             <div class="form-group">
                 <label class="form-label">Rubro</label>
                 <select id="rubroSelect" class="form-select">
@@ -641,10 +659,21 @@
                     <option value="otros">Otros servicios</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label class="form-label">Zona/Barrio</label>
+                <select id="zonaSelect" class="form-select">
+                    <option value="">Todas las zonas</option>
+                </select>
+            </div>
         </div>
-        <button id="searchBtn" class="btn btn-primary">
-            🔍 Buscar técnico
-        </button>
+        <div class="btn-group" style="display: flex; gap: 15px; margin-top: 20px;">
+            <button id="searchBtn" class="btn btn-primary">
+                🔍 Buscar técnico
+            </button>
+            <button id="showAllBtn" class="btn" style="background: #6c757d; color: white;">
+                📋 Ver todos
+            </button>
+        </div>
     </section>
 
     <!-- RESULTS -->
@@ -656,7 +685,9 @@
         <div class="loader" id="loader" style="display: none;">
             <div class="spinner"></div>
         </div>
-        <div class="professional-grid" id="resultsContainer"></div>
+        <div class="professional-grid" id="resultsContainer">
+            <!-- Los profesionales se mostrarán aquí -->
+        </div>
     </section>
 
     <!-- FOOTER -->
@@ -669,16 +700,16 @@
             <div class="footer-section">
                 <h3>Enlaces</h3>
                 <div class="footer-links">
-                    <a href="#" onclick="alert('Página de registro en desarrollo')">Registrate como Profesional</a>
-                    <a href="admin.html">Panel de Administración</a>
+                    <a href="#" onclick="alert('Para registrarte como profesional, contactanos por WhatsApp al 341 755-8966')">Registrate como Profesional</a>
                     <a href="#legal">Términos y Condiciones</a>
                     <a href="#privacidad">Política de Privacidad</a>
                 </div>
             </div>
             <div class="footer-section">
                 <h3>Contacto</h3>
-                <p>Argentina</p>
-                <p>contacto@tecniya.com</p>
+                <p>📱 WhatsApp: 341 755-8966</p>
+                <p>📍 Argentina</p>
+                <p>📧 contacto@tecniya.com</p>
             </div>
         </div>
         <div class="copyright">
@@ -781,7 +812,6 @@
             try {
                 if (!firebase.apps.length) {
                     firebase.initializeApp(firebaseConfig);
-                    console.log('Firebase inicializado correctamente');
                 }
                 
                 db = firebase.firestore();
@@ -801,22 +831,37 @@
             // Cargar datos geográficos
             loadProvincias();
             
-            // Establecer Santa Fe/Rosario como predeterminada
-            setTimeout(() => {
-                setRosarioDefault();
-            }, 500);
-            
             // Cargar estadísticas
             loadStats();
             
             // Cargar banner inicial
             loadBanner();
             
+            // Cargar todos los profesionales al inicio
+            loadAllProfessionals();
+            
             // Configurar eventos
             document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
+            document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
             document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
             document.getElementById('ciudadSelect').addEventListener('change', handleCiudadChange);
             document.getElementById('rubroSelect').addEventListener('change', loadBanner);
+            
+            // Habilitar zonaSelect desde el inicio
+            document.getElementById('zonaSelect').disabled = false;
+            
+            // Cargar zonas generales
+            const zonaSelect = document.getElementById('zonaSelect');
+            zonaSelect.innerHTML = '<option value="">Todas las zonas</option>';
+            
+            // Agregar opciones de zonas generales
+            const zonasGenerales = ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"];
+            zonasGenerales.forEach(zona => {
+                const option = document.createElement('option');
+                option.value = zona.toLowerCase().replace(/ /g, '_');
+                option.textContent = zona;
+                zonaSelect.appendChild(option);
+            });
         }
 
         // ============================================
@@ -836,54 +881,19 @@
             });
         }
 
-        function setRosarioDefault() {
-            const provinciaSelect = document.getElementById('provinciaSelect');
-            const ciudadSelect = document.getElementById('ciudadSelect');
-            const zonaSelect = document.getElementById('zonaSelect');
-            
-            // Establecer Santa Fe como provincia predeterminada
-            provinciaSelect.value = "Santa Fe";
-            
-            // Cargar ciudades de Santa Fe
-            const ciudades = provinciasCiudades["Santa Fe"];
-            ciudadSelect.innerHTML = '<option value="">Seleccioná una ciudad</option>';
-            ciudades.forEach(ciudad => {
-                const option = document.createElement('option');
-                option.value = ciudad;
-                option.textContent = ciudad;
-                if (ciudad === "Rosario") option.selected = true;
-                ciudadSelect.appendChild(option);
-            });
-            ciudadSelect.disabled = false;
-            
-            // Cargar zonas de Rosario
-            const zonas = ciudadesZonas["Rosario"] || ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"];
-            zonaSelect.innerHTML = '<option value="">Seleccioná una zona</option>';
-            zonas.forEach(zona => {
-                const option = document.createElement('option');
-                option.value = zona.toLowerCase().replace(/ /g, '_');
-                option.textContent = zona;
-                zonaSelect.appendChild(option);
-            });
-            zonaSelect.disabled = false;
-        }
-
         function handleProvinciaChange() {
             const provincia = this.value;
             const ciudadSelect = document.getElementById('ciudadSelect');
-            const zonaSelect = document.getElementById('zonaSelect');
             
             if (!provincia) {
-                ciudadSelect.innerHTML = '<option value="">Seleccioná primero una provincia</option>';
+                ciudadSelect.innerHTML = '<option value="">Todas las ciudades</option>';
                 ciudadSelect.disabled = true;
-                zonaSelect.innerHTML = '<option value="">Seleccioná primero una ciudad</option>';
-                zonaSelect.disabled = true;
                 return;
             }
             
             // Cargar ciudades de la provincia seleccionada
             const ciudades = provinciasCiudades[provincia] || [];
-            ciudadSelect.innerHTML = '<option value="">Seleccioná una ciudad</option>';
+            ciudadSelect.innerHTML = '<option value="">Todas las ciudades</option>';
             
             ciudades.forEach(ciudad => {
                 const option = document.createElement('option');
@@ -893,8 +903,6 @@
             });
             
             ciudadSelect.disabled = false;
-            zonaSelect.innerHTML = '<option value="">Seleccioná primero una ciudad</option>';
-            zonaSelect.disabled = true;
         }
 
         function handleCiudadChange() {
@@ -902,14 +910,21 @@
             const zonaSelect = document.getElementById('zonaSelect');
             
             if (!ciudad) {
-                zonaSelect.innerHTML = '<option value="">Seleccioná primero una ciudad</option>';
-                zonaSelect.disabled = true;
+                // Si no hay ciudad seleccionada, mostrar zonas generales
+                zonaSelect.innerHTML = '<option value="">Todas las zonas</option>';
+                const zonasGenerales = ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"];
+                zonasGenerales.forEach(zona => {
+                    const option = document.createElement('option');
+                    option.value = zona.toLowerCase().replace(/ /g, '_');
+                    option.textContent = zona;
+                    zonaSelect.appendChild(option);
+                });
                 return;
             }
             
             // Cargar zonas de la ciudad seleccionada
             const zonas = ciudadesZonas[ciudad] || ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"];
-            zonaSelect.innerHTML = '<option value="">Seleccioná una zona</option>';
+            zonaSelect.innerHTML = '<option value="">Todas las zonas</option>';
             
             zonas.forEach(zona => {
                 const option = document.createElement('option');
@@ -917,8 +932,6 @@
                 option.textContent = zona;
                 zonaSelect.appendChild(option);
             });
-            
-            zonaSelect.disabled = false;
         }
 
         async function loadStats() {
@@ -980,19 +993,7 @@
                 const ciudad = document.getElementById('ciudadSelect').value;
                 const rubro = document.getElementById('rubroSelect').value;
                 
-                console.log('Cargando banner para:', { provincia, ciudad, rubro });
-                
                 const bannerContainer = document.getElementById('bannerContent');
-                
-                if (!provincia || !ciudad) {
-                    bannerContainer.innerHTML = `
-                        <div style="padding: 3rem; text-align: center; color: #666;">
-                            <h3>🔧 TecniYa Argentina</h3>
-                            <p>Seleccioná tu ubicación para ver técnicos disponibles</p>
-                        </div>
-                    `;
-                    return;
-                }
                 
                 // Mostrar banner de carga
                 bannerContainer.innerHTML = `
@@ -1003,19 +1004,15 @@
                 `;
                 
                 const now = new Date();
-                console.log('Fecha actual:', now);
                 
-                // Buscar TODOS los banners activos (sin filtros iniciales)
+                // Buscar TODOS los banners activos
                 let bannersSnapshot = await db.collection('banners').get();
                 
-                console.log('Total de banners en la base de datos:', bannersSnapshot.size);
-                
                 if (bannersSnapshot.empty) {
-                    console.log('No hay banners en la base de datos');
                     // Mostrar banner por defecto
                     bannerContainer.innerHTML = `
-                        <div style="padding: 3rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px;">
-                            <h3 style="margin-bottom: 1rem;">🔧 TecniYa Argentina</h3>
+                        <div style="padding: 2rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🔧 TecniYa Argentina</h3>
                             <p>Conectamos clientes con técnicos certificados</p>
                             <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">Publicitá tu negocio aquí</p>
                         </div>
@@ -1028,39 +1025,15 @@
                 bannersSnapshot.forEach(doc => {
                     const banner = { id: doc.id, ...doc.data() };
                     
-                    console.log('Procesando banner:', banner.title, {
-                        active: banner.active,
-                        provincia: banner.provincia,
-                        ciudad: banner.ciudad,
-                        rubros: banner.rubros,
-                        startDate: banner.startDate,
-                        endDate: banner.endDate
-                    });
-                    
                     // Verificar que esté activo
-                    if (!banner.active) {
-                        console.log('Banner no activo:', banner.title);
-                        return;
-                    }
+                    if (!banner.active) return;
                     
                     // Verificar fecha
                     const startDate = banner.startDate ? banner.startDate.toDate() : null;
                     const endDate = banner.endDate ? banner.endDate.toDate() : null;
                     
-                    if (!startDate || !endDate) {
-                        console.log('Banner sin fechas válidas:', banner.title);
-                        return;
-                    }
-                    
-                    if (startDate > now) {
-                        console.log('Banner con fecha de inicio en el futuro:', banner.title, startDate);
-                        return;
-                    }
-                    
-                    if (endDate < now) {
-                        console.log('Banner con fecha de fin en el pasado:', banner.title, endDate);
-                        return;
-                    }
+                    if (!startDate || !endDate) return;
+                    if (startDate > now || endDate < now) return;
                     
                     // Verificar ubicación
                     let pasaUbicacion = false;
@@ -1068,51 +1041,43 @@
                     if (banner.provincia === 'toda') {
                         // Banner nacional - pasa para cualquier provincia
                         pasaUbicacion = true;
-                        console.log('Banner nacional - pasa ubicación');
+                    } else if (!provincia) {
+                        // Si no hay provincia seleccionada, mostrar banners nacionales
+                        if (banner.provincia === 'toda') {
+                            pasaUbicacion = true;
+                        }
                     } else if (banner.provincia === provincia) {
                         // Misma provincia
-                        if (banner.ciudad === 'toda') {
-                            // Toda la provincia
+                        if (banner.ciudad === 'toda' || !ciudad) {
+                            // Toda la provincia o no hay ciudad seleccionada
                             pasaUbicacion = true;
-                            console.log('Banner provincial - pasa ubicación');
                         } else if (banner.ciudad === ciudad) {
                             // Misma ciudad
                             pasaUbicacion = true;
-                            console.log('Banner local - pasa ubicación');
                         }
                     }
                     
-                    if (!pasaUbicacion) {
-                        console.log('Banner no pasa por ubicación:', banner.title);
-                        return;
-                    }
+                    if (!pasaUbicacion) return;
                     
                     // Verificar rubro
                     if (rubro && rubro !== '') {
-                        if (!banner.rubros || !Array.isArray(banner.rubros)) {
-                            console.log('Banner sin rubros definidos:', banner.title);
-                            return;
-                        }
+                        if (!banner.rubros || !Array.isArray(banner.rubros)) return;
                         
                         // Verificar si el banner aplica para "todos" los rubros o para este rubro específico
                         if (!banner.rubros.includes('todos') && !banner.rubros.includes(rubro)) {
-                            console.log('Banner no pasa por rubro:', banner.title, 'rubros:', banner.rubros, 'rubro buscado:', rubro);
                             return;
                         }
                     }
                     
-                    console.log('¡Banner válido encontrado!:', banner.title);
                     banners.push(banner);
                 });
-                
-                console.log('Banners válidos después de filtrar:', banners.length);
                 
                 if (banners.length === 0) {
                     // Mostrar banner por defecto
                     bannerContainer.innerHTML = `
-                        <div style="padding: 3rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px;">
-                            <h3 style="margin-bottom: 1rem;">🔧 TecniYa Argentina</h3>
-                            <p>Conectamos clientes con técnicos certificados en ${ciudad}</p>
+                        <div style="padding: 2rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🔧 TecniYa Argentina</h3>
+                            <p>Conectamos clientes con técnicos certificados</p>
                         </div>
                     `;
                     return;
@@ -1123,7 +1088,6 @@
                 
                 // Tomar el banner con mayor prioridad
                 const selectedBanner = banners[0];
-                console.log('Banner seleccionado:', selectedBanner.title, 'prioridad:', selectedBanner.priority);
                 
                 // Crear contenedor del banner
                 bannerContainer.innerHTML = `
@@ -1131,7 +1095,7 @@
                         <img src="${selectedBanner.imageUrl}" 
                              alt="${selectedBanner.title || 'Banner'}" 
                              class="banner-img"
-                             onerror="this.onerror=null; this.src='https://via.placeholder.com/900x300/0a4fd8/ffffff?text=BANNER+TECNIYA'">
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/900x200/0a4fd8/ffffff?text=BANNER+TECNIYA'">
                     </a>
                 `;
                 
@@ -1142,14 +1106,13 @@
                         await db.collection('ads_clicks').add({
                             bannerId: selectedBanner.id,
                             bannerTitle: selectedBanner.title,
-                            provincia: provincia,
-                            ciudad: ciudad,
-                            rubro: rubro,
+                            provincia: provincia || 'nacional',
+                            ciudad: ciudad || 'todas',
+                            rubro: rubro || 'todos',
                             clickedAt: firebase.firestore.FieldValue.serverTimestamp(),
                             userAgent: navigator.userAgent,
                             timestamp: new Date().toISOString()
                         });
-                        console.log('Clic registrado para banner:', selectedBanner.title);
                     } catch (error) {
                         console.error('Error registrando clic:', error);
                     }
@@ -1159,25 +1122,15 @@
                 console.error('Error cargando banner:', error);
                 const bannerContainer = document.getElementById('bannerContent');
                 bannerContainer.innerHTML = `
-                    <div style="padding: 3rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px;">
-                        <h3 style="margin-bottom: 1rem;">🔧 TecniYa Argentina</h3>
+                    <div style="padding: 2rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                        <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🔧 TecniYa Argentina</h3>
                         <p>Encontrá técnicos certificados en tu ciudad</p>
                     </div>
                 `;
             }
         }
 
-        async function searchProfessionals() {
-            const provincia = document.getElementById('provinciaSelect').value;
-            const ciudad = document.getElementById('ciudadSelect').value;
-            const zona = document.getElementById('zonaSelect').value;
-            const rubro = document.getElementById('rubroSelect').value;
-            
-            if (!provincia || !ciudad) {
-                showMessage('Por favor seleccioná provincia y ciudad para buscar.', 'error');
-                return;
-            }
-            
+        async function loadAllProfessionals() {
             const loader = document.getElementById('loader');
             const resultsContainer = document.getElementById('resultsContainer');
             const resultsHeader = document.getElementById('resultsHeader');
@@ -1188,21 +1141,15 @@
             resultsHeader.style.display = 'none';
             
             try {
-                // Construir consulta base
-                let query = db.collection('professionals')
+                // Obtener todos los profesionales activos
+                const snapshot = await db.collection('professionals')
                     .where('profileCompleted', '==', true)
                     .where('blocked', '==', false)
-                    .where('provincia', '==', provincia)
-                    .where('ciudad', '==', ciudad);
-                
-                if (rubro && rubro !== '') {
-                    query = query.where('rubros', 'array-contains', rubro);
-                }
-                
-                const snapshot = await query.get();
+                    .limit(100) // Límite para no sobrecargar
+                    .get();
                 
                 if (snapshot.empty) {
-                    showMessage('No se encontraron técnicos para tu búsqueda.', 'info');
+                    showMessage('No hay técnicos registrados en este momento.', 'info');
                     return;
                 }
                 
@@ -1213,17 +1160,27 @@
                 snapshot.forEach(doc => {
                     const prof = { id: doc.id, ...doc.data() };
                     
-                    // Filtrar por zona
-                    if (zona && zona !== '' && zona !== 'toda_la_ciudad' && prof.zonas) {
-                        const zonasProf = prof.zonas.map(z => z.toLowerCase().replace(/ /g, '_'));
-                        if (!zonasProf.includes(zona)) {
-                            return;
-                        }
-                    }
-                    
                     // Calcular score para ranking
                     let score = 0;
-                    score += (prof.rating || 0) * 10;
+                    
+                    // Rating basado en trabajos completados (rating provisional)
+                    // Mientras no implementemos sistema de votación, usamos:
+                    // - Base: 4.0 para todos
+                    // - +0.5 si tiene más de 10 trabajos
+                    // - +0.3 si es certificado
+                    // - +0.2 si tiene foto
+                    // - +0.5 si es destacado
+                    
+                    let rating = 4.0; // Base
+                    if (prof.jobsCompleted && prof.jobsCompleted > 10) rating += 0.5;
+                    if (prof.certified) rating += 0.3;
+                    if (prof.photoUrl) rating += 0.2;
+                    if (prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now) rating += 0.5;
+                    
+                    // Asegurar que no supere 5
+                    prof.rating = Math.min(rating, 5).toFixed(1);
+                    
+                    score += rating * 10;
                     score += (prof.jobsCompleted || 0) * 2;
                     
                     // Destacados activos
@@ -1249,7 +1206,7 @@
                 });
                 
                 if (professionals.length === 0) {
-                    showMessage('No hay técnicos disponibles en la zona seleccionada.', 'info');
+                    showMessage('No hay técnicos disponibles.', 'info');
                     return;
                 }
                 
@@ -1260,7 +1217,123 @@
                 displayProfessionals(professionals);
                 
                 // Actualizar contador
-                resultsCount.textContent = `${professionals.length} técnico${professionals.length !== 1 ? 's' : ''} encontrado${professionals.length !== 1 ? 's' : ''}`;
+                resultsCount.textContent = `${professionals.length} técnico${professionals.length !== 1 ? 's' : ''} en todo el país`;
+                resultsHeader.style.display = 'flex';
+                
+                // Recargar banner
+                loadBanner();
+                
+            } catch (error) {
+                console.error('Error cargando técnicos:', error);
+                showMessage('Error cargando técnicos. Por favor, intentá nuevamente.', 'error');
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        async function searchProfessionals() {
+            const provincia = document.getElementById('provinciaSelect').value;
+            const ciudad = document.getElementById('ciudadSelect').value;
+            const zona = document.getElementById('zonaSelect').value;
+            const rubro = document.getElementById('rubroSelect').value;
+            
+            const loader = document.getElementById('loader');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultsHeader = document.getElementById('resultsHeader');
+            const resultsCount = document.getElementById('resultsCount');
+            
+            loader.style.display = 'flex';
+            resultsContainer.innerHTML = '';
+            resultsHeader.style.display = 'none';
+            
+            try {
+                // Construir consulta base
+                let query = db.collection('professionals')
+                    .where('profileCompleted', '==', true)
+                    .where('blocked', '==', false);
+                
+                // Aplicar filtros
+                if (provincia && provincia !== '') {
+                    query = query.where('provincia', '==', provincia);
+                }
+                
+                if (ciudad && ciudad !== '') {
+                    query = query.where('ciudad', '==', ciudad);
+                }
+                
+                if (rubro && rubro !== '') {
+                    query = query.where('rubros', 'array-contains', rubro);
+                }
+                
+                const snapshot = await query.limit(100).get();
+                
+                if (snapshot.empty) {
+                    showMessage('No se encontraron técnicos para tu búsqueda.', 'info');
+                    return;
+                }
+                
+                // Filtrar y ordenar
+                const professionals = [];
+                const now = new Date();
+                
+                snapshot.forEach(doc => {
+                    const prof = { id: doc.id, ...doc.data() };
+                    
+                    // Filtrar por zona
+                    if (zona && zona !== '' && zona !== 'toda_la_ciudad' && prof.zonas) {
+                        const zonasProf = prof.zonas.map(z => z.toLowerCase().replace(/ /g, '_'));
+                        if (!zonasProf.includes(zona)) {
+                            return;
+                        }
+                    }
+                    
+                    // Calcular rating provisional (misma lógica que arriba)
+                    let rating = 4.0;
+                    if (prof.jobsCompleted && prof.jobsCompleted > 10) rating += 0.5;
+                    if (prof.certified) rating += 0.3;
+                    if (prof.photoUrl) rating += 0.2;
+                    if (prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now) rating += 0.5;
+                    
+                    prof.rating = Math.min(rating, 5).toFixed(1);
+                    
+                    // Calcular score
+                    let score = rating * 10;
+                    score += (prof.jobsCompleted || 0) * 2;
+                    
+                    if (prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now) {
+                        score += 100;
+                        prof.isFeaturedActive = true;
+                    }
+                    
+                    if (prof.lastActive) {
+                        const days = (now - prof.lastActive.toDate()) / (1000 * 60 * 60 * 24);
+                        if (days < 7) score += 5;
+                    }
+                    
+                    if (prof.certified) score += 20;
+                    if (prof.profileCompleted) score += 10;
+                    
+                    prof.score = score;
+                    professionals.push(prof);
+                });
+                
+                if (professionals.length === 0) {
+                    showMessage('No hay técnicos disponibles con los filtros seleccionados.', 'info');
+                    return;
+                }
+                
+                // Ordenar por score
+                professionals.sort((a, b) => b.score - a.score);
+                
+                // Mostrar resultados
+                displayProfessionals(professionals);
+                
+                // Actualizar contador
+                let locationText = '';
+                if (provincia) locationText += ` en ${provincia}`;
+                if (ciudad) locationText += `, ${ciudad}`;
+                
+                resultsCount.textContent = `${professionals.length} técnico${professionals.length !== 1 ? 's' : ''} encontrado${professionals.length !== 1 ? 's' : ''}${locationText}`;
                 resultsHeader.style.display = 'flex';
                 
                 // Recargar banner con los nuevos filtros
@@ -1297,11 +1370,11 @@
                         <div class="professional-info">
                             <h3 class="professional-name">${prof.name}</h3>
                             <div class="professional-rating">
-                                ⭐ ${prof.rating ? prof.rating.toFixed(1) : 'Nuevo'}
+                                ⭐ ${prof.rating || '4.0'}
                                 <span>(${prof.jobsCompleted || 0} trabajos)</span>
                             </div>
                             <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.5rem;">
-                                📍 ${prof.ciudad}, ${prof.provincia}
+                                📍 ${prof.ciudad || 'Sin ciudad'}, ${prof.provincia || 'Sin provincia'}
                             </div>
                         </div>
                     </div>
