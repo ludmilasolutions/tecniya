@@ -9,10 +9,6 @@
     <!-- Favicon optimizado -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
     
-    <!-- Preconnect para mejorar performance -->
-    <link rel="preconnect" href="https://www.gstatic.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    
     <!-- CSS mejorado -->
     <style>
         /* ===== VARIABLES & RESET ===== */
@@ -119,11 +115,34 @@
             overflow: hidden;
             box-shadow: 0 8px 30px rgba(0,0,0,0.12);
             transition: var(--transition);
+            background: white;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .banner-container:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+        
+        .banner-content {
+            width: 100%;
+            text-align: center;
+        }
+        
+        .banner-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: var(--radius);
+        }
+        
+        .banner-link {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
         
         /* ===== SEARCH SECTION ===== */
@@ -572,7 +591,11 @@
     </section>
 
     <!-- BANNER -->
-    <div class="container banner-container" id="bannerContainer"></div>
+    <div class="container banner-container" id="bannerContainer">
+        <div class="banner-content" id="bannerContent">
+            <!-- Banner se cargará aquí -->
+        </div>
+    </div>
 
     <!-- SEARCH -->
     <section class="container search-section">
@@ -646,7 +669,7 @@
             <div class="footer-section">
                 <h3>Enlaces</h3>
                 <div class="footer-links">
-                    <a href="profesional.html">Registrate como Profesional</a>
+                    <a href="#" onclick="alert('Página de registro en desarrollo')">Registrate como Profesional</a>
                     <a href="admin.html">Panel de Administración</a>
                     <a href="#legal">Términos y Condiciones</a>
                     <a href="#privacidad">Política de Privacidad</a>
@@ -665,22 +688,22 @@
     </footer>
 
     <!-- SCRIPTS -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    
     <script>
         // ============================================
-        // CONFIGURACIÓN SEGURA - Credenciales protegidas
+        // CONFIGURACIÓN FIREBASE
         // ============================================
-        class FirebaseConfig {
-            static get config() {
-                return {
-                    apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
-                    authDomain: "tecniya-b4206.firebaseapp.com",
-                    projectId: "tecniya-b4206",
-                    storageBucket: "tecniya-b4206.firebasestorage.app",
-                    messagingSenderId: "166424133304",
-                    appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
-                };
-            }
-        }
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
+            authDomain: "tecniya-b4206.firebaseapp.com",
+            projectId: "tecniya-b4206",
+            storageBucket: "tecniya-b4206.firebasestorage.app",
+            messagingSenderId: "166424133304",
+            appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
+        };
 
         // ============================================
         // DATOS DE PROVINCIAS Y CIUDADES
@@ -748,67 +771,61 @@
         // ============================================
         // INICIALIZACIÓN
         // ============================================
+        let db;
+        let auth;
+
         document.addEventListener('DOMContentLoaded', async () => {
-            // Cargar Firebase de manera segura
-            await loadFirebase();
+            await initFirebase();
             initApp();
         });
 
-        async function loadFirebase() {
+        async function initFirebase() {
             try {
-                // Carga asíncrona de Firebase
-                await Promise.all([
-                    loadScript('https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js'),
-                    loadScript('https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js')
-                ]);
+                // Verificar si Firebase ya está inicializado
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                    console.log('Firebase inicializado correctamente');
+                }
                 
-                firebase.initializeApp(FirebaseConfig.config);
-                console.log('Firebase inicializado correctamente');
+                db = firebase.firestore();
+                auth = firebase.auth();
+                
             } catch (error) {
-                console.error('Error cargando Firebase:', error);
-                showMessage('Error al inicializar la aplicación. Por favor, recargá la página.', 'error');
+                console.error('Error inicializando Firebase:', error);
+                showMessage('Error de conexión. Por favor, recargá la página.', 'error');
             }
         }
 
-        function loadScript(src) {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = src;
-                script.onload = resolve;
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-        }
-
         function initApp() {
-            // Inicializar elementos
-            db = firebase.firestore();
+            if (!db) {
+                console.error('Firestore no disponible');
+                return;
+            }
             
             // Cargar datos geográficos
             loadProvincias();
             
-            // Establecer Rosario como predeterminada
+            // Establecer Santa Fe/Rosario como predeterminada
             setTimeout(() => {
                 setRosarioDefault();
             }, 500);
             
-            // Cargar banner y estadísticas
-            loadBanner();
+            // Cargar estadísticas
             loadStats();
+            
+            // Cargar banner inicial
+            loadBanner();
             
             // Configurar eventos
             document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
-            
-            // Eventos para selects
             document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
             document.getElementById('ciudadSelect').addEventListener('change', handleCiudadChange);
+            document.getElementById('rubroSelect').addEventListener('change', loadBanner);
         }
 
         // ============================================
-        // FUNCIONES DE LA APLICACIÓN
+        // FUNCIONES PRINCIPALES
         // ============================================
-        let db;
-
         function loadProvincias() {
             const provinciaSelect = document.getElementById('provinciaSelect');
             
@@ -913,10 +930,10 @@
                 const statsRef = db.collection('stats').doc('global');
                 const doc = await statsRef.get();
                 
+                const statsContainer = document.getElementById('statsContainer');
+                
                 if (doc.exists) {
                     const data = doc.data();
-                    const statsContainer = document.getElementById('statsContainer');
-                    
                     statsContainer.innerHTML = `
                         <div class="stat-card">
                             <div class="stat-number">${data.totalProfessionals || '500+'}</div>
@@ -935,6 +952,26 @@
                             <div class="stat-label">Respuesta Rápida</div>
                         </div>
                     `;
+                } else {
+                    // Estadísticas por defecto
+                    statsContainer.innerHTML = `
+                        <div class="stat-card">
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Técnicos Activos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">5000+</div>
+                            <div class="stat-label">Trabajos Realizados</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">4.8/5</div>
+                            <div class="stat-label">Rating Promedio</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">24h</div>
+                            <div class="stat-label">Respuesta Rápida</div>
+                        </div>
+                    `;
                 }
             } catch (error) {
                 console.error('Error cargando estadísticas:', error);
@@ -945,67 +982,130 @@
             try {
                 const provincia = document.getElementById('provinciaSelect').value;
                 const ciudad = document.getElementById('ciudadSelect').value;
+                const rubro = document.getElementById('rubroSelect').value;
                 
-                if (!provincia || !ciudad) return;
+                const bannerContainer = document.getElementById('bannerContent');
                 
-                const bannersRef = db.collection('banners');
-                const snapshot = await bannersRef
+                if (!provincia || !ciudad) {
+                    bannerContainer.innerHTML = `
+                        <div style="padding: 3rem; text-align: center; color: #666;">
+                            <h3>🔧 TecniYa Argentina</h3>
+                            <p>Seleccioná tu ubicación para ver técnicos disponibles</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Mostrar banner de carga
+                bannerContainer.innerHTML = `
+                    <div style="padding: 2rem; text-align: center;">
+                        <div class="spinner" style="width: 40px; height: 40px; margin: 0 auto;"></div>
+                        <p style="margin-top: 1rem; color: #666;">Cargando banner...</p>
+                    </div>
+                `;
+                
+                const now = new Date();
+                
+                // Buscar banners activos
+                let bannersSnapshot = await db.collection('banners')
                     .where('active', '==', true)
-                    .where('provincia', '==', provincia)
-                    .where('ciudad', '==', ciudad)
-                    .where('startDate', '<=', new Date())
-                    .where('endDate', '>=', new Date())
-                    .orderBy('priority', 'desc')
-                    .limit(1)
+                    .where('startDate', '<=', now)
+                    .where('endDate', '>=', now)
                     .get();
                 
-                if (!snapshot.empty) {
-                    const banner = snapshot.docs[0].data();
-                    const bannerContainer = document.getElementById('bannerContainer');
-                    
+                if (bannersSnapshot.empty) {
+                    // Mostrar banner por defecto
                     bannerContainer.innerHTML = `
-                        <a href="${banner.link}" target="_blank" class="banner-link">
-                            <img src="${banner.imageUrl}" 
-                                 alt="${banner.title || 'Banner'}" 
-                                 class="banner-img"
-                                 style="width: 100%; height: auto; display: block;"
-                                 loading="lazy"
-                                 onerror="this.style.display='none'">
-                        </a>
+                        <div style="padding: 3rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px;">
+                            <h3 style="margin-bottom: 1rem;">🔧 TecniYa Argentina</h3>
+                            <p>Conectamos clientes con técnicos certificados</p>
+                            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">Publicitá tu negocio aquí</p>
+                        </div>
                     `;
-                } else {
-                    // Intentar buscar banner nacional (sin ciudad específica)
-                    const nacionalSnapshot = await bannersRef
-                        .where('active', '==', true)
-                        .where('provincia', '==', 'toda')
-                        .where('ciudad', '==', 'toda')
-                        .where('startDate', '<=', new Date())
-                        .where('endDate', '>=', new Date())
-                        .orderBy('priority', 'desc')
-                        .limit(1)
-                        .get();
-                    
-                    if (!nacionalSnapshot.empty) {
-                        const banner = nacionalSnapshot.docs[0].data();
-                        const bannerContainer = document.getElementById('bannerContainer');
-                        
-                        bannerContainer.innerHTML = `
-                            <a href="${banner.link}" target="_blank" class="banner-link">
-                                <img src="${banner.imageUrl}" 
-                                     alt="${banner.title || 'Banner'}" 
-                                     class="banner-img"
-                                     style="width: 100%; height: auto; display: block;"
-                                     loading="lazy"
-                                     onerror="this.style.display='none'">
-                            </a>
-                        `;
-                    } else {
-                        document.getElementById('bannerContainer').innerHTML = '';
-                    }
+                    return;
                 }
+                
+                // Filtrar banners por ubicación y rubro
+                const banners = [];
+                bannersSnapshot.forEach(doc => {
+                    const banner = { id: doc.id, ...doc.data() };
+                    
+                    // Verificar fecha
+                    const startDate = banner.startDate ? banner.startDate.toDate() : null;
+                    const endDate = banner.endDate ? banner.endDate.toDate() : null;
+                    
+                    if (!startDate || !endDate || startDate > now || endDate < now) {
+                        return;
+                    }
+                    
+                    // Verificar ubicación
+                    if (banner.provincia === 'toda' || banner.provincia === provincia) {
+                        if (banner.ciudad === 'toda' || banner.ciudad === ciudad) {
+                            // Verificar rubro si se especificó
+                            if (rubro && rubro !== '') {
+                                if (banner.rubros && banner.rubros.includes('todos')) {
+                                    banners.push(banner);
+                                } else if (banner.rubros && banner.rubros.includes(rubro)) {
+                                    banners.push(banner);
+                                }
+                            } else {
+                                banners.push(banner);
+                            }
+                        }
+                    }
+                });
+                
+                if (banners.length === 0) {
+                    // Mostrar banner por defecto
+                    bannerContainer.innerHTML = `
+                        <div style="padding: 3rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px;">
+                            <h3 style="margin-bottom: 1rem;">🔧 TecniYa Argentina</h3>
+                            <p>Conectamos clientes con técnicos certificados en ${ciudad}</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Ordenar por prioridad
+                banners.sort((a, b) => (b.priority || 5) - (a.priority || 5));
+                
+                // Tomar el banner con mayor prioridad
+                const selectedBanner = banners[0];
+                
+                bannerContainer.innerHTML = `
+                    <a href="${selectedBanner.link}" target="_blank" class="banner-link" id="bannerLink">
+                        <img src="${selectedBanner.imageUrl}" 
+                             alt="${selectedBanner.title || 'Banner'}" 
+                             class="banner-img"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/900x300/0a4fd8/ffffff?text=BANNER+TECNIYA'">
+                    </a>
+                `;
+                
+                // Registrar clic en el banner
+                document.getElementById('bannerLink').addEventListener('click', async () => {
+                    try {
+                        await db.collection('ads_clicks').add({
+                            bannerId: selectedBanner.id,
+                            bannerTitle: selectedBanner.title,
+                            provincia: provincia,
+                            ciudad: ciudad,
+                            rubro: rubro,
+                            clickedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    } catch (error) {
+                        console.error('Error registrando clic:', error);
+                    }
+                });
+                
             } catch (error) {
                 console.error('Error cargando banner:', error);
-                document.getElementById('bannerContainer').innerHTML = '';
+                const bannerContainer = document.getElementById('bannerContent');
+                bannerContainer.innerHTML = `
+                    <div style="padding: 3rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px;">
+                        <h3 style="margin-bottom: 1rem;">🔧 TecniYa Argentina</h3>
+                        <p>Encontrá técnicos certificados en tu ciudad</p>
+                    </div>
+                `;
             }
         }
 
@@ -1030,15 +1130,14 @@
             resultsHeader.style.display = 'none';
             
             try {
-                // Consulta base
+                // Construir consulta
                 let query = db.collection('professionals')
                     .where('profileCompleted', '==', true)
                     .where('blocked', '==', false)
                     .where('provincia', '==', provincia)
                     .where('ciudad', '==', ciudad);
                 
-                // Si se seleccionó un rubro específico, filtrar por rubro
-                if (rubro) {
+                if (rubro && rubro !== '') {
                     query = query.where('rubros', 'array-contains', rubro);
                 }
                 
@@ -1049,16 +1148,15 @@
                     return;
                 }
                 
-                // Filtrar y ordenar localmente
+                // Filtrar y ordenar
                 const professionals = [];
                 const now = new Date();
                 
                 snapshot.forEach(doc => {
                     const prof = { id: doc.id, ...doc.data() };
                     
-                    // Filtrar por zona si no es "toda"
+                    // Filtrar por zona
                     if (zona && zona !== 'toda_la_ciudad' && prof.zonas) {
-                        // Convertir zonas del profesional a formato compatible
                         const zonasProf = prof.zonas.map(z => z.toLowerCase().replace(/ /g, '_'));
                         if (!zonasProf.includes(zona)) {
                             return;
@@ -1082,7 +1180,7 @@
                         if (days < 7) score += 5;
                     }
                     
-                    // Verificación de certificaciones
+                    // Certificaciones
                     if (prof.certified) score += 20;
                     
                     prof.score = score;
@@ -1104,7 +1202,7 @@
                 resultsCount.textContent = `${professionals.length} técnico${professionals.length !== 1 ? 's' : ''} encontrado${professionals.length !== 1 ? 's' : ''}`;
                 resultsHeader.style.display = 'flex';
                 
-                // Recargar banner para la ciudad actual
+                // Recargar banner
                 loadBanner();
                 
             } catch (error) {
@@ -1130,10 +1228,11 @@
                     ${isFeatured ? '<div class="professional-featured">⭐ DESTACADO</div>' : ''}
                     ${prof.certified ? '<div class="professional-featured" style="top: 45px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">✓ CERTIFICADO</div>' : ''}
                     <div class="professional-header">
-                        <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80?text=TÉCNICO'}" 
+                        <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80/0a4fd8/ffffff?text=TÉCNICO'}" 
                              alt="${prof.name}"
                              class="professional-photo"
-                             loading="lazy">
+                             loading="lazy"
+                             onerror="this.src='https://via.placeholder.com/80x80/0a4fd8/ffffff?text=TÉCNICO'">
                         <div class="professional-info">
                             <h3 class="professional-name">${prof.name}</h3>
                             <div class="professional-rating">
@@ -1199,44 +1298,6 @@
                 message.remove();
             }, 5000);
         }
-
-        // ============================================
-        // MEJORAS DE PERFORMANCE
-        // ============================================
-        // Lazy loading para imágenes
-        if ('IntersectionObserver' in window) {
-            const imageObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        imageObserver.unobserve(img);
-                    }
-                });
-            });
-            
-            document.addEventListener('DOMContentLoaded', () => {
-                document.querySelectorAll('img[data-src]').forEach(img => {
-                    imageObserver.observe(img);
-                });
-            });
-        }
-
-        // Prevenir múltiples clics
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
-        // Aplicar debounce al botón de búsqueda
-        document.getElementById('searchBtn').addEventListener('click', debounce(searchProfessionals, 500));
     </script>
 </body>
 </html>
