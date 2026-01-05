@@ -59,6 +59,36 @@
         .logo-text { font-size: 2.5rem; font-weight: 800; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
         .tagline { font-size: 1.2rem; opacity: 0.95; max-width: 600px; margin: 0 auto; }
         
+        /* Stats */
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 2rem auto;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            text-align: center;
+            min-width: 150px;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
         /* Search */
         .search-section {
             background: white;
@@ -188,7 +218,23 @@
             align-items: center;
         }
         
-        /* Badges */
+        /* Ranking Badges */
+        .ranking-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-left: 8px;
+            gap: 5px;
+        }
+        
+        .ranking-platinum { background: linear-gradient(135deg, #e5e4e2 0%, #b4b4b4 100%); color: #333; }
+        .ranking-gold { background: linear-gradient(135deg, #ffd700 0%, #daa520 100%); color: #333; }
+        .ranking-silver { background: linear-gradient(135deg, #c0c0c0 0%, #a9a9a9 100%); color: #333; }
+        .ranking-bronze { background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%); color: white; }
+        
         .badge {
             display: inline-block;
             padding: 4px 10px;
@@ -301,6 +347,27 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* Results Header */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .results-count {
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
         /* Footer */
         .footer {
             background: var(--dark);
@@ -334,6 +401,7 @@
             .logo-text { font-size: 2rem; }
             .search-section { padding: 1.5rem; }
             .professional-header { flex-direction: column; text-align: center; }
+            .stats-container { flex-direction: column; align-items: center; }
         }
     </style>
 </head>
@@ -349,20 +417,9 @@
     </header>
 
     <!-- Stats -->
-    <section class="container stats" id="statsContainer">
-        <div class="stat-card">
-            <div class="stat-number">500+</div>
-            <div class="stat-label">Técnicos Activos</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">4.8/5</div>
-            <div class="stat-label">Rating Promedio</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">24h</div>
-            <div class="stat-label">Respuesta Rápida</div>
-        </div>
-    </section>
+    <div class="container stats-container" id="statsContainer">
+        <!-- Stats se cargan dinámicamente -->
+    </div>
 
     <!-- Search -->
     <section class="container search-section">
@@ -463,7 +520,9 @@
     
     <!-- Main Script -->
     <script>
-        // Firebase Config
+        // ============================================
+        // CONFIGURACIÓN FIREBASE
+        // ============================================
         const firebaseConfig = {
             apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
             authDomain: "tecniya-b4206.firebaseapp.com",
@@ -473,13 +532,50 @@
             appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
         };
 
-        // Initialize
+        // ============================================
+        // VARIABLES GLOBALES
+        // ============================================
         let db;
         let currentRatingProfessional = null;
+        let allProfessionals = [];
 
+        // ============================================
+        // DATOS DE PROVINCIAS Y CIUDADES
+        // ============================================
+        const provinciasCiudades = {
+            "Buenos Aires": ["La Plata", "Mar del Plata", "Bahía Blanca", "Quilmes", "Lomas de Zamora", "San Isidro", "Tigre", "Pilar", "Merlo", "Moreno"],
+            "CABA": ["Capital Federal"],
+            "Catamarca": ["San Fernando del Valle de Catamarca", "Valle Viejo", "Andalgalá"],
+            "Chaco": ["Resistencia", "Barranqueras", "Fontana", "Presidencia Roque Sáenz Peña"],
+            "Chubut": ["Rawson", "Comodoro Rivadavia", "Trelew", "Puerto Madryn"],
+            "Córdoba": ["Córdoba", "Villa María", "Río Cuarto", "Alta Gracia", "Villa Carlos Paz", "Jesús María"],
+            "Corrientes": ["Corrientes", "Goya", "Mercedes", "Curuzú Cuatiá"],
+            "Entre Ríos": ["Paraná", "Concordia", "Gualeguaychú", "Concepción del Uruguay"],
+            "Formosa": ["Formosa", "Clorinda", "Pirané"],
+            "Jujuy": ["San Salvador de Jujuy", "Palpalá", "San Pedro de Jujuy", "Libertador General San Martín"],
+            "La Pampa": ["Santa Rosa", "General Pico", "Toay", "Realicó"],
+            "La Rioja": ["La Rioja", "Chilecito", "Aimogasta", "Chamical"],
+            "Mendoza": ["Mendoza", "San Rafael", "Godoy Cruz", "Guaymallén", "Las Heras", "Maipú"],
+            "Misiones": ["Posadas", "Oberá", "Eldorado", "Apóstoles"],
+            "Neuquén": ["Neuquén", "Cutral-Có", "Plottier", "Centenario"],
+            "Río Negro": ["Viedma", "Bariloche", "General Roca", "Cipolletti"],
+            "Salta": ["Salta", "San Ramón de la Nueva Orán", "Tartagal", "Metán"],
+            "San Juan": ["San Juan", "Rivadavia", "Chimbas", "Rawson"],
+            "San Luis": ["San Luis", "Villa Mercedes", "Juana Koslay", "La Punta"],
+            "Santa Cruz": ["Río Gallegos", "Caleta Olivia", "Puerto Deseado", "Río Turbio"],
+            "Santa Fe": ["Rosario", "Santa Fe", "Rafaela", "Venado Tuerto", "Reconquista", "Sunchales"],
+            "Santiago del Estero": ["Santiago del Estero", "La Banda", "Frías", "Añatuya"],
+            "Tierra del Fuego": ["Ushuaia", "Río Grande"],
+            "Tucumán": ["San Miguel de Tucumán", "Yerba Buena", "Tafí Viejo", "Concepción"]
+        };
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
         document.addEventListener('DOMContentLoaded', async () => {
             await initFirebase();
             initApp();
+            updateStats();
         });
 
         async function initFirebase() {
@@ -502,15 +598,9 @@
             document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
         }
 
-        // Provincia/Ciudad Data
-        const provinciasCiudades = {
-            "Buenos Aires": ["La Plata", "Mar del Plata", "Bahía Blanca", "Quilmes"],
-            "CABA": ["Capital Federal"],
-            "Córdoba": ["Córdoba", "Villa María", "Río Cuarto"],
-            "Santa Fe": ["Rosario", "Santa Fe", "Rafaela"],
-            "Mendoza": ["Mendoza", "San Rafael", "Godoy Cruz"]
-        };
-
+        // ============================================
+        // FUNCIONES DE UI
+        // ============================================
         function loadProvincias() {
             const select = document.getElementById('provinciaSelect');
             Object.keys(provinciasCiudades).sort().forEach(provincia => {
@@ -542,7 +632,318 @@
             ciudadSelect.disabled = false;
         }
 
-        // Rating Functions
+        // ============================================
+        // SISTEMA DE RANKING
+        // ============================================
+        async function calculateProfessionalRanking(professional) {
+            try {
+                // Get approved ratings (last 3 months)
+                const threeMonthsAgo = new Date();
+                threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                
+                const ratingsSnapshot = await db.collection('ratings')
+                    .where('professionalId', '==', professional.id)
+                    .where('status', '==', 'approved')
+                    .where('createdAt', '>=', threeMonthsAgo)
+                    .get();
+                
+                let totalRatings = 0;
+                let sumRatings = 0;
+                let recentActivity = false;
+                
+                ratingsSnapshot.forEach(doc => {
+                    totalRatings++;
+                    sumRatings += doc.data().rating;
+                    recentActivity = true;
+                });
+                
+                // Calculate average rating
+                const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
+                
+                // ============================================
+                // CÁLCULO DE PUNTAJE DE RANKING (0-100)
+                // ============================================
+                let score = 0;
+                
+                // 1. CALIDAD DE CALIFICACIONES (25 puntos máximo)
+                score += averageRating * 5; // 5 puntos por cada estrella
+                
+                // 2. CANTIDAD DE CALIFICACIONES (20 puntos máximo)
+                const ratingQuantity = Math.min(totalRatings, 100);
+                score += ratingQuantity * 0.2;
+                
+                // 3. TIEMPO DE RESPUESTA (15 puntos)
+                if (professional.avgResponseTime) {
+                    if (professional.avgResponseTime < 4) score += 15;
+                    else if (professional.avgResponseTime < 8) score += 12;
+                    else if (professional.avgResponseTime < 24) score += 8;
+                    else if (professional.avgResponseTime < 48) score += 4;
+                }
+                
+                // 4. TRABAJOS COMPLETADOS (10 puntos)
+                if (professional.completedJobs) {
+                    score += Math.min(professional.completedJobs * 0.1, 10);
+                }
+                
+                // 5. CERTIFICACIONES (10 puntos)
+                if (professional.certifications && professional.certifications.length > 0) {
+                    score += Math.min(professional.certifications.length * 2, 10);
+                }
+                
+                // 6. COMPLETITUD DEL PERFIL (20 puntos)
+                let profileScore = 0;
+                if (professional.photoUrl) profileScore += 5;
+                if (professional.bio && professional.bio.length > 50) profileScore += 5;
+                if (professional.zonas && professional.zonas.length > 0) profileScore += 5;
+                if (professional.rubros && professional.rubros.length > 0) profileScore += 5;
+                score += profileScore;
+                
+                // 7. EXPERIENCIA (10 puntos)
+                if (professional.experienceYears) {
+                    score += Math.min(professional.experienceYears, 10);
+                }
+                
+                // 8. ACTIVIDAD RECIENTE (10 puntos)
+                if (professional.lastActive) {
+                    const lastActiveDate = professional.lastActive.toDate();
+                    const daysSince = (new Date() - lastActiveDate) / (1000 * 60 * 60 * 24);
+                    if (daysSince < 7) score += 10;
+                    else if (daysSince < 30) score += 7;
+                    else if (daysSince < 90) score += 4;
+                }
+                
+                // 9. PERFIL DESTACADO (5 puntos)
+                if (professional.isFeatured) {
+                    score += 5;
+                }
+                
+                // Asegurar que el score esté entre 0 y 100
+                score = Math.min(Math.max(score, 0), 100);
+                const rankingScore = Math.round(score);
+                
+                // Determinar nivel de ranking
+                let rankingLevel = 'Bronce';
+                if (rankingScore >= 90) rankingLevel = 'Platino';
+                else if (rankingScore >= 80) rankingLevel = 'Oro';
+                else if (rankingScore >= 70) rankingLevel = 'Plata';
+                else if (rankingScore >= 60) rankingLevel = 'Bronce';
+                else rankingLevel = 'Principiante';
+                
+                return {
+                    ...professional,
+                    averageRating,
+                    totalRatings,
+                    rankingScore,
+                    rankingLevel
+                };
+                
+            } catch (error) {
+                console.error('Error calculating ranking:', error);
+                return {
+                    ...professional,
+                    averageRating: professional.averageRating || 0,
+                    totalRatings: professional.totalRatings || 0,
+                    rankingScore: professional.rankingScore || 0,
+                    rankingLevel: professional.rankingLevel || 'Principiante'
+                };
+            }
+        }
+
+        function getRankingBadge(rankingLevel) {
+            const badges = {
+                'Platino': { class: 'ranking-platinum', emoji: '🏆' },
+                'Oro': { class: 'ranking-gold', emoji: '🥇' },
+                'Plata': { class: 'ranking-silver', emoji: '🥈' },
+                'Bronce': { class: 'ranking-bronze', emoji: '🥉' },
+                'Principiante': { class: 'ranking-bronze', emoji: '⭐' }
+            };
+            
+            const badge = badges[rankingLevel] || badges['Principiante'];
+            return `<span class="ranking-badge ${badge.class}">${badge.emoji} ${rankingLevel}</span>`;
+        }
+
+        // ============================================
+        // CARGA Y MUESTRA DE PROFESIONALES
+        // ============================================
+        async function loadAllProfessionals() {
+            showLoader();
+            try {
+                const snapshot = await db.collection('professionals')
+                    .where('active', '==', true)
+                    .limit(50)
+                    .get();
+                
+                const professionals = await Promise.all(
+                    snapshot.docs.map(async doc => {
+                        const prof = { id: doc.id, ...doc.data() };
+                        return await calculateProfessionalRanking(prof);
+                    })
+                );
+                
+                // Ordenar por ranking score (mayor a menor)
+                professionals.sort((a, b) => b.rankingScore - a.rankingScore);
+                allProfessionals = professionals;
+                
+                displayProfessionals(professionals);
+                
+            } catch (error) {
+                console.error('Error loading professionals:', error);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        async function searchProfessionals() {
+            showLoader();
+            const provincia = document.getElementById('provinciaSelect').value;
+            const ciudad = document.getElementById('ciudadSelect').value;
+            const rubro = document.getElementById('rubroSelect').value;
+            
+            try {
+                let query = db.collection('professionals').where('active', '==', true);
+                
+                if (provincia) query = query.where('provincia', '==', provincia);
+                if (ciudad) query = query.where('ciudad', '==', ciudad);
+                if (rubro) query = query.where('rubros', 'array-contains', rubro);
+                
+                const snapshot = await query.limit(50).get();
+                const professionals = await Promise.all(
+                    snapshot.docs.map(async doc => {
+                        const prof = { id: doc.id, ...doc.data() };
+                        return await calculateProfessionalRanking(prof);
+                    })
+                );
+                
+                // Ordenar por ranking score
+                professionals.sort((a, b) => b.rankingScore - a.rankingScore);
+                displayProfessionals(professionals);
+                
+            } catch (error) {
+                console.error('Error searching professionals:', error);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function displayProfessionals(professionals) {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '';
+            
+            if (professionals.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
+                        <h3>😔 No se encontraron técnicos</h3>
+                        <p>Intenta cambiar los filtros de búsqueda</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            professionals.forEach(prof => {
+                const card = document.createElement('div');
+                card.className = 'professional-card';
+                
+                // Calculate star display
+                const rating = prof.averageRating || 0;
+                const fullStars = Math.floor(rating);
+                const hasHalfStar = rating % 1 >= 0.5;
+                const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                
+                let starsHTML = '';
+                for (let i = 0; i < fullStars; i++) starsHTML += '⭐';
+                if (hasHalfStar) starsHTML += '½';
+                for (let i = 0; i < emptyStars; i++) starsHTML += '☆';
+                
+                // Determine position in city/rubro
+                const cityPosition = getPositionInCity(prof);
+                const rubroPosition = getPositionInRubro(prof);
+                
+                card.innerHTML = `
+                    <div class="professional-header">
+                        <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80/0a4fd8/ffffff?text=T'}" 
+                             alt="${prof.name}"
+                             class="professional-photo"
+                             onerror="this.src='https://via.placeholder.com/80x80/0a4fd8/ffffff?text=T'">
+                        <div class="professional-info">
+                            <h3 class="professional-name">${prof.name}</h3>
+                            <div class="professional-rating">
+                                ${starsHTML} ${rating.toFixed(1)}
+                                <span>(${prof.totalRatings || 0})</span>
+                                ${getRankingBadge(prof.rankingLevel)}
+                                ${prof.rankingScore >= 90 ? '<span class="badge badge-top">TOP</span>' : ''}
+                                ${prof.isFeatured ? '<span class="badge badge-featured">DESTACADO</span>' : ''}
+                                ${prof.certifications && prof.certifications.length > 0 ? '<span class="badge badge-certified">CERTIFICADO</span>' : ''}
+                            </div>
+                            <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.5rem;">
+                                📍 ${prof.ciudad || ''}, ${prof.provincia || ''}
+                            </div>
+                            <div class="ranking-stats">
+                                <div class="stat-item">🏆 ${prof.rankingScore || 0}/100</div>
+                                ${cityPosition ? `<div class="stat-item">📍 #${cityPosition} en ${prof.ciudad}</div>` : ''}
+                                ${rubroPosition && prof.rubros ? `<div class="stat-item">⭐ #${rubroPosition} en ${prof.rubros[0]}</div>` : ''}
+                                ${prof.avgResponseTime ? `<div class="stat-item">⏱️ ${prof.avgResponseTime}h respuesta</div>` : ''}
+                                ${prof.completedJobs ? `<div class="stat-item">✅ ${prof.completedJobs} trabajos</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="professional-body">
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem;">
+                            ${prof.rubros ? prof.rubros.map(r => `<span style="background: #f1f6ff; color: #0a4fd8; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem;">${r}</span>`).join('') : ''}
+                        </div>
+                        <p>${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
+                        ${prof.certifications && prof.certifications.length > 0 ? 
+                            `<p style="margin-top: 0.5rem;"><small>📜 <strong>Certificaciones:</strong> ${prof.certifications.join(', ')}</small></p>` : ''}
+                    </div>
+                    <div class="professional-footer">
+                        <span>${prof.zonas ? prof.zonas.join(', ') : 'Toda la ciudad'}</span>
+                        <div style="display: flex; gap: 10px;">
+                            <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
+                               target="_blank"
+                               class="btn btn-whatsapp">
+                                📱 Contactar
+                            </a>
+                            <button onclick="openRatingModal('${prof.id}', '${prof.name}')" 
+                                    class="btn" 
+                                    style="background: #6c757d; color: white;">
+                                ⭐ Calificar
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            document.getElementById('resultsHeader').style.display = 'flex';
+            document.getElementById('resultsCount').textContent = `${professionals.length} técnicos encontrados`;
+        }
+
+        function getPositionInCity(professional) {
+            if (!allProfessionals.length || !professional.ciudad) return null;
+            
+            const cityProfessionals = allProfessionals.filter(p => 
+                p.ciudad === professional.ciudad && p.rankingScore
+            ).sort((a, b) => b.rankingScore - a.rankingScore);
+            
+            const position = cityProfessionals.findIndex(p => p.id === professional.id) + 1;
+            return position > 0 ? position : null;
+        }
+
+        function getPositionInRubro(professional) {
+            if (!allProfessionals.length || !professional.rubros || professional.rubros.length === 0) return null;
+            
+            const rubro = professional.rubros[0];
+            const rubroProfessionals = allProfessionals.filter(p => 
+                p.rubros && p.rubros.includes(rubro) && p.rankingScore
+            ).sort((a, b) => b.rankingScore - a.rankingScore);
+            
+            const position = rubroProfessionals.findIndex(p => p.id === professional.id) + 1;
+            return position > 0 ? position : null;
+        }
+
+        // ============================================
+        // SISTEMA DE CALIFICACIONES
+        // ============================================
         function openRatingModal(professionalId, professionalName) {
             currentRatingProfessional = { id: professionalId, name: professionalName };
             
@@ -677,225 +1078,64 @@
             }
         }
 
-        // Professional Functions
-        async function loadAllProfessionals() {
-            showLoader();
+        // ============================================
+        // ESTADÍSTICAS
+        // ============================================
+        async function updateStats() {
             try {
-                const snapshot = await db.collection('professionals')
+                const statsContainer = document.getElementById('statsContainer');
+                
+                // Get total professionals
+                const profSnapshot = await db.collection('professionals')
                     .where('active', '==', true)
-                    .limit(50)
                     .get();
                 
-                const professionals = await Promise.all(
-                    snapshot.docs.map(async doc => {
-                        const prof = { id: doc.id, ...doc.data() };
-                        await calculateProfessionalRanking(prof);
-                        return prof;
-                    })
-                );
+                // Get average rating
+                let totalRating = 0;
+                let countWithRating = 0;
+                profSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.averageRating) {
+                        totalRating += data.averageRating;
+                        countWithRating++;
+                    }
+                });
+                const avgRating = countWithRating > 0 ? (totalRating / countWithRating).toFixed(1) : '0.0';
                 
-                professionals.sort((a, b) => b.rankingScore - a.rankingScore);
-                displayProfessionals(professions);
+                // Get total cities
+                const cities = new Set();
+                profSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.ciudad) cities.add(data.ciudad);
+                });
                 
-            } catch (error) {
-                console.error('Error loading professionals:', error);
-            } finally {
-                hideLoader();
-            }
-        }
-
-        async function searchProfessionals() {
-            showLoader();
-            const provincia = document.getElementById('provinciaSelect').value;
-            const ciudad = document.getElementById('ciudadSelect').value;
-            const rubro = document.getElementById('rubroSelect').value;
-            
-            try {
-                let query = db.collection('professionals').where('active', '==', true);
-                
-                if (provincia) query = query.where('provincia', '==', provincia);
-                if (ciudad) query = query.where('ciudad', '==', ciudad);
-                if (rubro) query = query.where('rubros', 'array-contains', rubro);
-                
-                const snapshot = await query.limit(50).get();
-                const professionals = await Promise.all(
-                    snapshot.docs.map(async doc => {
-                        const prof = { id: doc.id, ...doc.data() };
-                        await calculateProfessionalRanking(prof);
-                        return prof;
-                    })
-                );
-                
-                professionals.sort((a, b) => b.rankingScore - a.rankingScore);
-                displayProfessionals(professions);
-                
-            } catch (error) {
-                console.error('Error searching professionals:', error);
-            } finally {
-                hideLoader();
-            }
-        }
-
-        async function calculateProfessionalRanking(professional) {
-            // Get approved ratings
-            const ratingsSnapshot = await db.collection('ratings')
-                .where('professionalId', '==', professional.id)
-                .where('status', '==', 'approved')
-                .get();
-            
-            let totalRatings = 0;
-            let sumRatings = 0;
-            const now = new Date();
-            const threeMonthsAgo = new Date(now.setMonth(now.getMonth() - 3));
-            
-            ratingsSnapshot.forEach(doc => {
-                const rating = doc.data();
-                const ratingDate = rating.createdAt.toDate();
-                
-                if (ratingDate >= threeMonthsAgo) {
-                    totalRatings++;
-                    sumRatings += rating.rating;
-                }
-            });
-            
-            // Calculate average rating
-            professional.averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
-            professional.totalRatings = totalRatings;
-            
-            // Calculate ranking score (0-100)
-            let score = 0;
-            
-            // 1. Rating quality (25 points max)
-            score += professional.averageRating * 5;
-            
-            // 2. Rating quantity (20 points max)
-            const ratingQuantity = Math.min(totalRatings, 100);
-            score += ratingQuantity * 0.2;
-            
-            // 3. Response time (15 points)
-            if (professional.avgResponseTime && professional.avgResponseTime < 24) {
-                score += 15;
-            } else if (professional.avgResponseTime && professional.avgResponseTime < 48) {
-                score += 10;
-            }
-            
-            // 4. Completed jobs (10 points)
-            if (professional.completedJobs) {
-                score += Math.min(professional.completedJobs * 0.1, 10);
-            }
-            
-            // 5. Certifications (10 points)
-            if (professional.certifications && professional.certifications.length > 0) {
-                score += Math.min(professional.certifications.length * 2, 10);
-            }
-            
-            // 6. Profile completeness (5 points)
-            let profileScore = 0;
-            if (professional.photoUrl) profileScore++;
-            if (professional.bio && professional.bio.length > 50) profileScore++;
-            if (professional.zonas && professional.zonas.length > 0) profileScore++;
-            if (professional.rubros && professional.rubros.length > 0) profileScore++;
-            score += profileScore * 1.25;
-            
-            // 7. Experience (5 points)
-            if (professional.experienceYears) {
-                score += Math.min(professional.experienceYears * 0.5, 5);
-            }
-            
-            // 8. Recent activity (5 points)
-            if (professional.lastActive) {
-                const daysSince = (new Date() - professional.lastActive.toDate()) / (1000 * 60 * 60 * 24);
-                if (daysSince < 7) score += 5;
-                else if (daysSince < 30) score += 3;
-            }
-            
-            // 9. Featured status (5 points)
-            if (professional.isFeatured) {
-                score += 5;
-            }
-            
-            professional.rankingScore = Math.round(score);
-            return professional;
-        }
-
-        function displayProfessionals(professionals) {
-            const container = document.getElementById('resultsContainer');
-            container.innerHTML = '';
-            
-            if (professionals.length === 0) {
-                container.innerHTML = '<p style="text-align: center; padding: 40px; color: #666;">No se encontraron técnicos con esos filtros.</p>';
-                return;
-            }
-            
-            professionals.forEach(prof => {
-                const card = document.createElement('div');
-                card.className = 'professional-card';
-                
-                // Calculate star display
-                const rating = prof.averageRating || 0;
-                const fullStars = Math.floor(rating);
-                const hasHalfStar = rating % 1 >= 0.5;
-                const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-                
-                let starsHTML = '';
-                for (let i = 0; i < fullStars; i++) starsHTML += '⭐';
-                if (hasHalfStar) starsHTML += '½';
-                for (let i = 0; i < emptyStars; i++) starsHTML += '☆';
-                
-                card.innerHTML = `
-                    <div class="professional-header">
-                        <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80/0a4fd8/ffffff?text=T'}" 
-                             alt="${prof.name}"
-                             class="professional-photo">
-                        <div class="professional-info">
-                            <h3 class="professional-name">${prof.name}</h3>
-                            <div class="professional-rating">
-                                ${starsHTML} ${rating.toFixed(1)}
-                                <span>(${prof.totalRatings || 0})</span>
-                                ${prof.rankingScore >= 90 ? '<span class="badge badge-top">TOP</span>' : ''}
-                                ${prof.isFeatured ? '<span class="badge badge-featured">DESTACADO</span>' : ''}
-                                ${prof.certifications ? '<span class="badge badge-certified">CERTIFICADO</span>' : ''}
-                            </div>
-                            <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.5rem;">
-                                📍 ${prof.ciudad || ''}, ${prof.provincia || ''}
-                            </div>
-                            <div class="ranking-stats">
-                                <div class="stat-item">🏆 ${prof.rankingScore || 0}/100</div>
-                                ${prof.avgResponseTime ? `<div class="stat-item">⏱️ ${prof.avgResponseTime}h respuesta</div>` : ''}
-                                ${prof.completedJobs ? `<div class="stat-item">✅ ${prof.completedJobs} trabajos</div>` : ''}
-                            </div>
-                        </div>
+                statsContainer.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-number">${profSnapshot.size}</div>
+                        <div class="stat-label">Técnicos Activos</div>
                     </div>
-                    <div class="professional-body">
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem;">
-                            ${prof.rubros ? prof.rubros.map(r => `<span style="background: #f1f6ff; color: #0a4fd8; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem;">${r}</span>`).join('') : ''}
-                        </div>
-                        <p>${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
+                    <div class="stat-card">
+                        <div class="stat-number">${avgRating}/5</div>
+                        <div class="stat-label">Rating Promedio</div>
                     </div>
-                    <div class="professional-footer">
-                        <span>${prof.zonas ? prof.zonas.join(', ') : 'Toda la ciudad'}</span>
-                        <div style="display: flex; gap: 10px;">
-                            <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
-                               target="_blank"
-                               class="btn btn-whatsapp">
-                                📱 Contactar
-                            </a>
-                            <button onclick="openRatingModal('${prof.id}', '${prof.name}')" 
-                                    class="btn" 
-                                    style="background: #6c757d; color: white;">
-                                ⭐ Calificar
-                            </button>
-                        </div>
+                    <div class="stat-card">
+                        <div class="stat-number">24h</div>
+                        <div class="stat-label">Respuesta Rápida</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${cities.size}</div>
+                        <div class="stat-label">Ciudades Activas</div>
                     </div>
                 `;
                 
-                container.appendChild(card);
-            });
-            
-            document.getElementById('resultsHeader').style.display = 'flex';
-            document.getElementById('resultsCount').textContent = `${professionals.length} técnicos encontrados`;
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
         }
 
+        // ============================================
+        // UTILIDADES
+        // ============================================
         function showLoader() {
             document.getElementById('loader').style.display = 'flex';
         }
@@ -923,7 +1163,13 @@
                         certifications: ["Gasista Matriculado"],
                         completedJobs: 45,
                         avgResponseTime: 4,
-                        experienceYears: 15
+                        experienceYears: 15,
+                        zonas: ["Centro", "Norte"],
+                        rankingScore: 85,
+                        rankingLevel: "Oro",
+                        averageRating: 4.8,
+                        totalRatings: 12,
+                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
                     }
                 ];
                 
