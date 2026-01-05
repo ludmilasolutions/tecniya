@@ -690,7 +690,6 @@
     <!-- SCRIPTS -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     
     <script>
         // ============================================
@@ -772,7 +771,6 @@
         // INICIALIZACIÓN
         // ============================================
         let db;
-        let auth;
 
         document.addEventListener('DOMContentLoaded', async () => {
             await initFirebase();
@@ -781,14 +779,12 @@
 
         async function initFirebase() {
             try {
-                // Verificar si Firebase ya está inicializado
                 if (!firebase.apps.length) {
                     firebase.initializeApp(firebaseConfig);
                     console.log('Firebase inicializado correctamente');
                 }
                 
                 db = firebase.firestore();
-                auth = firebase.auth();
                 
             } catch (error) {
                 console.error('Error inicializando Firebase:', error);
@@ -1072,6 +1068,7 @@
                 // Tomar el banner con mayor prioridad
                 const selectedBanner = banners[0];
                 
+                // Crear contenedor del banner
                 bannerContainer.innerHTML = `
                     <a href="${selectedBanner.link}" target="_blank" class="banner-link" id="bannerLink">
                         <img src="${selectedBanner.imageUrl}" 
@@ -1082,7 +1079,8 @@
                 `;
                 
                 // Registrar clic en el banner
-                document.getElementById('bannerLink').addEventListener('click', async () => {
+                const bannerLink = document.getElementById('bannerLink');
+                bannerLink.addEventListener('click', async () => {
                     try {
                         await db.collection('ads_clicks').add({
                             bannerId: selectedBanner.id,
@@ -1090,7 +1088,9 @@
                             provincia: provincia,
                             ciudad: ciudad,
                             rubro: rubro,
-                            clickedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            clickedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            userAgent: navigator.userAgent,
+                            timestamp: new Date().toISOString()
                         });
                     } catch (error) {
                         console.error('Error registrando clic:', error);
@@ -1130,7 +1130,7 @@
             resultsHeader.style.display = 'none';
             
             try {
-                // Construir consulta
+                // Construir consulta base
                 let query = db.collection('professionals')
                     .where('profileCompleted', '==', true)
                     .where('blocked', '==', false)
@@ -1156,7 +1156,7 @@
                     const prof = { id: doc.id, ...doc.data() };
                     
                     // Filtrar por zona
-                    if (zona && zona !== 'toda_la_ciudad' && prof.zonas) {
+                    if (zona && zona !== '' && zona !== 'toda_la_ciudad' && prof.zonas) {
                         const zonasProf = prof.zonas.map(z => z.toLowerCase().replace(/ /g, '_'));
                         if (!zonasProf.includes(zona)) {
                             return;
@@ -1183,6 +1183,9 @@
                     // Certificaciones
                     if (prof.certified) score += 20;
                     
+                    // Perfil completo
+                    if (prof.profileCompleted) score += 10;
+                    
                     prof.score = score;
                     professionals.push(prof);
                 });
@@ -1202,7 +1205,7 @@
                 resultsCount.textContent = `${professionals.length} técnico${professionals.length !== 1 ? 's' : ''} encontrado${professionals.length !== 1 ? 's' : ''}`;
                 resultsHeader.style.display = 'flex';
                 
-                // Recargar banner
+                // Recargar banner con los nuevos filtros
                 loadBanner();
                 
             } catch (error) {
