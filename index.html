@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TecniYa - Encontrá técnicos en Rosario</title>
     <link rel="manifest" href="manifest.json">
-    <!-- Favicon simple para evitar error 404 -->
+    <!-- Favicon inline para evitar error 404 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>">
     
     <style>
@@ -147,6 +147,7 @@
           messagingSenderId: "166424133304",
           appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
         };
+
         // ============================================
         // INICIALIZACIÓN DE FIREBASE
         // ============================================
@@ -165,26 +166,49 @@
         const resultsContainer = document.getElementById('resultsContainer');
 
         // ============================================
-        // FUNCIONES PRINCIPALES
+        // FUNCIONES PRINCIPALES - VERSIÓN CORREGIDA
         // ============================================
 
-        // CARGAR BANNER ACTIVO
+        // CARGAR BANNER ACTIVO - VERSIÓN CORREGIDA (sin error de desigualdades múltiples)
         async function loadBanner() {
             try {
                 const now = new Date();
+                const nowTimestamp = firebase.firestore.Timestamp.fromDate(now);
+                
+                // Consulta corregida: solo una desigualdad
                 const bannersSnapshot = await db.collection('banners')
                     .where('active', '==', true)
                     .where('city', '==', 'Rosario')
-                    .where('startDate', '<=', now)
-                    .where('endDate', '>=', now)
-                    .limit(1)
+                    .where('endDate', '>=', nowTimestamp)
+                    .orderBy('endDate', 'asc')
+                    .limit(5)
                     .get();
                 
-                if (!bannersSnapshot.empty) {
-                    const banner = bannersSnapshot.docs[0].data();
+                if (bannersSnapshot.empty) {
+                    bannerContainer.innerHTML = '';
+                    return;
+                }
+
+                // Filtrar los que también tienen startDate <= now
+                let activeBanner = null;
+                let bannerDocId = null;
+                
+                bannersSnapshot.forEach(doc => {
+                    const banner = doc.data();
+                    const startDate = banner.startDate ? banner.startDate.toDate() : null;
+                    
+                    // Verificar startDate manualmente
+                    if (!startDate || startDate <= now) {
+                        activeBanner = banner;
+                        bannerDocId = doc.id;
+                        return;
+                    }
+                });
+
+                if (activeBanner) {
                     bannerContainer.innerHTML = `
-                        <a href="${banner.link}" target="_blank" class="banner-link" onclick="trackClick('${bannersSnapshot.docs[0].id}')">
-                            <img src="${banner.imageUrl}" alt="${banner.title}" class="banner-img">
+                        <a href="${activeBanner.link}" target="_blank" class="banner-link" onclick="trackClick('${bannerDocId}')">
+                            <img src="${activeBanner.imageUrl}" alt="${activeBanner.title}" class="banner-img">
                         </a>
                     `;
                 } else {
