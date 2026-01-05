@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TecniYa - Panel Administrador</title>
+    <title>TecniYa - Panel Administrador Nacional</title>
     <!-- Favicon inline para evitar error 404 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>">
     
@@ -57,6 +57,7 @@
         .badge-warning { background: #fff3cd; color: #856404; }
         .badge-danger { background: #f8d7da; color: #721c24; }
         .badge-info { background: #d1ecf1; color: #0c5460; }
+        .badge-primary { background: #d1e7ff; color: #0a4fd8; }
         
         /* BUTTONS */
         .btn { padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
@@ -124,8 +125,8 @@
     <!-- MAIN ADMIN -->
     <div id="adminPanel" style="display: none;">
         <header class="header">
-            <h1>⚙ Panel Administrador TecniYa</h1>
-            <p class="header-subtitle">Gestión completa de profesionales, banners y configuración</p>
+            <h1>⚙ Panel Administrador TecniYa Nacional</h1>
+            <p class="header-subtitle">Gestión completa de profesionales, banners y configuración para toda Argentina</p>
         </header>
         
         <div class="container">
@@ -140,12 +141,16 @@
             
             <!-- DASHBOARD -->
             <div id="dashboardPanel" class="panel active">
-                <h2 style="margin-bottom: 30px; color: #333;">Dashboard General</h2>
+                <h2 style="margin-bottom: 30px; color: #333;">Dashboard Nacional</h2>
                 
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-number" id="totalProfessionals">0</div>
                         <div class="stat-label">Total Profesionales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeCities">0</div>
+                        <div class="stat-label">Ciudades Activas</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-number" id="featuredProfessionals">0</div>
@@ -155,24 +160,21 @@
                         <div class="stat-number" id="totalQuotes">0</div>
                         <div class="stat-label">Presupuestos Creados</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalClicks">0</div>
-                        <div class="stat-label">Clicks en Banners</div>
-                    </div>
                 </div>
                 
                 <div style="margin-top: 50px;">
-                    <h3 style="margin-bottom: 20px;">📈 Actividad Reciente</h3>
+                    <h3 style="margin-bottom: 20px;">📍 Distribución por Provincia</h3>
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
-                                    <th>Detalle</th>
+                                    <th>Provincia</th>
+                                    <th>Profesionales</th>
+                                    <th>Ciudades</th>
+                                    <th>Destacados</th>
                                 </tr>
                             </thead>
-                            <tbody id="recentActivity">
+                            <tbody id="provinceDistribution">
                                 <!-- JS llenará esto -->
                             </tbody>
                         </table>
@@ -186,6 +188,18 @@
                 
                 <div class="filters">
                     <div class="filter-group">
+                        <label>Provincia:</label>
+                        <select id="filterProvincia" class="form-select" style="width: 200px;">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Ciudad:</label>
+                        <select id="filterCiudad" class="form-select" style="width: 200px;">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
                         <label>Rubro:</label>
                         <select id="filterRubro" class="form-select" style="width: 200px;">
                             <option value="">Todos</option>
@@ -196,6 +210,11 @@
                             <option value="albanileria">Albañilería</option>
                             <option value="pintura">Pintura</option>
                             <option value="cerrajeria">Cerrajería</option>
+                            <option value="jardineria">Jardinería</option>
+                            <option value="herreria">Herrería</option>
+                            <option value="carpinteria">Carpintería</option>
+                            <option value="limpieza">Limpieza</option>
+                            <option value="mudanzas">Mudanzas</option>
                             <option value="otros">Otros</option>
                         </select>
                     </div>
@@ -207,6 +226,7 @@
                             <option value="incomplete">Incompletos</option>
                             <option value="blocked">Bloqueados</option>
                             <option value="featured">Destacados</option>
+                            <option value="certified">Certificados</option>
                         </select>
                     </div>
                     <button id="applyFilters" class="btn btn-primary">🔍 Filtrar</button>
@@ -219,9 +239,9 @@
                             <tr>
                                 <th>Foto</th>
                                 <th>Nombre</th>
+                                <th>Ubicación</th>
                                 <th>Contacto</th>
                                 <th>Rubros</th>
-                                <th>Zonas</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
@@ -268,7 +288,6 @@
                             </div>
                         </div>
                         
-                        <!-- CAMBIO IMPORTANTE: URL de imagen en lugar de subir archivo -->
                         <div class="form-group">
                             <label class="form-label">URL de la imagen del banner</label>
                             <input type="url" id="bannerImageUrl" class="form-input" required 
@@ -282,8 +301,43 @@
                             <div id="bannerImagePreview" style="margin-top: 15px;"></div>
                         </div>
                         
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Ámbito</label>
+                                <select id="bannerAmbito" class="form-select" required onchange="toggleBannerLocation()">
+                                    <option value="nacional">Nacional (todo el país)</option>
+                                    <option value="provincial">Provincial</option>
+                                    <option value="local">Local (ciudad específica)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Posición</label>
+                                <select id="bannerPosition" class="form-select" required>
+                                    <option value="home">Home (arriba de búsqueda)</option>
+                                    <option value="results">Resultados (entre profesionales)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div id="bannerLocationFields" style="display: none;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Provincia</label>
+                                    <select id="bannerProvincia" class="form-select">
+                                        <option value="">Seleccioná provincia</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Ciudad</label>
+                                    <select id="bannerCiudad" class="form-select" disabled>
+                                        <option value="">Seleccioná ciudad</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="form-group">
-                            <label class="form-label">Rubros objetivo</label>
+                            <label class="form-label">Rubros objetivo (opcional)</label>
                             <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
                                 <label style="display: flex; align-items: center; gap: 5px;">
                                     <input type="checkbox" name="bannerRubros" value="plomeria"> Plomería
@@ -298,33 +352,8 @@
                                     <input type="checkbox" name="bannerRubros" value="aire"> Aire Acondicionado
                                 </label>
                                 <label style="display: flex; align-items: center; gap: 5px;">
-                                    <input type="checkbox" name="bannerRubros" value="albanileria"> Albañilería
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 5px;">
-                                    <input type="checkbox" name="bannerRubros" value="pintura"> Pintura
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 5px;">
-                                    <input type="checkbox" name="bannerRubros" value="cerrajeria"> Cerrajería
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 5px;">
                                     <input type="checkbox" name="bannerRubros" value="todos"> Todos los rubros
                                 </label>
-                            </div>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Posición</label>
-                                <select id="bannerPosition" class="form-select" required>
-                                    <option value="home">Home (arriba de búsqueda)</option>
-                                    <option value="results">Resultados (entre profesionales)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Ciudad</label>
-                                <select id="bannerCity" class="form-select" required>
-                                    <option value="Rosario">Rosario</option>
-                                </select>
                             </div>
                         </div>
                         
@@ -339,11 +368,17 @@
                             </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox" id="bannerActive" checked>
-                                <span>Banner activo</span>
-                            </label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Prioridad (1-10)</label>
+                                <input type="number" id="bannerPriority" class="form-input" min="1" max="10" value="5" required>
+                            </div>
+                            <div class="form-group">
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" id="bannerActive" checked>
+                                    <span>Banner activo</span>
+                                </label>
+                            </div>
                         </div>
                         
                         <div class="btn-group">
@@ -359,8 +394,8 @@
                             <tr>
                                 <th>Imagen</th>
                                 <th>Título</th>
+                                <th>Ámbito</th>
                                 <th>Periodo</th>
-                                <th>Rubros</th>
                                 <th>Estado</th>
                                 <th>Clicks</th>
                                 <th>Acciones</th>
@@ -384,7 +419,11 @@
                             <label class="form-label">Precio destacado (ARS/mes)</label>
                             <input type="number" id="featuredPrice" class="form-input" min="0">
                         </div>
-                        <button onclick="updateFeaturedPrice()" class="btn btn-primary">💾 Actualizar precio</button>
+                        <div class="form-group">
+                            <label class="form-label">Precio certificación (ARS)</label>
+                            <input type="number" id="certificationPrice" class="form-input" min="0">
+                        </div>
+                        <button onclick="updatePrices()" class="btn btn-primary">💾 Actualizar precios</button>
                     </div>
                     
                     <div>
@@ -397,8 +436,8 @@
                         </div>
                         <div class="form-group">
                             <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox" id="cityActive" checked>
-                                <span>Ciudad Rosario activa</span>
+                                <input type="checkbox" id="newCitiesEnabled" checked>
+                                <span>Permitir nuevas ciudades</span>
                             </label>
                         </div>
                         <button onclick="updateSystemConfig()" class="btn btn-primary">💾 Guardar configuración</button>
@@ -411,6 +450,7 @@
                         <button onclick="forceHideNoPhoto()" class="btn btn-warning">👁 Ocultar profesionales sin foto</button>
                         <button onclick="deactivateExpiredFeatured()" class="btn btn-warning">📅 Desactivar destacados vencidos</button>
                         <button onclick="recalculateRankings()" class="btn btn-warning">📊 Recalcular rankings</button>
+                        <button onclick="updateProvinceStats()" class="btn btn-warning">📍 Actualizar estadísticas por provincia</button>
                         <a href="setup.html" target="_blank" class="btn btn-danger">⚠ Setup Inicial</a>
                     </div>
                 </div>
@@ -420,7 +460,7 @@
                     <div class="btn-group">
                         <button onclick="exportProfessionals()" class="btn">📄 Exportar profesionales</button>
                         <button onclick="exportQuotes()" class="btn">📋 Exportar presupuestos</button>
-                        <button onclick="exportClicks()" class="btn">🖱 Exportar clicks</button>
+                        <button onclick="exportBanners()" class="btn">🖼 Exportar banners</button>
                     </div>
                 </div>
             </div>
@@ -433,12 +473,41 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <!-- NO CARGAMOS firebase-storage.js -->
 
     <!-- SCRIPT PRINCIPAL MODIFICADO -->
     <script>
         // ============================================
-        // CONFIGURACIÓN FIREBASE - SIN STORAGE
+        // DATOS DE PROVINCIAS Y CIUDADES
+        // ============================================
+        const provinciasCiudades = {
+            "Buenos Aires": ["La Plata", "Mar del Plata", "Bahía Blanca", "Quilmes", "Lomas de Zamora", "San Isidro", "Tigre", "Pilar", "Merlo", "Moreno", "San Martín", "Morón", "Avellaneda", "Lanús", "San Miguel", "Malvinas Argentinas", "Vicente López", "Tres de Febrero", "Ituzaingó", "Hurlingham"],
+            "CABA": ["Capital Federal"],
+            "Catamarca": ["San Fernando del Valle de Catamarca", "Valle Viejo", "Andalgalá", "Belén", "Santa María"],
+            "Chaco": ["Resistencia", "Barranqueras", "Fontana", "Presidencia Roque Sáenz Peña", "Villa Ángela"],
+            "Chubut": ["Rawson", "Comodoro Rivadavia", "Trelew", "Puerto Madryn", "Esquel"],
+            "Córdoba": ["Córdoba", "Villa María", "Río Cuarto", "Alta Gracia", "Villa Carlos Paz", "Jesús María", "Cosquín", "La Falda", "Villa General Belgrano", "Mina Clavero"],
+            "Corrientes": ["Corrientes", "Goya", "Mercedes", "Curuzú Cuatiá", "Paso de los Libres"],
+            "Entre Ríos": ["Paraná", "Concordia", "Gualeguaychú", "Concepción del Uruguay", "Victoria", "Colón", "Villaguay"],
+            "Formosa": ["Formosa", "Clorinda", "Pirané"],
+            "Jujuy": ["San Salvador de Jujuy", "Palpalá", "San Pedro de Jujuy", "Libertador General San Martín", "Perico"],
+            "La Pampa": ["Santa Rosa", "General Pico", "Toay", "Realicó"],
+            "La Rioja": ["La Rioja", "Chilecito", "Aimogasta", "Chamical"],
+            "Mendoza": ["Mendoza", "San Rafael", "Godoy Cruz", "Guaymallén", "Las Heras", "Maipú", "Luján de Cuyo", "Tunuyán", "San Martín", "Rivadavia"],
+            "Misiones": ["Posadas", "Oberá", "Eldorado", "Apóstoles", "Puerto Iguazú"],
+            "Neuquén": ["Neuquén", "Cutral-Có", "Plottier", "Centenario", "San Martín de los Andes"],
+            "Río Negro": ["Viedma", "Bariloche", "General Roca", "Cipolletti", "Allen", "El Bolsón"],
+            "Salta": ["Salta", "San Ramón de la Nueva Orán", "Tartagal", "Metán", "Cafayate", "Cerrillos", "Rosario de Lerma"],
+            "San Juan": ["San Juan", "Rivadavia", "Chimbas", "Rawson", "Pocito", "Caucete"],
+            "San Luis": ["San Luis", "Villa Mercedes", "Juana Koslay", "La Punta", "Merlo"],
+            "Santa Cruz": ["Río Gallegos", "Caleta Olivia", "Puerto Deseado", "Río Turbio", "El Calafate"],
+            "Santa Fe": ["Rosario", "Santa Fe", "Rafaela", "Venado Tuerto", "Reconquista", "Sunchales", "Villa Gobernador Gálvez", "Granadero Baigorria", "Capitán Bermúdez", "Funes", "Roldán", "San Lorenzo", "San Javier", "Esperanza"],
+            "Santiago del Estero": ["Santiago del Estero", "La Banda", "Frías", "Añatuya", "Termas de Río Hondo"],
+            "Tierra del Fuego": ["Ushuaia", "Río Grande"],
+            "Tucumán": ["San Miguel de Tucumán", "Yerba Buena", "Tafí Viejo", "Concepción", "Monteros", "Famaillá"]
+        };
+
+        // ============================================
+        // CONFIGURACIÓN FIREBASE
         // ============================================
         const firebaseConfig = {
           apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
@@ -455,7 +524,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
-        // NO inicializamos storage
 
         // ============================================
         // ELEMENTOS DOM
@@ -468,12 +536,12 @@
         // ============================================
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                // VERIFICAR ROL ADMIN
                 const adminSnapshot = await db.collection('admin_users').where('email', '==', user.email).get();
                 if (!adminSnapshot.empty) {
                     loginContainer.style.display = 'none';
                     adminPanel.style.display = 'block';
                     loadDashboard();
+                    loadProvinciasSelect();
                 } else {
                     auth.signOut();
                     showMessage('loginMessage', '❌ No tenés permisos de administrador', 'error');
@@ -483,6 +551,85 @@
                 adminPanel.style.display = 'none';
             }
         });
+
+        // ============================================
+        // CARGAR SELECTS DE PROVINCIAS
+        // ============================================
+        function loadProvinciasSelect() {
+            const provinciaSelect = document.getElementById('filterProvincia');
+            const bannerProvinciaSelect = document.getElementById('bannerProvincia');
+            
+            // Ordenar provincias alfabéticamente
+            const provinciasOrdenadas = Object.keys(provinciasCiudades).sort();
+            
+            provinciasOrdenadas.forEach(provincia => {
+                // Para filtros
+                const option1 = document.createElement('option');
+                option1.value = provincia;
+                option1.textContent = provincia;
+                provinciaSelect.appendChild(option1);
+                
+                // Para banners
+                const option2 = document.createElement('option');
+                option2.value = provincia;
+                option2.textContent = provincia;
+                bannerProvinciaSelect.appendChild(option2);
+            });
+            
+            // Agregar opción "Toda Argentina"
+            const nacionalOption = document.createElement('option');
+            nacionalOption.value = "toda";
+            nacionalOption.textContent = "Toda Argentina";
+            bannerProvinciaSelect.insertBefore(nacionalOption, bannerProvinciaSelect.firstChild);
+        }
+
+        // ============================================
+        // MANEJAR CAMBIO DE PROVINCIA EN BANNERS
+        // ============================================
+        document.getElementById('bannerProvincia').addEventListener('change', function() {
+            const provincia = this.value;
+            const ciudadSelect = document.getElementById('bannerCiudad');
+            
+            if (!provincia || provincia === 'toda') {
+                ciudadSelect.innerHTML = '<option value="toda">Toda la provincia</option>';
+                ciudadSelect.disabled = true;
+                return;
+            }
+            
+            const ciudades = provinciasCiudades[provincia] || [];
+            ciudadSelect.innerHTML = '<option value="">Seleccioná ciudad</option>';
+            ciudades.forEach(ciudad => {
+                const option = document.createElement('option');
+                option.value = ciudad;
+                option.textContent = ciudad;
+                ciudadSelect.appendChild(option);
+            });
+            
+            ciudadSelect.disabled = false;
+        });
+
+        // ============================================
+        // TOGGLE CAMPOS DE LOCALIZACIÓN DE BANNERS
+        // ============================================
+        window.toggleBannerLocation = function() {
+            const ambito = document.getElementById('bannerAmbito').value;
+            const locationFields = document.getElementById('bannerLocationFields');
+            
+            if (ambito === 'nacional') {
+                locationFields.style.display = 'none';
+                document.getElementById('bannerProvincia').value = 'toda';
+                document.getElementById('bannerCiudad').value = 'toda';
+                document.getElementById('bannerCiudad').disabled = true;
+            } else {
+                locationFields.style.display = 'block';
+                if (ambito === 'provincial') {
+                    document.getElementById('bannerCiudad').value = 'toda';
+                    document.getElementById('bannerCiudad').disabled = true;
+                } else {
+                    document.getElementById('bannerCiudad').disabled = false;
+                }
+            }
+        };
 
         // ============================================
         // LOGIN
@@ -512,15 +659,12 @@
             tab.addEventListener('click', () => {
                 const tabId = tab.getAttribute('data-tab');
                 
-                // REMOVER ACTIVE
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
                 
-                // AGREGAR ACTIVE
                 tab.classList.add('active');
                 document.getElementById(`${tabId}Panel`).classList.add('active');
                 
-                // CARGAR DATOS DE LA PESTAÑA
                 if (tabId === 'dashboard') loadDashboard();
                 if (tabId === 'professionals') loadProfessionals();
                 if (tabId === 'banners') loadBanners();
@@ -539,6 +683,16 @@
                 const profSnapshot = await db.collection('professionals').get();
                 document.getElementById('totalProfessionals').textContent = profSnapshot.size;
                 
+                // CONTAR CIUDADES ACTIVAS
+                const ciudadesSet = new Set();
+                profSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.ciudad) {
+                        ciudadesSet.add(data.ciudad);
+                    }
+                });
+                document.getElementById('activeCities').textContent = ciudadesSet.size;
+                
                 // CONTAR DESTACADOS ACTIVOS
                 const now = new Date();
                 let featuredCount = 0;
@@ -554,61 +708,38 @@
                 const quotesSnapshot = await db.collection('quotes').get();
                 document.getElementById('totalQuotes').textContent = quotesSnapshot.size;
                 
-                // CONTAR CLICKS
-                const clicksSnapshot = await db.collection('ads_clicks').get();
-                document.getElementById('totalClicks').textContent = clicksSnapshot.size;
-                
-                // ACTIVIDAD RECIENTE
-                const recentActivity = document.getElementById('recentActivity');
-                recentActivity.innerHTML = '<tr><td colspan="3">Cargando...</td></tr>';
-                
-                // OBTENER ÚLTIMAS 10 ACTIVIDADES
-                const activities = [];
-                
-                // PROFESIONALES RECIENTES
-                const recentProfs = await db.collection('professionals')
-                    .orderBy('createdAt', 'desc')
-                    .limit(5)
-                    .get();
-                
-                recentProfs.forEach(doc => {
+                // DISTRIBUCIÓN POR PROVINCIA
+                const distribution = {};
+                profSnapshot.forEach(doc => {
                     const data = doc.data();
-                    activities.push({
-                        date: data.createdAt ? data.createdAt.toDate() : new Date(),
-                        type: '👨‍🔧 Nuevo profesional',
-                        detail: data.name || 'Sin nombre'
-                    });
+                    if (data.provincia) {
+                        if (!distribution[data.provincia]) {
+                            distribution[data.provincia] = {
+                                profesionales: 0,
+                                ciudades: new Set(),
+                                destacados: 0
+                            };
+                        }
+                        distribution[data.provincia].profesionales++;
+                        if (data.ciudad) distribution[data.provincia].ciudades.add(data.ciudad);
+                        if (data.isFeatured && data.featuredUntil && data.featuredUntil.toDate() > now) {
+                            distribution[data.provincia].destacados++;
+                        }
+                    }
                 });
                 
-                // PRESUPUESTOS RECIENTES
-                const recentQuotes = await db.collection('quotes')
-                    .orderBy('createdAt', 'desc')
-                    .limit(5)
-                    .get();
+                const tbody = document.getElementById('provinceDistribution');
+                tbody.innerHTML = '';
                 
-                recentQuotes.forEach(doc => {
-                    const data = doc.data();
-                    activities.push({
-                        date: data.createdAt ? data.createdAt.toDate() : new Date(),
-                        type: '📋 Nuevo presupuesto',
-                        detail: `${data.clientName || 'Sin nombre'} - $${data.total || '0'}`
-                    });
-                });
-                
-                // ORDENAR POR FECHA
-                activities.sort((a, b) => b.date - a.date);
-                activities.splice(10); // LIMITAR A 10
-                
-                // MOSTRAR
-                recentActivity.innerHTML = '';
-                activities.forEach(activity => {
+                Object.keys(distribution).sort().forEach(provincia => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${activity.date.toLocaleDateString('es-AR')}</td>
-                        <td>${activity.type}</td>
-                        <td>${activity.detail}</td>
+                        <td><strong>${provincia}</strong></td>
+                        <td>${distribution[provincia].profesionales}</td>
+                        <td>${distribution[provincia].ciudades.size}</td>
+                        <td>${distribution[provincia].destacados}</td>
                     `;
-                    recentActivity.appendChild(row);
+                    tbody.appendChild(row);
                 });
                 
                 hideLoader();
@@ -628,8 +759,30 @@
                 let query = db.collection('professionals');
                 
                 // APLICAR FILTROS
+                const provinciaFilter = document.getElementById('filterProvincia').value;
+                const ciudadFilter = document.getElementById('filterCiudad').value;
                 const rubroFilter = document.getElementById('filterRubro').value;
                 const statusFilter = document.getElementById('filterStatus').value;
+                
+                if (provinciaFilter) {
+                    query = query.where('provincia', '==', provinciaFilter);
+                    
+                    // Cargar ciudades de la provincia seleccionada
+                    const ciudadSelect = document.getElementById('filterCiudad');
+                    ciudadSelect.innerHTML = '<option value="">Todas</option>';
+                    if (provinciasCiudades[provinciaFilter]) {
+                        provinciasCiudades[provinciaFilter].forEach(ciudad => {
+                            const option = document.createElement('option');
+                            option.value = ciudad;
+                            option.textContent = ciudad;
+                            ciudadSelect.appendChild(option);
+                        });
+                    }
+                }
+                
+                if (ciudadFilter) {
+                    query = query.where('ciudad', '==', ciudadFilter);
+                }
                 
                 if (rubroFilter) {
                     query = query.where('rubros', 'array-contains', rubroFilter);
@@ -653,30 +806,44 @@
                         const isFeaturedActive = data.isFeatured && data.featuredUntil && data.featuredUntil.toDate() > now;
                         if (!isFeaturedActive) return;
                     }
+                    if (statusFilter === 'certified' && !data.certified) return;
                     
                     const featuredActive = data.isFeatured && data.featuredUntil && data.featuredUntil.toDate() > now;
-                    // Usar placeholder si no hay foto
                     const photoUrl = data.photoUrl || 'https://via.placeholder.com/50x50/0a4fd8/ffffff?text=NO+FOTO';
                     
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td><img src="${photoUrl}" class="table-photo" alt="Foto" onerror="this.src='https://via.placeholder.com/50x50/0a4fd8/ffffff?text=NO+FOTO'"></td>
-                        <td>${data.name || 'Sin nombre'}</td>
-                        <td>${data.phone || 'Sin teléfono'}<br>${data.email || ''}</td>
-                        <td>${data.rubros ? data.rubros.join(', ') : ''}</td>
-                        <td>${data.zonas ? data.zonas.join(', ') : ''}</td>
+                        <td>
+                            <strong>${data.name || 'Sin nombre'}</strong><br>
+                            <small style="color: #666;">${data.email || ''}</small>
+                        </td>
+                        <td>
+                            ${data.ciudad || 'Sin ciudad'},<br>
+                            ${data.provincia || 'Sin provincia'}
+                        </td>
+                        <td>
+                            ${data.phone || 'Sin teléfono'}<br>
+                            ${data.zonas ? data.zonas.join(', ') : ''}
+                        </td>
+                        <td>${data.rubros ? data.rubros.map(r => getRubroName(r)).join(', ') : ''}</td>
                         <td>
                             ${data.blocked ? '<span class="badge badge-danger">BLOQUEADO</span>' : ''}
                             ${!data.profileCompleted ? '<span class="badge badge-warning">INCOMPLETO</span>' : ''}
                             ${featuredActive ? '<span class="badge badge-success">DESTACADO</span>' : ''}
-                            ${data.profileCompleted && !data.blocked && !featuredActive ? '<span class="badge badge-info">ACTIVO</span>' : ''}
+                            ${data.certified ? '<span class="badge badge-primary">CERTIFICADO</span>' : ''}
+                            ${data.profileCompleted && !data.blocked && !featuredActive && !data.certified ? '<span class="badge badge-info">ACTIVO</span>' : ''}
                         </td>
                         <td>
                             <div class="btn-group">
                                 <button onclick="viewProfessionalDetail('${id}')" class="btn btn-sm">👁 Ver</button>
                                 ${featuredActive ? 
-                                    `<button onclick="deactivateFeatured('${id}')" class="btn btn-warning btn-sm">⭐ Desactivar destacado</button>` : 
-                                    `<button onclick="activateFeatured('${id}')" class="btn btn-success btn-sm">⭐ Activar destacado</button>`
+                                    `<button onclick="deactivateFeatured('${id}')" class="btn btn-warning btn-sm">⭐ Desactivar</button>` : 
+                                    `<button onclick="activateFeatured('${id}')" class="btn btn-success btn-sm">⭐ Destacar</button>`
+                                }
+                                ${data.certified ?
+                                    `<button onclick="removeCertification('${id}')" class="btn btn-warning btn-sm">✓ Remover cert.</button>` :
+                                    `<button onclick="addCertification('${id}')" class="btn btn-primary btn-sm">✓ Certificar</button>`
                                 }
                                 ${data.blocked ? 
                                     `<button onclick="unblockProfessional('${id}')" class="btn btn-success btn-sm">🔓 Desbloquear</button>` : 
@@ -696,10 +863,34 @@
         }
 
         // ============================================
+        // FUNCIONES AUXILIARES
+        // ============================================
+        function getRubroName(rubroKey) {
+            const rubros = {
+                'plomeria': 'Plomería',
+                'gas': 'Gas',
+                'electricidad': 'Electricidad',
+                'aire': 'Aire Acondicionado',
+                'albanileria': 'Albañilería',
+                'pintura': 'Pintura',
+                'cerrajeria': 'Cerrajería',
+                'jardineria': 'Jardinería',
+                'herreria': 'Herrería',
+                'carpinteria': 'Carpintería',
+                'limpieza': 'Limpieza',
+                'mudanzas': 'Mudanzas',
+                'otros': 'Otros servicios'
+            };
+            return rubros[rubroKey] || rubroKey;
+        }
+
+        // ============================================
         // APLICAR FILTROS
         // ============================================
         document.getElementById('applyFilters').addEventListener('click', loadProfessionals);
         document.getElementById('resetFilters').addEventListener('click', () => {
+            document.getElementById('filterProvincia').value = '';
+            document.getElementById('filterCiudad').value = '';
             document.getElementById('filterRubro').value = '';
             document.getElementById('filterStatus').value = '';
             loadProfessionals();
@@ -725,17 +916,19 @@
                     </div>
                     <div>
                         <h4>${data.name || 'Sin nombre'}</h4>
+                        <p><strong>📍 Ubicación:</strong> ${data.ciudad || ''}, ${data.provincia || ''}</p>
                         <p><strong>📞 Teléfono:</strong> ${data.phone || 'No especificado'}</p>
                         <p><strong>📧 Email:</strong> ${data.email || 'No especificado'}</p>
                         <p><strong>⭐ Rating:</strong> ${data.rating || '0'}</p>
                         <p><strong>✅ Trabajos completados:</strong> ${data.jobsCompleted || '0'}</p>
-                        <p><strong>📅 Última actividad:</strong> ${data.lastActive ? data.lastActive.toDate().toLocaleDateString('es-AR') : 'Nunca'}</p>
+                        <p><strong>📅 Registrado:</strong> ${data.createdAt ? data.createdAt.toDate().toLocaleDateString('es-AR') : 'No disponible'}</p>
                     </div>
                 </div>
                 
                 <div style="margin-bottom: 20px;">
-                    <p><strong>Rubros:</strong> ${data.rubros ? data.rubros.join(', ') : ''}</p>
+                    <p><strong>Rubros:</strong> ${data.rubros ? data.rubros.map(r => getRubroName(r)).join(', ') : ''}</p>
                     <p><strong>Zonas:</strong> ${data.zonas ? data.zonas.join(', ') : ''}</p>
+                    <p><strong>Descripción:</strong> ${data.bio || 'Sin descripción'}</p>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -743,6 +936,7 @@
                         <h5>Estado del perfil</h5>
                         <p>${data.profileCompleted ? '✅ COMPLETO' : '❌ INCOMPLETO'}</p>
                         <p>${data.blocked ? '🚫 BLOQUEADO' : '✅ ACTIVO'}</p>
+                        <p>${data.certified ? '✅ CERTIFICADO' : '❌ NO CERTIFICADO'}</p>
                     </div>
                     
                     <div style="background: ${featuredActive ? '#fff3cd' : '#f8f9fa'}; padding: 20px; border-radius: 12px;">
@@ -785,6 +979,29 @@
         };
 
         // ============================================
+        // CERTIFICAR/DESCERTIFICAR PROFESIONAL
+        // ============================================
+        window.addCertification = async function(id) {
+            if (confirm('¿Certificar a este profesional? Esto le dará mayor visibilidad.')) {
+                await db.collection('professionals').doc(id).update({ 
+                    certified: true,
+                    certifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                loadProfessionals();
+            }
+        };
+
+        window.removeCertification = async function(id) {
+            if (confirm('¿Remover certificación a este profesional?')) {
+                await db.collection('professionals').doc(id).update({ 
+                    certified: false,
+                    certifiedAt: null
+                });
+                loadProfessionals();
+            }
+        };
+
+        // ============================================
         // ACTIVAR/DESACTIVAR DESTACADO
         // ============================================
         window.activateFeatured = async function(id) {
@@ -796,7 +1013,8 @@
             
             await db.collection('professionals').doc(id).update({
                 isFeatured: true,
-                featuredUntil: featuredUntil
+                featuredUntil: featuredUntil,
+                featuredAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             
             loadProfessionals();
@@ -806,7 +1024,8 @@
             if (confirm('¿Desactivar servicio destacado?')) {
                 await db.collection('professionals').doc(id).update({
                     isFeatured: false,
-                    featuredUntil: null
+                    featuredUntil: null,
+                    featuredAt: null
                 });
                 loadProfessionals();
             }
@@ -847,6 +1066,14 @@
                     const active = data.active && data.startDate && data.endDate && 
                                    data.startDate.toDate() <= now && data.endDate.toDate() >= now;
                     
+                    // Determinar ámbito
+                    let ambito = 'Local';
+                    if (data.provincia === 'toda') {
+                        ambito = 'Nacional';
+                    } else if (data.ciudad === 'toda') {
+                        ambito = 'Provincial';
+                    }
+                    
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>
@@ -856,14 +1083,21 @@
                                 '<img src="https://via.placeholder.com/100x50/0a4fd8/ffffff?text=SIN+IMAGEN" style="border-radius: 6px;">'
                             }
                         </td>
-                        <td>${data.title || 'Sin título'}</td>
+                        <td>
+                            <strong>${data.title || 'Sin título'}</strong><br>
+                            <small style="color: #666;">${ambito} - ${data.provincia || 'Nacional'}${data.ciudad && data.ciudad !== 'toda' ? ', ' + data.ciudad : ''}</small>
+                        </td>
+                        <td>
+                            ${ambito}<br>
+                            <small>${data.provincia === 'toda' ? 'Todo el país' : data.provincia}${data.ciudad && data.ciudad !== 'toda' ? ', ' + data.ciudad : ''}</small>
+                        </td>
                         <td>
                             ${data.startDate ? data.startDate.toDate().toLocaleDateString('es-AR') : ''}<br>
                             al ${data.endDate ? data.endDate.toDate().toLocaleDateString('es-AR') : ''}
                         </td>
-                        <td>${data.rubros ? data.rubros.join(', ') : 'Todos'}</td>
                         <td>
                             ${active ? '<span class="badge badge-success">ACTIVO</span>' : '<span class="badge badge-danger">INACTIVO</span>'}
+                            <br><small>Prioridad: ${data.priority || 5}</small>
                         </td>
                         <td>${clicks}</td>
                         <td>
@@ -898,6 +1132,8 @@
                 document.getElementById('bannerFormElement').reset();
                 document.getElementById('bannerId').value = '';
                 document.getElementById('bannerImagePreview').innerHTML = '';
+                document.getElementById('bannerAmbito').value = 'nacional';
+                toggleBannerLocation();
             }
             
             form.style.display = 'block';
@@ -921,9 +1157,37 @@
             document.getElementById('bannerTitle').value = data.title || '';
             document.getElementById('bannerLink').value = data.link || '';
             document.getElementById('bannerImageUrl').value = data.imageUrl || '';
-            document.getElementById('bannerPosition').value = data.position || 'home';
-            document.getElementById('bannerCity').value = data.city || 'Rosario';
+            document.getElementById('bannerPriority').value = data.priority || 5;
             document.getElementById('bannerActive').checked = data.active || false;
+            
+            // Determinar ámbito
+            let ambito = 'local';
+            if (data.provincia === 'toda') {
+                ambito = 'nacional';
+            } else if (data.ciudad === 'toda') {
+                ambito = 'provincial';
+            }
+            
+            document.getElementById('bannerAmbito').value = ambito;
+            toggleBannerLocation();
+            
+            // Cargar provincia y ciudad
+            if (ambito !== 'nacional') {
+                document.getElementById('bannerProvincia').value = data.provincia || '';
+                if (data.provincia && data.provincia !== 'toda') {
+                    const ciudades = provinciasCiudades[data.provincia] || [];
+                    const ciudadSelect = document.getElementById('bannerCiudad');
+                    ciudadSelect.innerHTML = '<option value="">Seleccioná ciudad</option>';
+                    ciudades.forEach(ciudad => {
+                        const option = document.createElement('option');
+                        option.value = ciudad;
+                        option.textContent = ciudad;
+                        ciudadSelect.appendChild(option);
+                    });
+                    ciudadSelect.value = data.ciudad || '';
+                    ciudadSelect.disabled = ambito === 'provincial';
+                }
+            }
             
             // FECHAS
             if (data.startDate) {
@@ -968,7 +1232,7 @@
         });
 
         // ============================================
-        // GUARDAR BANNER (SIN SUBIR ARCHIVOS)
+        // GUARDAR BANNER
         // ============================================
         document.getElementById('bannerFormElement').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -977,11 +1241,31 @@
             const title = document.getElementById('bannerTitle').value.trim();
             const link = document.getElementById('bannerLink').value.trim();
             const imageUrl = document.getElementById('bannerImageUrl').value.trim();
+            const ambito = document.getElementById('bannerAmbito').value;
             const position = document.getElementById('bannerPosition').value;
-            const city = document.getElementById('bannerCity').value;
+            const priority = parseInt(document.getElementById('bannerPriority').value);
             const startDate = document.getElementById('bannerStartDate').value;
             const endDate = document.getElementById('bannerEndDate').value;
             const active = document.getElementById('bannerActive').checked;
+            
+            let provincia = 'toda';
+            let ciudad = 'toda';
+            
+            if (ambito !== 'nacional') {
+                provincia = document.getElementById('bannerProvincia').value;
+                if (!provincia) {
+                    alert('Seleccioná una provincia');
+                    return;
+                }
+                
+                if (ambito === 'local') {
+                    ciudad = document.getElementById('bannerCiudad').value;
+                    if (!ciudad) {
+                        alert('Seleccioná una ciudad');
+                        return;
+                    }
+                }
+            }
             
             // OBTENER RUBROS SELECCIONADOS
             const rubros = [];
@@ -1007,6 +1291,11 @@
                 return;
             }
             
+            if (priority < 1 || priority > 10) {
+                alert('La prioridad debe ser entre 1 y 10');
+                return;
+            }
+            
             try {
                 showLoader();
                 
@@ -1016,7 +1305,9 @@
                     imageUrl,
                     rubros: rubros.length > 0 ? rubros : ['todos'],
                     position,
-                    city,
+                    provincia,
+                    ciudad,
+                    priority,
                     active,
                     startDate: new Date(startDate),
                     endDate: new Date(endDate),
@@ -1069,8 +1360,9 @@
                 if (doc.exists) {
                     const data = doc.data();
                     document.getElementById('featuredPrice').value = data.featuredPrice || 9000;
+                    document.getElementById('certificationPrice').value = data.certificationPrice || 5000;
                     document.getElementById('bannersEnabled').checked = data.bannersEnabled !== false;
-                    document.getElementById('cityActive').checked = data.cityActive !== false;
+                    document.getElementById('newCitiesEnabled').checked = data.newCitiesEnabled !== false;
                 }
             } catch (error) {
                 console.error("Error cargando configuración:", error);
@@ -1078,17 +1370,20 @@
         }
 
         // ============================================
-        // ACTUALIZAR PRECIO DESTACADO
+        // ACTUALIZAR PRECIOS
         // ============================================
-        window.updateFeaturedPrice = async function() {
-            const price = document.getElementById('featuredPrice').value;
-            if (!price || price < 0) return;
+        window.updatePrices = async function() {
+            const featuredPrice = document.getElementById('featuredPrice').value;
+            const certificationPrice = document.getElementById('certificationPrice').value;
+            
+            if (!featuredPrice || featuredPrice < 0 || !certificationPrice || certificationPrice < 0) return;
             
             await db.collection('admin_config').doc('config').set({
-                featuredPrice: parseInt(price)
+                featuredPrice: parseInt(featuredPrice),
+                certificationPrice: parseInt(certificationPrice)
             }, { merge: true });
             
-            alert('✅ Precio actualizado');
+            alert('✅ Precios actualizados');
         };
 
         // ============================================
@@ -1097,7 +1392,7 @@
         window.updateSystemConfig = async function() {
             await db.collection('admin_config').doc('config').set({
                 bannersEnabled: document.getElementById('bannersEnabled').checked,
-                cityActive: document.getElementById('cityActive').checked,
+                newCitiesEnabled: document.getElementById('newCitiesEnabled').checked,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
             
@@ -1167,6 +1462,7 @@
                 let rankingScore = 0;
                 rankingScore += (data.rating || 0) * 5;
                 rankingScore += (data.jobsCompleted || 0) * 2;
+                if (data.certified) rankingScore += 10;
                 
                 if (data.lastActive) {
                     const lastActiveDate = data.lastActive.toDate();
@@ -1183,6 +1479,55 @@
             await batch.commit();
             hideLoader();
             alert(`✅ Rankings recalculados para ${snapshot.size} profesionales`);
+            loadProfessionals();
+        };
+
+        window.updateProvinceStats = async function() {
+            showLoader();
+            
+            try {
+                const snapshot = await db.collection('professionals').get();
+                const stats = {};
+                const now = new Date();
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.provincia) {
+                        if (!stats[data.provincia]) {
+                            stats[data.provincia] = {
+                                profesionales: 0,
+                                destacados: 0,
+                                certificados: 0
+                            };
+                        }
+                        stats[data.provincia].profesionales++;
+                        if (data.isFeatured && data.featuredUntil && data.featuredUntil.toDate() > now) {
+                            stats[data.provincia].destacados++;
+                        }
+                        if (data.certified) {
+                            stats[data.provincia].certificados++;
+                        }
+                    }
+                });
+                
+                // Guardar estadísticas por provincia
+                const batch = db.batch();
+                Object.keys(stats).forEach(provincia => {
+                    const statRef = db.collection('province_stats').doc(provincia);
+                    batch.set(statRef, {
+                        ...stats[provincia],
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                });
+                
+                await batch.commit();
+                hideLoader();
+                alert(`✅ Estadísticas de ${Object.keys(stats).length} provincias actualizadas`);
+                loadDashboard();
+            } catch (error) {
+                hideLoader();
+                alert('Error actualizando estadísticas: ' + error.message);
+            }
         };
 
         // ============================================
@@ -1193,7 +1538,14 @@
             const data = [];
             
             snapshot.forEach(doc => {
-                data.push({ id: doc.id, ...doc.data() });
+                const docData = doc.data();
+                data.push({ 
+                    id: doc.id, 
+                    ...docData,
+                    createdAt: docData.createdAt ? docData.createdAt.toDate().toISOString() : null,
+                    lastActive: docData.lastActive ? docData.lastActive.toDate().toISOString() : null,
+                    featuredUntil: docData.featuredUntil ? docData.featuredUntil.toDate().toISOString() : null
+                });
             });
             
             downloadJSON(data, 'profesionales_tecniya.json');
@@ -1215,20 +1567,22 @@
             downloadJSON(data, 'presupuestos_tecniya.json');
         };
 
-        window.exportClicks = async function() {
-            const snapshot = await db.collection('ads_clicks').get();
+        window.exportBanners = async function() {
+            const snapshot = await db.collection('banners').get();
             const data = [];
             
             snapshot.forEach(doc => {
-                const clickData = doc.data();
+                const bannerData = doc.data();
                 data.push({ 
                     id: doc.id, 
-                    ...clickData,
-                    timestamp: clickData.timestamp ? clickData.timestamp.toDate().toISOString() : null
+                    ...bannerData,
+                    createdAt: bannerData.createdAt ? bannerData.createdAt.toDate().toISOString() : null,
+                    startDate: bannerData.startDate ? bannerData.startDate.toDate().toISOString() : null,
+                    endDate: bannerData.endDate ? bannerData.endDate.toDate().toISOString() : null
                 });
             });
             
-            downloadJSON(data, 'clicks_banners_tecniya.json');
+            downloadJSON(data, 'banners_tecniya.json');
         };
 
         // ============================================
