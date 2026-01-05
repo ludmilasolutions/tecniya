@@ -111,7 +111,7 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.12);
             transition: var(--transition);
             background: white;
-            height: 200px; /* Altura fija para el banner */
+            height: 180px; /* Altura fija para el banner */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -134,8 +134,8 @@
         .banner-img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Cambiado de cover a contain para que no se estire */
-            background-color: #f8f9fa; /* Fondo por si la imagen es más pequeña */
+            object-fit: cover; /* Cambiado a cover para mejor ajuste */
+            background-color: #f8f9fa;
         }
         
         .banner-link {
@@ -1035,24 +1035,33 @@
                     if (!startDate || !endDate) return;
                     if (startDate > now || endDate < now) return;
                     
-                    // Verificar ubicación
+                    // Verificar ubicación - CORRECCIÓN AQUÍ
                     let pasaUbicacion = false;
                     
-                    if (banner.provincia === 'toda') {
-                        // Banner nacional - pasa para cualquier provincia
-                        pasaUbicacion = true;
-                    } else if (!provincia) {
-                        // Si no hay provincia seleccionada, mostrar banners nacionales
-                        if (banner.provincia === 'toda') {
+                    if (provincia && ciudad) {
+                        // Si hay provincia y ciudad seleccionadas
+                        if (banner.provincia === provincia && banner.ciudad === ciudad) {
+                            // Banner local específico
+                            pasaUbicacion = true;
+                        } else if (banner.provincia === provincia && banner.ciudad === 'toda') {
+                            // Banner provincial
+                            pasaUbicacion = true;
+                        } else if (banner.provincia === 'toda' && banner.ciudad === 'toda') {
+                            // Banner nacional
                             pasaUbicacion = true;
                         }
-                    } else if (banner.provincia === provincia) {
-                        // Misma provincia
-                        if (banner.ciudad === 'toda' || !ciudad) {
-                            // Toda la provincia o no hay ciudad seleccionada
+                    } else if (provincia && !ciudad) {
+                        // Si solo hay provincia seleccionada
+                        if (banner.provincia === provincia && banner.ciudad === 'toda') {
+                            // Banner provincial
                             pasaUbicacion = true;
-                        } else if (banner.ciudad === ciudad) {
-                            // Misma ciudad
+                        } else if (banner.provincia === 'toda' && banner.ciudad === 'toda') {
+                            // Banner nacional
+                            pasaUbicacion = true;
+                        }
+                    } else {
+                        // Si no hay nada seleccionado, solo banners nacionales
+                        if (banner.provincia === 'toda' && banner.ciudad === 'toda') {
                             pasaUbicacion = true;
                         }
                     }
@@ -1095,7 +1104,7 @@
                         <img src="${selectedBanner.imageUrl}" 
                              alt="${selectedBanner.title || 'Banner'}" 
                              class="banner-img"
-                             onerror="this.onerror=null; this.src='https://via.placeholder.com/900x200/0a4fd8/ffffff?text=BANNER+TECNIYA'">
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/900x180/0a4fd8/ffffff?text=BANNER+TECNIYA'">
                     </a>
                 `;
                 
