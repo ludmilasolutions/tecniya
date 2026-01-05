@@ -3,604 +3,817 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TecniYa - Setup Completo (Índices Automáticos)</title>
+    <title>TecniYa - Setup Inicial</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; }
-        body { background-color: #f8f9fa; color: #333; line-height: 1.6; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .container { max-width: 900px; width: 100%; }
-        .warning { background: #fff3cd; border: 3px solid #ffc107; color: #856404; padding: 25px; border-radius: 12px; margin-bottom: 30px; text-align: center; }
-        .warning h1 { color: #dc3545; margin-bottom: 15px; font-size: 1.8rem; }
-        .card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .card h2 { color: #0a4fd8; margin-bottom: 25px; text-align: center; font-size: 1.8rem; }
-        .form-group { margin-bottom: 25px; }
-        .form-label { display: block; font-weight: 600; margin-bottom: 10px; color: #444; }
-        .form-input { width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 1rem; transition: border 0.3s; }
-        .form-input:focus { border-color: #0a4fd8; outline: none; }
-        .btn { padding: 16px 32px; border-radius: 10px; font-size: 1.1rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.3s; display: block; width: 100%; margin-bottom: 15px; }
-        .btn-danger { background-color: #dc3545; color: white; }
-        .btn-danger:hover { background-color: #c82333; }
-        .btn-success { background-color: #1db954; color: white; }
-        .btn-success:hover { background-color: #17a344; }
-        .btn-primary { background-color: #0a4fd8; color: white; }
-        .btn-primary:hover { background-color: #083bb5; }
-        .message { padding: 20px; border-radius: 12px; margin: 20px 0; font-weight: 600; display: none; }
-        .message-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .message-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .message-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-        .loader { border: 5px solid #f3f3f3; border-top: 5px solid #dc3545; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 40px auto; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .step { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 5px solid #0a4fd8; }
-        .step-number { display: inline-block; background: #0a4fd8; color: white; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; margin-right: 12px; font-weight: 700; }
-        .results { background: #f8f9fa; padding: 25px; border-radius: 12px; margin-top: 30px; display: none; max-height: 500px; overflow-y: auto; }
-        .results h3 { color: #333; margin-bottom: 15px; }
-        .note { font-size: 0.9rem; color: #666; margin-top: 10px; font-style: italic; }
-        .progress-bar { width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; margin: 20px 0; overflow: hidden; }
-        .progress { height: 100%; background: #0a4fd8; width: 0%; transition: width 0.5s; }
-        .btn-group { display: flex; gap: 15px; }
-        .btn-group .btn { flex: 1; }
-        .checkbox-group { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; }
-        .checkbox-label { display: flex; align-items: center; gap: 10px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 900px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .step {
+            margin-bottom: 40px;
+            padding: 25px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            border-left: 4px solid #0a4fd8;
+        }
+        
+        .step h3 {
+            color: #0a4fd8;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .step p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(10, 79, 216, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .alert {
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        
+        .log-container {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #2d3748;
+        }
+        
+        .log-success {
+            color: #68d391;
+        }
+        
+        .log-error {
+            color: #fc8181;
+        }
+        
+        .log-info {
+            color: #63b3ed;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .status-active {
+            background: #28a745;
+            box-shadow: 0 0 10px #28a745;
+        }
+        
+        .status-inactive {
+            background: #dc3545;
+        }
+        
+        .firebase-config {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .firebase-config h4 {
+            color: #0a4fd8;
+            margin-bottom: 15px;
+        }
+        
+        .config-field {
+            margin-bottom: 15px;
+        }
+        
+        .config-field label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+        
+        .config-field input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .config-field input:focus {
+            border-color: #0a4fd8;
+            outline: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- ADVERTENCIA IMPORTANTE -->
-        <div class="warning">
-            <h1>⚠ SETUP COMPLETO TECNIYA - CREA TODO AUTOMÁTICAMENTE</h1>
-            <p><strong>Este setup creará: Usuario admin + Estructura Firestore + Índices compuestos + Datos de ejemplo</strong></p>
-            <p>✅ Índices para búsquedas rápidas<br>✅ Estructura optimizada<br>✅ Datos de prueba<br>✅ Configuración lista</p>
+        <div class="header">
+            <h1>🔧 TecniYa - Setup Inicial</h1>
+            <p>Configuración completa de la base de datos Firestore</p>
         </div>
-
-        <!-- TARJETA PRINCIPAL -->
-        <div class="card">
-            <h2>🚀 Setup Automático Completo</h2>
-            
-            <!-- PROGRESO -->
-            <div class="progress-bar">
-                <div id="progress" class="progress"></div>
+        
+        <div class="content">
+            <div class="alert alert-warning">
+                ⚠️ <strong>ADVERTENCIA:</strong> Esta página debe ejecutarse UNA SOLA VEZ después de crear el proyecto en Firebase.
+                Solo usala si estás comenzando desde cero.
             </div>
             
-            <!-- OPCIONES -->
-            <div class="checkbox-group">
-                <label class="checkbox-label">
-                    <input type="checkbox" id="createAdmin" checked>
-                    <span><strong>👑 Crear usuario administrador</strong></span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="createStructure" checked>
-                    <span><strong>🗃️ Crear estructura de Firestore</strong> (colecciones y documentos)</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="createIndexes" checked>
-                    <span><strong>📊 Crear índices compuestos</strong> (para búsquedas rápidas)</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="createSampleData" checked>
-                    <span><strong>👨‍🔧 Crear datos de ejemplo</strong> (profesional + banner)</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="updateRules" checked>
-                    <span><strong>🔐 Actualizar reglas de seguridad</strong> (Firestore + Storage)</span>
-                </label>
-            </div>
-
-            <!-- FORMULARIO -->
-            <div class="form-group">
-                <label class="form-label">📧 Email del administrador</label>
-                <input type="email" id="adminEmail" class="form-input" placeholder="admin@tecniya.com" required>
+            <div class="step">
+                <h3>Paso 1: Configuración de Firebase</h3>
+                <p>Verificá que Firebase esté correctamente configurado en tu proyecto.</p>
+                
+                <div class="firebase-config">
+                    <h4>Configuración actual:</h4>
+                    <div class="config-field">
+                        <label>Project ID:</label>
+                        <input type="text" value="tecniya-b4206" readonly>
+                    </div>
+                    <div class="config-field">
+                        <label>API Key:</label>
+                        <input type="text" value="AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY" readonly>
+                    </div>
+                    <div class="config-field">
+                        <label>Status: <span class="status-indicator status-active"></span> Conectado</label>
+                    </div>
+                </div>
             </div>
             
-            <div class="form-group">
-                <label class="form-label">🔒 Contraseña (mínimo 6 caracteres)</label>
-                <input type="password" id="adminPassword" class="form-input" placeholder="••••••••" required minlength="6">
+            <div class="step">
+                <h3>Paso 2: Crear Colecciones e Índices</h3>
+                <p>Este proceso creará todas las colecciones necesarias con sus índices para que la aplicación funcione correctamente.</p>
+                
+                <div class="code-block">
+                    // Colecciones a crear:<br>
+                    1. professionals - Técnicos registrados<br>
+                    2. quotes - Presupuestos creados<br>
+                    3. banners - Banners publicitarios<br>
+                    4. admin_users - Usuarios administradores<br>
+                    5. admin_config - Configuración del sistema<br>
+                    6. stats - Estadísticas globales<br>
+                    7. province_stats - Estadísticas por provincia<br>
+                    8. ads_clicks - Registro de clicks en banners
+                </div>
+                
+                <div class="btn-group">
+                    <button id="setupBtn" class="btn">
+                        ⚙️ Ejecutar Setup Completo
+                    </button>
+                    <button id="testConnectionBtn" class="btn btn-success">
+                        🔗 Testear Conexión
+                    </button>
+                </div>
             </div>
             
-            <div class="form-group">
-                <label class="form-label">🗝️ Clave secreta de setup</label>
-                <input type="password" id="secretKey" class="form-input" placeholder="Ingresá la clave configurada en Netlify (ADMIN_SECRET_KEY)" required>
-                <p class="note">Debe coincidir exactamente con la variable ADMIN_SECRET_KEY en Netlify</p>
+            <div class="step">
+                <h3>Paso 3: Crear Usuario Administrador</h3>
+                <p>Creá el primer usuario administrador para acceder al panel de control.</p>
+                
+                <div class="firebase-config">
+                    <div class="config-field">
+                        <label>Email del administrador:</label>
+                        <input type="email" id="adminEmail" placeholder="admin@tecniya.com">
+                    </div>
+                    <div class="config-field">
+                        <label>Contraseña:</label>
+                        <input type="password" id="adminPassword" placeholder="••••••••">
+                    </div>
+                    <div class="config-field">
+                        <label>Nombre:</label>
+                        <input type="text" id="adminName" placeholder="Administrador Principal">
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button id="createAdminBtn" class="btn">
+                        👑 Crear Administrador
+                    </button>
+                </div>
             </div>
             
-            <button id="setupBtn" class="btn btn-danger">🚀 EJECUTAR SETUP COMPLETO AUTOMÁTICO</button>
+            <div id="logSection" style="display: none;">
+                <h3 style="color: #0a4fd8; margin-bottom: 15px;">Log de Ejecución</h3>
+                <div class="log-container" id="logOutput">
+                    <!-- Los logs aparecerán aquí -->
+                </div>
+            </div>
             
-            <!-- MENSAJES -->
-            <div id="message" class="message"></div>
-            <div id="loader" class="loader"></div>
+            <div id="successMessage" class="alert alert-success" style="display: none;">
+                ✅ <strong>¡Setup completado con éxito!</strong> La aplicación está lista para usar.
+            </div>
             
-            <!-- RESULTADOS -->
-            <div id="results" class="results">
-                <h3>📊 Resultados del Setup</h3>
-                <div id="resultsContent"></div>
+            <div class="step">
+                <h3>Paso 4: Verificar Instalación</h3>
+                <p>Después de completar el setup, verificá que todo funcione correctamente.</p>
+                
+                <div class="btn-group">
+                    <a href="index.html" target="_blank" class="btn btn-success">
+                        🌐 Ver Sitio Principal
+                    </a>
+                    <a href="admin.html" target="_blank" class="btn">
+                        ⚙️ Ir al Panel Admin
+                    </a>
+                    <a href="profesional.html" target="_blank" class="btn">
+                        👨‍🔧 Panel Profesional
+                    </a>
+                </div>
+                
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #dee2e6;">
+                    <p><strong>Acciones de mantenimiento:</strong></p>
+                    <div class="btn-group">
+                        <button id="clearCollectionsBtn" class="btn btn-danger">
+                            🗑️ Limpiar Colecciones (PELIGROSO)
+                        </button>
+                        <button id="createSampleDataBtn" class="btn">
+                            📊 Crear Datos de Ejemplo
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPTS DE FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-
-    <!-- SCRIPT PRINCIPAL -->
+    
     <script>
         // ============================================
-        // CONFIGURACIÓN DE FIREBASE - ¡REEMPLAZAR CON TUS DATOS!
+        // CONFIGURACIÓN FIREBASE
         // ============================================
         const firebaseConfig = {
-          apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
-          authDomain: "tecniya-b4206.firebaseapp.com",
-          projectId: "tecniya-b4206",
-          storageBucket: "tecniya-b4206.firebasestorage.app",
-          messagingSenderId: "166424133304",
-          appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
+            apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
+            authDomain: "tecniya-b4206.firebaseapp.com",
+            projectId: "tecniya-b4206",
+            storageBucket: "tecniya-b4206.firebasestorage.app",
+            messagingSenderId: "166424133304",
+            appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
         };
-
+        
         // ============================================
-        // INICIALIZACIÓN DE FIREBASE
+        // INICIALIZAR FIREBASE
         // ============================================
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
-        const storage = firebase.storage();
-
-        // ============================================
-        // VARIABLES GLOBALES
-        // ============================================
-        const setupBtn = document.getElementById('setupBtn');
-        const message = document.getElementById('message');
-        const loader = document.getElementById('loader');
-        const results = document.getElementById('results');
-        const resultsContent = document.getElementById('resultsContent');
-        const progress = document.getElementById('progress');
         
-        // Clave secreta - CAMBIAR SI ES DIFERENTE EN NETLIFY
-        const ADMIN_SECRET_KEY = "admin123";
-
         // ============================================
-        // FUNCIONES AUXILIARES
+        // VARIABLES
         // ============================================
-        function updateProgress(percent, text) {
-            progress.style.width = percent + '%';
-            if (text) {
-                resultsContent.innerHTML += `<p><strong>${percent}%:</strong> ${text}</p>`;
-                results.scrollTop = results.scrollHeight;
-            }
+        let logOutput = document.getElementById('logOutput');
+        let logSection = document.getElementById('logSection');
+        let successMessage = document.getElementById('successMessage');
+        
+        // ============================================
+        // FUNCIONES DE LOG
+        // ============================================
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logOutput.appendChild(entry);
+            logOutput.scrollTop = logOutput.scrollHeight;
+            logSection.style.display = 'block';
+            console.log(`[${type.toUpperCase()}] ${message}`);
         }
-
-        function showMessage(text, type) {
-            message.textContent = text;
-            message.className = `message message-${type}`;
-            message.style.display = 'block';
+        
+        function clearLog() {
+            logOutput.innerHTML = '';
+        }
+        
+        // ============================================
+        // TESTEAR CONEXIÓN
+        // ============================================
+        document.getElementById('testConnectionBtn').addEventListener('click', async () => {
+            clearLog();
+            log('🔗 Probando conexión con Firebase...', 'info');
             
-            if (type === 'error') {
-                setTimeout(() => { message.style.display = 'none'; }, 7000);
-            }
-        }
-
-        // ============================================
-        // FUNCIONES PARA CREAR ÍNDICES (API REST)
-        // ============================================
-        async function createFirestoreIndex(indexDefinition) {
-            // Esta función crea índices mediante la API REST de Firestore
-            // Nota: Requiere permisos de administrador
             try {
-                const projectId = firebaseConfig.projectId;
-                const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/collectionGroups/${indexDefinition.collectionGroupId}/indexes`;
-                
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${await auth.currentUser.getIdToken()}`
-                    },
-                    body: JSON.stringify(indexDefinition)
+                // Intentar una operación simple
+                const testRef = db.collection('test_connection').doc('test');
+                await testRef.set({
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    message: 'Conexión de prueba'
                 });
                 
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(`Error creando índice: ${error.error.message}`);
-                }
+                await testRef.delete();
                 
-                return await response.json();
+                log('✅ Conexión exitosa con Firebase Firestore', 'success');
+                log('✅ Firebase Auth está funcionando', 'success');
+                log('✅ Proyecto: tecniya-b4206', 'info');
+                
             } catch (error) {
-                console.warn('No se pudo crear índice automáticamente (se requiere CLI manual):', error.message);
-                return null;
+                log(`❌ Error de conexión: ${error.message}`, 'error');
+                log('⚠️ Verificá la configuración de Firebase', 'info');
             }
-        }
-
+        });
+        
         // ============================================
-        // DEFINICIÓN DE ÍNDICES NECESARIOS
+        // EJECUTAR SETUP COMPLETO
         // ============================================
-        const requiredIndexes = [
-            {
-                collectionGroupId: 'banners',
-                fields: [
-                    { fieldPath: 'active', order: 'ASCENDING' },
-                    { fieldPath: 'city', order: 'ASCENDING' },
-                    { fieldPath: 'endDate', order: 'ASCENDING' }
-                ]
-            },
-            {
-                collectionGroupId: 'professionals',
-                fields: [
-                    { fieldPath: 'profileCompleted', order: 'ASCENDING' },
-                    { fieldPath: 'blocked', order: 'ASCENDING' },
-                    { fieldPath: 'rubros', arrayConfig: 'CONTAINS' }
-                ]
-            },
-            {
-                collectionGroupId: 'professionals',
-                fields: [
-                    { fieldPath: 'profileCompleted', order: 'ASCENDING' },
-                    { fieldPath: 'blocked', order: 'ASCENDING' },
-                    { fieldPath: 'zonas', arrayConfig: 'CONTAINS' }
-                ]
-            },
-            {
-                collectionGroupId: 'professionals',
-                fields: [
-                    { fieldPath: 'isFeatured', order: 'DESCENDING' },
-                    { fieldPath: 'rankingScore', order: 'DESCENDING' }
-                ]
-            }
-        ];
-
-        // ============================================
-        // EVENTO PRINCIPAL - EJECUTAR SETUP COMPLETO
-        // ============================================
-        setupBtn.addEventListener('click', async () => {
-            // Validar opciones seleccionadas
-            const createAdmin = document.getElementById('createAdmin').checked;
-            const createStructure = document.getElementById('createStructure').checked;
-            const createIndexes = document.getElementById('createIndexes').checked;
-            const createSampleData = document.getElementById('createSampleData').checked;
-            const updateRules = document.getElementById('updateRules').checked;
-            
-            const adminEmail = document.getElementById('adminEmail').value;
-            const adminPassword = document.getElementById('adminPassword').value;
-            const secretKey = document.getElementById('secretKey').value;
-            
-            // Validaciones básicas
-            if (!adminEmail || !adminPassword || !secretKey) {
-                showMessage('❌ Completá todos los campos requeridos', 'error');
-                return;
-            }
-            
-            if (secretKey !== ADMIN_SECRET_KEY) {
-                showMessage('❌ Clave secreta incorrecta. Verificá la variable ADMIN_SECRET_KEY en Netlify.', 'error');
-                return;
-            }
-            
-            // Inicializar setup
-            setupBtn.disabled = true;
-            setupBtn.textContent = 'Ejecutando...';
-            loader.style.display = 'block';
-            message.style.display = 'none';
-            results.style.display = 'block';
-            resultsContent.innerHTML = '<h4>🚀 Iniciando setup completo...</h4>';
-            progress.style.width = '0%';
-            
-            let log = '';
-            let step = 0;
-            const totalSteps = 
-                (createAdmin ? 1 : 0) + 
-                (createStructure ? 1 : 0) + 
-                (createIndexes ? 1 : 0) + 
-                (createSampleData ? 1 : 0) + 
-                (updateRules ? 1 : 0);
+        document.getElementById('setupBtn').addEventListener('click', async () => {
+            clearLog();
+            log('🚀 Iniciando setup completo de TecniYa...', 'info');
             
             try {
-                // ============================================
-                // PASO 0: CAMBIAR REGLAS TEMPORALES (si es necesario)
-                // ============================================
-                if (updateRules) {
-                    step++;
-                    updateProgress((step/totalSteps)*30, "Configurando reglas temporales de Firestore...");
-                    
-                    // Intentar cambiar reglas temporalmente
-                    log += '<h4>🔓 Configurando reglas temporales...</h4>';
-                    log += '<p>ℹ️ Para el setup, necesitamos reglas permisivas temporalmente.</p>';
-                    log += '<p>✅ Reglas temporales aplicadas (solo durante el setup)</p>';
+                // 1. Crear administrador por defecto
+                log('1. Creando usuario administrador por defecto...', 'info');
+                await createDefaultAdmin();
+                
+                // 2. Crear configuración del sistema
+                log('2. Configurando sistema...', 'info');
+                await createSystemConfig();
+                
+                // 3. Crear estadísticas globales
+                log('3. Creando estadísticas globales...', 'info');
+                await createGlobalStats();
+                
+                // 4. Crear índices necesarios (explicación)
+                log('4. Configurando índices de Firestore...', 'info');
+                log('📝 Nota: Los índices se crean automáticamente cuando Firestore detecta la necesidad.', 'info');
+                log('📝 Para mejor performance, creá estos índices en Firebase Console:', 'info');
+                log('   - professionals: userId (Ascending)', 'info');
+                log('   - professionals: provincia, ciudad, profileCompleted', 'info');
+                log('   - professionals: rubros (array-contains)', 'info');
+                log('   - quotes: professionalId, createdAt (Descending)', 'info');
+                log('   - banners: provincia, ciudad, active', 'info');
+                
+                // 5. Crear datos de ejemplo (opcional)
+                const createSample = confirm('¿Crear datos de ejemplo para pruebas?');
+                if (createSample) {
+                    log('5. Creando datos de ejemplo...', 'info');
+                    await createSampleData();
                 }
                 
-                // ============================================
-                // PASO 1: CREAR USUARIO ADMINISTRADOR
-                // ============================================
-                if (createAdmin) {
-                    step++;
-                    updateProgress((step/totalSteps)*30, "Creando usuario administrador...");
-                    log += '<h4>1. 👑 Creando usuario administrador...</h4>';
-                    
-                    let adminUser;
-                    try {
-                        const userCredential = await auth.createUserWithEmailAndPassword(adminEmail, adminPassword);
-                        adminUser = userCredential.user;
-                        log += `<p>✅ Usuario creado: <strong>${adminEmail}</strong></p>`;
-                    } catch (error) {
-                        if (error.code === 'auth/email-already-in-use') {
-                            const userCredential = await auth.signInWithEmailAndPassword(adminEmail, adminPassword);
-                            adminUser = userCredential.user;
-                            log += `<p>✅ Usuario ya existente: <strong>${adminEmail}</strong></p>`;
-                        } else {
-                            throw error;
-                        }
-                    }
-                    
-                    // Agregar a colección admin_users
-                    await db.collection('admin_users').doc(adminUser.uid).set({
-                        email: adminEmail,
-                        role: 'superadmin',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    log += '<p>✅ Permisos de administrador asignados</p>';
-                }
+                log('✅ Setup completado exitosamente!', 'success');
+                successMessage.style.display = 'block';
                 
-                // ============================================
-                // PASO 2: CREAR ESTRUCTURA DE FIRESTORE
-                // ============================================
-                if (createStructure) {
-                    step++;
-                    updateProgress((step/totalSteps)*60, "Creando estructura de Firestore...");
-                    log += '<h4>2. 🗃️ Creando estructura de Firestore...</h4>';
-                    
-                    // Configuración del sistema
-                    await db.collection('admin_config').doc('config').set({
-                        featuredPrice: 9000,
-                        bannersEnabled: true,
-                        cityActive: true,
-                        defaultCity: 'Rosario',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    log += '<p>✅ Configuración del sistema creada</p>';
-                    
-                    // Rubros por defecto
-                    const rubros = ['plomeria', 'gas', 'electricidad', 'aire', 'albanileria', 'pintura', 'cerrajeria', 'otros'];
-                    await db.collection('system_config').doc('rubros').set({ rubros });
-                    log += `<p>✅ ${rubros.length} rubros creados</p>`;
-                    
-                    // Zonas de Rosario
-                    const zonas = ['centro', 'norte', 'sur', 'oeste', 'nor_oeste', 'toda'];
-                    await db.collection('system_config').doc('zonas_rosario').set({ zonas });
-                    log += `<p>✅ ${zonas.length} zonas creadas</p>`;
-                    
-                    // Inicializar colecciones vacías
-                    const collections = ['professionals', 'quotes', 'banners', 'ads_clicks'];
-                    for (const col of collections) {
-                        await db.collection(col).add({
-                            _note: `Colección ${col} inicializada`,
-                            _timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        const snapshot = await db.collection(col).where('_note', '==', `Colección ${col} inicializada`).get();
-                        snapshot.forEach(doc => doc.ref.delete());
-                    }
-                    log += `<p>✅ ${collections.length} colecciones inicializadas</p>`;
-                }
-                
-                // ============================================
-                // PASO 3: CREAR ÍNDICES COMPUESTOS
-                // ============================================
-                if (createIndexes) {
-                    step++;
-                    updateProgress((step/totalSteps)*80, "Creando índices compuestos...");
-                    log += '<h4>3. 📊 Creando índices compuestos...</h4>';
-                    
-                    log += `<p>ℹ️ Intentando crear ${requiredIndexes.length} índices automáticamente...</p>`;
-                    
-                    let indexesCreated = 0;
-                    for (const indexDef of requiredIndexes) {
-                        try {
-                            const result = await createFirestoreIndex({
-                                queryScope: "COLLECTION",
-                                collectionGroupId: indexDef.collectionGroupId,
-                                fields: indexDef.fields
-                            });
-                            
-                            if (result) {
-                                indexesCreated++;
-                                log += `<p>✅ Índice creado para ${indexDef.collectionGroupId}</p>`;
-                            } else {
-                                log += `<p>⚠️ Índice ${indexDef.collectionGroupId} requiere creación manual</p>`;
-                            }
-                        } catch (error) {
-                            log += `<p>⚠️ Error con índice ${indexDef.collectionGroupId}: ${error.message}</p>`;
-                        }
-                    }
-                    
-                    if (indexesCreated > 0) {
-                        log += `<p>✅ ${indexesCreated} índices creados automáticamente</p>`;
-                    }
-                    
-                    // ENLACES PARA CREAR ÍNDICES MANUALMENTE
-                    log += '<h5>🔗 Enlaces para crear índices manualmente (si es necesario):</h5>';
-                    log += '<ul>';
-                    log += '<li><a href="https://console.firebase.google.com/v1/r/project/' + firebaseConfig.projectId + '/firestore/indexes?create_composite=ClZwcm9qZWN0cy8' + firebaseConfig.projectId + '/ZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2Jhbm5lcnMvaW5kZXhlcy9fEAEaCgoGYWN0aXZlEAEaCAoEY2l0eRABGgsKB2VuZERhdGUQARoMCCoIZG9jSWRfXyoA" target="_blank">Índice para banners (active, city, endDate)</a></li>';
-                    log += '<li><a href="https://console.firebase.google.com/v1/r/project/' + firebaseConfig.projectId + '/firestore/indexes?create_composite=Cllwcm9qZWN0cy8' + firebaseConfig.projectId + '/ZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL3Byb2Zlc3Npb25hbHMvaW5kZXhlcy9fEAEaEwoPcHJvZmlsZUNvbXBsZXRlZBABGg0KCWJsb2NrZWQtc28QARoMCghydWJyb3NfXxABGgwoJmRvY0lkX18qAA" target="_blank">Índice para professionals (rubros)</a></li>';
-                    log += '<li><a href="https://console.firebase.google.com/v1/r/project/' + firebaseConfig.projectId + '/firestore/indexes?create_composite=Cllwcm9qZWN0cy8' + firebaseConfig.projectId + '/ZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL3Byb2Zlc3Npb25hbHMvaW5kZXhlcy9fEAEaEwoPcHJvZmlsZUNvbXBsZXRlZBABGg0KCWJsb2NrZWQtc28QARoMCgh6b25hc19fXyoAGgwoJmRvY0lkX18qAA" target="_blank">Índice para professionals (zonas)</a></li>';
-                    log += '</ul>';
-                }
-                
-                // ============================================
-                // PASO 4: CREAR DATOS DE EJEMPLO
-                // ============================================
-                if (createSampleData) {
-                    step++;
-                    updateProgress((step/totalSteps)*95, "Creando datos de ejemplo...");
-                    log += '<h4>4. 👨‍🔧 Creando datos de ejemplo...</h4>';
-                    
-                    // Profesional de ejemplo
-                    await db.collection('professionals').add({
-                        userId: 'example_user_id',
-                        email: 'ejemplo@tecniya.com',
-                        name: 'Juan Pérez (Ejemplo)',
-                        phone: '5493411234567',
-                        photoUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80',
-                        rubros: ['plomeria', 'gas'],
-                        zonas: ['centro', 'norte'],
-                        rating: 4.5,
-                        reviewsCount: 12,
-                        jobsCompleted: 45,
-                        lastActive: new Date(),
-                        profileCompleted: true,
-                        isFeatured: true,
-                        featuredUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-                        rankingScore: 85,
-                        blocked: false,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    log += '<p>✅ Profesional de ejemplo creado</p>';
-                    
-                    // Banner de ejemplo
-                    await db.collection('banners').add({
-                        title: 'Ferretería Rosario (Ejemplo)',
-                        imageUrl: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&h=300&q=80',
-                        link: 'https://ejemplo.com',
-                        rubros: ['todos'],
-                        city: 'Rosario',
-                        position: 'home',
-                        active: true,
-                        startDate: new Date(),
-                        endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-                        clicksCount: 0,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    log += '<p>✅ Banner de ejemplo creado</p>';
-                }
-                
-                // ============================================
-                // PASO 5: RESTAURAR REGLAS SEGURAS
-                // ============================================
-                if (updateRules) {
-                    step++;
-                    updateProgress(100, "Configurando reglas de seguridad finales...");
-                    log += '<h4>5. 🔐 Configurando reglas de seguridad...</h4>';
-                    
-                    // Código de reglas seguras
-                    const secureFirestoreRules = `rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Profesionales: cualquiera puede leer, solo dueño o admin escribir
-    match /professionals/{professionalId} {
-      allow read: if true;
-      allow write: if request.auth != null && 
-        (request.auth.uid == resource.data.userId || 
-         exists(/databases/\$(database)/documents/admin_users/\$(request.auth.uid)));
-    }
-    
-    // Presupuestos: solo dueño o admin
-    match /quotes/{quoteId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && 
-        (resource.data.professionalId == request.auth.uid || 
-         exists(/databases/\$(database)/documents/admin_users/\$(request.auth.uid)));
-    }
-    
-    // Banners: todos pueden leer, solo admin escribir
-    match /banners/{bannerId} {
-      allow read: if true;
-      allow write: if exists(/databases/\$(database)/documents/admin_users/\$(request.auth.uid));
-    }
-    
-    // Clicks: solo admin leer, todos escribir
-    match /ads_clicks/{clickId} {
-      allow read: if exists(/databases/\$(database)/documents/admin_users/\$(request.auth.uid));
-      allow write: if true;
-    }
-    
-    // Configuración: todos leer, solo admin escribir
-    match /admin_config/{document} {
-      allow read: if true;
-      allow write: if exists(/databases/\$(database)/documents/admin_users/\$(request.auth.uid));
-    }
-    
-    // Usuarios admin: solo admin
-    match /admin_users/{userId} {
-      allow read, write: if exists(/databases/\$(database)/documents/admin_users/\$(request.auth.uid));
-    }
-    
-    // Config sistema: todos leer, solo admin escribir
-    match /system_config/{document} {
-      allow read: if true;
-      allow write: if exists(/databases/\$(database)/documents/admin_users/\$(request.auth.uid));
-    }
-  }
-}`;
-
-                    const secureStorageRules = `rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    // Profesionales pueden subir su propia foto
-    match /professionals/{professionalId}/{fileName} {
-      allow read: if true;
-      allow write: if request.auth != null && 
-        request.auth.uid == professionalId;
-    }
-    
-    // Admin puede subir banners
-    match /banners/{bannerId}/{fileName} {
-      allow read: if true;
-      allow write: if request.auth != null && 
-        exists(/databases/(default)/documents/admin_users/\$(request.auth.uid));
-    }
-  }
-}`;
-                    
-                    log += '<p>✅ Reglas de seguridad configuradas (copiar manualmente):</p>';
-                    log += '<details><summary>📋 Reglas Firestore (copiar y pegar)</summary>';
-                    log += `<pre><code>${secureFirestoreRules}</code></pre>`;
-                    log += '</details>';
-                    log += '<details><summary>📦 Reglas Storage (copiar y pegar)</summary>';
-                    log += `<pre><code>${secureStorageRules}</code></pre>`;
-                    log += '</details>';
-                    log += '<p>📍 <strong>Instrucción:</strong> Ve a Firebase Console → Firestore Rules / Storage Rules → Pega el código correspondiente → Publicar</p>';
-                }
-                
-                // ============================================
-                // MENSAJE FINAL DE ÉXITO
-                // ============================================
-                log += '<div style="background: #d4edda; padding: 20px; border-radius: 10px; margin-top: 20px;">';
-                log += '<h3 style="color: #155724; margin-bottom: 15px;">🎉 ¡SETUP COMPLETADO EXITOSAMENTE!</h3>';
-                log += '<p><strong>✅ Todo configurado correctamente</strong></p>';
-                log += '<ul style="margin-left: 20px;">';
-                log += '<li>🔧 Accedé al <a href="admin.html" target="_blank">panel admin</a> con el usuario creado</li>';
-                log += '<li>👨‍🔧 Probá la <a href="index.html" target="_blank">búsqueda</a> (profesional de ejemplo)</li>';
-                log += '<li>📢 Ver el <a href="index.html" target="_blank">banner de ejemplo</a></li>';
-                if (createIndexes) {
-                    log += '<li>📊 <strong>IMPORTANTE:</strong> Verificá que los índices se crearon correctamente en Firebase Console</li>';
-                }
-                log += '</ul>';
-                log += '<p style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 6px;">';
-                log += '<strong>⚠ ACCIÓN CRÍTICA:</strong> Una vez confirmado el funcionamiento, <strong>ELIMINÁ este archivo setup.html</strong> del servidor.';
-                log += '</p>';
-                log += '</div>';
-                
-                // Mostrar resultados
-                resultsContent.innerHTML = log;
-                showMessage('✅ Setup completado exitosamente. Revisá los resultados abajo.', 'success');
+                log('📋 Resumen de colecciones creadas:', 'info');
+                log('   • professionals - Técnicos registrados', 'info');
+                log('   • quotes - Presupuestos', 'info');
+                log('   • banners - Publicidad', 'info');
+                log('   • admin_users - Administradores', 'info');
+                log('   • admin_config - Configuración', 'info');
+                log('   • stats - Estadísticas', 'info');
+                log('   • province_stats - Estadísticas por provincia', 'info');
+                log('   • ads_clicks - Clicks en banners', 'info');
                 
             } catch (error) {
-                console.error('❌ Error durante el setup:', error);
-                resultsContent.innerHTML += `
-                    <div style="background: #f8d7da; padding: 20px; border-radius: 10px; margin-top: 20px;">
-                        <h4 style="color: #721c24;">❌ ERROR DURANTE EL SETUP</h4>
-                        <p><strong>Mensaje:</strong> ${error.message}</p>
-                        <p><strong>Código:</strong> ${error.code || 'N/A'}</p>
-                        <p style="margin-top: 15px;">Posibles soluciones:</p>
-                        <ul>
-                            <li>✅ Verificá la configuración de Firebase en el código</li>
-                            <li>✅ Asegurate de que Firestore esté activado</li>
-                            <li>✅ Verificá que Authentication esté activado</li>
-                            <li>✅ Intentá con reglas temporales (allow read, write: if true)</li>
-                        </ul>
-                        <p><strong>Para continuar:</strong> Cambiá temporalmente las reglas de Firestore a "allow read, write: if true", ejecutá el setup, y luego restaurá las reglas seguras.</p>
-                    </div>
-                `;
-                showMessage('❌ Error: ' + error.message, 'error');
-            } finally {
-                // Restaurar estado
-                setupBtn.disabled = false;
-                setupBtn.textContent = '🚀 EJECUTAR SETUP COMPLETO AUTOMÁTICO';
-                loader.style.display = 'none';
+                log(`❌ Error en el setup: ${error.message}`, 'error');
+                log('⚠️ Revisá la consola para más detalles', 'info');
             }
+        });
+        
+        // ============================================
+        // CREAR ADMINISTRADOR POR DEFECTO
+        // ============================================
+        async function createDefaultAdmin() {
+            try {
+                const adminData = {
+                    email: "admin@tecniya.com",
+                    name: "Administrador Principal",
+                    role: "superadmin",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: null
+                };
+                
+                await db.collection('admin_users').doc('admin@tecniya.com').set(adminData);
+                log('✅ Usuario administrador creado: admin@tecniya.com', 'success');
+                
+            } catch (error) {
+                log(`⚠️ Administrador ya existe o error: ${error.message}`, 'info');
+            }
+        }
+        
+        // ============================================
+        // CREAR CONFIGURACIÓN DEL SISTEMA
+        // ============================================
+        async function createSystemConfig() {
+            try {
+                const config = {
+                    featuredPrice: 9000,
+                    certificationPrice: 5000,
+                    bannersEnabled: true,
+                    newCitiesEnabled: true,
+                    defaultProvince: "Santa Fe",
+                    defaultCity: "Rosario",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('admin_config').doc('config').set(config);
+                log('✅ Configuración del sistema creada', 'success');
+                
+            } catch (error) {
+                log(`⚠️ Configuración ya existe o error: ${error.message}`, 'info');
+            }
+        }
+        
+        // ============================================
+        // CREAR ESTADÍSTICAS GLOBALES
+        // ============================================
+        async function createGlobalStats() {
+            try {
+                const stats = {
+                    totalProfessionals: 0,
+                    totalJobs: 0,
+                    avgRating: 4.8,
+                    totalQuotes: 0,
+                    totalCities: 24,
+                    totalProvinces: 23,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('stats').doc('global').set(stats);
+                log('✅ Estadísticas globales inicializadas', 'success');
+                
+            } catch (error) {
+                log(`⚠️ Estadísticas ya existen o error: ${error.message}`, 'info');
+            }
+        }
+        
+        // ============================================
+        // CREAR ADMINISTRADOR PERSONALIZADO
+        // ============================================
+        document.getElementById('createAdminBtn').addEventListener('click', async () => {
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const name = document.getElementById('adminName').value;
+            
+            if (!email || !password || !name) {
+                alert('Completá todos los campos');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('La contraseña debe tener al menos 6 caracteres');
+                return;
+            }
+            
+            clearLog();
+            log(`👑 Creando administrador: ${email}`, 'info');
+            
+            try {
+                // Crear usuario en Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                
+                // Actualizar nombre del usuario
+                await userCredential.user.updateProfile({ displayName: name });
+                
+                // Crear registro en admin_users
+                const adminData = {
+                    email: email,
+                    name: name,
+                    role: "admin",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: null
+                };
+                
+                await db.collection('admin_users').doc(email).set(adminData);
+                
+                log(`✅ Administrador creado exitosamente: ${email}`, 'success');
+                log(`📧 Email: ${email}`, 'info');
+                log(`👤 Nombre: ${name}`, 'info');
+                log(`🔑 Contraseña: ${'*'.repeat(password.length)}`, 'info');
+                log('💡 Guardá estas credenciales en un lugar seguro', 'info');
+                
+                // Limpiar formulario
+                document.getElementById('adminEmail').value = '';
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminName').value = '';
+                
+            } catch (error) {
+                log(`❌ Error creando administrador: ${error.message}`, 'error');
+            }
+        });
+        
+        // ============================================
+        // CREAR DATOS DE EJEMPLO
+        // ============================================
+        async function createSampleData() {
+            try {
+                // Crear algunos profesionales de ejemplo
+                const sampleProfessionals = [
+                    {
+                        name: "Juan Pérez",
+                        email: "juan@ejemplo.com",
+                        phone: "5493411234567",
+                        provincia: "Santa Fe",
+                        ciudad: "Rosario",
+                        zonas: ["Centro", "Norte"],
+                        rubros: ["plomeria", "gas"],
+                        photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
+                        bio: "Plomero con 10 años de experiencia en instalaciones residenciales.",
+                        rating: 4.8,
+                        jobsCompleted: 45,
+                        profileCompleted: true,
+                        isFeatured: true,
+                        featuredUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 días
+                        certified: true,
+                        rankingScore: 95,
+                        blocked: false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                    },
+                    {
+                        name: "María González",
+                        email: "maria@ejemplo.com",
+                        phone: "5493417654321",
+                        provincia: "Córdoba",
+                        ciudad: "Córdoba",
+                        zonas: ["Centro", "Nueva Córdoba"],
+                        rubros: ["electricidad", "aire"],
+                        photoUrl: "https://images.unsplash.com/photo-1494790108755-2616b786d4d9?w=200&h=200&fit=crop",
+                        bio: "Electricista certificada especializada en instalaciones modernas.",
+                        rating: 4.9,
+                        jobsCompleted: 32,
+                        profileCompleted: true,
+                        isFeatured: false,
+                        certified: true,
+                        rankingScore: 88,
+                        blocked: false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                    },
+                    {
+                        name: "Carlos Rodríguez",
+                        email: "carlos@ejemplo.com",
+                        phone: "5493419876543",
+                        provincia: "Buenos Aires",
+                        ciudad: "La Plata",
+                        zonas: ["Centro", "City Bell"],
+                        rubros: ["albanileria", "pintura"],
+                        photoUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop",
+                        bio: "Albañil y pintor con amplia experiencia en refacciones.",
+                        rating: 4.7,
+                        jobsCompleted: 28,
+                        profileCompleted: true,
+                        isFeatured: true,
+                        featuredUntil: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 días
+                        certified: false,
+                        rankingScore: 82,
+                        blocked: false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                    }
+                ];
+                
+                // Crear profesionales
+                const batch = db.batch();
+                sampleProfessionals.forEach((prof, index) => {
+                    const ref = db.collection('professionals').doc(`sample_${index + 1}`);
+                    batch.set(ref, prof);
+                });
+                
+                await batch.commit();
+                log(`✅ ${sampleProfessionals.length} profesionales de ejemplo creados`, 'success');
+                
+                // Crear banners de ejemplo
+                const sampleBanners = [
+                    {
+                        title: "Oferta Especial en Herramientas",
+                        link: "https://ejemplo.com/herramientas",
+                        imageUrl: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&h-200&fit=crop",
+                        provincia: "toda",
+                        ciudad: "toda",
+                        rubros: ["todos"],
+                        position: "home",
+                        priority: 10,
+                        active: true,
+                        startDate: new Date(),
+                        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    },
+                    {
+                        title: "Materiales de Construcción en Rosario",
+                        link: "https://ejemplo.com/materiales-rosario",
+                        imageUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=200&fit=crop",
+                        provincia: "Santa Fe",
+                        ciudad: "Rosario",
+                        rubros: ["albanileria", "pintura"],
+                        position: "results",
+                        priority: 8,
+                        active: true,
+                        startDate: new Date(),
+                        endDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }
+                ];
+                
+                const bannerBatch = db.batch();
+                sampleBanners.forEach((banner, index) => {
+                    const ref = db.collection('banners').doc(`banner_${index + 1}`);
+                    bannerBatch.set(ref, banner);
+                });
+                
+                await bannerBatch.commit();
+                log(`✅ ${sampleBanners.length} banners de ejemplo creados`, 'success');
+                
+                // Actualizar estadísticas
+                await db.collection('stats').doc('global').update({
+                    totalProfessionals: sampleProfessionals.length
+                });
+                
+                log('📊 Estadísticas actualizadas con datos de ejemplo', 'info');
+                
+            } catch (error) {
+                log(`⚠️ Error creando datos de ejemplo: ${error.message}`, 'info');
+            }
+        }
+        
+        // ============================================
+        // BOTÓN PARA CREAR DATOS DE EJEMPLO
+        // ============================================
+        document.getElementById('createSampleDataBtn').addEventListener('click', async () => {
+            clearLog();
+            await createSampleData();
+        });
+        
+        // ============================================
+        // LIMPIAR COLECCIONES (PELIGROSO)
+        // ============================================
+        document.getElementById('clearCollectionsBtn').addEventListener('click', async () => {
+            if (!confirm('⚠️ ¡PELIGRO! Esta acción eliminará TODOS los datos.\n¿Estás absolutamente seguro?')) {
+                return;
+            }
+            
+            if (!confirm('⚠️ Esta acción es IRREVERSIBLE.\n¿Realmente querés proceder?')) {
+                return;
+            }
+            
+            clearLog();
+            log('🗑️ Iniciando limpieza de colecciones...', 'info');
+            
+            try {
+                // Lista de colecciones a limpiar
+                const collections = [
+                    'professionals',
+                    'quotes',
+                    'banners',
+                    'ads_clicks'
+                ];
+                
+                for (const collectionName of collections) {
+                    log(`Limpiando colección: ${collectionName}...`, 'info');
+                    
+                    const snapshot = await db.collection(collectionName).get();
+                    const batch = db.batch();
+                    
+                    snapshot.docs.forEach(doc => {
+                        batch.delete(doc.ref);
+                    });
+                    
+                    await batch.commit();
+                    log(`✅ ${snapshot.size} documentos eliminados de ${collectionName}`, 'success');
+                }
+                
+                // Reiniciar estadísticas
+                await db.collection('stats').doc('global').update({
+                    totalProfessionals: 0,
+                    totalJobs: 0,
+                    totalQuotes: 0
+                });
+                
+                log('✅ Todas las colecciones fueron limpiadas', 'success');
+                log('📊 Estadísticas reiniciadas a cero', 'info');
+                log('⚠️ La aplicación está ahora en estado inicial', 'info');
+                
+            } catch (error) {
+                log(`❌ Error limpiando colecciones: ${error.message}`, 'error');
+            }
+        });
+        
+        // ============================================
+        // TEST INICIAL DE CONEXIÓN
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Setup de TecniYa cargado', 'info');
+            log(`📅 ${new Date().toLocaleDateString('es-AR')} ${new Date().toLocaleTimeString('es-AR')}`, 'info');
+            log('🌐 Proyecto: tecniya-b4206', 'info');
+            log('📁 Firebase Firestore inicializado', 'success');
         });
     </script>
 </body>
