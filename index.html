@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TecniYa - Encontrá técnicos en Rosario</title>
-    <link rel="manifest" href="manifest.json">
     <!-- Favicon inline para evitar error 404 -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>">
     
@@ -128,7 +127,7 @@
         <p><small>No realizamos trabajos. Conectamos clientes con profesionales.</small></p>
     </footer>
 
-    <!-- SCRIPTS DE FIREBASE (IMPORTANTE: NO ELIMINAR) -->
+    <!-- SCRIPTS DE FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -166,22 +165,19 @@
         const resultsContainer = document.getElementById('resultsContainer');
 
         // ============================================
-        // FUNCIONES PRINCIPALES - VERSIÓN CORREGIDA
+        // FUNCIONES PRINCIPALES CORREGIDAS
         // ============================================
 
-        // CARGAR BANNER ACTIVO - VERSIÓN CORREGIDA (sin error de desigualdades múltiples)
+        // CARGAR BANNER ACTIVO - VERSIÓN SIMPLIFICADA
         async function loadBanner() {
             try {
                 const now = new Date();
-                const nowTimestamp = firebase.firestore.Timestamp.fromDate(now);
                 
-                // Consulta corregida: solo una desigualdad
+                // Consulta simplificada sin múltiples condiciones complejas
                 const bannersSnapshot = await db.collection('banners')
                     .where('active', '==', true)
                     .where('city', '==', 'Rosario')
-                    .where('endDate', '>=', nowTimestamp)
-                    .orderBy('endDate', 'asc')
-                    .limit(5)
+                    .limit(10) // Traer más y filtrar localmente
                     .get();
                 
                 if (bannersSnapshot.empty) {
@@ -189,16 +185,17 @@
                     return;
                 }
 
-                // Filtrar los que también tienen startDate <= now
+                // Filtrar banners que están dentro del rango de fechas
                 let activeBanner = null;
                 let bannerDocId = null;
                 
                 bannersSnapshot.forEach(doc => {
                     const banner = doc.data();
                     const startDate = banner.startDate ? banner.startDate.toDate() : null;
+                    const endDate = banner.endDate ? banner.endDate.toDate() : null;
                     
-                    // Verificar startDate manualmente
-                    if (!startDate || startDate <= now) {
+                    // Verificar fechas manualmente
+                    if ((!startDate || startDate <= now) && (!endDate || endDate >= now)) {
                         activeBanner = banner;
                         bannerDocId = doc.id;
                         return;
@@ -233,7 +230,7 @@
             }
         }
 
-        // BUSCAR PROFESIONALES
+        // BUSCAR PROFESIONALES - VERSIÓN CORREGIDA (sin múltiples array-contains)
         async function searchProfessionals() {
             const rubro = rubroSelect.value;
             const zona = zonaSelect.value;
@@ -247,16 +244,12 @@
             resultsContainer.innerHTML = '';
 
             try {
-                // CONSULTA BASE: ACTIVOS, CON FOTO, NO BLOQUEADOS, ZONA COINCIDE
-                let query = db.collection('professionals')
+                // SOLUCIÓN: Consulta base solo por rubro, luego filtramos zona localmente
+                const query = db.collection('professionals')
                     .where('profileCompleted', '==', true)
                     .where('blocked', '==', false)
                     .where('photoUrl', '!=', '')
                     .where('rubros', 'array-contains', rubro);
-
-                if (zona !== 'toda') {
-                    query = query.where('zonas', 'array-contains', zona);
-                }
 
                 const snapshot = await query.get();
                 
@@ -272,6 +265,12 @@
                 
                 snapshot.forEach(doc => {
                     const prof = { id: doc.id, ...doc.data() };
+                    
+                    // FILTRAR POR ZONA LOCALMENTE
+                    const zonasProfesional = prof.zonas || [];
+                    if (zona !== 'toda' && !zonasProfesional.includes(zona)) {
+                        return; // Saltar profesional si no trabaja en la zona seleccionada
+                    }
                     
                     // CALCULAR PUNTAJE DE RANKING
                     let rankingScore = 0;
@@ -302,6 +301,13 @@
                     prof.rankingScore = rankingScore;
                     professionals.push(prof);
                 });
+
+                // Verificar si después del filtrado local hay resultados
+                if (professionals.length === 0) {
+                    showMessage('No se encontraron profesionales en la zona seleccionada.', 'info');
+                    loader.style.display = 'none';
+                    return;
+                }
 
                 // ORDENAR: PRIMERO DESTACADOS ACTIVOS, LUEGO POR SCORE
                 professionals.sort((a, b) => {
@@ -345,8 +351,8 @@
                             ${featuredActive ? '<span class="professional-badge">⭐ DESTACADO</span>' : ''}
                         </h3>
                         <div class="professional-details">
-                            <span>${prof.rubros[0]}</span>
-                            <span>${prof.zonas.join(', ')}</span>
+                            <span>${prof.rubros && prof.rubros[0] ? prof.rubros[0] : 'Sin rubro'}</span>
+                            <span>${prof.zonas ? prof.zonas.join(', ') : 'Sin zona'}</span>
                         </div>
                         <div class="professional-stats">
                             ⭐ ${prof.rating ? prof.rating.toFixed(1) : 'Nuevo'} 
@@ -391,6 +397,17 @@
                 if (e.key === 'Enter') searchProfessionals();
             });
         });
+
+        // ============================================
+        // SOLUCIÓN PARA LOS ÍCONOS (evita error 404)
+        // ============================================
+        // Eliminar manifest.json si existe para evitar errores
+        setTimeout(() => {
+            const manifestLink = document.querySelector('link[rel="manifest"]');
+            if (manifestLink) {
+                manifestLink.remove();
+            }
+        }, 1000);
     </script>
 </body>
 </html>
