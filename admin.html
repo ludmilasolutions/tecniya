@@ -1,10 +1,12 @@
-<!-- admin.html -->
 <!DOCTYPE html>
 <html lang="es-AR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TecniYa - Panel Administrador</title>
+    <!-- Favicon inline para evitar error 404 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>">
+    
     <style>
         /* RESET & BASE */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; }
@@ -420,26 +422,44 @@
     
     <div id="loader" class="loader"></div>
     
+    <!-- SCRIPTS DE FIREBASE (CRÍTICO - DEBEN IR ANTES DEL SCRIPT PRINCIPAL) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
+    <!-- SCRIPT PRINCIPAL -->
     <script>
-        // CONFIGURACIÓN FIREBASE
+        // ============================================
+        // CONFIGURACIÓN FIREBASE - TUS DATOS
+        // ============================================
         const firebaseConfig = {
-          apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
-          authDomain: "tecniya-b4206.firebaseapp.com",
-          projectId: "tecniya-b4206",
-          storageBucket: "tecniya-b4206.firebasestorage.app",
-          messagingSenderId: "166424133304",
-          appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
+            apiKey: "AIzaSyCB_aik9aLpCH3OeF6_S28kVIfkQDDx6G4",
+            authDomain: "tecniya-b4206.firebaseapp.com",
+            projectId: "tecniya-b4206",
+            storageBucket: "tecniya-b4206.appspot.com",
+            messagingSenderId: "640723724521",
+            appId: "1:640723724521:web:354ef5d47e63fdc7179150",
+            measurementId: "G-TT0J8RTCME"
         };
+
+        // ============================================
+        // INICIALIZACIÓN DE FIREBASE
+        // ============================================
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
         const storage = firebase.storage();
-        
+
+        // ============================================
         // ELEMENTOS DOM
+        // ============================================
         const loginContainer = document.getElementById('loginContainer');
         const adminPanel = document.getElementById('adminPanel');
-        
-        // VERIFICAR ADMIN
+
+        // ============================================
+        // VERIFICAR ADMIN AL CARGAR
+        // ============================================
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 // VERIFICAR ROL ADMIN
@@ -457,8 +477,10 @@
                 adminPanel.style.display = 'none';
             }
         });
-        
+
+        // ============================================
         // LOGIN
+        // ============================================
         document.getElementById('loginBtn').addEventListener('click', async () => {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
@@ -469,13 +491,17 @@
                 showMessage('loginMessage', '❌ Error: ' + error.message, 'error');
             }
         });
-        
+
+        // ============================================
         // LOGOUT
+        // ============================================
         document.getElementById('logoutBtn').addEventListener('click', () => {
             auth.signOut();
         });
-        
+
+        // ============================================
         // SWITCH TABS
+        // ============================================
         document.querySelectorAll('.tab:not(.tab-logout)').forEach(tab => {
             tab.addEventListener('click', () => {
                 const tabId = tab.getAttribute('data-tab');
@@ -495,8 +521,10 @@
                 if (tabId === 'config') loadConfig();
             });
         });
-        
+
+        // ============================================
         // CARGAR DASHBOARD
+        // ============================================
         async function loadDashboard() {
             showLoader();
             
@@ -583,8 +611,10 @@
                 hideLoader();
             }
         }
-        
+
+        // ============================================
         // CARGAR PROFESIONALES
+        // ============================================
         async function loadProfessionals() {
             showLoader();
             
@@ -657,16 +687,20 @@
                 hideLoader();
             }
         }
-        
+
+        // ============================================
         // APLICAR FILTROS
+        // ============================================
         document.getElementById('applyFilters').addEventListener('click', loadProfessionals);
         document.getElementById('resetFilters').addEventListener('click', () => {
             document.getElementById('filterRubro').value = '';
             document.getElementById('filterStatus').value = '';
             loadProfessionals();
         });
-        
+
+        // ============================================
         // VER DETALLE PROFESIONAL
+        // ============================================
         window.viewProfessionalDetail = async function(id) {
             const doc = await db.collection('professionals').doc(id).get();
             if (!doc.exists) return;
@@ -721,25 +755,29 @@
             document.getElementById('professionalDetailContent').innerHTML = html;
             document.getElementById('professionalDetailModal').style.display = 'block';
         };
-        
+
         window.closeModal = function() {
             document.getElementById('professionalDetailModal').style.display = 'none';
         };
-        
+
+        // ============================================
         // BLOQUEAR/DESBLOQUEAR PROFESIONAL
+        // ============================================
         window.blockProfessional = async function(id) {
             if (confirm('¿Estás seguro de bloquear a este profesional? No podrá acceder a su panel.')) {
                 await db.collection('professionals').doc(id).update({ blocked: true });
                 loadProfessionals();
             }
         };
-        
+
         window.unblockProfessional = async function(id) {
             await db.collection('professionals').doc(id).update({ blocked: false });
             loadProfessionals();
         };
-        
+
+        // ============================================
         // ACTIVAR/DESACTIVAR DESTACADO
+        // ============================================
         window.activateFeatured = async function(id) {
             const months = prompt('¿Por cuántos meses activar el servicio destacado?', '1');
             if (!months || isNaN(months) || months < 1) return;
@@ -754,7 +792,7 @@
             
             loadProfessionals();
         };
-        
+
         window.deactivateFeatured = async function(id) {
             if (confirm('¿Desactivar servicio destacado?')) {
                 await db.collection('professionals').doc(id).update({
@@ -764,15 +802,19 @@
                 loadProfessionals();
             }
         };
-        
+
+        // ============================================
         // CONTACTAR PROFESIONAL
+        // ============================================
         window.contactProfessional = function(phone) {
             if (phone) {
                 window.open(`https://wa.me/${phone}`, '_blank');
             }
         };
-        
+
+        // ============================================
         // CARGAR BANNERS
+        // ============================================
         async function loadBanners() {
             showLoader();
             
@@ -830,8 +872,10 @@
                 hideLoader();
             }
         }
-        
+
+        // ============================================
         // MOSTRAR/OCULTAR FORMULARIO BANNER
+        // ============================================
         window.showBannerForm = function(bannerId) {
             const form = document.getElementById('bannerForm');
             const title = document.getElementById('bannerFormTitle');
@@ -849,12 +893,14 @@
             form.style.display = 'block';
             form.scrollIntoView({ behavior: 'smooth' });
         };
-        
+
         window.hideBannerForm = function() {
             document.getElementById('bannerForm').style.display = 'none';
         };
-        
+
+        // ============================================
         // CARGAR DATOS BANNER PARA EDITAR
+        // ============================================
         async function loadBannerData(bannerId) {
             const doc = await db.collection('banners').doc(bannerId).get();
             if (!doc.exists) return;
@@ -890,8 +936,10 @@
                 `;
             }
         }
-        
+
+        // ============================================
         // GUARDAR BANNER
+        // ============================================
         document.getElementById('bannerFormElement').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -978,21 +1026,27 @@
                 hideLoader();
             }
         });
-        
+
+        // ============================================
         // EDITAR BANNER
+        // ============================================
         window.editBanner = function(bannerId) {
             showBannerForm(bannerId);
         };
-        
+
+        // ============================================
         // ELIMINAR BANNER
+        // ============================================
         window.deleteBanner = async function(bannerId) {
             if (confirm('¿Estás seguro de eliminar este banner?')) {
                 await db.collection('banners').doc(bannerId).delete();
                 loadBanners();
             }
         };
-        
+
+        // ============================================
         // CARGAR CONFIGURACIÓN
+        // ============================================
         async function loadConfig() {
             try {
                 const doc = await db.collection('admin_config').doc('config').get();
@@ -1006,8 +1060,10 @@
                 console.error("Error cargando configuración:", error);
             }
         }
-        
+
+        // ============================================
         // ACTUALIZAR PRECIO DESTACADO
+        // ============================================
         window.updateFeaturedPrice = async function() {
             const price = document.getElementById('featuredPrice').value;
             if (!price || price < 0) return;
@@ -1018,8 +1074,10 @@
             
             alert('✅ Precio actualizado');
         };
-        
+
+        // ============================================
         // ACTUALIZAR CONFIGURACIÓN DEL SISTEMA
+        // ============================================
         window.updateSystemConfig = async function() {
             await db.collection('admin_config').doc('config').set({
                 bannersEnabled: document.getElementById('bannersEnabled').checked,
@@ -1029,9 +1087,10 @@
             
             alert('✅ Configuración actualizada');
         };
-        
+
+        // ============================================
         // HERRAMIENTAS ADMIN
-        
+        // ============================================
         window.forceHideNoPhoto = async function() {
             if (confirm('¿Ocultar profesionales sin foto? Esto los marcará como perfil incompleto.')) {
                 showLoader();
@@ -1049,7 +1108,7 @@
                 loadProfessionals();
             }
         };
-        
+
         window.deactivateExpiredFeatured = async function() {
             showLoader();
             
@@ -1077,7 +1136,7 @@
             alert(`✅ ${count} destacados vencidos desactivados`);
             loadProfessionals();
         };
-        
+
         window.recalculateRankings = async function() {
             showLoader();
             
@@ -1109,8 +1168,10 @@
             hideLoader();
             alert(`✅ Rankings recalculados para ${snapshot.size} profesionales`);
         };
-        
+
+        // ============================================
         // EXPORTAR DATOS
+        // ============================================
         window.exportProfessionals = async function() {
             const snapshot = await db.collection('professionals').get();
             const data = [];
@@ -1121,7 +1182,7 @@
             
             downloadJSON(data, 'profesionales_tecniya.json');
         };
-        
+
         window.exportQuotes = async function() {
             const snapshot = await db.collection('quotes').get();
             const data = [];
@@ -1137,7 +1198,7 @@
             
             downloadJSON(data, 'presupuestos_tecniya.json');
         };
-        
+
         window.exportClicks = async function() {
             const snapshot = await db.collection('ads_clicks').get();
             const data = [];
@@ -1153,8 +1214,10 @@
             
             downloadJSON(data, 'clicks_banners_tecniya.json');
         };
-        
+
+        // ============================================
         // FUNCIONES AUXILIARES
+        // ============================================
         function downloadJSON(data, filename) {
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -1166,7 +1229,7 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
-        
+
         function showMessage(elementId, text, type) {
             const el = document.getElementById(elementId);
             el.textContent = text;
@@ -1175,11 +1238,11 @@
             el.style.display = 'block';
             setTimeout(() => { el.style.display = 'none'; }, 5000);
         }
-        
+
         function showLoader() {
             document.getElementById('loader').style.display = 'block';
         }
-        
+
         function hideLoader() {
             document.getElementById('loader').style.display = 'none';
         }
