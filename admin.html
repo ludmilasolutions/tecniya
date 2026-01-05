@@ -3,738 +3,480 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TecniYa - Encontrá técnicos certificados en Argentina</title>
-    <meta name="description" content="Plomería, electricidad, gas, aire acondicionado. Técnicos verificados con contacto directo por WhatsApp.">
+    <title>TecniYa - Panel Administrador Nacional</title>
+    <!-- Favicon inline para evitar error 404 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>">
     
-    <!-- Favicon optimizado -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
-    
-    <!-- CSS mejorado -->
     <style>
-        /* ===== VARIABLES & RESET ===== */
-        :root {
-            --primary: #0a4fd8;
-            --primary-dark: #083bb5;
-            --secondary: #1db954;
-            --secondary-dark: #17a344;
-            --accent: #ff9800;
-            --light: #f8f9fa;
-            --dark: #333;
-            --gray: #666;
-            --light-gray: #e1e5e9;
-            --shadow: 0 4px 12px rgba(10, 79, 216, 0.15);
-            --radius: 12px;
-            --transition: all 0.3s ease;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            color: var(--dark);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-        
-        /* ===== LAYOUT ===== */
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* ===== HEADER ===== */
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, #1a60f0 100%);
-            color: white;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .logo-img {
-            height: 60px;
-            width: auto;
-            max-width: 180px;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
-        
-        .logo-text {
-            font-size: 2.5rem;
-            font-weight: 800;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .tagline {
-            font-size: 1.2rem;
-            opacity: 0.95;
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* ===== BANNER ===== */
-        .banner-container {
-            margin: 2rem auto;
-            max-width: 900px;
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            transition: var(--transition);
-            background: white;
-            height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .banner-container:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-        }
-        
-        .banner-content {
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .banner-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            background-color: #f8f9fa;
-        }
-        
-        .banner-link {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-        
-        /* ===== SEARCH SECTION ===== */
-        .search-section {
-            background: white;
-            border-radius: var(--radius);
-            padding: 2.5rem;
-            margin: 2rem auto;
-            max-width: 800px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(10, 79, 216, 0.1);
-        }
-        
-        .search-title {
-            font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-            text-align: center;
-            font-weight: 700;
-        }
-        
-        .search-grid {
-            display: grid;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        @media (min-width: 768px) {
-            .search-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        
-        .form-group {
-            position: relative;
-        }
-        
-        .form-label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-            font-size: 0.95rem;
-        }
-        
-        .form-select {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid var(--light-gray);
-            border-radius: 10px;
-            font-size: 1rem;
-            background: white;
-            transition: var(--transition);
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%230a4fd8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 16px;
-        }
-        
-        .form-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(10, 79, 216, 0.1);
-        }
-        
-        /* ===== BUTTONS ===== */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 1rem 2rem;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
-        }
-        
-        .btn:focus:not(:active)::after {
-            animation: ripple 1s ease-out;
-        }
-        
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(20, 20);
-                opacity: 0;
-            }
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, #1a60f0 100%);
-            color: white;
-            width: 100%;
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, #0a4fd8 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(10, 79, 216, 0.3);
-        }
-        
-        .btn-whatsapp {
-            background: linear-gradient(135deg, #1db954 0%, #17a344 100%);
-            color: white;
-            padding: 0.8rem 1.5rem;
-        }
-        
-        .btn-whatsapp:hover {
-            background: linear-gradient(135deg, #17a344 0%, #128c3a 100%);
-            transform: translateY(-2px);
-        }
-        
-        /* ===== STATS ===== */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin: 2rem auto;
-            max-width: 800px;
-        }
-        
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: var(--radius);
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: var(--transition);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-        
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-label {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        /* ===== RESULTS ===== */
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 2rem 0 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light-gray);
-        }
-        
-        .results-count {
-            font-weight: 600;
-            color: var(--primary);
-        }
-        
-        .professional-grid {
-            display: grid;
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-        
-        @media (min-width: 768px) {
-            .professional-grid {
-                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            }
-        }
-        
-        .professional-card {
-            background: white;
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-            transition: var(--transition);
-            position: relative;
-            border: 1px solid rgba(10, 79, 216, 0.1);
-        }
-        
-        .professional-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-        }
-        
-        .professional-featured {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-            color: #333;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            z-index: 2;
-            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
-        }
-        
-        .professional-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--light-gray);
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        
-        .professional-photo {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--primary);
-            flex-shrink: 0;
-        }
-        
-        .professional-info {
-            flex: 1;
-        }
-        
-        .professional-name {
-            font-size: 1.3rem;
-            color: var(--dark);
-            margin-bottom: 0.3rem;
-            font-weight: 700;
-        }
-        
-        .professional-rating {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--accent);
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .professional-body {
-            padding: 1.5rem;
-        }
-        
-        .professional-services {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 1rem;
-        }
-        
-        .service-tag {
-            background: #f1f6ff;
-            color: var(--primary);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .professional-footer {
-            padding: 1rem 1.5rem;
-            background: #f8f9fa;
-            border-top: 1px solid var(--light-gray);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        /* ===== LOADER ===== */
-        .loader {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 3rem;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* ===== MESSAGES ===== */
-        .message {
-            padding: 1.5rem;
-            border-radius: var(--radius);
-            margin: 1rem 0;
-            text-align: center;
-            font-weight: 600;
-            animation: slideIn 0.3s ease;
-        }
-        
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .message-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .message-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .message-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        /* ===== FOOTER ===== */
-        .footer {
-            background: var(--dark);
-            color: #aaa;
-            padding: 3rem 1rem;
-            margin-top: 4rem;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            gap: 2rem;
-        }
-        
-        @media (min-width: 768px) {
-            .footer-content {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        
-        .footer-section h3 {
-            color: white;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-        
-        .footer-links {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-        
-        .footer-links a {
-            color: #aaa;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-        
-        .footer-links a:hover {
-            color: white;
-            padding-left: 5px;
-        }
-        
-        .copyright {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid #444;
-            color: #777;
-            font-size: 0.9rem;
-        }
-        
-        /* ===== RESPONSIVE ===== */
+        /* MANTENER TODOS LOS ESTILOS ORIGINALES */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; }
+        body { background-color: #f8f9fa; color: #333; line-height: 1.6; }
+        .container { width: 100%; max-width: 1400px; margin: 0 auto; padding: 20px; }
+        a { text-decoration: none; color: #0a4fd8; }
+        ul { list-style: none; }
+        
+        /* HEADER */
+        .header { background: linear-gradient(135deg, #333 0%, #555 100%); color: white; padding: 25px 20px; text-align: center; }
+        .header h1 { font-size: 2rem; margin-bottom: 8px; font-weight: 800; }
+        .header-subtitle { opacity: 0.9; }
+        
+        /* TABS */
+        .tabs { display: flex; background: white; border-bottom: 2px solid #eaeaea; overflow-x: auto; flex-wrap: wrap; }
+        .tab { padding: 18px 25px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+        .tab.active { border-bottom-color: #dc3545; color: #dc3545; background-color: #fff5f5; }
+        .tab-logout { margin-left: auto; background: #333; color: white; }
+        
+        /* PANELS */
+        .panel { display: none; background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .panel.active { display: block; }
+        
+        /* LOGIN */
+        .login-container { max-width: 500px; margin: 80px auto; padding: 40px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .login-title { text-align: center; font-size: 1.8rem; margin-bottom: 30px; color: #333; }
+        
+        /* FORMS */
+        .form-group { margin-bottom: 25px; }
+        .form-label { display: block; font-weight: 600; margin-bottom: 10px; color: #444; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 1rem; transition: border 0.3s; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: #0a4fd8; outline: none; }
+        .form-textarea { min-height: 120px; resize: vertical; }
+        .form-row { display: flex; gap: 20px; }
+        .form-row .form-group { flex: 1; }
+        
+        /* TABLES */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95rem; }
+        .data-table th, .data-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eaeaea; }
+        .data-table th { background-color: #f8f9fa; font-weight: 700; position: sticky; top: 0; }
+        .data-table tr:hover { background-color: #f8f9fa; }
+        .table-container { max-height: 600px; overflow-y: auto; border: 1px solid #eaeaea; border-radius: 12px; }
+        .table-photo { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; }
+        
+        /* BADGES */
+        .badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+        .badge-primary { background: #d1e7ff; color: #0a4fd8; }
+        
+        /* BUTTONS */
+        .btn { padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-sm { padding: 8px 16px; font-size: 0.9rem; }
+        .btn-primary { background-color: #0a4fd8; color: white; }
+        .btn-primary:hover { background-color: #083bb5; }
+        .btn-success { background-color: #1db954; color: white; }
+        .btn-success:hover { background-color: #17a344; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-danger:hover { background-color: #c82333; }
+        .btn-warning { background-color: #ffc107; color: #333; }
+        .btn-warning:hover { background-color: #e0a800; }
+        .btn-block { width: 100%; }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        /* CARDS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin: 30px 0; }
+        .stat-card { background: #f8f9fa; padding: 25px; border-radius: 12px; text-align: center; }
+        .stat-number { font-size: 2.5rem; font-weight: 700; color: #0a4fd8; }
+        .stat-label { margin-top: 10px; color: #666; }
+        
+        /* BANNER PREVIEW */
+        .banner-preview { max-width: 800px; margin: 20px 0; border-radius: 12px; overflow: hidden; border: 2px solid #eaeaea; }
+        .banner-preview-img { width: 100%; height: auto; display: block; }
+        
+        /* LOADER */
+        .loader { border: 5px solid #f3f3f3; border-top: 5px solid #dc3545; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 40px auto; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* FILTERS */
+        .filters { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 30px; display: flex; gap: 20px; flex-wrap: wrap; }
+        .filter-group { display: flex; align-items: center; gap: 10px; }
+        
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal-content { background: white; width: 90%; max-width: 600px; margin: 50px auto; padding: 30px; border-radius: 16px; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .modal-close { font-size: 2rem; cursor: pointer; color: #666; }
+        
+        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .logo {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .logo-img {
-                height: 50px;
-                max-width: 150px;
-            }
-            
-            .logo-text {
-                font-size: 2rem;
-            }
-            
-            .search-section {
-                padding: 1.5rem;
-            }
-            
-            .professional-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .banner-container {
-                height: 150px;
-                margin: 1rem auto;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .banner-container {
-                height: 120px;
-            }
-            
-            .logo-text {
-                font-size: 1.8rem;
-            }
-            
-            .logo-img {
-                height: 40px;
-                max-width: 120px;
-            }
+            .form-row { flex-direction: column; }
+            .tabs { flex-direction: column; }
+            .tab { text-align: center; }
+            .filters { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">
-                <img src="logo.png" class="logo-img" alt="TecniYa Logo">
-                <h1 class="logo-text">TecniYa</h1>
-            </div>
-            <p class="tagline">Encontrá técnicos certificados en toda Argentina. Contacto directo por WhatsApp.</p>
+    <!-- LOGIN -->
+    <div id="loginContainer" class="login-container">
+        <h2 class="login-title">🔐 Admin TecniYa</h2>
+        <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="loginEmail" class="form-input" placeholder="admin@tecniya.com">
         </div>
-    </header>
-
-    <!-- STATS -->
-    <section class="container stats" id="statsContainer">
-        <!-- Se llena dinámicamente -->
-    </section>
-
-    <!-- BANNER -->
-    <div class="container banner-container" id="bannerContainer">
-        <div class="banner-content" id="bannerContent">
-            <!-- Banner se cargará aquí -->
+        <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
         </div>
+        <button id="loginBtn" class="btn btn-primary btn-block">Ingresar</button>
+        <div id="loginMessage" style="margin-top: 20px; padding: 15px; border-radius: 8px; display: none;"></div>
     </div>
-
-    <!-- SEARCH -->
-    <section class="container search-section">
-        <h2 class="search-title">¿Qué servicio necesitás?</h2>
-        <div class="search-grid">
-            <div class="form-group">
-                <label class="form-label">Provincia</label>
-                <select id="provinciaSelect" class="form-select">
-                    <option value="">Todas las provincias</option>
-                    <!-- Se llena dinámicamente -->
-                </select>
+    
+    <!-- MAIN ADMIN -->
+    <div id="adminPanel" style="display: none;">
+        <header class="header">
+            <h1>⚙ Panel Administrador TecniYa Nacional</h1>
+            <p class="header-subtitle">Gestión completa de profesionales, banners y configuración para toda Argentina</p>
+        </header>
+        
+        <div class="container">
+            <!-- TABS -->
+            <div class="tabs">
+                <div class="tab active" data-tab="dashboard">📊 Dashboard</div>
+                <div class="tab" data-tab="professionals">👨‍🔧 Profesionales</div>
+                <div class="tab" data-tab="banners">📢 Banners</div>
+                <div class="tab" data-tab="config">⚙ Configuración</div>
+                <div class="tab tab-logout" id="logoutBtn">🚪 Cerrar Sesión</div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Ciudad</label>
-                <select id="ciudadSelect" class="form-select" disabled>
-                    <option value="">Todas las ciudades</option>
-                </select>
-            </div>
-        </div>
-        <div class="search-grid">
-            <div class="form-group">
-                <label class="form-label">Rubro</label>
-                <select id="rubroSelect" class="form-select">
-                    <option value="">Todos los rubros</option>
-                    <option value="plomeria">Plomería</option>
-                    <option value="gas">Gas</option>
-                    <option value="electricidad">Electricidad</option>
-                    <option value="aire">Aire acondicionado</option>
-                    <option value="albanileria">Albañilería</option>
-                    <option value="pintura">Pintura</option>
-                    <option value="cerrajeria">Cerrajería</option>
-                    <option value="jardineria">Jardinería</option>
-                    <option value="herreria">Herrería</option>
-                    <option value="carpinteria">Carpintería</option>
-                    <option value="limpieza">Limpieza</option>
-                    <option value="mudanzas">Mudanzas</option>
-                    <option value="otros">Otros servicios</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Zona/Barrio</label>
-                <select id="zonaSelect" class="form-select">
-                    <option value="">Todas las zonas</option>
-                </select>
-            </div>
-        </div>
-        <div class="btn-group" style="display: flex; gap: 15px; margin-top: 20px;">
-            <button id="searchBtn" class="btn btn-primary">
-                🔍 Buscar técnico
-            </button>
-            <button id="showAllBtn" class="btn" style="background: #6c757d; color: white;">
-                📋 Ver todos
-            </button>
-        </div>
-    </section>
-
-    <!-- RESULTS -->
-    <section class="container">
-        <div class="results-header" id="resultsHeader" style="display: none;">
-            <h2>Técnicos Disponibles</h2>
-            <span class="results-count" id="resultsCount"></span>
-        </div>
-        <div class="loader" id="loader" style="display: none;">
-            <div class="spinner"></div>
-        </div>
-        <div class="professional-grid" id="resultsContainer">
-            <!-- Los profesionales se mostrarán aquí -->
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>TecniYa</h3>
-                <p>Conectamos a los argentinos con técnicos certificados. Rápido, seguro y confiable.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Enlaces</h3>
-                <div class="footer-links">
-                    <a href="#" onclick="alert('Para registrarte como profesional, contactanos por WhatsApp al 341 755-8966')">Registrate como Profesional</a>
-                    <a href="#legal">Términos y Condiciones</a>
-                    <a href="#privacidad">Política de Privacidad</a>
+            
+            <!-- DASHBOARD -->
+            <div id="dashboardPanel" class="panel active">
+                <h2 style="margin-bottom: 30px; color: #333;">Dashboard Nacional</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalProfessionals">0</div>
+                        <div class="stat-label">Total Profesionales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeCities">0</div>
+                        <div class="stat-label">Ciudades Activas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="featuredProfessionals">0</div>
+                        <div class="stat-label">Destacados Activos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalQuotes">0</div>
+                        <div class="stat-label">Presupuestos Creados</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 50px;">
+                    <h3 style="margin-bottom: 20px;">📍 Distribución por Provincia</h3>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Provincia</th>
+                                    <th>Profesionales</th>
+                                    <th>Ciudades</th>
+                                    <th>Destacados</th>
+                                </tr>
+                            </thead>
+                            <tbody id="provinceDistribution">
+                                <!-- JS llenará esto -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>📱 WhatsApp: 341 755-8966</p>
-                <p>📍 Argentina</p>
-                <p>📧 contacto@tecniya.com</p>
+            
+            <!-- PROFESSIONALS -->
+            <div id="professionalsPanel" class="panel">
+                <h2 style="margin-bottom: 25px; color: #333;">Gestión de Profesionales</h2>
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Provincia:</label>
+                        <select id="filterProvincia" class="form-select" style="width: 200px;">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Ciudad:</label>
+                        <select id="filterCiudad" class="form-select" style="width: 200px;">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Rubro:</label>
+                        <select id="filterRubro" class="form-select" style="width: 200px;">
+                            <option value="">Todos</option>
+                            <option value="plomeria">Plomería</option>
+                            <option value="gas">Gas</option>
+                            <option value="electricidad">Electricidad</option>
+                            <option value="aire">Aire Acondicionado</option>
+                            <option value="albanileria">Albañilería</option>
+                            <option value="pintura">Pintura</option>
+                            <option value="cerrajeria">Cerrajería</option>
+                            <option value="jardineria">Jardinería</option>
+                            <option value="herreria">Herrería</option>
+                            <option value="carpinteria">Carpintería</option>
+                            <option value="limpieza">Limpieza</option>
+                            <option value="mudanzas">Mudanzas</option>
+                            <option value="otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Estado:</label>
+                        <select id="filterStatus" class="form-select" style="width: 200px;">
+                            <option value="">Todos</option>
+                            <option value="active">Activos</option>
+                            <option value="incomplete">Incompletos</option>
+                            <option value="blocked">Bloqueados</option>
+                            <option value="featured">Destacados</option>
+                            <option value="certified">Certificados</option>
+                        </select>
+                    </div>
+                    <button id="applyFilters" class="btn btn-primary">🔍 Filtrar</button>
+                    <button id="resetFilters" class="btn">🔄 Reiniciar</button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nombre</th>
+                                <th>Ubicación</th>
+                                <th>Contacto</th>
+                                <th>Rubros</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="professionalsTable">
+                            <!-- JS llenará esto -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="professionalDetailModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Detalle del Profesional</h3>
+                            <span class="modal-close" onclick="closeModal()">×</span>
+                        </div>
+                        <div id="professionalDetailContent">
+                            <!-- JS llenará esto -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- BANNERS -->
+            <div id="bannersPanel" class="panel">
+                <h2 style="margin-bottom: 25px; color: #333;">Gestión de Banners Publicitarios</h2>
+                
+                <div class="btn-group" style="margin-bottom: 25px;">
+                    <button class="btn btn-success" onclick="showBannerForm()">➕ Crear Nuevo Banner</button>
+                </div>
+                
+                <div id="bannerForm" style="display: none; background: #f8f9fa; padding: 30px; border-radius: 12px; margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 20px;" id="bannerFormTitle">Nuevo Banner</h3>
+                    <form id="bannerFormElement">
+                        <input type="hidden" id="bannerId">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Título del banner</label>
+                                <input type="text" id="bannerTitle" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Enlace (URL)</label>
+                                <input type="url" id="bannerLink" class="form-input" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">URL de la imagen del banner</label>
+                            <input type="url" id="bannerImageUrl" class="form-input" required 
+                                   placeholder="https://ejemplo.com/banner.jpg">
+                            <small style="color: #666;">
+                                🌟 <strong>Servicios GRATIS para subir imágenes:</strong><br>
+                                1. <a href="https://imgur.com" target="_blank">Imgur.com</a> - Sube, luego copia "Direct Link"<br>
+                                2. <a href="https://postimages.org" target="_blank">Postimages.org</a> - Sube, copia "Direct Link"<br>
+                                3. <a href="https://imgbb.com" target="_blank">ImgBB.com</a> - Sin registro necesario
+                            </small>
+                            <div id="bannerImagePreview" style="margin-top: 15px;"></div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Ámbito</label>
+                                <select id="bannerAmbito" class="form-select" required onchange="toggleBannerLocation()">
+                                    <option value="nacional">Nacional (todo el país)</option>
+                                    <option value="provincial">Provincial</option>
+                                    <option value="local">Local (ciudad específica)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Posición</label>
+                                <select id="bannerPosition" class="form-select" required>
+                                    <option value="home">Home (arriba de búsqueda)</option>
+                                    <option value="results">Resultados (entre profesionales)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div id="bannerLocationFields" style="display: none;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Provincia</label>
+                                    <select id="bannerProvincia" class="form-select">
+                                        <option value="">Seleccioná provincia</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Ciudad</label>
+                                    <select id="bannerCiudad" class="form-select" disabled>
+                                        <option value="">Seleccioná ciudad</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Rubros objetivo (opcional)</label>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
+                                <label style="display: flex; align-items: center; gap: 5px;">
+                                    <input type="checkbox" name="bannerRubros" value="plomeria"> Plomería
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 5px;">
+                                    <input type="checkbox" name="bannerRubros" value="gas"> Gas
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 5px;">
+                                    <input type="checkbox" name="bannerRubros" value="electricidad"> Electricidad
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 5px;">
+                                    <input type="checkbox" name="bannerRubros" value="aire"> Aire Acondicionado
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 5px;">
+                                    <input type="checkbox" name="bannerRubros" value="todos"> Todos los rubros
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Fecha inicio</label>
+                                <input type="date" id="bannerStartDate" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Fecha fin</label>
+                                <input type="date" id="bannerEndDate" class="form-input" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Prioridad (1-10)</label>
+                                <input type="number" id="bannerPriority" class="form-input" min="1" max="10" value="5" required>
+                                <small style="color: #666;">Los banners con mayor prioridad tienen más probabilidades de aparecer</small>
+                            </div>
+                            <div class="form-group">
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" id="bannerActive" checked>
+                                    <span>Banner activo</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary">💾 Guardar Banner</button>
+                            <button type="button" class="btn" onclick="hideBannerForm()">❌ Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Título</th>
+                                <th>Ámbito</th>
+                                <th>Periodo</th>
+                                <th>Estado</th>
+                                <th>Clicks</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bannersTable">
+                            <!-- JS llenará esto -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- CONFIG -->
+            <div id="configPanel" class="panel">
+                <h2 style="margin-bottom: 30px; color: #333;">Configuración del Sistema</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                    <div>
+                        <h3 style="margin-bottom: 20px;">💰 Precios</h3>
+                        <div class="form-group">
+                            <label class="form-label">Precio destacado (ARS/mes)</label>
+                            <input type="number" id="featuredPrice" class="form-input" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Precio certificación (ARS)</label>
+                            <input type="number" id="certificationPrice" class="form-input" min="0">
+                        </div>
+                        <button onclick="updatePrices()" class="btn btn-primary">💾 Actualizar precios</button>
+                    </div>
+                    
+                    <div>
+                        <h3 style="margin-bottom: 20px;">⚙ Sistema</h3>
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="bannersEnabled">
+                                <span>Banners publicitarios activados</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="newCitiesEnabled" checked>
+                                <span>Permitir nuevas ciudades</span>
+                            </label>
+                        </div>
+                        <button onclick="updateSystemConfig()" class="btn btn-primary">💾 Guardar configuración</button>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 50px;">
+                    <h3 style="margin-bottom: 20px;">🛠 Herramientas de Administración</h3>
+                    <div class="btn-group">
+                        <button onclick="forceHideNoPhoto()" class="btn btn-warning">👁 Ocultar profesionales sin foto</button>
+                        <button onclick="deactivateExpiredFeatured()" class="btn btn-warning">📅 Desactivar destacados vencidos</button>
+                        <button onclick="recalculateRankings()" class="btn btn-warning">📊 Recalcular rankings</button>
+                        <button onclick="updateProvinceStats()" class="btn btn-warning">📍 Actualizar estadísticas por provincia</button>
+                        <a href="setup.html" target="_blank" class="btn btn-danger">⚠ Setup Inicial</a>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 50px; background: #f8f9fa; padding: 25px; border-radius: 12px;">
+                    <h3 style="margin-bottom: 15px;">📋 Exportar Datos</h3>
+                    <div class="btn-group">
+                        <button onclick="exportProfessionals()" class="btn">📄 Exportar profesionales</button>
+                        <button onclick="exportQuotes()" class="btn">📋 Exportar presupuestos</button>
+                        <button onclick="exportBanners()" class="btn">🖼 Exportar banners</button>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="copyright">
-            <p>© 2024 TecniYa - Todos los derechos reservados</p>
-            <p><small>No realizamos trabajos. Conectamos clientes con profesionales.</small></p>
-        </div>
-    </footer>
-
-    <!-- SCRIPTS -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    </div>
     
-    <script>
-        // ============================================
-        // CONFIGURACIÓN FIREBASE
-        // ============================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
-            authDomain: "tecniya-b4206.firebaseapp.com",
-            projectId: "tecniya-b4206",
-            storageBucket: "tecniya-b4206.firebasestorage.app",
-            messagingSenderId: "166424133304",
-            appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
-        };
+    <div id="loader" class="loader"></div>
+    
+    <!-- SCRIPTS DE FIREBASE - SIN STORAGE -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
+    <!-- SCRIPT PRINCIPAL MODIFICADO -->
+    <script>
         // ============================================
         // DATOS DE PROVINCIAS Y CIUDADES
         // ============================================
@@ -765,143 +507,98 @@
             "Tucumán": ["San Miguel de Tucumán", "Yerba Buena", "Tafí Viejo", "Concepción", "Monteros", "Famaillá"]
         };
 
-        const ciudadesZonas = {
-            "Rosario": ["Centro", "Norte", "Sur", "Oeste", "NorOeste", "Echesortu", "Fisherton", "Alberdi", "Arroyito", "República de la Sexta", "La Florida", "Alto Rosario", "Toda la ciudad"],
-            "Córdoba": ["Centro", "Nueva Córdoba", "Alberdi", "Güemes", "Cerro de las Rosas", "Alta Córdoba", "General Paz", "Jardín", "Urca", "Argüello", "Toda la ciudad"],
-            "Mendoza": ["Centro", "Godoy Cruz", "Guaymallén", "Las Heras", "Maipú", "Chacras de Coria", "General Gutiérrez", "Toda la ciudad"],
-            "La Plata": ["Centro", "City Bell", "Gonnet", "Ringuelet", "Tolosa", "Los Hornos", "Villa Elisa", "Toda la ciudad"],
-            "Mar del Plata": ["Centro", "La Perla", "Bristol", "Playa Grande", "Altafulla", "Las Toscas", "Toda la ciudad"],
-            "Bahía Blanca": ["Centro", "Ingeniero White", "Villa Mitre", "Villa Rosas", "Villa Harding Green", "Toda la ciudad"],
-            "Salta": ["Centro", "Norte", "Sur", "Oeste", "Cerritos", "Toda la ciudad"],
-            "San Miguel de Tucumán": ["Centro", "Norte", "Sur", "Oeste", "Yerba Buena", "Toda la ciudad"],
-            "San Juan": ["Centro", "Rivadavia", "Chimbas", "Rawson", "Toda la ciudad"],
-            "Santa Fe": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Paraná": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Resistencia": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Corrientes": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Posadas": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Neuquén": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Bariloche": ["Centro", "Cerro Catedral", "Llao Llao", "Melipal", "Toda la ciudad"],
-            "Ushuaia": ["Centro", "Andorra", "La Cantera", "Malvinas Argentinas", "Toda la ciudad"],
-            "Comodoro Rivadavia": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Trelew": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Rawson": ["Centro", "Playa Unión", "Toda la ciudad"],
-            "Villa María": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Río Cuarto": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "San Rafael": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "San Luis": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Villa Mercedes": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Jujuy": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Formosa": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "La Rioja": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Catamarca": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
-            "Santiago del Estero": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"]
+        // ============================================
+        // CONFIGURACIÓN FIREBASE
+        // ============================================
+        const firebaseConfig = {
+          apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
+          authDomain: "tecniya-b4206.firebaseapp.com",
+          projectId: "tecniya-b4206",
+          storageBucket: "tecniya-b4206.firebasestorage.app",
+          messagingSenderId: "166424133304",
+          appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
         };
 
         // ============================================
-        // VARIABLES PARA ROTACIÓN DE BANNERS
+        // INICIALIZACIÓN DE FIREBASE
         // ============================================
-        let currentBannerIndex = 0;
-        let bannerRotationInterval = null;
-        let availableBanners = [];
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
 
         // ============================================
-        // INICIALIZACIÓN
+        // ELEMENTOS DOM
         // ============================================
-        let db;
+        const loginContainer = document.getElementById('loginContainer');
+        const adminPanel = document.getElementById('adminPanel');
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            await initFirebase();
-            initApp();
+        // ============================================
+        // VERIFICAR ADMIN AL CARGAR
+        // ============================================
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                const adminSnapshot = await db.collection('admin_users').where('email', '==', user.email).get();
+                if (!adminSnapshot.empty) {
+                    loginContainer.style.display = 'none';
+                    adminPanel.style.display = 'block';
+                    loadDashboard();
+                    loadProvinciasSelect();
+                } else {
+                    auth.signOut();
+                    showMessage('loginMessage', '❌ No tenés permisos de administrador', 'error');
+                }
+            } else {
+                loginContainer.style.display = 'block';
+                adminPanel.style.display = 'none';
+            }
         });
 
-        async function initFirebase() {
-            try {
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                }
-                
-                db = firebase.firestore();
-                
-            } catch (error) {
-                console.error('Error inicializando Firebase:', error);
-                showMessage('Error de conexión. Por favor, recargá la página.', 'error');
-            }
-        }
-
-        function initApp() {
-            if (!db) {
-                console.error('Firestore no disponible');
-                return;
-            }
-            
-            // Cargar datos geográficos
-            loadProvincias();
-            
-            // Cargar estadísticas
-            loadStats();
-            
-            // Cargar banner inicial
-            loadBanner();
-            
-            // Cargar todos los profesionales al inicio
-            loadAllProfessionals();
-            
-            // Configurar eventos
-            document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
-            document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
-            document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
-            document.getElementById('ciudadSelect').addEventListener('change', handleCiudadChange);
-            document.getElementById('rubroSelect').addEventListener('change', loadBanner);
-            
-            // Habilitar zonaSelect desde el inicio
-            document.getElementById('zonaSelect').disabled = false;
-            
-            // Cargar zonas generales
-            const zonaSelect = document.getElementById('zonaSelect');
-            zonaSelect.innerHTML = '<option value="">Todas las zonas</option>';
-            
-            // Agregar opciones de zonas generales
-            const zonasGenerales = ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"];
-            zonasGenerales.forEach(zona => {
-                const option = document.createElement('option');
-                option.value = zona.toLowerCase().replace(/ /g, '_');
-                option.textContent = zona;
-                zonaSelect.appendChild(option);
-            });
-        }
-
         // ============================================
-        // FUNCIONES PRINCIPALES
+        // CARGAR SELECTS DE PROVINCIAS
         // ============================================
-        function loadProvincias() {
-            const provinciaSelect = document.getElementById('provinciaSelect');
+        function loadProvinciasSelect() {
+            const provinciaSelect = document.getElementById('filterProvincia');
+            const bannerProvinciaSelect = document.getElementById('bannerProvincia');
             
             // Ordenar provincias alfabéticamente
             const provinciasOrdenadas = Object.keys(provinciasCiudades).sort();
             
             provinciasOrdenadas.forEach(provincia => {
-                const option = document.createElement('option');
-                option.value = provincia;
-                option.textContent = provincia;
-                provinciaSelect.appendChild(option);
+                // Para filtros
+                const option1 = document.createElement('option');
+                option1.value = provincia;
+                option1.textContent = provincia;
+                provinciaSelect.appendChild(option1);
+                
+                // Para banners
+                const option2 = document.createElement('option');
+                option2.value = provincia;
+                option2.textContent = provincia;
+                bannerProvinciaSelect.appendChild(option2);
             });
+            
+            // Agregar opción "Toda Argentina"
+            const nacionalOption = document.createElement('option');
+            nacionalOption.value = "toda";
+            nacionalOption.textContent = "Toda Argentina";
+            bannerProvinciaSelect.insertBefore(nacionalOption, bannerProvinciaSelect.firstChild);
         }
 
-        function handleProvinciaChange() {
+        // ============================================
+        // MANEJAR CAMBIO DE PROVINCIA EN BANNERS
+        // ============================================
+        document.getElementById('bannerProvincia').addEventListener('change', function() {
             const provincia = this.value;
-            const ciudadSelect = document.getElementById('ciudadSelect');
+            const ciudadSelect = document.getElementById('bannerCiudad');
             
-            if (!provincia) {
-                ciudadSelect.innerHTML = '<option value="">Todas las ciudades</option>';
+            if (!provincia || provincia === 'toda') {
+                ciudadSelect.innerHTML = '<option value="toda">Toda la provincia</option>';
                 ciudadSelect.disabled = true;
                 return;
             }
             
-            // Cargar ciudades de la provincia seleccionada
             const ciudades = provinciasCiudades[provincia] || [];
-            ciudadSelect.innerHTML = '<option value="">Todas las ciudades</option>';
-            
+            ciudadSelect.innerHTML = '<option value="">Seleccioná ciudad</option>';
             ciudades.forEach(ciudad => {
                 const option = document.createElement('option');
                 option.value = ciudad;
@@ -910,564 +607,265 @@
             });
             
             ciudadSelect.disabled = false;
-        }
+        });
 
-        function handleCiudadChange() {
-            const ciudad = this.value;
-            const zonaSelect = document.getElementById('zonaSelect');
+        // ============================================
+        // TOGGLE CAMPOS DE LOCALIZACIÓN DE BANNERS
+        // ============================================
+        window.toggleBannerLocation = function() {
+            const ambito = document.getElementById('bannerAmbito').value;
+            const locationFields = document.getElementById('bannerLocationFields');
             
-            if (!ciudad) {
-                // Si no hay ciudad seleccionada, mostrar zonas generales
-                zonaSelect.innerHTML = '<option value="">Todas las zonas</option>';
-                const zonasGenerales = ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"];
-                zonasGenerales.forEach(zona => {
-                    const option = document.createElement('option');
-                    option.value = zona.toLowerCase().replace(/ /g, '_');
-                    option.textContent = zona;
-                    zonaSelect.appendChild(option);
-                });
-                return;
-            }
-            
-            // Cargar zonas de la ciudad seleccionada
-            const zonas = ciudadesZonas[ciudad] || ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"];
-            zonaSelect.innerHTML = '<option value="">Todas las zonas</option>';
-            
-            zonas.forEach(zona => {
-                const option = document.createElement('option');
-                option.value = zona.toLowerCase().replace(/ /g, '_');
-                option.textContent = zona;
-                zonaSelect.appendChild(option);
-            });
-        }
-
-        async function loadStats() {
-            try {
-                const statsRef = db.collection('stats').doc('global');
-                const doc = await statsRef.get();
-                
-                const statsContainer = document.getElementById('statsContainer');
-                
-                if (doc.exists) {
-                    const data = doc.data();
-                    statsContainer.innerHTML = `
-                        <div class="stat-card">
-                            <div class="stat-number">${data.totalProfessionals || '500+'}</div>
-                            <div class="stat-label">Técnicos Activos</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">${data.totalJobs || '5000+'}</div>
-                            <div class="stat-label">Trabajos Realizados</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">${data.avgRating || '4.8'}/5</div>
-                            <div class="stat-label">Rating Promedio</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">24h</div>
-                            <div class="stat-label">Respuesta Rápida</div>
-                        </div>
-                    `;
+            if (ambito === 'nacional') {
+                locationFields.style.display = 'none';
+                document.getElementById('bannerProvincia').value = 'toda';
+                document.getElementById('bannerCiudad').value = 'toda';
+                document.getElementById('bannerCiudad').disabled = true;
+            } else {
+                locationFields.style.display = 'block';
+                if (ambito === 'provincial') {
+                    document.getElementById('bannerCiudad').value = 'toda';
+                    document.getElementById('bannerCiudad').disabled = true;
                 } else {
-                    // Estadísticas por defecto
-                    statsContainer.innerHTML = `
-                        <div class="stat-card">
-                            <div class="stat-number">500+</div>
-                            <div class="stat-label">Técnicos Activos</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">5000+</div>
-                            <div class="stat-label">Trabajos Realizados</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">4.8/5</div>
-                            <div class="stat-label">Rating Promedio</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">24h</div>
-                            <div class="stat-label">Respuesta Rápida</div>
-                        </div>
-                    `;
+                    document.getElementById('bannerCiudad').disabled = false;
                 }
+            }
+        };
+
+        // ============================================
+        // LOGIN
+        // ============================================
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
             } catch (error) {
-                console.error('Error cargando estadísticas:', error);
+                showMessage('loginMessage', '❌ Error: ' + error.message, 'error');
+            }
+        });
+
+        // ============================================
+        // LOGOUT
+        // ============================================
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut();
+        });
+
+        // ============================================
+        // SWITCH TABS
+        // ============================================
+        document.querySelectorAll('.tab:not(.tab-logout)').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(`${tabId}Panel`).classList.add('active');
+                
+                if (tabId === 'dashboard') loadDashboard();
+                if (tabId === 'professionals') loadProfessionals();
+                if (tabId === 'banners') loadBanners();
+                if (tabId === 'config') loadConfig();
+            });
+        });
+
+        // ============================================
+        // CARGAR DASHBOARD
+        // ============================================
+        async function loadDashboard() {
+            showLoader();
+            
+            try {
+                // CONTAR PROFESIONALES
+                const profSnapshot = await db.collection('professionals').get();
+                document.getElementById('totalProfessionals').textContent = profSnapshot.size;
+                
+                // CONTAR CIUDADES ACTIVAS
+                const ciudadesSet = new Set();
+                profSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.ciudad) {
+                        ciudadesSet.add(data.ciudad);
+                    }
+                });
+                document.getElementById('activeCities').textContent = ciudadesSet.size;
+                
+                // CONTAR DESTACADOS ACTIVOS
+                const now = new Date();
+                let featuredCount = 0;
+                profSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.isFeatured && data.featuredUntil && data.featuredUntil.toDate() > now) {
+                        featuredCount++;
+                    }
+                });
+                document.getElementById('featuredProfessionals').textContent = featuredCount;
+                
+                // CONTAR PRESUPUESTOS
+                const quotesSnapshot = await db.collection('quotes').get();
+                document.getElementById('totalQuotes').textContent = quotesSnapshot.size;
+                
+                // DISTRIBUCIÓN POR PROVINCIA
+                const distribution = {};
+                profSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.provincia) {
+                        if (!distribution[data.provincia]) {
+                            distribution[data.provincia] = {
+                                profesionales: 0,
+                                ciudades: new Set(),
+                                destacados: 0
+                            };
+                        }
+                        distribution[data.provincia].profesionales++;
+                        if (data.ciudad) distribution[data.provincia].ciudades.add(data.ciudad);
+                        if (data.isFeatured && data.featuredUntil && data.featuredUntil.toDate() > now) {
+                            distribution[data.provincia].destacados++;
+                        }
+                    }
+                });
+                
+                const tbody = document.getElementById('provinceDistribution');
+                tbody.innerHTML = '';
+                
+                Object.keys(distribution).sort().forEach(provincia => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${provincia}</strong></td>
+                        <td>${distribution[provincia].profesionales}</td>
+                        <td>${distribution[provincia].ciudades.size}</td>
+                        <td>${distribution[provincia].destacados}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                hideLoader();
+            } catch (error) {
+                console.error("Error cargando dashboard:", error);
+                hideLoader();
             }
         }
 
         // ============================================
-        // FUNCIONES PARA ROTACIÓN DE BANNERS
+        // CARGAR PROFESIONALES
         // ============================================
-        function startBannerRotation() {
-            // Detener rotación anterior si existe
-            if (bannerRotationInterval) {
-                clearInterval(bannerRotationInterval);
-            }
-            
-            // Si hay más de un banner, iniciar rotación cada 8 segundos
-            if (availableBanners.length > 1) {
-                bannerRotationInterval = setInterval(() => {
-                    showNextBanner();
-                }, 8000); // 8 segundos entre banners
-            }
-        }
-
-        function showNextBanner() {
-            if (availableBanners.length === 0) return;
-            
-            // Incrementar índice
-            currentBannerIndex = (currentBannerIndex + 1) % availableBanners.length;
-            
-            // Mostrar banner actual
-            displayBanner(currentBannerIndex);
-        }
-
-        function displayBanner(index) {
-            const bannerContainer = document.getElementById('bannerContent');
-            const banner = availableBanners[index];
-            
-            if (!banner) return;
-            
-            bannerContainer.innerHTML = `
-                <a href="${banner.link}" target="_blank" class="banner-link" id="bannerLink">
-                    <img src="${banner.imageUrl}" 
-                         alt="${banner.title || 'Banner'}" 
-                         class="banner-img"
-                         onerror="this.onerror=null; this.src='https://via.placeholder.com/900x180/0a4fd8/ffffff?text=BANNER+TECNIYA'">
-                </a>
-            `;
-            
-            // Actualizar evento de clic
-            const bannerLink = document.getElementById('bannerLink');
-            const provincia = document.getElementById('provinciaSelect').value;
-            const ciudad = document.getElementById('ciudadSelect').value;
-            const rubro = document.getElementById('rubroSelect').value;
-            
-            bannerLink.addEventListener('click', async () => {
-                try {
-                    await db.collection('ads_clicks').add({
-                        bannerId: banner.id,
-                        bannerTitle: banner.title,
-                        provincia: provincia || 'nacional',
-                        ciudad: ciudad || 'todas',
-                        rubro: rubro || 'todos',
-                        clickedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        userAgent: navigator.userAgent,
-                        timestamp: new Date().toISOString()
-                    });
-                } catch (error) {
-                    console.error('Error registrando clic:', error);
-                }
-            });
-        }
-
-        async function loadBanner() {
-            try {
-                const provincia = document.getElementById('provinciaSelect').value;
-                const ciudad = document.getElementById('ciudadSelect').value;
-                const rubro = document.getElementById('rubroSelect').value;
-                
-                const bannerContainer = document.getElementById('bannerContent');
-                
-                // Mostrar banner de carga
-                bannerContainer.innerHTML = `
-                    <div style="padding: 2rem; text-align: center;">
-                        <div class="spinner" style="width: 40px; height: 40px; margin: 0 auto;"></div>
-                        <p style="margin-top: 1rem; color: #666;">Cargando banner...</p>
-                    </div>
-                `;
-                
-                const now = new Date();
-                
-                // Buscar TODOS los banners activos
-                let bannersSnapshot = await db.collection('banners').get();
-                
-                if (bannersSnapshot.empty) {
-                    // Mostrar banner por defecto
-                    bannerContainer.innerHTML = `
-                        <div style="padding: 2rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                            <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🔧 TecniYa Argentina</h3>
-                            <p>Conectamos clientes con técnicos certificados</p>
-                            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">Publicitá tu negocio aquí</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                // Filtrar banners manualmente
-                availableBanners = [];
-                bannersSnapshot.forEach(doc => {
-                    const banner = { id: doc.id, ...doc.data() };
-                    
-                    // Verificar que esté activo
-                    if (!banner.active) return;
-                    
-                    // Verificar fecha
-                    const startDate = banner.startDate ? banner.startDate.toDate() : null;
-                    const endDate = banner.endDate ? banner.endDate.toDate() : null;
-                    
-                    if (!startDate || !endDate) return;
-                    if (startDate > now || endDate < now) return;
-                    
-                    // Verificar ubicación - SISTEMA DE JERARQUÍA MEJORADO
-                    let pasaUbicacion = false;
-                    
-                    if (provincia && ciudad) {
-                        // Si hay provincia y ciudad seleccionadas
-                        // 1. Banner local específico (misma provincia y ciudad)
-                        if (banner.provincia === provincia && banner.ciudad === ciudad) {
-                            pasaUbicacion = true;
-                        }
-                        // 2. Banner provincial (misma provincia, ciudad: "toda")
-                        else if (banner.provincia === provincia && banner.ciudad === 'toda') {
-                            pasaUbicacion = true;
-                        }
-                        // 3. Banner nacional (provincia: "toda", ciudad: "toda")
-                        else if (banner.provincia === 'toda' && banner.ciudad === 'toda') {
-                            pasaUbicacion = true;
-                        }
-                    } else if (provincia && !ciudad) {
-                        // Si solo hay provincia seleccionada
-                        // 1. Banner provincial (misma provincia, ciudad: "toda")
-                        if (banner.provincia === provincia && banner.ciudad === 'toda') {
-                            pasaUbicacion = true;
-                        }
-                        // 2. Banner nacional (provincia: "toda", ciudad: "toda")
-                        else if (banner.provincia === 'toda' && banner.ciudad === 'toda') {
-                            pasaUbicacion = true;
-                        }
-                    } else {
-                        // Si no hay nada seleccionado, solo banners nacionales
-                        if (banner.provincia === 'toda' && banner.ciudad === 'toda') {
-                            pasaUbicacion = true;
-                        }
-                    }
-                    
-                    if (!pasaUbicacion) return;
-                    
-                    // Verificar rubro
-                    if (rubro && rubro !== '') {
-                        if (!banner.rubros || !Array.isArray(banner.rubros)) return;
-                        
-                        // Verificar si el banner aplica para "todos" los rubros o para este rubro específico
-                        if (!banner.rubros.includes('todos') && !banner.rubros.includes(rubro)) {
-                            return;
-                        }
-                    }
-                    
-                    // Asignar peso según jerarquía para ordenar
-                    let peso = 0;
-                    if (banner.provincia === provincia && banner.ciudad === ciudad) {
-                        peso = 100; // Banners locales tienen mayor peso
-                    } else if (banner.provincia === provincia && banner.ciudad === 'toda') {
-                        peso = 50; // Banners provinciales
-                    } else if (banner.provincia === 'toda' && banner.ciudad === 'toda') {
-                        peso = 10; // Banners nacionales
-                    }
-                    
-                    // Añadir peso de prioridad
-                    peso += banner.priority || 0;
-                    
-                    banner.peso = peso;
-                    availableBanners.push(banner);
-                });
-                
-                if (availableBanners.length === 0) {
-                    // Mostrar banner por defecto
-                    bannerContainer.innerHTML = `
-                        <div style="padding: 2rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                            <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🔧 TecniYa Argentina</h3>
-                            <p>Conectamos clientes con técnicos certificados</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                // Ordenar banners por peso (jerarquía + prioridad)
-                availableBanners.sort((a, b) => b.peso - a.peso);
-                
-                // Reiniciar índice
-                currentBannerIndex = 0;
-                
-                // Mostrar primer banner
-                displayBanner(0);
-                
-                // Iniciar rotación si hay más de un banner
-                startBannerRotation();
-                
-            } catch (error) {
-                console.error('Error cargando banner:', error);
-                const bannerContainer = document.getElementById('bannerContent');
-                bannerContainer.innerHTML = `
-                    <div style="padding: 2rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                        <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🔧 TecniYa Argentina</h3>
-                        <p>Encontrá técnicos certificados en tu ciudad</p>
-                    </div>
-                `;
-            }
-        }
-
-        async function loadAllProfessionals() {
-            const loader = document.getElementById('loader');
-            const resultsContainer = document.getElementById('resultsContainer');
-            const resultsHeader = document.getElementById('resultsHeader');
-            const resultsCount = document.getElementById('resultsCount');
-            
-            loader.style.display = 'flex';
-            resultsContainer.innerHTML = '';
-            resultsHeader.style.display = 'none';
+        async function loadProfessionals() {
+            showLoader();
             
             try {
-                // Obtener todos los profesionales activos
-                const snapshot = await db.collection('professionals')
-                    .where('profileCompleted', '==', true)
-                    .where('blocked', '==', false)
-                    .limit(100) // Límite para no sobrecargar
-                    .get();
+                let query = db.collection('professionals');
                 
-                if (snapshot.empty) {
-                    showMessage('No hay técnicos registrados en este momento.', 'info');
-                    return;
+                // APLICAR FILTROS
+                const provinciaFilter = document.getElementById('filterProvincia').value;
+                const ciudadFilter = document.getElementById('filterCiudad').value;
+                const rubroFilter = document.getElementById('filterRubro').value;
+                const statusFilter = document.getElementById('filterStatus').value;
+                
+                if (provinciaFilter) {
+                    query = query.where('provincia', '==', provinciaFilter);
+                    
+                    // Cargar ciudades de la provincia seleccionada
+                    const ciudadSelect = document.getElementById('filterCiudad');
+                    ciudadSelect.innerHTML = '<option value="">Todas</option>';
+                    if (provinciasCiudades[provinciaFilter]) {
+                        provinciasCiudades[provinciaFilter].forEach(ciudad => {
+                            const option = document.createElement('option');
+                            option.value = ciudad;
+                            option.textContent = ciudad;
+                            ciudadSelect.appendChild(option);
+                        });
+                    }
                 }
                 
-                // Filtrar y ordenar
-                const professionals = [];
+                if (ciudadFilter) {
+                    query = query.where('ciudad', '==', ciudadFilter);
+                }
+                
+                if (rubroFilter) {
+                    query = query.where('rubros', 'array-contains', rubroFilter);
+                }
+                
+                const snapshot = await query.get();
+                const tbody = document.getElementById('professionalsTable');
+                tbody.innerHTML = '';
+                
                 const now = new Date();
                 
                 snapshot.forEach(doc => {
-                    const prof = { id: doc.id, ...doc.data() };
+                    const data = doc.data();
+                    const id = doc.id;
                     
-                    // Calcular rating provisional
-                    let rating = 4.0; // Base
-                    if (prof.jobsCompleted && prof.jobsCompleted > 10) rating += 0.5;
-                    if (prof.certified) rating += 0.3;
-                    if (prof.photoUrl) rating += 0.2;
-                    if (prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now) rating += 0.5;
-                    
-                    // Asegurar que no supere 5
-                    prof.rating = Math.min(rating, 5).toFixed(1);
-                    
-                    // Calcular score
-                    let score = rating * 10;
-                    score += (prof.jobsCompleted || 0) * 2;
-                    
-                    // Destacados activos
-                    if (prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now) {
-                        score += 100;
-                        prof.isFeaturedActive = true;
+                    // APLICAR FILTRO DE ESTADO
+                    if (statusFilter === 'active' && !data.profileCompleted) return;
+                    if (statusFilter === 'incomplete' && data.profileCompleted) return;
+                    if (statusFilter === 'blocked' && !data.blocked) return;
+                    if (statusFilter === 'featured') {
+                        const isFeaturedActive = data.isFeatured && data.featuredUntil && data.featuredUntil.toDate() > now;
+                        if (!isFeaturedActive) return;
                     }
+                    if (statusFilter === 'certified' && !data.certified) return;
                     
-                    // Actividad reciente
-                    if (prof.lastActive) {
-                        const days = (now - prof.lastActive.toDate()) / (1000 * 60 * 60 * 24);
-                        if (days < 7) score += 5;
-                    }
+                    const featuredActive = data.isFeatured && data.featuredUntil && data.featuredUntil.toDate() > now;
+                    const photoUrl = data.photoUrl || 'https://via.placeholder.com/50x50/0a4fd8/ffffff?text=NO+FOTO';
                     
-                    // Certificaciones
-                    if (prof.certified) score += 20;
-                    
-                    // Perfil completo
-                    if (prof.profileCompleted) score += 10;
-                    
-                    prof.score = score;
-                    professionals.push(prof);
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><img src="${photoUrl}" class="table-photo" alt="Foto" onerror="this.src='https://via.placeholder.com/50x50/0a4fd8/ffffff?text=NO+FOTO'"></td>
+                        <td>
+                            <strong>${data.name || 'Sin nombre'}</strong><br>
+                            <small style="color: #666;">${data.email || ''}</small>
+                        </td>
+                        <td>
+                            ${data.ciudad || 'Sin ciudad'},<br>
+                            ${data.provincia || 'Sin provincia'}
+                        </td>
+                        <td>
+                            ${data.phone || 'Sin teléfono'}<br>
+                            ${data.zonas ? data.zonas.join(', ') : ''}
+                        </td>
+                        <td>${data.rubros ? data.rubros.map(r => getRubroName(r)).join(', ') : ''}</td>
+                        <td>
+                            ${data.blocked ? '<span class="badge badge-danger">BLOQUEADO</span>' : ''}
+                            ${!data.profileCompleted ? '<span class="badge badge-warning">INCOMPLETO</span>' : ''}
+                            ${featuredActive ? '<span class="badge badge-success">DESTACADO</span>' : ''}
+                            ${data.certified ? '<span class="badge badge-primary">CERTIFICADO</span>' : ''}
+                            ${data.profileCompleted && !data.blocked && !featuredActive && !data.certified ? '<span class="badge badge-info">ACTIVO</span>' : ''}
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <button onclick="viewProfessionalDetail('${id}')" class="btn btn-sm">👁 Ver</button>
+                                ${featuredActive ? 
+                                    `<button onclick="deactivateFeatured('${id}')" class="btn btn-warning btn-sm">⭐ Desactivar</button>` : 
+                                    `<button onclick="activateFeatured('${id}')" class="btn btn-success btn-sm">⭐ Destacar</button>`
+                                }
+                                ${data.certified ?
+                                    `<button onclick="removeCertification('${id}')" class="btn btn-warning btn-sm">✓ Remover cert.</button>` :
+                                    `<button onclick="addCertification('${id}')" class="btn btn-primary btn-sm">✓ Certificar</button>`
+                                }
+                                ${data.blocked ? 
+                                    `<button onclick="unblockProfessional('${id}')" class="btn btn-success btn-sm">🔓 Desbloquear</button>` : 
+                                    `<button onclick="blockProfessional('${id}')" class="btn btn-danger btn-sm">🚫 Bloquear</button>`
+                                }
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
                 });
                 
-                if (professionals.length === 0) {
-                    showMessage('No hay técnicos disponibles.', 'info');
-                    return;
-                }
-                
-                // Ordenar por score
-                professionals.sort((a, b) => b.score - a.score);
-                
-                // Mostrar resultados
-                displayProfessionals(professionals);
-                
-                // Actualizar contador
-                resultsCount.textContent = `${professionals.length} técnico${professionals.length !== 1 ? 's' : ''} en todo el país`;
-                resultsHeader.style.display = 'flex';
-                
-                // Recargar banner
-                loadBanner();
-                
+                hideLoader();
             } catch (error) {
-                console.error('Error cargando técnicos:', error);
-                showMessage('Error cargando técnicos. Por favor, intentá nuevamente.', 'error');
-            } finally {
-                loader.style.display = 'none';
+                console.error("Error cargando profesionales:", error);
+                hideLoader();
             }
         }
 
-        async function searchProfessionals() {
-            const provincia = document.getElementById('provinciaSelect').value;
-            const ciudad = document.getElementById('ciudadSelect').value;
-            const zona = document.getElementById('zonaSelect').value;
-            const rubro = document.getElementById('rubroSelect').value;
-            
-            const loader = document.getElementById('loader');
-            const resultsContainer = document.getElementById('resultsContainer');
-            const resultsHeader = document.getElementById('resultsHeader');
-            const resultsCount = document.getElementById('resultsCount');
-            
-            loader.style.display = 'flex';
-            resultsContainer.innerHTML = '';
-            resultsHeader.style.display = 'none';
-            
-            try {
-                // Construir consulta base
-                let query = db.collection('professionals')
-                    .where('profileCompleted', '==', true)
-                    .where('blocked', '==', false);
-                
-                // Aplicar filtros
-                if (provincia && provincia !== '') {
-                    query = query.where('provincia', '==', provincia);
-                }
-                
-                if (ciudad && ciudad !== '') {
-                    query = query.where('ciudad', '==', ciudad);
-                }
-                
-                if (rubro && rubro !== '') {
-                    query = query.where('rubros', 'array-contains', rubro);
-                }
-                
-                const snapshot = await query.limit(100).get();
-                
-                if (snapshot.empty) {
-                    showMessage('No se encontraron técnicos para tu búsqueda.', 'info');
-                    return;
-                }
-                
-                // Filtrar y ordenar
-                const professionals = [];
-                const now = new Date();
-                
-                snapshot.forEach(doc => {
-                    const prof = { id: doc.id, ...doc.data() };
-                    
-                    // Filtrar por zona
-                    if (zona && zona !== '' && zona !== 'toda_la_ciudad' && prof.zonas) {
-                        const zonasProf = prof.zonas.map(z => z.toLowerCase().replace(/ /g, '_'));
-                        if (!zonasProf.includes(zona)) {
-                            return;
-                        }
-                    }
-                    
-                    // Calcular rating provisional
-                    let rating = 4.0;
-                    if (prof.jobsCompleted && prof.jobsCompleted > 10) rating += 0.5;
-                    if (prof.certified) rating += 0.3;
-                    if (prof.photoUrl) rating += 0.2;
-                    if (prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now) rating += 0.5;
-                    
-                    prof.rating = Math.min(rating, 5).toFixed(1);
-                    
-                    // Calcular score
-                    let score = rating * 10;
-                    score += (prof.jobsCompleted || 0) * 2;
-                    
-                    if (prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now) {
-                        score += 100;
-                        prof.isFeaturedActive = true;
-                    }
-                    
-                    if (prof.lastActive) {
-                        const days = (now - prof.lastActive.toDate()) / (1000 * 60 * 60 * 24);
-                        if (days < 7) score += 5;
-                    }
-                    
-                    if (prof.certified) score += 20;
-                    if (prof.profileCompleted) score += 10;
-                    
-                    prof.score = score;
-                    professionals.push(prof);
-                });
-                
-                if (professionals.length === 0) {
-                    showMessage('No hay técnicos disponibles con los filtros seleccionados.', 'info');
-                    return;
-                }
-                
-                // Ordenar por score
-                professionals.sort((a, b) => b.score - a.score);
-                
-                // Mostrar resultados
-                displayProfessionals(professionals);
-                
-                // Actualizar contador
-                let locationText = '';
-                if (provincia) locationText += ` en ${provincia}`;
-                if (ciudad) locationText += `, ${ciudad}`;
-                
-                resultsCount.textContent = `${professionals.length} técnico${professionals.length !== 1 ? 's' : ''} encontrado${professionals.length !== 1 ? 's' : ''}${locationText}`;
-                resultsHeader.style.display = 'flex';
-                
-                // Recargar banner con los nuevos filtros
-                loadBanner();
-                
-            } catch (error) {
-                console.error('Error buscando técnicos:', error);
-                showMessage('Error en la búsqueda. Por favor, intentá nuevamente.', 'error');
-            } finally {
-                loader.style.display = 'none';
-            }
-        }
-
-        function displayProfessionals(professionals) {
-            const container = document.getElementById('resultsContainer');
-            container.innerHTML = '';
-            
-            professionals.forEach(prof => {
-                const now = new Date();
-                const isFeatured = prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now;
-                
-                const card = document.createElement('div');
-                card.className = 'professional-card';
-                
-                card.innerHTML = `
-                    ${isFeatured ? '<div class="professional-featured">⭐ DESTACADO</div>' : ''}
-                    ${prof.certified ? '<div class="professional-featured" style="top: 45px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">✓ CERTIFICADO</div>' : ''}
-                    <div class="professional-header">
-                        <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80/0a4fd8/ffffff?text=TÉCNICO'}" 
-                             alt="${prof.name}"
-                             class="professional-photo"
-                             loading="lazy"
-                             onerror="this.src='https://via.placeholder.com/80x80/0a4fd8/ffffff?text=TÉCNICO'">
-                        <div class="professional-info">
-                            <h3 class="professional-name">${prof.name}</h3>
-                            <div class="professional-rating">
-                                ⭐ ${prof.rating || '4.0'}
-                                <span>(${prof.jobsCompleted || 0} trabajos)</span>
-                            </div>
-                            <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.5rem;">
-                                📍 ${prof.ciudad || 'Sin ciudad'}, ${prof.provincia || 'Sin provincia'}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="professional-body">
-                        <div class="professional-services">
-                            ${prof.rubros ? prof.rubros.map(rubro => 
-                                `<span class="service-tag">${getRubroName(rubro)}</span>`
-                            ).join('') : ''}
-                        </div>
-                        <p style="margin-top: 1rem;">${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
-                        ${prof.certified ? '<p style="color: #28a745; font-weight: 600; margin-top: 0.5rem;">✓ Técnico certificado</p>' : ''}
-                    </div>
-                    <div class="professional-footer">
-                        <span>📍 ${prof.zonas ? prof.zonas.join(', ') : 'Toda la ciudad'}</span>
-                        <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa para consultar por tus servicios" 
-                           target="_blank"
-                           class="btn btn-whatsapp">
-                            📱 Contactar
-                        </a>
-                    </div>
-                `;
-                
-                container.appendChild(card);
-            });
-        }
-
+        // ============================================
+        // FUNCIONES AUXILIARES
+        // ============================================
         function getRubroName(rubroKey) {
             const rubros = {
                 'plomeria': 'Plomería',
@@ -1487,17 +885,737 @@
             return rubros[rubroKey] || rubroKey;
         }
 
-        function showMessage(text, type) {
-            const container = document.getElementById('resultsContainer');
-            const message = document.createElement('div');
-            message.className = `message message-${type}`;
-            message.textContent = text;
-            container.innerHTML = '';
-            container.appendChild(message);
+        // ============================================
+        // APLICAR FILTROS
+        // ============================================
+        document.getElementById('applyFilters').addEventListener('click', loadProfessionals);
+        document.getElementById('resetFilters').addEventListener('click', () => {
+            document.getElementById('filterProvincia').value = '';
+            document.getElementById('filterCiudad').value = '';
+            document.getElementById('filterRubro').value = '';
+            document.getElementById('filterStatus').value = '';
+            loadProfessionals();
+        });
+
+        // ============================================
+        // VER DETALLE PROFESIONAL
+        // ============================================
+        window.viewProfessionalDetail = async function(id) {
+            const doc = await db.collection('professionals').doc(id).get();
+            if (!doc.exists) return;
             
-            setTimeout(() => {
-                message.remove();
-            }, 5000);
+            const data = doc.data();
+            const now = new Date();
+            const featuredActive = data.isFeatured && data.featuredUntil && data.featuredUntil.toDate() > now;
+            
+            let html = `
+                <div style="display: flex; gap: 30px; margin-bottom: 30px;">
+                    <div>
+                        <img src="${data.photoUrl || 'https://via.placeholder.com/150x150/0a4fd8/ffffff?text=NO+FOTO'}" 
+                             style="width: 150px; height: 150px; object-fit: cover; border-radius: 12px;"
+                             onerror="this.src='https://via.placeholder.com/150x150/0a4fd8/ffffff?text=NO+FOTO'">
+                    </div>
+                    <div>
+                        <h4>${data.name || 'Sin nombre'}</h4>
+                        <p><strong>📍 Ubicación:</strong> ${data.ciudad || ''}, ${data.provincia || ''}</p>
+                        <p><strong>📞 Teléfono:</strong> ${data.phone || 'No especificado'}</p>
+                        <p><strong>📧 Email:</strong> ${data.email || 'No especificado'}</p>
+                        <p><strong>⭐ Rating:</strong> ${data.rating || '0'}</p>
+                        <p><strong>✅ Trabajos completados:</strong> ${data.jobsCompleted || '0'}</p>
+                        <p><strong>📅 Registrado:</strong> ${data.createdAt ? data.createdAt.toDate().toLocaleDateString('es-AR') : 'No disponible'}</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Rubros:</strong> ${data.rubros ? data.rubros.map(r => getRubroName(r)).join(', ') : ''}</p>
+                    <p><strong>Zonas:</strong> ${data.zonas ? data.zonas.join(', ') : ''}</p>
+                    <p><strong>Descripción:</strong> ${data.bio || 'Sin descripción'}</p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px;">
+                        <h5>Estado del perfil</h5>
+                        <p>${data.profileCompleted ? '✅ COMPLETO' : '❌ INCOMPLETO'}</p>
+                        <p>${data.blocked ? '🚫 BLOQUEADO' : '✅ ACTIVO'}</p>
+                        <p>${data.certified ? '✅ CERTIFICADO' : '❌ NO CERTIFICADO'}</p>
+                    </div>
+                    
+                    <div style="background: ${featuredActive ? '#fff3cd' : '#f8f9fa'}; padding: 20px; border-radius: 12px;">
+                        <h5>Servicio destacado</h5>
+                        <p>${featuredActive ? '✅ ACTIVO' : '❌ INACTIVO'}</p>
+                        ${data.featuredUntil ? 
+                            `<p><strong>Válido hasta:</strong> ${data.featuredUntil.toDate().toLocaleDateString('es-AR')}</p>` : 
+                            ''
+                        }
+                    </div>
+                </div>
+                
+                <div class="btn-group" style="margin-top: 30px;">
+                    <button onclick="contactProfessional('${data.phone}')" class="btn btn-success">📱 Contactar por WhatsApp</button>
+                    <button onclick="closeModal()" class="btn">Cerrar</button>
+                </div>
+            `;
+            
+            document.getElementById('professionalDetailContent').innerHTML = html;
+            document.getElementById('professionalDetailModal').style.display = 'block';
+        };
+
+        window.closeModal = function() {
+            document.getElementById('professionalDetailModal').style.display = 'none';
+        };
+
+        // ============================================
+        // BLOQUEAR/DESBLOQUEAR PROFESIONAL
+        // ============================================
+        window.blockProfessional = async function(id) {
+            if (confirm('¿Estás seguro de bloquear a este profesional? No podrá acceder a su panel.')) {
+                await db.collection('professionals').doc(id).update({ blocked: true });
+                loadProfessionals();
+            }
+        };
+
+        window.unblockProfessional = async function(id) {
+            await db.collection('professionals').doc(id).update({ blocked: false });
+            loadProfessionals();
+        };
+
+        // ============================================
+        // CERTIFICAR/DESCERTIFICAR PROFESIONAL
+        // ============================================
+        window.addCertification = async function(id) {
+            if (confirm('¿Certificar a este profesional? Esto le dará mayor visibilidad.')) {
+                await db.collection('professionals').doc(id).update({ 
+                    certified: true,
+                    certifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                loadProfessionals();
+            }
+        };
+
+        window.removeCertification = async function(id) {
+            if (confirm('¿Remover certificación a este profesional?')) {
+                await db.collection('professionals').doc(id).update({ 
+                    certified: false,
+                    certifiedAt: null
+                });
+                loadProfessionals();
+            }
+        };
+
+        // ============================================
+        // ACTIVAR/DESACTIVAR DESTACADO
+        // ============================================
+        window.activateFeatured = async function(id) {
+            const months = prompt('¿Por cuántos meses activar el servicio destacado?', '1');
+            if (!months || isNaN(months) || months < 1) return;
+            
+            const now = new Date();
+            const featuredUntil = new Date(now.setMonth(now.getMonth() + parseInt(months)));
+            
+            await db.collection('professionals').doc(id).update({
+                isFeatured: true,
+                featuredUntil: featuredUntil,
+                featuredAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            loadProfessionals();
+        };
+
+        window.deactivateFeatured = async function(id) {
+            if (confirm('¿Desactivar servicio destacado?')) {
+                await db.collection('professionals').doc(id).update({
+                    isFeatured: false,
+                    featuredUntil: null,
+                    featuredAt: null
+                });
+                loadProfessionals();
+            }
+        };
+
+        // ============================================
+        // CONTACTAR PROFESIONAL
+        // ============================================
+        window.contactProfessional = function(phone) {
+            if (phone) {
+                window.open(`https://wa.me/${phone}`, '_blank');
+            }
+        };
+
+        // ============================================
+        // CARGAR BANNERS
+        // ============================================
+        async function loadBanners() {
+            showLoader();
+            
+            try {
+                const snapshot = await db.collection('banners').orderBy('createdAt', 'desc').get();
+                const tbody = document.getElementById('bannersTable');
+                tbody.innerHTML = '';
+                
+                const now = new Date();
+                
+                snapshot.forEach(async doc => {
+                    const data = doc.data();
+                    const id = doc.id;
+                    
+                    // CONTAR CLICKS
+                    const clicksSnapshot = await db.collection('ads_clicks')
+                        .where('bannerId', '==', id)
+                        .get();
+                    
+                    const clicks = clicksSnapshot.size;
+                    const active = data.active && data.startDate && data.endDate && 
+                                   data.startDate.toDate() <= now && data.endDate.toDate() >= now;
+                    
+                    // Determinar ámbito
+                    let ambito = 'Local';
+                    if (data.provincia === 'toda') {
+                        ambito = 'Nacional';
+                    } else if (data.ciudad === 'toda') {
+                        ambito = 'Provincial';
+                    }
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            ${data.imageUrl ? 
+                                `<img src="${data.imageUrl}" style="width: 100px; height: 50px; object-fit: cover; border-radius: 6px;" 
+                                      onerror="this.src='https://via.placeholder.com/100x50/0a4fd8/ffffff?text=BANNER'">` : 
+                                '<img src="https://via.placeholder.com/100x50/0a4fd8/ffffff?text=SIN+IMAGEN" style="border-radius: 6px;">'
+                            }
+                        </td>
+                        <td>
+                            <strong>${data.title || 'Sin título'}</strong><br>
+                            <small style="color: #666;">${ambito} - ${data.provincia || 'Nacional'}${data.ciudad && data.ciudad !== 'toda' ? ', ' + data.ciudad : ''}</small>
+                        </td>
+                        <td>
+                            ${ambito}<br>
+                            <small>${data.provincia === 'toda' ? 'Todo el país' : data.provincia}${data.ciudad && data.ciudad !== 'toda' ? ', ' + data.ciudad : ''}</small>
+                        </td>
+                        <td>
+                            ${data.startDate ? data.startDate.toDate().toLocaleDateString('es-AR') : ''}<br>
+                            al ${data.endDate ? data.endDate.toDate().toLocaleDateString('es-AR') : ''}
+                        </td>
+                        <td>
+                            ${active ? '<span class="badge badge-success">ACTIVO</span>' : '<span class="badge badge-danger">INACTIVO</span>'}
+                            <br><small>Prioridad: ${data.priority || 5}</small>
+                        </td>
+                        <td>${clicks}</td>
+                        <td>
+                            <div class="btn-group">
+                                <button onclick="editBanner('${id}')" class="btn btn-sm">✏️ Editar</button>
+                                <button onclick="deleteBanner('${id}')" class="btn btn-danger btn-sm">🗑 Eliminar</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                hideLoader();
+            } catch (error) {
+                console.error("Error cargando banners:", error);
+                hideLoader();
+            }
+        }
+
+        // ============================================
+        // MOSTRAR/OCULTAR FORMULARIO BANNER
+        // ============================================
+        window.showBannerForm = function(bannerId) {
+            const form = document.getElementById('bannerForm');
+            const title = document.getElementById('bannerFormTitle');
+            
+            if (bannerId) {
+                title.textContent = 'Editar Banner';
+                loadBannerData(bannerId);
+            } else {
+                title.textContent = 'Nuevo Banner';
+                document.getElementById('bannerFormElement').reset();
+                document.getElementById('bannerId').value = '';
+                document.getElementById('bannerImagePreview').innerHTML = '';
+                document.getElementById('bannerAmbito').value = 'nacional';
+                toggleBannerLocation();
+            }
+            
+            form.style.display = 'block';
+            form.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        window.hideBannerForm = function() {
+            document.getElementById('bannerForm').style.display = 'none';
+        };
+
+        // ============================================
+        // CARGAR DATOS BANNER PARA EDITAR
+        // ============================================
+        async function loadBannerData(bannerId) {
+            const doc = await db.collection('banners').doc(bannerId).get();
+            if (!doc.exists) return;
+            
+            const data = doc.data();
+            
+            document.getElementById('bannerId').value = bannerId;
+            document.getElementById('bannerTitle').value = data.title || '';
+            document.getElementById('bannerLink').value = data.link || '';
+            document.getElementById('bannerImageUrl').value = data.imageUrl || '';
+            document.getElementById('bannerPriority').value = data.priority || 5;
+            document.getElementById('bannerActive').checked = data.active || false;
+            
+            // Determinar ámbito
+            let ambito = 'local';
+            if (data.provincia === 'toda') {
+                ambito = 'nacional';
+            } else if (data.ciudad === 'toda') {
+                ambito = 'provincial';
+            }
+            
+            document.getElementById('bannerAmbito').value = ambito;
+            toggleBannerLocation();
+            
+            // Cargar provincia y ciudad
+            if (ambito !== 'nacional') {
+                document.getElementById('bannerProvincia').value = data.provincia || '';
+                if (data.provincia && data.provincia !== 'toda') {
+                    const ciudades = provinciasCiudades[data.provincia] || [];
+                    const ciudadSelect = document.getElementById('bannerCiudad');
+                    ciudadSelect.innerHTML = '<option value="">Seleccioná ciudad</option>';
+                    ciudades.forEach(ciudad => {
+                        const option = document.createElement('option');
+                        option.value = ciudad;
+                        option.textContent = ciudad;
+                        ciudadSelect.appendChild(option);
+                    });
+                    ciudadSelect.value = data.ciudad || '';
+                    ciudadSelect.disabled = ambito === 'provincial';
+                }
+            }
+            
+            // FECHAS
+            if (data.startDate) {
+                const startDate = data.startDate.toDate().toISOString().split('T')[0];
+                document.getElementById('bannerStartDate').value = startDate;
+            }
+            if (data.endDate) {
+                const endDate = data.endDate.toDate().toISOString().split('T')[0];
+                document.getElementById('bannerEndDate').value = endDate;
+            }
+            
+            // RUBROS
+            document.querySelectorAll('input[name="bannerRubros"]').forEach(cb => {
+                cb.checked = data.rubros && data.rubros.includes(cb.value);
+            });
+            
+            // IMAGEN PREVIEW
+            if (data.imageUrl) {
+                document.getElementById('bannerImagePreview').innerHTML = `
+                    <img src="${data.imageUrl}" style="max-width: 300px; border-radius: 8px;"
+                         onerror="this.style.display='none'">
+                `;
+            }
+        }
+
+        // ============================================
+        // PREVIEW DE IMAGEN EN TIEMPO REAL
+        // ============================================
+        document.getElementById('bannerImageUrl').addEventListener('input', function(e) {
+            const url = e.target.value.trim();
+            const preview = document.getElementById('bannerImagePreview');
+            
+            if (url && url.startsWith('http')) {
+                preview.innerHTML = `
+                    <p><small>Vista previa:</small></p>
+                    <img src="${url}" style="max-width: 300px; border-radius: 8px;"
+                         onerror="this.src='https://via.placeholder.com/300x100/0a4fd8/ffffff?text=URL+INVÁLIDA'">
+                `;
+            } else {
+                preview.innerHTML = '';
+            }
+        });
+
+        // ============================================
+        // GUARDAR BANNER
+        // ============================================
+        document.getElementById('bannerFormElement').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const bannerId = document.getElementById('bannerId').value;
+            const title = document.getElementById('bannerTitle').value.trim();
+            const link = document.getElementById('bannerLink').value.trim();
+            const imageUrl = document.getElementById('bannerImageUrl').value.trim();
+            const ambito = document.getElementById('bannerAmbito').value;
+            const position = document.getElementById('bannerPosition').value;
+            const priority = parseInt(document.getElementById('bannerPriority').value);
+            const startDate = document.getElementById('bannerStartDate').value;
+            const endDate = document.getElementById('bannerEndDate').value;
+            const active = document.getElementById('bannerActive').checked;
+            
+            let provincia = 'toda';
+            let ciudad = 'toda';
+            
+            if (ambito !== 'nacional') {
+                provincia = document.getElementById('bannerProvincia').value;
+                if (!provincia) {
+                    alert('Seleccioná una provincia');
+                    return;
+                }
+                
+                if (ambito === 'local') {
+                    ciudad = document.getElementById('bannerCiudad').value;
+                    if (!ciudad) {
+                        alert('Seleccioná una ciudad');
+                        return;
+                    }
+                }
+            }
+            
+            // OBTENER RUBROS SELECCIONADOS
+            const rubros = [];
+            document.querySelectorAll('input[name="bannerRubros"]:checked').forEach(cb => {
+                rubros.push(cb.value);
+            });
+            
+            if (!title || !link || !startDate || !endDate || !imageUrl) {
+                alert('Completá todos los campos obligatorios');
+                return;
+            }
+            
+            // Validar URL de imagen
+            try {
+                new URL(imageUrl);
+            } catch {
+                alert('La URL de la imagen no es válida. Debe comenzar con http:// o https://');
+                return;
+            }
+            
+            if (new Date(startDate) > new Date(endDate)) {
+                alert('La fecha de inicio debe ser anterior a la fecha de fin');
+                return;
+            }
+            
+            if (priority < 1 || priority > 10) {
+                alert('La prioridad debe ser entre 1 y 10');
+                return;
+            }
+            
+            try {
+                showLoader();
+                
+                const bannerData = {
+                    title,
+                    link,
+                    imageUrl,
+                    rubros: rubros.length > 0 ? rubros : ['todos'],
+                    position,
+                    provincia,
+                    ciudad,
+                    priority,
+                    active,
+                    startDate: new Date(startDate),
+                    endDate: new Date(endDate),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                // GUARDAR EN FIRESTORE
+                if (bannerId) {
+                    await db.collection('banners').doc(bannerId).update(bannerData);
+                } else {
+                    bannerData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('banners').add(bannerData);
+                }
+                
+                // RECARGAR
+                hideBannerForm();
+                loadBanners();
+                hideLoader();
+                
+            } catch (error) {
+                console.error("Error guardando banner:", error);
+                alert('Error guardando banner: ' + error.message);
+                hideLoader();
+            }
+        });
+
+        // ============================================
+        // EDITAR BANNER
+        // ============================================
+        window.editBanner = function(bannerId) {
+            showBannerForm(bannerId);
+        };
+
+        // ============================================
+        // ELIMINAR BANNER
+        // ============================================
+        window.deleteBanner = async function(bannerId) {
+            if (confirm('¿Estás seguro de eliminar este banner?')) {
+                await db.collection('banners').doc(bannerId).delete();
+                loadBanners();
+            }
+        };
+
+        // ============================================
+        // CARGAR CONFIGURACIÓN
+        // ============================================
+        async function loadConfig() {
+            try {
+                const doc = await db.collection('admin_config').doc('config').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('featuredPrice').value = data.featuredPrice || 9000;
+                    document.getElementById('certificationPrice').value = data.certificationPrice || 5000;
+                    document.getElementById('bannersEnabled').checked = data.bannersEnabled !== false;
+                    document.getElementById('newCitiesEnabled').checked = data.newCitiesEnabled !== false;
+                }
+            } catch (error) {
+                console.error("Error cargando configuración:", error);
+            }
+        }
+
+        // ============================================
+        // ACTUALIZAR PRECIOS
+        // ============================================
+        window.updatePrices = async function() {
+            const featuredPrice = document.getElementById('featuredPrice').value;
+            const certificationPrice = document.getElementById('certificationPrice').value;
+            
+            if (!featuredPrice || featuredPrice < 0 || !certificationPrice || certificationPrice < 0) return;
+            
+            await db.collection('admin_config').doc('config').set({
+                featuredPrice: parseInt(featuredPrice),
+                certificationPrice: parseInt(certificationPrice)
+            }, { merge: true });
+            
+            alert('✅ Precios actualizados');
+        };
+
+        // ============================================
+        // ACTUALIZAR CONFIGURACIÓN DEL SISTEMA
+        // ============================================
+        window.updateSystemConfig = async function() {
+            await db.collection('admin_config').doc('config').set({
+                bannersEnabled: document.getElementById('bannersEnabled').checked,
+                newCitiesEnabled: document.getElementById('newCitiesEnabled').checked,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+            
+            alert('✅ Configuración actualizada');
+        };
+
+        // ============================================
+        // HERRAMIENTAS ADMIN
+        // ============================================
+        window.forceHideNoPhoto = async function() {
+            if (confirm('¿Ocultar profesionales sin foto? Esto los marcará como perfil incompleto.')) {
+                showLoader();
+                
+                const snapshot = await db.collection('professionals').where('photoUrl', '==', '').get();
+                const batch = db.batch();
+                
+                snapshot.forEach(doc => {
+                    batch.update(doc.ref, { profileCompleted: false });
+                });
+                
+                await batch.commit();
+                hideLoader();
+                alert(`✅ ${snapshot.size} profesionales actualizados`);
+                loadProfessionals();
+            }
+        };
+
+        window.deactivateExpiredFeatured = async function() {
+            showLoader();
+            
+            const now = new Date();
+            const snapshot = await db.collection('professionals')
+                .where('isFeatured', '==', true)
+                .get();
+            
+            const batch = db.batch();
+            let count = 0;
+            
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                if (data.featuredUntil && data.featuredUntil.toDate() < now) {
+                    batch.update(doc.ref, { 
+                        isFeatured: false,
+                        featuredUntil: null 
+                    });
+                    count++;
+                }
+            });
+            
+            await batch.commit();
+            hideLoader();
+            alert(`✅ ${count} destacados vencidos desactivados`);
+            loadProfessionals();
+        };
+
+        window.recalculateRankings = async function() {
+            showLoader();
+            
+            const snapshot = await db.collection('professionals').get();
+            const now = new Date();
+            const batch = db.batch();
+            
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                
+                // CALCULAR RANKING
+                let rankingScore = 0;
+                rankingScore += (data.rating || 0) * 5;
+                rankingScore += (data.jobsCompleted || 0) * 2;
+                if (data.certified) rankingScore += 10;
+                
+                if (data.lastActive) {
+                    const lastActiveDate = data.lastActive.toDate();
+                    const daysDiff = Math.floor((now - lastActiveDate) / (1000 * 60 * 60 * 24));
+                    if (daysDiff <= 7) rankingScore += 3;
+                    else if (daysDiff <= 15) rankingScore += 2;
+                }
+                
+                if (data.profileCompleted) rankingScore += 5;
+                
+                batch.update(doc.ref, { rankingScore });
+            });
+            
+            await batch.commit();
+            hideLoader();
+            alert(`✅ Rankings recalculados para ${snapshot.size} profesionales`);
+            loadProfessionals();
+        };
+
+        window.updateProvinceStats = async function() {
+            showLoader();
+            
+            try {
+                const snapshot = await db.collection('professionals').get();
+                const stats = {};
+                const now = new Date();
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.provincia) {
+                        if (!stats[data.provincia]) {
+                            stats[data.provincia] = {
+                                profesionales: 0,
+                                destacados: 0,
+                                certificados: 0
+                            };
+                        }
+                        stats[data.provincia].profesionales++;
+                        if (data.isFeatured && data.featuredUntil && data.featuredUntil.toDate() > now) {
+                            stats[data.provincia].destacados++;
+                        }
+                        if (data.certified) {
+                            stats[data.provincia].certificados++;
+                        }
+                    }
+                });
+                
+                // Guardar estadísticas por provincia
+                const batch = db.batch();
+                Object.keys(stats).forEach(provincia => {
+                    const statRef = db.collection('province_stats').doc(provincia);
+                    batch.set(statRef, {
+                        ...stats[provincia],
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                });
+                
+                await batch.commit();
+                hideLoader();
+                alert(`✅ Estadísticas de ${Object.keys(stats).length} provincias actualizadas`);
+                loadDashboard();
+            } catch (error) {
+                hideLoader();
+                alert('Error actualizando estadísticas: ' + error.message);
+            }
+        };
+
+        // ============================================
+        // EXPORTAR DATOS
+        // ============================================
+        window.exportProfessionals = async function() {
+            const snapshot = await db.collection('professionals').get();
+            const data = [];
+            
+            snapshot.forEach(doc => {
+                const docData = doc.data();
+                data.push({ 
+                    id: doc.id, 
+                    ...docData,
+                    createdAt: docData.createdAt ? docData.createdAt.toDate().toISOString() : null,
+                    lastActive: docData.lastActive ? docData.lastActive.toDate().toISOString() : null,
+                    featuredUntil: docData.featuredUntil ? docData.featuredUntil.toDate().toISOString() : null
+                });
+            });
+            
+            downloadJSON(data, 'profesionales_tecniya.json');
+        };
+
+        window.exportQuotes = async function() {
+            const snapshot = await db.collection('quotes').get();
+            const data = [];
+            
+            snapshot.forEach(doc => {
+                const quoteData = doc.data();
+                data.push({ 
+                    id: doc.id, 
+                    ...quoteData,
+                    createdAt: quoteData.createdAt ? quoteData.createdAt.toDate().toISOString() : null
+                });
+            });
+            
+            downloadJSON(data, 'presupuestos_tecniya.json');
+        };
+
+        window.exportBanners = async function() {
+            const snapshot = await db.collection('banners').get();
+            const data = [];
+            
+            snapshot.forEach(doc => {
+                const bannerData = doc.data();
+                data.push({ 
+                    id: doc.id, 
+                    ...bannerData,
+                    createdAt: bannerData.createdAt ? bannerData.createdAt.toDate().toISOString() : null,
+                    startDate: bannerData.startDate ? bannerData.startDate.toDate().toISOString() : null,
+                    endDate: bannerData.endDate ? bannerData.endDate.toDate().toISOString() : null
+                });
+            });
+            
+            downloadJSON(data, 'banners_tecniya.json');
+        };
+
+        // ============================================
+        // FUNCIONES AUXILIARES
+        // ============================================
+        function downloadJSON(data, filename) {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function showMessage(elementId, text, type) {
+            const el = document.getElementById(elementId);
+            el.textContent = text;
+            el.style.background = type === 'error' ? '#f8d7da' : '#d4edda';
+            el.style.color = type === 'error' ? '#721c24' : '#155724';
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        }
+
+        function showLoader() {
+            document.getElementById('loader').style.display = 'block';
+        }
+
+        function hideLoader() {
+            document.getElementById('loader').style.display = 'none';
         }
     </script>
 </body>
