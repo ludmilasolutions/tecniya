@@ -3,365 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TecniYa - Setup Inicial</title>
+    <title>TecniYa - Configuración Inicial</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 900px;
-            overflow: hidden;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%);
-            color: white;
-            padding: 40px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1rem;
-        }
-        
-        .content {
-            padding: 40px;
-        }
-        
-        .step {
-            margin-bottom: 40px;
-            padding: 25px;
-            border-radius: 12px;
-            background: #f8f9fa;
-            border-left: 4px solid #0a4fd8;
-        }
-        
-        .step h3 {
-            color: #0a4fd8;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-        
-        .step p {
-            color: #666;
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-        
-        .code-block {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 20px;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            margin: 15px 0;
-            overflow-x: auto;
-        }
-        
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(10, 79, 216, 0.3);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        }
-        
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-        
-        .alert {
-            padding: 20px;
-            border-radius: 12px;
-            margin: 20px 0;
-            font-weight: 600;
-        }
-        
-        .alert-warning {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            color: #856404;
-        }
-        
-        .alert-danger {
-            background: #f8d7da;
-            border: 2px solid #dc3545;
-            color: #721c24;
-        }
-        
-        .alert-success {
-            background: #d4edda;
-            border: 2px solid #28a745;
-            color: #155724;
-        }
-        
-        .log-container {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-        }
-        
-        .log-entry {
-            padding: 5px 0;
-            border-bottom: 1px solid #2d3748;
-        }
-        
-        .log-success {
-            color: #68d391;
-        }
-        
-        .log-error {
-            color: #fc8181;
-        }
-        
-        .log-info {
-            color: #63b3ed;
-        }
-        
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-        
-        .status-active {
-            background: #28a745;
-            box-shadow: 0 0 10px #28a745;
-        }
-        
-        .status-inactive {
-            background: #dc3545;
-        }
-        
-        .firebase-config {
-            background: #f8f9fa;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        
-        .firebase-config h4 {
-            color: #0a4fd8;
-            margin-bottom: 15px;
-        }
-        
-        .config-field {
-            margin-bottom: 15px;
-        }
-        
-        .config-field label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #495057;
-        }
-        
-        .config-field input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border 0.3s;
-        }
-        
-        .config-field input:focus {
-            border-color: #0a4fd8;
-            outline: none;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; }
+        body { background: #f8f9fa; color: #333; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1 { color: #0a4fd8; margin-bottom: 20px; }
+        .btn { background: #0a4fd8; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
+        .btn:hover { background: #083bb5; }
+        .btn-success { background: #1db954; }
+        .btn-success:hover { background: #17a344; }
+        .btn-warning { background: #ffc107; color: #333; }
+        .btn-warning:hover { background: #e0a800; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        .log { margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; max-height: 400px; overflow-y: auto; font-family: monospace; }
+        .log-entry { margin-bottom: 5px; padding: 5px; border-bottom: 1px solid #eaeaea; }
+        .log-success { color: #155724; background: #d4edda; }
+        .log-error { color: #721c24; background: #f8d7da; }
+        .log-info { color: #0c5460; background: #d1ecf1; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🔧 TecniYa - Setup Inicial</h1>
-            <p>Configuración completa de la base de datos Firestore</p>
+        <h1>⚙️ Configuración Inicial de TecniYa</h1>
+        <p>Esta página inicializa la base de datos con datos de ejemplo y configura el sistema de ranking.</p>
+        
+        <div class="btn-group">
+            <button id="initBtn" class="btn">🚀 Inicializar Base de Datos</button>
+            <button id="calcRankingsBtn" class="btn btn-warning">📊 Calcular Rankings</button>
+            <button id="clearBtn" class="btn btn-danger">🗑️ Borrar Datos de Prueba</button>
         </div>
         
-        <div class="content">
-            <div class="alert alert-warning">
-                ⚠️ <strong>ADVERTENCIA:</strong> Esta página debe ejecutarse UNA SOLA VEZ después de crear el proyecto en Firebase.
-                Solo usala si estás comenzando desde cero.
-            </div>
-            
-            <div class="step">
-                <h3>Paso 1: Configuración de Firebase</h3>
-                <p>Verificá que Firebase esté correctamente configurado en tu proyecto.</p>
-                
-                <div class="firebase-config">
-                    <h4>Configuración actual:</h4>
-                    <div class="config-field">
-                        <label>Project ID:</label>
-                        <input type="text" value="tecniya-b4206" readonly>
-                    </div>
-                    <div class="config-field">
-                        <label>API Key:</label>
-                        <input type="text" value="AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY" readonly>
-                    </div>
-                    <div class="config-field">
-                        <label>Status: <span class="status-indicator status-active"></span> Conectado</label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="step">
-                <h3>Paso 2: Crear Colecciones e Índices</h3>
-                <p>Este proceso creará todas las colecciones necesarias con sus índices para que la aplicación funcione correctamente.</p>
-                
-                <div class="code-block">
-                    // Colecciones a crear:<br>
-                    1. professionals - Técnicos registrados<br>
-                    2. quotes - Presupuestos creados<br>
-                    3. banners - Banners publicitarios<br>
-                    4. admin_users - Usuarios administradores<br>
-                    5. admin_config - Configuración del sistema<br>
-                    6. stats - Estadísticas globales<br>
-                    7. province_stats - Estadísticas por provincia<br>
-                    8. ads_clicks - Registro de clicks en banners
-                </div>
-                
-                <div class="btn-group">
-                    <button id="setupBtn" class="btn">
-                        ⚙️ Ejecutar Setup Completo
-                    </button>
-                    <button id="testConnectionBtn" class="btn btn-success">
-                        🔗 Testear Conexión
-                    </button>
-                </div>
-            </div>
-            
-            <div class="step">
-                <h3>Paso 3: Crear Usuario Administrador</h3>
-                <p>Creá el primer usuario administrador para acceder al panel de control.</p>
-                
-                <div class="firebase-config">
-                    <div class="config-field">
-                        <label>Email del administrador:</label>
-                        <input type="email" id="adminEmail" placeholder="admin@tecniya.com">
-                    </div>
-                    <div class="config-field">
-                        <label>Contraseña:</label>
-                        <input type="password" id="adminPassword" placeholder="••••••••">
-                    </div>
-                    <div class="config-field">
-                        <label>Nombre:</label>
-                        <input type="text" id="adminName" placeholder="Administrador Principal">
-                    </div>
-                </div>
-                
-                <div class="btn-group">
-                    <button id="createAdminBtn" class="btn">
-                        👑 Crear Administrador
-                    </button>
-                </div>
-            </div>
-            
-            <div id="logSection" style="display: none;">
-                <h3 style="color: #0a4fd8; margin-bottom: 15px;">Log de Ejecución</h3>
-                <div class="log-container" id="logOutput">
-                    <!-- Los logs aparecerán aquí -->
-                </div>
-            </div>
-            
-            <div id="successMessage" class="alert alert-success" style="display: none;">
-                ✅ <strong>¡Setup completado con éxito!</strong> La aplicación está lista para usar.
-            </div>
-            
-            <div class="step">
-                <h3>Paso 4: Verificar Instalación</h3>
-                <p>Después de completar el setup, verificá que todo funcione correctamente.</p>
-                
-                <div class="btn-group">
-                    <a href="index.html" target="_blank" class="btn btn-success">
-                        🌐 Ver Sitio Principal
-                    </a>
-                    <a href="admin.html" target="_blank" class="btn">
-                        ⚙️ Ir al Panel Admin
-                    </a>
-                    <a href="profesional.html" target="_blank" class="btn">
-                        👨‍🔧 Panel Profesional
-                    </a>
-                </div>
-                
-                <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #dee2e6;">
-                    <p><strong>Acciones de mantenimiento:</strong></p>
-                    <div class="btn-group">
-                        <button id="clearCollectionsBtn" class="btn btn-danger">
-                            🗑️ Limpiar Colecciones (PELIGROSO)
-                        </button>
-                        <button id="createSampleDataBtn" class="btn">
-                            📊 Crear Datos de Ejemplo
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="log" class="log"></div>
     </div>
 
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    
+
     <script>
-        // ============================================
-        // CONFIGURACIÓN FIREBASE
-        // ============================================
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
             authDomain: "tecniya-b4206.firebaseapp.com",
@@ -370,451 +53,383 @@
             messagingSenderId: "166424133304",
             appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
         };
-        
-        // ============================================
-        // INICIALIZAR FIREBASE
-        // ============================================
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
-        
-        // ============================================
-        // VARIABLES
-        // ============================================
-        let logOutput = document.getElementById('logOutput');
-        let logSection = document.getElementById('logSection');
-        let successMessage = document.getElementById('successMessage');
-        
-        // ============================================
-        // FUNCIONES DE LOG
-        // ============================================
-        function log(message, type = 'info') {
-            const entry = document.createElement('div');
-            entry.className = `log-entry log-${type}`;
-            entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
-            logOutput.appendChild(entry);
-            logOutput.scrollTop = logOutput.scrollHeight;
-            logSection.style.display = 'block';
-            console.log(`[${type.toUpperCase()}] ${message}`);
-        }
-        
-        function clearLog() {
-            logOutput.innerHTML = '';
-        }
-        
-        // ============================================
-        // TESTEAR CONEXIÓN
-        // ============================================
-        document.getElementById('testConnectionBtn').addEventListener('click', async () => {
-            clearLog();
-            log('🔗 Probando conexión con Firebase...', 'info');
-            
+
+        // Initialize
+        let db;
+        let isInitializing = false;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initFirebase();
+        });
+
+        async function initFirebase() {
             try {
-                // Intentar una operación simple
-                const testRef = db.collection('test_connection').doc('test');
-                await testRef.set({
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    message: 'Conexión de prueba'
-                });
-                
-                await testRef.delete();
-                
-                log('✅ Conexión exitosa con Firebase Firestore', 'success');
-                log('✅ Firebase Auth está funcionando', 'success');
-                log('✅ Proyecto: tecniya-b4206', 'info');
-                
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                db = firebase.firestore();
+                log('Firebase inicializado correctamente', 'success');
             } catch (error) {
-                log(`❌ Error de conexión: ${error.message}`, 'error');
-                log('⚠️ Verificá la configuración de Firebase', 'info');
+                log('Error inicializando Firebase: ' + error.message, 'error');
+            }
+        }
+
+        // Initialize Database
+        document.getElementById('initBtn').addEventListener('click', async () => {
+            if (isInitializing) return;
+            isInitializing = true;
+            await initializeDatabase();
+            isInitializing = false;
+        });
+
+        // Calculate Rankings
+        document.getElementById('calcRankingsBtn').addEventListener('click', async () => {
+            await calculateAllRankings();
+        });
+
+        // Clear Test Data
+        document.getElementById('clearBtn').addEventListener('click', async () => {
+            if (confirm('¿Estás seguro de borrar todos los datos de prueba? Esta acción no se puede deshacer.')) {
+                await clearTestData();
             }
         });
-        
-        // ============================================
-        // EJECUTAR SETUP COMPLETO
-        // ============================================
-        document.getElementById('setupBtn').addEventListener('click', async () => {
-            clearLog();
-            log('🚀 Iniciando setup completo de TecniYa...', 'info');
+
+        async function initializeDatabase() {
+            log('Iniciando inicialización de base de datos...', 'info');
             
             try {
-                // 1. Crear administrador por defecto
-                log('1. Creando usuario administrador por defecto...', 'info');
-                await createDefaultAdmin();
+                // 1. Create admin user
+                await createAdminUser();
                 
-                // 2. Crear configuración del sistema
-                log('2. Configurando sistema...', 'info');
+                // 2. Create sample professionals
+                await createSampleProfessionals();
+                
+                // 3. Create sample ratings
+                await createSampleRatings();
+                
+                // 4. Create system configuration
                 await createSystemConfig();
                 
-                // 3. Crear estadísticas globales
-                log('3. Creando estadísticas globales...', 'info');
-                await createGlobalStats();
+                // 5. Calculate initial rankings
+                await calculateAllRankings();
                 
-                // 4. Crear índices necesarios (explicación)
-                log('4. Configurando índices de Firestore...', 'info');
-                log('📝 Nota: Los índices se crean automáticamente cuando Firestore detecta la necesidad.', 'info');
-                log('📝 Para mejor performance, creá estos índices en Firebase Console:', 'info');
-                log('   - professionals: userId (Ascending)', 'info');
-                log('   - professionals: provincia, ciudad, profileCompleted', 'info');
-                log('   - professionals: rubros (array-contains)', 'info');
-                log('   - quotes: professionalId, createdAt (Descending)', 'info');
-                log('   - banners: provincia, ciudad, active', 'info');
-                
-                // 5. Crear datos de ejemplo (opcional)
-                const createSample = confirm('¿Crear datos de ejemplo para pruebas?');
-                if (createSample) {
-                    log('5. Creando datos de ejemplo...', 'info');
-                    await createSampleData();
-                }
-                
-                log('✅ Setup completado exitosamente!', 'success');
-                successMessage.style.display = 'block';
-                
-                log('📋 Resumen de colecciones creadas:', 'info');
-                log('   • professionals - Técnicos registrados', 'info');
-                log('   • quotes - Presupuestos', 'info');
-                log('   • banners - Publicidad', 'info');
-                log('   • admin_users - Administradores', 'info');
-                log('   • admin_config - Configuración', 'info');
-                log('   • stats - Estadísticas', 'info');
-                log('   • province_stats - Estadísticas por provincia', 'info');
-                log('   • ads_clicks - Clicks en banners', 'info');
-                
+                log('✅ Base de datos inicializada correctamente', 'success');
             } catch (error) {
-                log(`❌ Error en el setup: ${error.message}`, 'error');
-                log('⚠️ Revisá la consola para más detalles', 'info');
+                log('❌ Error durante la inicialización: ' + error.message, 'error');
             }
-        });
-        
-        // ============================================
-        // CREAR ADMINISTRADOR POR DEFECTO
-        // ============================================
-        async function createDefaultAdmin() {
+        }
+
+        async function createAdminUser() {
             try {
                 const adminData = {
                     email: "admin@tecniya.com",
-                    name: "Administrador Principal",
+                    name: "Administrador",
                     role: "superadmin",
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastLogin: null
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
-                await db.collection('admin_users').doc('admin@tecniya.com').set(adminData);
-                log('✅ Usuario administrador creado: admin@tecniya.com', 'success');
-                
+                // We don't store password in Firestore for security, use Firebase Auth separately
+                await db.collection('admin_users').doc('admin').set(adminData);
+                log('Usuario administrador creado', 'success');
             } catch (error) {
-                log(`⚠️ Administrador ya existe o error: ${error.message}`, 'info');
+                log('Error creando admin: ' + error.message, 'error');
             }
         }
-        
-        // ============================================
-        // CREAR CONFIGURACIÓN DEL SISTEMA
-        // ============================================
-        async function createSystemConfig() {
-            try {
-                const config = {
-                    featuredPrice: 9000,
-                    certificationPrice: 5000,
-                    bannersEnabled: true,
-                    newCitiesEnabled: true,
-                    defaultProvince: "Santa Fe",
-                    defaultCity: "Rosario",
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                await db.collection('admin_config').doc('config').set(config);
-                log('✅ Configuración del sistema creada', 'success');
-                
-            } catch (error) {
-                log(`⚠️ Configuración ya existe o error: ${error.message}`, 'info');
-            }
-        }
-        
-        // ============================================
-        // CREAR ESTADÍSTICAS GLOBALES
-        // ============================================
-        async function createGlobalStats() {
-            try {
-                const stats = {
-                    totalProfessionals: 0,
-                    totalJobs: 0,
-                    avgRating: 4.8,
-                    totalQuotes: 0,
-                    totalCities: 24,
-                    totalProvinces: 23,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                await db.collection('stats').doc('global').set(stats);
-                log('✅ Estadísticas globales inicializadas', 'success');
-                
-            } catch (error) {
-                log(`⚠️ Estadísticas ya existen o error: ${error.message}`, 'info');
-            }
-        }
-        
-        // ============================================
-        // CREAR ADMINISTRADOR PERSONALIZADO
-        // ============================================
-        document.getElementById('createAdminBtn').addEventListener('click', async () => {
-            const email = document.getElementById('adminEmail').value;
-            const password = document.getElementById('adminPassword').value;
-            const name = document.getElementById('adminName').value;
+
+        async function createSampleProfessionals() {
+            const sampleProfessionals = [
+                {
+                    name: "Juan Pérez",
+                    phone: "3415551234",
+                    provincia: "Santa Fe",
+                    ciudad: "Rosario",
+                    rubros: ["plomeria", "gas"],
+                    bio: "Plomero matriculado con 15 años de experiencia en instalaciones domiciliarias y comerciales. Especialista en reparación de calderas y sistemas de gas.",
+                    photoUrl: "https://randomuser.me/api/portraits/men/32.jpg",
+                    active: true,
+                    isFeatured: true,
+                    certifications: ["Gasista Matriculado", "Plomero Profesional"],
+                    completedJobs: 45,
+                    avgResponseTime: 4,
+                    experienceYears: 15,
+                    zonas: ["Centro", "Norte", "Fisherton"],
+                    rankingScore: 0, // Will be calculated
+                    averageRating: 0,
+                    totalRatings: 0,
+                    lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                },
+                {
+                    name: "María García",
+                    phone: "3415555678",
+                    provincia: "Santa Fe",
+                    ciudad: "Rosario",
+                    rubros: ["electricidad"],
+                    bio: "Electricista certificada con 10 años de experiencia. Especialista en instalaciones eléctricas domiciliarias y reparación de tableros.",
+                    photoUrl: "https://randomuser.me/api/portraits/women/44.jpg",
+                    active: true,
+                    isFeatured: true,
+                    certifications: ["Electricista Certificada"],
+                    completedJobs: 32,
+                    avgResponseTime: 2,
+                    experienceYears: 10,
+                    zonas: ["Centro", "Sur", "Alberdi"],
+                    rankingScore: 0,
+                    averageRating: 0,
+                    totalRatings: 0,
+                    lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                },
+                {
+                    name: "Carlos López",
+                    phone: "3415559012",
+                    provincia: "Buenos Aires",
+                    ciudad: "La Plata",
+                    rubros: ["aire", "electricidad"],
+                    bio: "Técnico especializado en aire acondicionado y refrigeración. Servicio técnico de todas las marcas.",
+                    photoUrl: "https://randomuser.me/api/portraits/men/67.jpg",
+                    active: true,
+                    isFeatured: false,
+                    certifications: ["Técnico en Refrigeración"],
+                    completedJobs: 28,
+                    avgResponseTime: 6,
+                    experienceYears: 8,
+                    zonas: ["Centro", "Este", "Oeste"],
+                    rankingScore: 0,
+                    averageRating: 0,
+                    totalRatings: 0,
+                    lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                },
+                {
+                    name: "Ana Martínez",
+                    phone: "3415553456",
+                    provincia: "Córdoba",
+                    ciudad: "Córdoba",
+                    rubros: ["plomeria", "jardineria"],
+                    bio: "Fontanera y jardinera con amplia experiencia. Trabajos de plomería general y diseño de jardines.",
+                    photoUrl: "https://randomuser.me/api/portraits/women/68.jpg",
+                    active: true,
+                    isFeatured: true,
+                    certifications: ["Jardinería Profesional"],
+                    completedJobs: 19,
+                    avgResponseTime: 8,
+                    experienceYears: 6,
+                    zonas: ["Nueva Córdoba", "Centro", "General Paz"],
+                    rankingScore: 0,
+                    averageRating: 0,
+                    totalRatings: 0,
+                    lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                }
+            ];
             
-            if (!email || !password || !name) {
-                alert('Completá todos los campos');
+            try {
+                for (const pro of sampleProfessionals) {
+                    await db.collection('professionals').add(pro);
+                }
+                log(`${sampleProfessionals.length} profesionales de ejemplo creados`, 'success');
+            } catch (error) {
+                log('Error creando profesionales: ' + error.message, 'error');
+            }
+        }
+
+        async function createSampleRatings() {
+            // We'll create ratings after professionals are created
+            // First, get the professionals to assign ratings
+            const professionalsSnapshot = await db.collection('professionals').limit(4).get();
+            const professionals = [];
+            professionalsSnapshot.forEach(doc => {
+                professionals.push({ id: doc.id, ...doc.data() });
+            });
+            
+            if (professionals.length === 0) {
+                log('No hay profesionales para asignar calificaciones', 'error');
                 return;
             }
             
-            if (password.length < 6) {
-                alert('La contraseña debe tener al menos 6 caracteres');
-                return;
-            }
-            
-            clearLog();
-            log(`👑 Creando administrador: ${email}`, 'info');
-            
-            try {
-                // Crear usuario en Firebase Auth
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                
-                // Actualizar nombre del usuario
-                await userCredential.user.updateProfile({ displayName: name });
-                
-                // Crear registro en admin_users
-                const adminData = {
-                    email: email,
-                    name: name,
-                    role: "admin",
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastLogin: null
-                };
-                
-                await db.collection('admin_users').doc(email).set(adminData);
-                
-                log(`✅ Administrador creado exitosamente: ${email}`, 'success');
-                log(`📧 Email: ${email}`, 'info');
-                log(`👤 Nombre: ${name}`, 'info');
-                log(`🔑 Contraseña: ${'*'.repeat(password.length)}`, 'info');
-                log('💡 Guardá estas credenciales en un lugar seguro', 'info');
-                
-                // Limpiar formulario
-                document.getElementById('adminEmail').value = '';
-                document.getElementById('adminPassword').value = '';
-                document.getElementById('adminName').value = '';
-                
-            } catch (error) {
-                log(`❌ Error creando administrador: ${error.message}`, 'error');
-            }
-        });
-        
-        // ============================================
-        // CREAR DATOS DE EJEMPLO
-        // ============================================
-        async function createSampleData() {
-            try {
-                // Crear algunos profesionales de ejemplo
-                const sampleProfessionals = [
-                    {
-                        name: "Juan Pérez",
-                        email: "juan@ejemplo.com",
-                        phone: "5493411234567",
-                        provincia: "Santa Fe",
-                        ciudad: "Rosario",
-                        zonas: ["Centro", "Norte"],
-                        rubros: ["plomeria", "gas"],
-                        photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
-                        bio: "Plomero con 10 años de experiencia en instalaciones residenciales.",
-                        rating: 4.8,
-                        jobsCompleted: 45,
-                        profileCompleted: true,
-                        isFeatured: true,
-                        featuredUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 días
-                        certified: true,
-                        rankingScore: 95,
-                        blocked: false,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                    },
-                    {
-                        name: "María González",
-                        email: "maria@ejemplo.com",
-                        phone: "5493417654321",
-                        provincia: "Córdoba",
-                        ciudad: "Córdoba",
-                        zonas: ["Centro", "Nueva Córdoba"],
-                        rubros: ["electricidad", "aire"],
-                        photoUrl: "https://images.unsplash.com/photo-1494790108755-2616b786d4d9?w=200&h=200&fit=crop",
-                        bio: "Electricista certificada especializada en instalaciones modernas.",
-                        rating: 4.9,
-                        jobsCompleted: 32,
-                        profileCompleted: true,
-                        isFeatured: false,
-                        certified: true,
-                        rankingScore: 88,
-                        blocked: false,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                    },
-                    {
-                        name: "Carlos Rodríguez",
-                        email: "carlos@ejemplo.com",
-                        phone: "5493419876543",
-                        provincia: "Buenos Aires",
-                        ciudad: "La Plata",
-                        zonas: ["Centro", "City Bell"],
-                        rubros: ["albanileria", "pintura"],
-                        photoUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop",
-                        bio: "Albañil y pintor con amplia experiencia en refacciones.",
-                        rating: 4.7,
-                        jobsCompleted: 28,
-                        profileCompleted: true,
-                        isFeatured: true,
-                        featuredUntil: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 días
-                        certified: false,
-                        rankingScore: 82,
-                        blocked: false,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                    }
-                ];
-                
-                // Crear profesionales
-                const batch = db.batch();
-                sampleProfessionals.forEach((prof, index) => {
-                    const ref = db.collection('professionals').doc(`sample_${index + 1}`);
-                    batch.set(ref, prof);
-                });
-                
-                await batch.commit();
-                log(`✅ ${sampleProfessionals.length} profesionales de ejemplo creados`, 'success');
-                
-                // Crear banners de ejemplo
-                const sampleBanners = [
-                    {
-                        title: "Oferta Especial en Herramientas",
-                        link: "https://ejemplo.com/herramientas",
-                        imageUrl: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&h-200&fit=crop",
-                        provincia: "toda",
-                        ciudad: "toda",
-                        rubros: ["todos"],
-                        position: "home",
-                        priority: 10,
-                        active: true,
-                        startDate: new Date(),
-                        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    },
-                    {
-                        title: "Materiales de Construcción en Rosario",
-                        link: "https://ejemplo.com/materiales-rosario",
-                        imageUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=200&fit=crop",
-                        provincia: "Santa Fe",
-                        ciudad: "Rosario",
-                        rubros: ["albanileria", "pintura"],
-                        position: "results",
-                        priority: 8,
-                        active: true,
-                        startDate: new Date(),
-                        endDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    }
-                ];
-                
-                const bannerBatch = db.batch();
-                sampleBanners.forEach((banner, index) => {
-                    const ref = db.collection('banners').doc(`banner_${index + 1}`);
-                    bannerBatch.set(ref, banner);
-                });
-                
-                await bannerBatch.commit();
-                log(`✅ ${sampleBanners.length} banners de ejemplo creados`, 'success');
-                
-                // Actualizar estadísticas
-                await db.collection('stats').doc('global').update({
-                    totalProfessionals: sampleProfessionals.length
-                });
-                
-                log('📊 Estadísticas actualizadas con datos de ejemplo', 'info');
-                
-            } catch (error) {
-                log(`⚠️ Error creando datos de ejemplo: ${error.message}`, 'info');
-            }
-        }
-        
-        // ============================================
-        // BOTÓN PARA CREAR DATOS DE EJEMPLO
-        // ============================================
-        document.getElementById('createSampleDataBtn').addEventListener('click', async () => {
-            clearLog();
-            await createSampleData();
-        });
-        
-        // ============================================
-        // LIMPIAR COLECCIONES (PELIGROSO)
-        // ============================================
-        document.getElementById('clearCollectionsBtn').addEventListener('click', async () => {
-            if (!confirm('⚠️ ¡PELIGRO! Esta acción eliminará TODOS los datos.\n¿Estás absolutamente seguro?')) {
-                return;
-            }
-            
-            if (!confirm('⚠️ Esta acción es IRREVERSIBLE.\n¿Realmente querés proceder?')) {
-                return;
-            }
-            
-            clearLog();
-            log('🗑️ Iniciando limpieza de colecciones...', 'info');
+            const sampleRatings = [
+                { professionalId: professionals[0].id, rating: 5, comment: "Excelente servicio, muy profesional", clientPhone: "3415551111" },
+                { professionalId: professionals[0].id, rating: 4, comment: "Buen trabajo, puntual", clientPhone: "3415552222" },
+                { professionalId: professionals[0].id, rating: 5, comment: "Resolvió mi problema rápidamente", clientPhone: "3415553333" },
+                { professionalId: professionals[1].id, rating: 5, comment: "Muy detallista y cuidadosa", clientPhone: "3415554444" },
+                { professionalId: professionals[1].id, rating: 4, comment: "Buen precio y calidad", clientPhone: "3415555555" },
+                { professionalId: professionals[2].id, rating: 3, comment: "Trabajo aceptable", clientPhone: "3415556666" },
+                { professionalId: professionals[3].id, rating: 5, comment: "Transformó mi jardín, increíble", clientPhone: "3415557777" },
+            ];
             
             try {
-                // Lista de colecciones a limpiar
-                const collections = [
-                    'professionals',
-                    'quotes',
-                    'banners',
-                    'ads_clicks'
-                ];
-                
-                for (const collectionName of collections) {
-                    log(`Limpiando colección: ${collectionName}...`, 'info');
-                    
-                    const snapshot = await db.collection(collectionName).get();
-                    const batch = db.batch();
-                    
-                    snapshot.docs.forEach(doc => {
-                        batch.delete(doc.ref);
+                for (const rating of sampleRatings) {
+                    await db.collection('ratings').add({
+                        ...rating,
+                        status: 'approved',
+                        ipAddress: '127.0.0.1',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    
-                    await batch.commit();
-                    log(`✅ ${snapshot.size} documentos eliminados de ${collectionName}`, 'success');
+                }
+                log(`${sampleRatings.length} calificaciones de ejemplo creadas`, 'success');
+            } catch (error) {
+                log('Error creando calificaciones: ' + error.message, 'error');
+            }
+        }
+
+        async function createSystemConfig() {
+            const config = {
+                ratingWeight: 5,
+                responseWeight: 15,
+                certWeight: 2,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            try {
+                await db.collection('system_config').doc('ranking').set(config);
+                log('Configuración del sistema creada', 'success');
+            } catch (error) {
+                log('Error creando configuración: ' + error.message, 'error');
+            }
+        }
+
+        async function calculateAllRankings() {
+            log('Calculando rankings de todos los profesionales...', 'info');
+            
+            try {
+                const professionalsSnapshot = await db.collection('professionals').get();
+                let count = 0;
+                
+                for (const doc of professionalsSnapshot.docs) {
+                    await calculateProfessionalRanking(doc.id);
+                    count++;
                 }
                 
-                // Reiniciar estadísticas
-                await db.collection('stats').doc('global').update({
-                    totalProfessionals: 0,
-                    totalJobs: 0,
-                    totalQuotes: 0
+                log(`✅ Rankings calculados para ${count} profesionales`, 'success');
+            } catch (error) {
+                log('❌ Error calculando rankings: ' + error.message, 'error');
+            }
+        }
+
+        async function calculateProfessionalRanking(professionalId) {
+            try {
+                // Get professional data
+                const professionalDoc = await db.collection('professionals').doc(professionalId).get();
+                const professional = professionalDoc.data();
+                
+                // Get approved ratings for this professional (last 3 months)
+                const threeMonthsAgo = new Date();
+                threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                
+                const ratingsSnapshot = await db.collection('ratings')
+                    .where('professionalId', '==', professionalId)
+                    .where('status', '==', 'approved')
+                    .where('createdAt', '>=', threeMonthsAgo)
+                    .get();
+                
+                let totalRatings = 0;
+                let sumRatings = 0;
+                
+                ratingsSnapshot.forEach(doc => {
+                    totalRatings++;
+                    sumRatings += doc.data().rating;
                 });
                 
-                log('✅ Todas las colecciones fueron limpiadas', 'success');
-                log('📊 Estadísticas reiniciadas a cero', 'info');
-                log('⚠️ La aplicación está ahora en estado inicial', 'info');
+                // Calculate average rating
+                const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
+                
+                // Calculate ranking score (same algorithm as in main app)
+                let score = 0;
+                
+                // 1. Rating quality (25 points max)
+                score += averageRating * 5;
+                
+                // 2. Rating quantity (20 points max)
+                const ratingQuantity = Math.min(totalRatings, 100);
+                score += ratingQuantity * 0.2;
+                
+                // 3. Response time (15 points)
+                if (professional.avgResponseTime && professional.avgResponseTime < 24) {
+                    score += 15;
+                } else if (professional.avgResponseTime && professional.avgResponseTime < 48) {
+                    score += 10;
+                }
+                
+                // 4. Completed jobs (10 points)
+                if (professional.completedJobs) {
+                    score += Math.min(professional.completedJobs * 0.1, 10);
+                }
+                
+                // 5. Certifications (10 points)
+                if (professional.certifications && professional.certifications.length > 0) {
+                    score += Math.min(professional.certifications.length * 2, 10);
+                }
+                
+                // 6. Profile completeness (5 points)
+                let profileScore = 0;
+                if (professional.photoUrl) profileScore++;
+                if (professional.bio && professional.bio.length > 50) profileScore++;
+                if (professional.zonas && professional.zonas.length > 0) profileScore++;
+                if (professional.rubros && professional.rubros.length > 0) profileScore++;
+                score += profileScore * 1.25;
+                
+                // 7. Experience (5 points)
+                if (professional.experienceYears) {
+                    score += Math.min(professional.experienceYears * 0.5, 5);
+                }
+                
+                // 8. Recent activity (5 points)
+                if (professional.lastActive) {
+                    const daysSince = (new Date() - professional.lastActive.toDate()) / (1000 * 60 * 60 * 24);
+                    if (daysSince < 7) score += 5;
+                    else if (daysSince < 30) score += 3;
+                }
+                
+                // 9. Featured status (5 points)
+                if (professional.isFeatured) {
+                    score += 5;
+                }
+                
+                const rankingScore = Math.round(score);
+                
+                // Update professional
+                await db.collection('professionals').doc(professionalId).update({
+                    averageRating: averageRating,
+                    totalRatings: totalRatings,
+                    rankingScore: rankingScore,
+                    rankingUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                return { success: true };
                 
             } catch (error) {
-                log(`❌ Error limpiando colecciones: ${error.message}`, 'error');
+                console.error("Error calculating ranking for professional", professionalId, error);
+                return { success: false, error: error.message };
             }
-        });
-        
-        // ============================================
-        // TEST INICIAL DE CONEXIÓN
-        // ============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            log('🚀 Setup de TecniYa cargado', 'info');
-            log(`📅 ${new Date().toLocaleDateString('es-AR')} ${new Date().toLocaleTimeString('es-AR')}`, 'info');
-            log('🌐 Proyecto: tecniya-b4206', 'info');
-            log('📁 Firebase Firestore inicializado', 'success');
-        });
+        }
+
+        async function clearTestData() {
+            log('Eliminando datos de prueba...', 'info');
+            
+            try {
+                // Delete all professionals
+                const professionalsSnapshot = await db.collection('professionals').get();
+                for (const doc of professionalsSnapshot.docs) {
+                    await doc.ref.delete();
+                }
+                
+                // Delete all ratings
+                const ratingsSnapshot = await db.collection('ratings').get();
+                for (const doc of ratingsSnapshot.docs) {
+                    await doc.ref.delete();
+                }
+                
+                log('✅ Todos los datos de prueba eliminados', 'success');
+            } catch (error) {
+                log('❌ Error eliminando datos: ' + error.message, 'error');
+            }
+        }
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
     </script>
 </body>
 </html>
