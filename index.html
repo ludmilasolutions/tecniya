@@ -980,6 +980,8 @@
                 const ciudad = document.getElementById('ciudadSelect').value;
                 const rubro = document.getElementById('rubroSelect').value;
                 
+                console.log('Cargando banner para:', { provincia, ciudad, rubro });
+                
                 const bannerContainer = document.getElementById('bannerContent');
                 
                 if (!provincia || !ciudad) {
@@ -1001,15 +1003,15 @@
                 `;
                 
                 const now = new Date();
+                console.log('Fecha actual:', now);
                 
-                // Buscar banners activos
-                let bannersSnapshot = await db.collection('banners')
-                    .where('active', '==', true)
-                    .where('startDate', '<=', now)
-                    .where('endDate', '>=', now)
-                    .get();
+                // Buscar TODOS los banners activos (sin filtros iniciales)
+                let bannersSnapshot = await db.collection('banners').get();
+                
+                console.log('Total de banners en la base de datos:', bannersSnapshot.size);
                 
                 if (bannersSnapshot.empty) {
+                    console.log('No hay banners en la base de datos');
                     // Mostrar banner por defecto
                     bannerContainer.innerHTML = `
                         <div style="padding: 3rem; text-align: center; color: white; background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); border-radius: 12px;">
@@ -1021,35 +1023,89 @@
                     return;
                 }
                 
-                // Filtrar banners por ubicación y rubro
+                // Filtrar banners manualmente
                 const banners = [];
                 bannersSnapshot.forEach(doc => {
                     const banner = { id: doc.id, ...doc.data() };
+                    
+                    console.log('Procesando banner:', banner.title, {
+                        active: banner.active,
+                        provincia: banner.provincia,
+                        ciudad: banner.ciudad,
+                        rubros: banner.rubros,
+                        startDate: banner.startDate,
+                        endDate: banner.endDate
+                    });
+                    
+                    // Verificar que esté activo
+                    if (!banner.active) {
+                        console.log('Banner no activo:', banner.title);
+                        return;
+                    }
                     
                     // Verificar fecha
                     const startDate = banner.startDate ? banner.startDate.toDate() : null;
                     const endDate = banner.endDate ? banner.endDate.toDate() : null;
                     
-                    if (!startDate || !endDate || startDate > now || endDate < now) {
+                    if (!startDate || !endDate) {
+                        console.log('Banner sin fechas válidas:', banner.title);
+                        return;
+                    }
+                    
+                    if (startDate > now) {
+                        console.log('Banner con fecha de inicio en el futuro:', banner.title, startDate);
+                        return;
+                    }
+                    
+                    if (endDate < now) {
+                        console.log('Banner con fecha de fin en el pasado:', banner.title, endDate);
                         return;
                     }
                     
                     // Verificar ubicación
-                    if (banner.provincia === 'toda' || banner.provincia === provincia) {
-                        if (banner.ciudad === 'toda' || banner.ciudad === ciudad) {
-                            // Verificar rubro si se especificó
-                            if (rubro && rubro !== '') {
-                                if (banner.rubros && banner.rubros.includes('todos')) {
-                                    banners.push(banner);
-                                } else if (banner.rubros && banner.rubros.includes(rubro)) {
-                                    banners.push(banner);
-                                }
-                            } else {
-                                banners.push(banner);
-                            }
+                    let pasaUbicacion = false;
+                    
+                    if (banner.provincia === 'toda') {
+                        // Banner nacional - pasa para cualquier provincia
+                        pasaUbicacion = true;
+                        console.log('Banner nacional - pasa ubicación');
+                    } else if (banner.provincia === provincia) {
+                        // Misma provincia
+                        if (banner.ciudad === 'toda') {
+                            // Toda la provincia
+                            pasaUbicacion = true;
+                            console.log('Banner provincial - pasa ubicación');
+                        } else if (banner.ciudad === ciudad) {
+                            // Misma ciudad
+                            pasaUbicacion = true;
+                            console.log('Banner local - pasa ubicación');
                         }
                     }
+                    
+                    if (!pasaUbicacion) {
+                        console.log('Banner no pasa por ubicación:', banner.title);
+                        return;
+                    }
+                    
+                    // Verificar rubro
+                    if (rubro && rubro !== '') {
+                        if (!banner.rubros || !Array.isArray(banner.rubros)) {
+                            console.log('Banner sin rubros definidos:', banner.title);
+                            return;
+                        }
+                        
+                        // Verificar si el banner aplica para "todos" los rubros o para este rubro específico
+                        if (!banner.rubros.includes('todos') && !banner.rubros.includes(rubro)) {
+                            console.log('Banner no pasa por rubro:', banner.title, 'rubros:', banner.rubros, 'rubro buscado:', rubro);
+                            return;
+                        }
+                    }
+                    
+                    console.log('¡Banner válido encontrado!:', banner.title);
+                    banners.push(banner);
                 });
+                
+                console.log('Banners válidos después de filtrar:', banners.length);
                 
                 if (banners.length === 0) {
                     // Mostrar banner por defecto
@@ -1062,11 +1118,12 @@
                     return;
                 }
                 
-                // Ordenar por prioridad
+                // Ordenar por prioridad (mayor primero)
                 banners.sort((a, b) => (b.priority || 5) - (a.priority || 5));
                 
                 // Tomar el banner con mayor prioridad
                 const selectedBanner = banners[0];
+                console.log('Banner seleccionado:', selectedBanner.title, 'prioridad:', selectedBanner.priority);
                 
                 // Crear contenedor del banner
                 bannerContainer.innerHTML = `
@@ -1092,6 +1149,7 @@
                             userAgent: navigator.userAgent,
                             timestamp: new Date().toISOString()
                         });
+                        console.log('Clic registrado para banner:', selectedBanner.title);
                     } catch (error) {
                         console.error('Error registrando clic:', error);
                     }
