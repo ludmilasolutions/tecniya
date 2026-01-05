@@ -855,6 +855,34 @@
                         </div>
                         
                         <div class="form-group">
+                            <label class="form-label">Provincia *</label>
+                            <select id="profileProvincia" class="form-select" required>
+                                <option value="">Seleccioná una provincia</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Ciudad *</label>
+                            <select id="profileCiudad" class="form-select" required disabled>
+                                <option value="">Seleccioná una ciudad</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Zonas/Barrios donde trabajás *</label>
+                            <div class="checkbox-group" id="zonasCheckbox">
+                                <!-- Se llena dinámicamente según la ciudad -->
+                            </div>
+                            <div id="customZonaInput" style="display: none; margin-top: 1rem;">
+                                <input type="text" id="customZona" class="form-input" 
+                                       placeholder="Ej: Centro, Norte, Oeste (separá con comas)">
+                                <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
+                                    Escribí las zonas donde trabajás, separadas por comas
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
                             <label class="form-label">Rubros *</label>
                             <div class="checkbox-group" id="rubrosCheckbox">
                                 <label class="checkbox-label">
@@ -886,38 +914,28 @@
                                     <span>Cerrajería</span>
                                 </label>
                                 <label class="checkbox-label">
+                                    <input type="checkbox" value="jardineria">
+                                    <span>Jardinería</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="herreria">
+                                    <span>Herrería</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="carpinteria">
+                                    <span>Carpintería</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="limpieza">
+                                    <span>Limpieza</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="mudanzas">
+                                    <span>Mudanzas</span>
+                                </label>
+                                <label class="checkbox-label">
                                     <input type="checkbox" value="otros">
                                     <span>Otros servicios</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Zonas de trabajo *</label>
-                            <div class="checkbox-group" id="zonasCheckbox">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" value="centro">
-                                    <span>Centro</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" value="norte">
-                                    <span>Norte</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" value="sur">
-                                    <span>Sur</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" value="oeste">
-                                    <span>Oeste</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" value="nor_oeste">
-                                    <span>NorOeste</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" value="toda">
-                                    <span>Toda la ciudad</span>
                                 </label>
                             </div>
                         </div>
@@ -1153,7 +1171,70 @@
     <!-- SCRIPTS -->
     <script>
         // ============================================
-        // CONFIGURACIÓN SEGURA - Credenciales protegidas
+        // DATOS DE PROVINCIAS Y CIUDADES
+        // ============================================
+        const provinciasCiudades = {
+            "Buenos Aires": ["La Plata", "Mar del Plata", "Bahía Blanca", "Quilmes", "Lomas de Zamora", "San Isidro", "Tigre", "Pilar", "Merlo", "Moreno", "San Martín", "Morón", "Avellaneda", "Lanús", "San Miguel", "Malvinas Argentinas", "Vicente López", "Tres de Febrero", "Ituzaingó", "Hurlingham"],
+            "CABA": ["Capital Federal"],
+            "Catamarca": ["San Fernando del Valle de Catamarca", "Valle Viejo", "Andalgalá", "Belén", "Santa María"],
+            "Chaco": ["Resistencia", "Barranqueras", "Fontana", "Presidencia Roque Sáenz Peña", "Villa Ángela"],
+            "Chubut": ["Rawson", "Comodoro Rivadavia", "Trelew", "Puerto Madryn", "Esquel"],
+            "Córdoba": ["Córdoba", "Villa María", "Río Cuarto", "Alta Gracia", "Villa Carlos Paz", "Jesús María", "Cosquín", "La Falda", "Villa General Belgrano", "Mina Clavero"],
+            "Corrientes": ["Corrientes", "Goya", "Mercedes", "Curuzú Cuatiá", "Paso de los Libres"],
+            "Entre Ríos": ["Paraná", "Concordia", "Gualeguaychú", "Concepción del Uruguay", "Victoria", "Colón", "Villaguay"],
+            "Formosa": ["Formosa", "Clorinda", "Pirané"],
+            "Jujuy": ["San Salvador de Jujuy", "Palpalá", "San Pedro de Jujuy", "Libertador General San Martín", "Perico"],
+            "La Pampa": ["Santa Rosa", "General Pico", "Toay", "Realicó"],
+            "La Rioja": ["La Rioja", "Chilecito", "Aimogasta", "Chamical"],
+            "Mendoza": ["Mendoza", "San Rafael", "Godoy Cruz", "Guaymallén", "Las Heras", "Maipú", "Luján de Cuyo", "Tunuyán", "San Martín", "Rivadavia"],
+            "Misiones": ["Posadas", "Oberá", "Eldorado", "Apóstoles", "Puerto Iguazú"],
+            "Neuquén": ["Neuquén", "Cutral-Có", "Plottier", "Centenario", "San Martín de los Andes"],
+            "Río Negro": ["Viedma", "Bariloche", "General Roca", "Cipolletti", "Allen", "El Bolsón"],
+            "Salta": ["Salta", "San Ramón de la Nueva Orán", "Tartagal", "Metán", "Cafayate", "Cerrillos", "Rosario de Lerma"],
+            "San Juan": ["San Juan", "Rivadavia", "Chimbas", "Rawson", "Pocito", "Caucete"],
+            "San Luis": ["San Luis", "Villa Mercedes", "Juana Koslay", "La Punta", "Merlo"],
+            "Santa Cruz": ["Río Gallegos", "Caleta Olivia", "Puerto Deseado", "Río Turbio", "El Calafate"],
+            "Santa Fe": ["Rosario", "Santa Fe", "Rafaela", "Venado Tuerto", "Reconquista", "Sunchales", "Villa Gobernador Gálvez", "Granadero Baigorria", "Capitán Bermúdez", "Funes", "Roldán", "San Lorenzo", "San Javier", "Esperanza"],
+            "Santiago del Estero": ["Santiago del Estero", "La Banda", "Frías", "Añatuya", "Termas de Río Hondo"],
+            "Tierra del Fuego": ["Ushuaia", "Río Grande"],
+            "Tucumán": ["San Miguel de Tucumán", "Yerba Buena", "Tafí Viejo", "Concepción", "Monteros", "Famaillá"]
+        };
+
+        const ciudadesZonas = {
+            "Rosario": ["Centro", "Norte", "Sur", "Oeste", "NorOeste", "Echesortu", "Fisherton", "Alberdi", "Arroyito", "República de la Sexta", "La Florida", "Alto Rosario", "Toda la ciudad"],
+            "Córdoba": ["Centro", "Nueva Córdoba", "Alberdi", "Güemes", "Cerro de las Rosas", "Alta Córdoba", "General Paz", "Jardín", "Urca", "Argüello", "Toda la ciudad"],
+            "Mendoza": ["Centro", "Godoy Cruz", "Guaymallén", "Las Heras", "Maipú", "Chacras de Coria", "General Gutiérrez", "Toda la ciudad"],
+            "La Plata": ["Centro", "City Bell", "Gonnet", "Ringuelet", "Tolosa", "Los Hornos", "Villa Elisa", "Toda la ciudad"],
+            "Mar del Plata": ["Centro", "La Perla", "Bristol", "Playa Grande", "Altafulla", "Las Toscas", "Toda la ciudad"],
+            "Bahía Blanca": ["Centro", "Ingeniero White", "Villa Mitre", "Villa Rosas", "Villa Harding Green", "Toda la ciudad"],
+            "Salta": ["Centro", "Norte", "Sur", "Oeste", "Cerritos", "Toda la ciudad"],
+            "San Miguel de Tucumán": ["Centro", "Norte", "Sur", "Oeste", "Yerba Buena", "Toda la ciudad"],
+            "San Juan": ["Centro", "Rivadavia", "Chimbas", "Rawson", "Toda la ciudad"],
+            "Santa Fe": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Paraná": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Resistencia": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Corrientes": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Posadas": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Neuquén": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Bariloche": ["Centro", "Cerro Catedral", "Llao Llao", "Melipal", "Toda la ciudad"],
+            "Ushuaia": ["Centro", "Andorra", "La Cantera", "Malvinas Argentinas", "Toda la ciudad"],
+            "Comodoro Rivadavia": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Trelew": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Rawson": ["Centro", "Playa Unión", "Toda la ciudad"],
+            "Villa María": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Río Cuarto": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "San Rafael": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "San Luis": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Villa Mercedes": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Jujuy": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Formosa": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "La Rioja": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Catamarca": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"],
+            "Santiago del Estero": ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"]
+        };
+
+        // ============================================
+        // CONFIGURACIÓN SEGURA
         // ============================================
         class FirebaseConfig {
             static get config() {
@@ -1185,7 +1266,6 @@
 
         async function loadFirebase() {
             return new Promise((resolve, reject) => {
-                // Cargar scripts de Firebase
                 const scripts = [
                     'https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js',
                     'https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js',
@@ -1225,6 +1305,7 @@
             db = firebase.firestore();
             
             setupEventListeners();
+            loadProvinciasSelect();
             checkAuthState();
         }
         
@@ -1247,12 +1328,105 @@
             document.getElementById('profileForm').addEventListener('submit', saveProfile);
             document.getElementById('updateActivityBtn').addEventListener('click', updateActivity);
             document.getElementById('photoUrl').addEventListener('input', updatePhotoPreview);
+            document.getElementById('profileProvincia').addEventListener('change', handleProfileProvinciaChange);
+            document.getElementById('profileCiudad').addEventListener('change', handleProfileCiudadChange);
             
             // Quotes
             document.getElementById('quoteForm').addEventListener('submit', createQuote);
             document.getElementById('previewQuoteBtn').addEventListener('click', previewQuote);
         }
-        
+
+        // ============================================
+        // CARGAR SELECT DE PROVINCIAS
+        // ============================================
+        function loadProvinciasSelect() {
+            const provinciaSelect = document.getElementById('profileProvincia');
+            
+            // Ordenar provincias alfabéticamente
+            const provinciasOrdenadas = Object.keys(provinciasCiudades).sort();
+            
+            provinciasOrdenadas.forEach(provincia => {
+                const option = document.createElement('option');
+                option.value = provincia;
+                option.textContent = provincia;
+                provinciaSelect.appendChild(option);
+            });
+        }
+
+        // ============================================
+        // MANEJAR CAMBIO DE PROVINCIA
+        // ============================================
+        function handleProfileProvinciaChange() {
+            const provincia = this.value;
+            const ciudadSelect = document.getElementById('profileCiudad');
+            
+            if (!provincia) {
+                ciudadSelect.innerHTML = '<option value="">Seleccioná una ciudad</option>';
+                ciudadSelect.disabled = true;
+                return;
+            }
+            
+            const ciudades = provinciasCiudades[provincia] || [];
+            ciudadSelect.innerHTML = '<option value="">Seleccioná una ciudad</option>';
+            
+            ciudades.forEach(ciudad => {
+                const option = document.createElement('option');
+                option.value = ciudad;
+                option.textContent = ciudad;
+                ciudadSelect.appendChild(option);
+            });
+            
+            ciudadSelect.disabled = false;
+        }
+
+        // ============================================
+        // MANEJAR CAMBIO DE CIUDAD
+        // ============================================
+        function handleProfileCiudadChange() {
+            const ciudad = this.value;
+            const zonasContainer = document.getElementById('zonasCheckbox');
+            const customZonaInput = document.getElementById('customZonaInput');
+            
+            if (!ciudad) {
+                zonasContainer.innerHTML = '<p style="color: var(--gray);">Seleccioná una ciudad primero</p>';
+                customZonaInput.style.display = 'none';
+                return;
+            }
+            
+            const zonas = ciudadesZonas[ciudad] || ["Centro", "Norte", "Sur", "Oeste", "Toda la ciudad"];
+            
+            if (zonas.length > 0) {
+                zonasContainer.innerHTML = '';
+                zonas.forEach(zona => {
+                    const label = document.createElement('label');
+                    label.className = 'checkbox-label';
+                    label.innerHTML = `
+                        <input type="checkbox" value="${zona}">
+                        <span>${zona}</span>
+                    `;
+                    zonasContainer.appendChild(label);
+                });
+                
+                // Agregar opción "Otra zona"
+                const customLabel = document.createElement('label');
+                customLabel.className = 'checkbox-label';
+                customLabel.innerHTML = `
+                    <input type="checkbox" id="customZonaCheckbox" value="otra">
+                    <span>Otra zona (especificar)</span>
+                `;
+                zonasContainer.appendChild(customLabel);
+                
+                customLabel.querySelector('input').addEventListener('change', function() {
+                    customZonaInput.style.display = this.checked ? 'block' : 'none';
+                });
+                
+                customZonaInput.style.display = 'none';
+            } else {
+                zonasContainer.innerHTML = '<p style="color: var(--gray);">No hay zonas predefinidas para esta ciudad</p>';
+                customZonaInput.style.display = 'block';
+            }
+        }
+
         // ============================================
         // AUTENTICACIÓN
         // ============================================
@@ -1336,8 +1510,10 @@
                     phone,
                     photoUrl: '',
                     bio: '',
-                    rubros: [],
+                    provincia: '',
+                    ciudad: '',
                     zonas: [],
+                    rubros: [],
                     rating: 0,
                     reviewsCount: 0,
                     jobsCompleted: 0,
@@ -1345,6 +1521,7 @@
                     profileCompleted: false,
                     isFeatured: false,
                     featuredUntil: null,
+                    certified: false,
                     rankingScore: 0,
                     blocked: false,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1452,8 +1629,10 @@
                     phone: '',
                     photoUrl: '',
                     bio: '',
-                    rubros: [],
+                    provincia: '',
+                    ciudad: '',
                     zonas: [],
+                    rubros: [],
                     rating: 0,
                     reviewsCount: 0,
                     jobsCompleted: 0,
@@ -1461,6 +1640,7 @@
                     profileCompleted: false,
                     isFeatured: false,
                     featuredUntil: null,
+                    certified: false,
                     rankingScore: 0,
                     blocked: false,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1482,6 +1662,45 @@
             document.getElementById('profileBio').value = professionalData.bio || '';
             document.getElementById('photoUrl').value = professionalData.photoUrl || '';
             
+            // Ubicación
+            if (professionalData.provincia) {
+                document.getElementById('profileProvincia').value = professionalData.provincia;
+                
+                // Cargar ciudades de la provincia
+                const ciudades = provinciasCiudades[professionalData.provincia] || [];
+                const ciudadSelect = document.getElementById('profileCiudad');
+                ciudadSelect.innerHTML = '<option value="">Seleccioná una ciudad</option>';
+                ciudades.forEach(ciudad => {
+                    const option = document.createElement('option');
+                    option.value = ciudad;
+                    option.textContent = ciudad;
+                    if (ciudad === professionalData.ciudad) option.selected = true;
+                    ciudadSelect.appendChild(option);
+                });
+                ciudadSelect.disabled = false;
+                
+                // Cargar zonas si hay ciudad
+                if (professionalData.ciudad) {
+                    setTimeout(() => {
+                        document.getElementById('profileCiudad').value = professionalData.ciudad;
+                        handleProfileCiudadChange();
+                        
+                        // Seleccionar zonas guardadas
+                        if (professionalData.zonas && professionalData.zonas.length > 0) {
+                            setTimeout(() => {
+                                professionalData.zonas.forEach(zona => {
+                                    document.querySelectorAll('#zonasCheckbox input').forEach(checkbox => {
+                                        if (checkbox.value === zona) {
+                                            checkbox.checked = true;
+                                        }
+                                    });
+                                });
+                            }, 100);
+                        }
+                    }, 100);
+                }
+            }
+            
             // Actualizar preview de foto
             updatePhotoPreview();
             
@@ -1489,12 +1708,6 @@
             document.querySelectorAll('#rubrosCheckbox input').forEach(checkbox => {
                 checkbox.checked = professionalData.rubros && 
                     professionalData.rubros.includes(checkbox.value);
-            });
-            
-            // Zonas seleccionadas
-            document.querySelectorAll('#zonasCheckbox input').forEach(checkbox => {
-                checkbox.checked = professionalData.zonas && 
-                    professionalData.zonas.includes(checkbox.value);
             });
             
             // Estado del perfil
@@ -1506,8 +1719,10 @@
                 professionalData.name,
                 professionalData.phone,
                 professionalData.photoUrl,
-                professionalData.rubros?.length > 0,
-                professionalData.zonas?.length > 0
+                professionalData.provincia,
+                professionalData.ciudad,
+                professionalData.zonas?.length > 0,
+                professionalData.rubros?.length > 0
             ];
             
             const completedCount = requiredFields.filter(Boolean).length;
@@ -1540,11 +1755,13 @@
             // Validaciones
             const name = document.getElementById('profileName').value.trim();
             const phone = document.getElementById('profilePhone').value.trim();
+            const provincia = document.getElementById('profileProvincia').value;
+            const ciudad = document.getElementById('profileCiudad').value;
             const photoUrl = document.getElementById('photoUrl').value.trim();
             const bio = document.getElementById('profileBio').value.trim();
             
-            if (!name || !phone || !photoUrl) {
-                showMessage('profileMessage', 'Nombre, teléfono y foto son obligatorios', 'error');
+            if (!name || !phone || !provincia || !ciudad || !photoUrl) {
+                showMessage('profileMessage', 'Todos los campos obligatorios deben estar completos', 'error');
                 return;
             }
             
@@ -1556,20 +1773,39 @@
                 return;
             }
             
+            // Obtener zonas seleccionadas
+            const zonas = [];
+            document.querySelectorAll('#zonasCheckbox input:checked').forEach(cb => {
+                if (cb.value !== 'otra') {
+                    zonas.push(cb.value);
+                }
+            });
+            
+            // Si seleccionó "Otra zona", agregar del input
+            const customZonaCheckbox = document.getElementById('customZonaCheckbox');
+            if (customZonaCheckbox && customZonaCheckbox.checked) {
+                const customZona = document.getElementById('customZona').value.trim();
+                if (customZona) {
+                    customZona.split(',').forEach(z => {
+                        const zona = z.trim();
+                        if (zona) zonas.push(zona);
+                    });
+                }
+            }
+            
+            if (zonas.length === 0) {
+                showMessage('profileMessage', 'Seleccioná al menos una zona', 'error');
+                return;
+            }
+            
             // Obtener rubros seleccionados
             const rubros = [];
             document.querySelectorAll('#rubrosCheckbox input:checked').forEach(cb => {
                 rubros.push(cb.value);
             });
             
-            // Obtener zonas seleccionadas
-            const zonas = [];
-            document.querySelectorAll('#zonasCheckbox input:checked').forEach(cb => {
-                zonas.push(cb.value);
-            });
-            
-            if (rubros.length === 0 || zonas.length === 0) {
-                showMessage('profileMessage', 'Seleccioná al menos un rubro y una zona', 'error');
+            if (rubros.length === 0) {
+                showMessage('profileMessage', 'Seleccioná al menos un rubro', 'error');
                 return;
             }
             
@@ -1585,10 +1821,12 @@
                 const updateData = {
                     name,
                     phone,
+                    provincia,
+                    ciudad,
+                    zonas,
                     photoUrl,
                     bio,
                     rubros,
-                    zonas,
                     lastActive: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
@@ -1598,7 +1836,7 @@
                 professionalData = { ...professionalData, ...updateData };
                 
                 // Verificar si el perfil está completo
-                const isComplete = name && phone && photoUrl && rubros.length > 0 && zonas.length > 0;
+                const isComplete = name && phone && provincia && ciudad && photoUrl && zonas.length > 0 && rubros.length > 0;
                 await db.collection('professionals').doc(professionalId).update({
                     profileCompleted: isComplete
                 });
