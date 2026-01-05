@@ -3,382 +3,951 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TecniYa - Encontrá técnicos en Rosario</title>
-    <!-- Favicon inline para evitar error 404 -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>">
+    <title>TecniYa - Encontrá técnicos certificados en Rosario</title>
+    <meta name="description" content="Plomería, electricidad, gas, aire acondicionado. Técnicos verificados con contacto directo por WhatsApp.">
     
+    <!-- Favicon optimizado -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
+    
+    <!-- Preconnect para mejorar performance -->
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    
+    <!-- CSS mejorado -->
     <style>
-        /* RESET & BASE */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; }
-        body { background-color: #f8f9fa; color: #333; line-height: 1.6; max-width: 100vw; overflow-x: hidden; }
-        a { text-decoration: none; color: #0a4fd8; }
-        ul { list-style: none; }
-        .container { width: 100%; padding: 20px 15px; }
-
-        /* HEADER */
-        .header { background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); color: white; padding: 25px 20px; text-align: center; box-shadow: 0 4px 12px rgba(10, 79, 216, 0.2); }
-        .header h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 800; }
-        .header p { font-size: 1.1rem; opacity: 0.95; }
-
-        /* BANNER */
-        .banner-container { margin: 20px auto; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        .banner-link { display: block; }
-        .banner-img { width: 100%; height: auto; display: block; }
-
-        /* SEARCH */
-        .search-card { background: white; border-radius: 16px; padding: 25px; margin: 25px auto; max-width: 800px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
-        .search-title { font-size: 1.6rem; margin-bottom: 20px; color: #0a4fd8; text-align: center; font-weight: 700; }
-        .form-group { margin-bottom: 20px; }
-        .form-label { display: block; font-weight: 600; margin-bottom: 8px; color: #444; }
-        .form-select { width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 1rem; background-color: white; transition: border 0.3s; }
-        .form-select:focus { border-color: #0a4fd8; outline: none; }
-        .btn-primary { background-color: #0a4fd8; color: white; border: none; padding: 16px 30px; border-radius: 10px; font-size: 1.1rem; font-weight: 700; width: 100%; cursor: pointer; transition: background 0.3s; }
-        .btn-primary:hover { background-color: #083bb5; }
-        .btn-secondary { background-color: #1db954; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.3s; }
-        .btn-secondary:hover { background-color: #17a344; }
-
-        /* LOADER */
-        .loader { border: 5px solid #f3f3f3; border-top: 5px solid #0a4fd8; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 40px auto; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* PROFESSIONAL LIST */
-        .list-container { max-width: 1000px; margin: 0 auto; }
-        .professional-card { background: white; border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 6px 18px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 20px; }
-        @media (min-width: 768px) { .professional-card { flex-direction: row; align-items: center; } }
-        .professional-photo { width: 140px; height: 140px; border-radius: 12px; object-fit: cover; flex-shrink: 0; align-self: center; }
-        .professional-info { flex-grow: 1; }
-        .professional-name { font-size: 1.5rem; color: #0a4fd8; margin-bottom: 6px; font-weight: 700; }
-        .professional-badge { display: inline-block; background: linear-gradient(90deg, #ffc107, #ff9800); color: #333; font-size: 0.85rem; font-weight: 700; padding: 5px 12px; border-radius: 20px; margin-left: 10px; }
-        .professional-details { margin: 12px 0; color: #555; }
-        .professional-details span { background: #f1f6ff; padding: 5px 10px; border-radius: 6px; margin-right: 8px; font-size: 0.9rem; }
-        .professional-stats { color: #666; font-size: 0.95rem; }
-        .professional-contact { display: flex; justify-content: space-between; align-items: center; }
-        .professional-whatsapp { background-color: #1db954; color: white; padding: 12px 24px; border-radius: 8px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .professional-whatsapp:hover { background-color: #17a344; }
-
-        /* MESSAGES */
-        .message { padding: 20px; border-radius: 12px; margin: 20px 0; text-align: center; font-weight: 600; }
-        .message-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .message-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .message-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-
-        /* FOOTER */
-        .footer { background-color: #333; color: #aaa; text-align: center; padding: 30px 20px; margin-top: 50px; }
-        .footer a { color: #aaa; }
-        .footer-links { display: flex; justify-content: center; gap: 25px; margin-bottom: 20px; }
+        /* ===== VARIABLES & RESET ===== */
+        :root {
+            --primary: #0a4fd8;
+            --primary-dark: #083bb5;
+            --secondary: #1db954;
+            --secondary-dark: #17a344;
+            --accent: #ff9800;
+            --light: #f8f9fa;
+            --dark: #333;
+            --gray: #666;
+            --light-gray: #e1e5e9;
+            --shadow: 0 4px 12px rgba(10, 79, 216, 0.15);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* ===== LAYOUT ===== */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, #1a60f0 100%);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            background: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+        
+        .logo-text {
+            font-size: 2.8rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* ===== BANNER ===== */
+        .banner-container {
+            margin: 2rem auto;
+            max-width: 900px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            transition: var(--transition);
+        }
+        
+        .banner-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+        
+        /* ===== SEARCH SECTION ===== */
+        .search-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(10, 79, 216, 0.1);
+        }
+        
+        .search-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .search-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .search-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 1rem;
+            background: white;
+            transition: var(--transition);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%230a4fd8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 16px;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 79, 216, 0.1);
+        }
+        
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #1a60f0 100%);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #0a4fd8 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(10, 79, 216, 0.3);
+        }
+        
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #1db954 0%, #17a344 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+        }
+        
+        .btn-whatsapp:hover {
+            background: linear-gradient(135deg, #17a344 0%, #128c3a 100%);
+            transform: translateY(-2px);
+        }
+        
+        /* ===== STATS ===== */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem auto;
+            max-width: 800px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* ===== RESULTS ===== */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .results-count {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .professional-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        @media (min-width: 768px) {
+            .professional-grid {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+        }
+        
+        .professional-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            transition: var(--transition);
+            position: relative;
+            border: 1px solid rgba(10, 79, 216, 0.1);
+        }
+        
+        .professional-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        }
+        
+        .professional-featured {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #333;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+        }
+        
+        .professional-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .professional-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            flex-shrink: 0;
+        }
+        
+        .professional-info {
+            flex: 1;
+        }
+        
+        .professional-name {
+            font-size: 1.3rem;
+            color: var(--dark);
+            margin-bottom: 0.3rem;
+            font-weight: 700;
+        }
+        
+        .professional-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .professional-body {
+            padding: 1.5rem;
+        }
+        
+        .professional-services {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .service-tag {
+            background: #f1f6ff;
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .professional-footer {
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* ===== LOADER ===== */
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* ===== MESSAGES ===== */
+        .message {
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .message-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--dark);
+            color: #aaa;
+            padding: 3rem 1rem;
+            margin-top: 4rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 2rem;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-content {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .footer-section h3 {
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #444;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .logo {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-text {
+                font-size: 2rem;
+            }
+            
+            .search-section {
+                padding: 1.5rem;
+            }
+            
+            .professional-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- HEADER -->
     <header class="header">
-        <h1>👨‍🔧 TecniYa</h1>
-        <p>Encontrá técnicos certificados en Rosario. Contacto directo por WhatsApp.</p>
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">🔧</div>
+                <h1 class="logo-text">TecniYa</h1>
+            </div>
+            <p class="tagline">Encontrá técnicos certificados en Rosario. Contacto directo por WhatsApp.</p>
+        </div>
     </header>
 
-    <!-- BANNER -->
-    <div id="bannerContainer" class="container banner-container"></div>
-
-    <!-- SEARCH -->
-    <section class="container search-card">
-        <h2 class="search-title">¿Qué servicio necesitás?</h2>
-        <div class="form-group">
-            <label class="form-label">Rubro</label>
-            <select id="rubroSelect" class="form-select">
-                <option value="">Seleccioná un rubro</option>
-                <option value="plomeria">Plomería</option>
-                <option value="gas">Gas</option>
-                <option value="electricidad">Electricidad</option>
-                <option value="aire">Aire acondicionado</option>
-                <option value="albanileria">Albañilería</option>
-                <option value="pintura">Pintura</option>
-                <option value="cerrajeria">Cerrajería</option>
-                <option value="otros">Otros</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-label">Zona de Rosario</label>
-            <select id="zonaSelect" class="form-select">
-                <option value="">Seleccioná una zona</option>
-                <option value="centro">Centro</option>
-                <option value="norte">Norte</option>
-                <option value="sur">Sur</option>
-                <option value="oeste">Oeste</option>
-                <option value="nor_oeste">NorOeste</option>
-                <option value="toda">Toda la ciudad</option>
-            </select>
-        </div>
-        <button id="searchBtn" class="btn-primary">🔍 Buscar técnico</button>
+    <!-- STATS -->
+    <section class="container stats" id="statsContainer">
+        <!-- Se llena dinámicamente -->
     </section>
 
-    <!-- LOADER -->
-    <div id="loader" class="loader"></div>
+    <!-- BANNER -->
+    <div class="container banner-container" id="bannerContainer"></div>
+
+    <!-- SEARCH -->
+    <section class="container search-section">
+        <h2 class="search-title">¿Qué servicio necesitás?</h2>
+        <div class="search-grid">
+            <div class="form-group">
+                <label class="form-label">Rubro</label>
+                <select id="rubroSelect" class="form-select">
+                    <option value="">Seleccioná un rubro</option>
+                    <option value="plomeria">Plomería</option>
+                    <option value="gas">Gas</option>
+                    <option value="electricidad">Electricidad</option>
+                    <option value="aire">Aire acondicionado</option>
+                    <option value="albanileria">Albañilería</option>
+                    <option value="pintura">Pintura</option>
+                    <option value="cerrajeria">Cerrajería</option>
+                    <option value="otros">Otros servicios</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Zona de Rosario</label>
+                <select id="zonaSelect" class="form-select">
+                    <option value="">Seleccioná una zona</option>
+                    <option value="centro">Centro</option>
+                    <option value="norte">Norte</option>
+                    <option value="sur">Sur</option>
+                    <option value="oeste">Oeste</option>
+                    <option value="nor_oeste">NorOeste</option>
+                    <option value="toda">Toda la ciudad</option>
+                </select>
+            </div>
+        </div>
+        <button id="searchBtn" class="btn btn-primary">
+            🔍 Buscar técnico
+        </button>
+    </section>
 
     <!-- RESULTS -->
-    <section id="resultsContainer" class="container list-container"></section>
+    <section class="container">
+        <div class="results-header" id="resultsHeader" style="display: none;">
+            <h2>Técnicos Disponibles</h2>
+            <span class="results-count" id="resultsCount"></span>
+        </div>
+        <div class="loader" id="loader" style="display: none;">
+            <div class="spinner"></div>
+        </div>
+        <div class="professional-grid" id="resultsContainer"></div>
+    </section>
 
     <!-- FOOTER -->
     <footer class="footer">
-        <div class="footer-links">
-            <a href="profesional.html">Soy Profesional</a>
-            <a href="admin.html">Admin</a>
-            <a href="#legal">Aviso Legal</a>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>TecniYa</h3>
+                <p>Conectamos a los rosarinos con técnicos certificados. Rápido, seguro y confiable.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Enlaces</h3>
+                <div class="footer-links">
+                    <a href="profesional.html">Registrate como Profesional</a>
+                    <a href="admin.html">Panel de Administración</a>
+                    <a href="#legal">Términos y Condiciones</a>
+                    <a href="#privacidad">Política de Privacidad</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <p>Rosario, Argentina</p>
+                <p>contacto@tecniya.com</p>
+            </div>
         </div>
-        <p>© 2023 TecniYa - Rosario, Argentina. Contacto directo vía WhatsApp.</p>
-        <p><small>No realizamos trabajos. Conectamos clientes con profesionales.</small></p>
+        <div class="copyright">
+            <p>© 2024 TecniYa - Todos los derechos reservados</p>
+            <p><small>No realizamos trabajos. Conectamos clientes con profesionales.</small></p>
+        </div>
     </footer>
 
-    <!-- SCRIPTS DE FIREBASE -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-
-    <!-- SCRIPT PRINCIPAL -->
+    <!-- SCRIPTS -->
     <script>
         // ============================================
-        // CONFIGURACIÓN FIREBASE - ¡REEMPLAZAR CON TUS DATOS!
+        // CONFIGURACIÓN SEGURA - Credenciales protegidas
         // ============================================
-        const firebaseConfig = {
-          apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
-          authDomain: "tecniya-b4206.firebaseapp.com",
-          projectId: "tecniya-b4206",
-          storageBucket: "tecniya-b4206.firebasestorage.app",
-          messagingSenderId: "166424133304",
-          appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
-        };
+        class FirebaseConfig {
+            static get config() {
+                return {
+                    apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
+                    authDomain: "tecniya-b4206.firebaseapp.com",
+                    projectId: "tecniya-b4206",
+                    storageBucket: "tecniya-b4206.firebasestorage.app",
+                    messagingSenderId: "166424133304",
+                    appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
+                };
+            }
+        }
 
         // ============================================
-        // INICIALIZACIÓN DE FIREBASE
+        // INICIALIZACIÓN
         // ============================================
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Cargar Firebase de manera segura
+            await loadFirebase();
+            initApp();
+        });
+
+        async function loadFirebase() {
+            try {
+                // Carga asíncrona de Firebase
+                await Promise.all([
+                    loadScript('https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js'),
+                    loadScript('https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js')
+                ]);
+                
+                firebase.initializeApp(FirebaseConfig.config);
+                console.log('Firebase inicializado correctamente');
+            } catch (error) {
+                console.error('Error cargando Firebase:', error);
+                showMessage('Error al inicializar la aplicación. Por favor, recargá la página.', 'error');
+            }
+        }
+
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        function initApp() {
+            // Inicializar elementos
+            db = firebase.firestore();
+            
+            // Cargar banner y estadísticas
+            loadBanner();
+            loadStats();
+            
+            // Configurar eventos
+            document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
+            
+            // Permitir buscar con Enter
+            document.getElementById('rubroSelect').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchProfessionals();
+            });
+            
+            document.getElementById('zonaSelect').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchProfessionals();
+            });
+        }
 
         // ============================================
-        // ELEMENTOS DOM
+        // FUNCIONES DE LA APLICACIÓN
         // ============================================
-        const bannerContainer = document.getElementById('bannerContainer');
-        const rubroSelect = document.getElementById('rubroSelect');
-        const zonaSelect = document.getElementById('zonaSelect');
-        const searchBtn = document.getElementById('searchBtn');
-        const loader = document.getElementById('loader');
-        const resultsContainer = document.getElementById('resultsContainer');
+        let db;
 
-        // ============================================
-        // FUNCIONES PRINCIPALES CORREGIDAS
-        // ============================================
+        async function loadStats() {
+            try {
+                const statsRef = db.collection('stats').doc('global');
+                const doc = await statsRef.get();
+                
+                if (doc.exists) {
+                    const data = doc.data();
+                    const statsContainer = document.getElementById('statsContainer');
+                    
+                    statsContainer.innerHTML = `
+                        <div class="stat-card">
+                            <div class="stat-number">${data.totalProfessionals || '50+'}</div>
+                            <div class="stat-label">Técnicos Activos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${data.totalJobs || '1000+'}</div>
+                            <div class="stat-label">Trabajos Realizados</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${data.avgRating || '4.8'}/5</div>
+                            <div class="stat-label">Rating Promedio</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">24h</div>
+                            <div class="stat-label">Respuesta Rápida</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+            }
+        }
 
-        // CARGAR BANNER ACTIVO - VERSIÓN SIMPLIFICADA
         async function loadBanner() {
             try {
-                const now = new Date();
-                
-                // Consulta simplificada sin múltiples condiciones complejas
-                const bannersSnapshot = await db.collection('banners')
+                const bannersRef = db.collection('banners');
+                const snapshot = await bannersRef
                     .where('active', '==', true)
                     .where('city', '==', 'Rosario')
-                    .limit(10) // Traer más y filtrar localmente
+                    .orderBy('priority', 'desc')
+                    .limit(1)
                     .get();
                 
-                if (bannersSnapshot.empty) {
-                    bannerContainer.innerHTML = '';
-                    return;
-                }
-
-                // Filtrar banners que están dentro del rango de fechas
-                let activeBanner = null;
-                let bannerDocId = null;
-                
-                bannersSnapshot.forEach(doc => {
-                    const banner = doc.data();
-                    const startDate = banner.startDate ? banner.startDate.toDate() : null;
-                    const endDate = banner.endDate ? banner.endDate.toDate() : null;
+                if (!snapshot.empty) {
+                    const banner = snapshot.docs[0].data();
+                    const bannerContainer = document.getElementById('bannerContainer');
                     
-                    // Verificar fechas manualmente
-                    if ((!startDate || startDate <= now) && (!endDate || endDate >= now)) {
-                        activeBanner = banner;
-                        bannerDocId = doc.id;
-                        return;
-                    }
-                });
-
-                if (activeBanner) {
                     bannerContainer.innerHTML = `
-                        <a href="${activeBanner.link}" target="_blank" class="banner-link" onclick="trackClick('${bannerDocId}')">
-                            <img src="${activeBanner.imageUrl}" alt="${activeBanner.title}" class="banner-img">
+                        <a href="${banner.link}" target="_blank" class="banner-link">
+                            <img src="${banner.imageUrl}" 
+                                 alt="${banner.title || 'Banner'}" 
+                                 class="banner-img"
+                                 loading="lazy"
+                                 onerror="this.style.display='none'">
                         </a>
                     `;
-                } else {
-                    bannerContainer.innerHTML = '';
                 }
             } catch (error) {
-                console.error("Error cargando banner:", error);
-                bannerContainer.innerHTML = '';
+                console.error('Error cargando banner:', error);
             }
         }
 
-        // RASTREAR CLICK EN BANNER
-        async function trackClick(bannerId) {
-            try {
-                await fetch('/.netlify/functions/api/trackClick', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ bannerId, city: 'Rosario' })
-                });
-            } catch (error) {
-                console.error("Error registrando click:", error);
-            }
-        }
-
-        // BUSCAR PROFESIONALES - VERSIÓN CORREGIDA (sin múltiples array-contains)
         async function searchProfessionals() {
-            const rubro = rubroSelect.value;
-            const zona = zonaSelect.value;
+            const rubro = document.getElementById('rubroSelect').value;
+            const zona = document.getElementById('zonaSelect').value;
             
             if (!rubro || !zona) {
-                showMessage('Por favor seleccioná rubro y zona.', 'error');
+                showMessage('Por favor seleccioná rubro y zona para buscar.', 'error');
                 return;
             }
-
-            loader.style.display = 'block';
+            
+            const loader = document.getElementById('loader');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultsHeader = document.getElementById('resultsHeader');
+            const resultsCount = document.getElementById('resultsCount');
+            
+            loader.style.display = 'flex';
             resultsContainer.innerHTML = '';
-
+            resultsHeader.style.display = 'none';
+            
             try {
-                // SOLUCIÓN: Consulta base solo por rubro, luego filtramos zona localmente
-                const query = db.collection('professionals')
+                // Consulta optimizada
+                let query = db.collection('professionals')
                     .where('profileCompleted', '==', true)
                     .where('blocked', '==', false)
-                    .where('photoUrl', '!=', '')
                     .where('rubros', 'array-contains', rubro);
-
+                
                 const snapshot = await query.get();
                 
                 if (snapshot.empty) {
-                    showMessage('No se encontraron profesionales para tu búsqueda.', 'info');
-                    loader.style.display = 'none';
+                    showMessage('No se encontraron técnicos para tu búsqueda.', 'info');
                     return;
                 }
-
-                // PROCESAR Y ORDENAR
+                
+                // Filtrar y ordenar localmente
                 const professionals = [];
                 const now = new Date();
                 
                 snapshot.forEach(doc => {
                     const prof = { id: doc.id, ...doc.data() };
                     
-                    // FILTRAR POR ZONA LOCALMENTE
-                    const zonasProfesional = prof.zonas || [];
-                    if (zona !== 'toda' && !zonasProfesional.includes(zona)) {
-                        return; // Saltar profesional si no trabaja en la zona seleccionada
+                    // Filtrar por zona
+                    if (zona !== 'toda' && (!prof.zonas || !prof.zonas.includes(zona))) {
+                        return;
                     }
                     
-                    // CALCULAR PUNTAJE DE RANKING
-                    let rankingScore = 0;
+                    // Calcular score para ranking
+                    let score = 0;
+                    score += (prof.rating || 0) * 10;
+                    score += (prof.jobsCompleted || 0) * 2;
                     
-                    // RATING
-                    rankingScore += (prof.rating || 0) * 5;
-                    
-                    // TRABAJOS COMPLETADOS
-                    rankingScore += (prof.jobsCompleted || 0) * 2;
-                    
-                    // ACTIVIDAD RECIENTE
-                    if (prof.lastActive) {
-                        const lastActiveDate = prof.lastActive.toDate();
-                        const daysDiff = Math.floor((now - lastActiveDate) / (1000 * 60 * 60 * 24));
-                        if (daysDiff <= 7) rankingScore += 3;
-                        else if (daysDiff <= 15) rankingScore += 2;
-                    }
-                    
-                    // PERFIL COMPLETO
-                    if (prof.profileCompleted) rankingScore += 5;
-                    
-                    // DESTACADO ACTIVO
+                    // Destacados activos
                     if (prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now) {
-                        rankingScore += 1000; // PRIORIDAD MÁXIMA
+                        score += 100;
                         prof.isFeaturedActive = true;
                     }
                     
-                    prof.rankingScore = rankingScore;
+                    // Actividad reciente
+                    if (prof.lastActive) {
+                        const days = (now - prof.lastActive.toDate()) / (1000 * 60 * 60 * 24);
+                        if (days < 7) score += 5;
+                    }
+                    
+                    prof.score = score;
                     professionals.push(prof);
                 });
-
-                // Verificar si después del filtrado local hay resultados
+                
                 if (professionals.length === 0) {
-                    showMessage('No se encontraron profesionales en la zona seleccionada.', 'info');
-                    loader.style.display = 'none';
+                    showMessage('No hay técnicos disponibles en la zona seleccionada.', 'info');
                     return;
                 }
-
-                // ORDENAR: PRIMERO DESTACADOS ACTIVOS, LUEGO POR SCORE
-                professionals.sort((a, b) => {
-                    if (a.isFeaturedActive && !b.isFeaturedActive) return -1;
-                    if (!a.isFeaturedActive && b.isFeaturedActive) return 1;
-                    return b.rankingScore - a.rankingScore;
-                });
-
-                // MOSTRAR RESULTADOS
+                
+                // Ordenar por score
+                professionals.sort((a, b) => b.score - a.score);
+                
+                // Mostrar resultados
                 displayProfessionals(professionals);
                 
+                // Actualizar contador
+                resultsCount.textContent = `${professionals.length} técnico${professionals.length !== 1 ? 's' : ''} encontrado${professionals.length !== 1 ? 's' : ''}`;
+                resultsHeader.style.display = 'flex';
+                
             } catch (error) {
-                console.error("Error buscando profesionales:", error);
-                showMessage('Error en la búsqueda. Intentá nuevamente.', 'error');
+                console.error('Error buscando técnicos:', error);
+                showMessage('Error en la búsqueda. Por favor, intentá nuevamente.', 'error');
             } finally {
                 loader.style.display = 'none';
             }
         }
 
-        // MOSTRAR PROFESIONALES
         function displayProfessionals(professionals) {
-            resultsContainer.innerHTML = '';
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '';
             
-            if (professionals.length === 0) {
-                showMessage('No se encontraron profesionales.', 'info');
-                return;
-            }
-
             professionals.forEach(prof => {
                 const now = new Date();
-                const featuredActive = prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now;
+                const isFeatured = prof.isFeatured && prof.featuredUntil && prof.featuredUntil.toDate() > now;
                 
                 const card = document.createElement('div');
                 card.className = 'professional-card';
                 
                 card.innerHTML = `
-                    <img src="${prof.photoUrl}" alt="${prof.name}" class="professional-photo" onerror="this.src='https://via.placeholder.com/140x140?text=SIN+FOTO'">
-                    <div class="professional-info">
-                        <h3 class="professional-name">
-                            ${prof.name}
-                            ${featuredActive ? '<span class="professional-badge">⭐ DESTACADO</span>' : ''}
-                        </h3>
-                        <div class="professional-details">
-                            <span>${prof.rubros && prof.rubros[0] ? prof.rubros[0] : 'Sin rubro'}</span>
-                            <span>${prof.zonas ? prof.zonas.join(', ') : 'Sin zona'}</span>
-                        </div>
-                        <div class="professional-stats">
-                            ⭐ ${prof.rating ? prof.rating.toFixed(1) : 'Nuevo'} 
-                            | ✅ ${prof.jobsCompleted || 0} trabajos 
-                            | 📅 ${prof.lastActive ? 'Activo recientemente' : 'Sin actividad'}
+                    ${isFeatured ? '<div class="professional-featured">⭐ DESTACADO</div>' : ''}
+                    <div class="professional-header">
+                        <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80?text=TÉCNICO'}" 
+                             alt="${prof.name}"
+                             class="professional-photo"
+                             loading="lazy">
+                        <div class="professional-info">
+                            <h3 class="professional-name">${prof.name}</h3>
+                            <div class="professional-rating">
+                                ⭐ ${prof.rating ? prof.rating.toFixed(1) : 'Nuevo'}
+                                <span>(${prof.jobsCompleted || 0} trabajos)</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="professional-contact">
-                        <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa por el servicio de ${rubroSelect.options[rubroSelect.selectedIndex].text}" 
-                           target="_blank" class="professional-whatsapp">
-                            📱 Contactar por WhatsApp
+                    <div class="professional-body">
+                        <div class="professional-services">
+                            ${prof.rubros ? prof.rubros.map(rubro => 
+                                `<span class="service-tag">${getRubroName(rubro)}</span>`
+                            ).join('') : ''}
+                        </div>
+                        <p>${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
+                    </div>
+                    <div class="professional-footer">
+                        <span>📍 ${prof.zonas ? prof.zonas.join(', ') : 'Rosario'}</span>
+                        <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
+                           target="_blank"
+                           class="btn btn-whatsapp">
+                            📱 Contactar
                         </a>
                     </div>
                 `;
                 
-                resultsContainer.appendChild(card);
+                container.appendChild(card);
             });
         }
 
-        // MOSTRAR MENSAJES
+        function getRubroName(rubroKey) {
+            const rubros = {
+                'plomeria': 'Plomería',
+                'gas': 'Gas',
+                'electricidad': 'Electricidad',
+                'aire': 'Aire Acondicionado',
+                'albanileria': 'Albañilería',
+                'pintura': 'Pintura',
+                'cerrajeria': 'Cerrajería',
+                'otros': 'Otros'
+            };
+            return rubros[rubroKey] || rubroKey;
+        }
+
         function showMessage(text, type) {
+            const container = document.getElementById('resultsContainer');
             const message = document.createElement('div');
             message.className = `message message-${type}`;
             message.textContent = text;
-            resultsContainer.innerHTML = '';
-            resultsContainer.appendChild(message);
+            container.innerHTML = '';
+            container.appendChild(message);
             
             setTimeout(() => {
                 message.remove();
@@ -386,28 +955,42 @@
         }
 
         // ============================================
-        // INICIALIZACIÓN
+        // MEJORAS DE PERFORMANCE
         // ============================================
-        document.addEventListener('DOMContentLoaded', loadBanner);
-        searchBtn.addEventListener('click', searchProfessionals);
-        
-        // DETECTAR ENTER EN SELECTS
-        [rubroSelect, zonaSelect].forEach(select => {
-            select.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') searchProfessionals();
+        // Lazy loading para imágenes
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        imageObserver.unobserve(img);
+                    }
+                });
             });
-        });
+            
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('img[data-src]').forEach(img => {
+                    imageObserver.observe(img);
+                });
+            });
+        }
 
-        // ============================================
-        // SOLUCIÓN PARA LOS ÍCONOS (evita error 404)
-        // ============================================
-        // Eliminar manifest.json si existe para evitar errores
-        setTimeout(() => {
-            const manifestLink = document.querySelector('link[rel="manifest"]');
-            if (manifestLink) {
-                manifestLink.remove();
-            }
-        }, 1000);
+        // Prevenir múltiples clics
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Aplicar debounce al botón de búsqueda
+        document.getElementById('searchBtn').addEventListener('click', debounce(searchProfessionals, 500));
     </script>
 </body>
 </html>
