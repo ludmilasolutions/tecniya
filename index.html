@@ -3,8 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TecniYa - Encontrá técnicos certificados en Rosario</title>
-    <meta name="description" content="Plomería, electricidad, gas, aire acondicionado. Técnicos verificados con contacto directo por WhatsApp.">
+    <title>TecniYa - Encontrá técnicos certificados en toda Argentina</title>
+    <meta name="description" content="Plomería, electricidad, gas, aire acondicionado. Técnicos verificados con contacto directo por WhatsApp en toda Argentina.">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0a4fd8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
+    <link rel="manifest" href="manifest.json">
     
     <!-- Favicon optimizado -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
@@ -43,6 +50,7 @@
             color: var(--dark);
             line-height: 1.6;
             min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
         }
         
         /* ===== LAYOUT ===== */
@@ -126,6 +134,12 @@
             box-shadow: 0 12px 40px rgba(0,0,0,0.15);
         }
         
+        .banner-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
         /* ===== SEARCH SECTION ===== */
         .search-section {
             background: white;
@@ -169,7 +183,7 @@
             font-size: 0.95rem;
         }
         
-        .form-select {
+        .form-select, .form-input {
             width: 100%;
             padding: 1rem;
             border: 2px solid var(--light-gray);
@@ -185,7 +199,11 @@
             background-size: 16px;
         }
         
-        .form-select:focus {
+        .form-input {
+            background-image: none;
+        }
+        
+        .form-select:focus, .form-input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(10, 79, 216, 0.1);
@@ -207,6 +225,9 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            text-decoration: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
         .btn::after {
@@ -254,6 +275,7 @@
             background: linear-gradient(135deg, #1db954 0%, #17a344 100%);
             color: white;
             padding: 0.8rem 1.5rem;
+            font-size: 0.95rem;
         }
         
         .btn-whatsapp:hover {
@@ -416,6 +438,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .professional-location {
+            color: var(--gray);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         /* ===== LOADER ===== */
@@ -532,6 +564,48 @@
             font-size: 0.9rem;
         }
         
+        /* ===== INSTALL PROMPT ===== */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+            animation: slideUp 0.3s ease;
+            border: 2px solid var(--primary);
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .install-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .close-install {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .logo {
@@ -551,6 +625,39 @@
                 flex-direction: column;
                 text-align: center;
             }
+            
+            .professional-footer {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .install-prompt {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 1.5rem 1rem;
+            }
+            
+            .logo-text {
+                font-size: 1.8rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .search-title {
+                font-size: 1.5rem;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
 </head>
@@ -562,7 +669,7 @@
                 <div class="logo-icon">🔧</div>
                 <h1 class="logo-text">TecniYa</h1>
             </div>
-            <p class="tagline">Encontrá técnicos certificados en Rosario. Contacto directo por WhatsApp.</p>
+            <p class="tagline">Encontrá técnicos certificados en toda Argentina. Contacto directo por WhatsApp.</p>
         </div>
     </header>
 
@@ -581,7 +688,7 @@
             <div class="form-group">
                 <label class="form-label">Rubro</label>
                 <select id="rubroSelect" class="form-select">
-                    <option value="">Seleccioná un rubro</option>
+                    <option value="todos" selected>Todos los rubros</option>
                     <option value="plomeria">Plomería</option>
                     <option value="gas">Gas</option>
                     <option value="electricidad">Electricidad</option>
@@ -589,20 +696,20 @@
                     <option value="albanileria">Albañilería</option>
                     <option value="pintura">Pintura</option>
                     <option value="cerrajeria">Cerrajería</option>
+                    <option value="carpinteria">Carpintería</option>
+                    <option value="herreria">Herrería</option>
+                    <option value="jardineria">Jardinería</option>
+                    <option value="limpieza">Limpieza</option>
+                    <option value="mudanza">Mudanzas</option>
+                    <option value="tecnico">Técnico de PC</option>
                     <option value="otros">Otros servicios</option>
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">Zona de Rosario</label>
-                <select id="zonaSelect" class="form-select">
-                    <option value="">Seleccioná una zona</option>
-                    <option value="centro">Centro</option>
-                    <option value="norte">Norte</option>
-                    <option value="sur">Sur</option>
-                    <option value="oeste">Oeste</option>
-                    <option value="nor_oeste">NorOeste</option>
-                    <option value="toda">Toda la ciudad</option>
-                </select>
+                <label class="form-label">Tu ciudad</label>
+                <input type="text" id="ciudadInput" class="form-input" 
+                       placeholder="Ej: Rosario, Buenos Aires, Córdoba" 
+                       value="Rosario">
             </div>
         </div>
         <button id="searchBtn" class="btn btn-primary">
@@ -627,20 +734,19 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>TecniYa</h3>
-                <p>Conectamos a los rosarinos con técnicos certificados. Rápido, seguro y confiable.</p>
+                <p>Conectamos a personas con técnicos certificados en toda Argentina. Rápido, seguro y confiable.</p>
             </div>
             <div class="footer-section">
                 <h3>Enlaces</h3>
                 <div class="footer-links">
                     <a href="profesional.html">Registrate como Profesional</a>
-                    <a href="admin.html">Panel de Administración</a>
                     <a href="#legal">Términos y Condiciones</a>
                     <a href="#privacidad">Política de Privacidad</a>
                 </div>
             </div>
             <div class="footer-section">
                 <h3>Contacto</h3>
-                <p>Rosario, Argentina</p>
+                <p>Argentina</p>
                 <p>contacto@tecniya.com</p>
             </div>
         </div>
@@ -649,6 +755,18 @@
             <p><small>No realizamos trabajos. Conectamos clientes con profesionales.</small></p>
         </div>
     </footer>
+
+    <!-- INSTALL PROMPT -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-header">
+            <h3 style="color: var(--primary);">📱 Instalar TecniYa</h3>
+            <button class="close-install" id="closeInstall">&times;</button>
+        </div>
+        <p>Instalá TecniYa en tu teléfono para acceso rápido y notificaciones.</p>
+        <button class="btn btn-primary" id="installBtn" style="margin-top: 1rem;">
+            ✅ Instalar App
+        </button>
+    </div>
 
     <!-- SCRIPTS -->
     <script>
@@ -675,6 +793,9 @@
             // Cargar Firebase de manera segura
             await loadFirebase();
             initApp();
+            
+            // Configurar PWA
+            setupPWA();
         });
 
         async function loadFirebase() {
@@ -713,21 +834,31 @@
             
             // Configurar eventos
             document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
+            document.getElementById('closeInstall').addEventListener('click', hideInstallPrompt);
+            document.getElementById('installBtn').addEventListener('click', installApp);
             
             // Permitir buscar con Enter
             document.getElementById('rubroSelect').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') searchProfessionals();
             });
             
-            document.getElementById('zonaSelect').addEventListener('keypress', (e) => {
+            document.getElementById('ciudadInput').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') searchProfessionals();
             });
+            
+            // Búsqueda inicial (mostrar algunos técnicos)
+            setTimeout(() => {
+                if (window.innerWidth > 768) {
+                    searchProfessionals();
+                }
+            }, 1000);
         }
 
         // ============================================
         // FUNCIONES DE LA APLICACIÓN
         // ============================================
         let db;
+        let deferredPrompt;
 
         async function loadStats() {
             try {
@@ -740,11 +871,11 @@
                     
                     statsContainer.innerHTML = `
                         <div class="stat-card">
-                            <div class="stat-number">${data.totalProfessionals || '50+'}</div>
+                            <div class="stat-number">${data.totalProfessionals || '500+'}</div>
                             <div class="stat-label">Técnicos Activos</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number">${data.totalJobs || '1000+'}</div>
+                            <div class="stat-number">${data.totalJobs || '5000+'}</div>
                             <div class="stat-label">Trabajos Realizados</div>
                         </div>
                         <div class="stat-card">
@@ -767,7 +898,6 @@
                 const bannersRef = db.collection('banners');
                 const snapshot = await bannersRef
                     .where('active', '==', true)
-                    .where('city', '==', 'Rosario')
                     .orderBy('priority', 'desc')
                     .limit(1)
                     .get();
@@ -793,10 +923,10 @@
 
         async function searchProfessionals() {
             const rubro = document.getElementById('rubroSelect').value;
-            const zona = document.getElementById('zonaSelect').value;
+            const ciudad = document.getElementById('ciudadInput').value.trim();
             
-            if (!rubro || !zona) {
-                showMessage('Por favor seleccioná rubro y zona para buscar.', 'error');
+            if (!ciudad) {
+                showMessage('Por favor ingresá tu ciudad para buscar.', 'error');
                 return;
             }
             
@@ -810,30 +940,32 @@
             resultsHeader.style.display = 'none';
             
             try {
-                // Consulta optimizada
+                // Consulta base
                 let query = db.collection('professionals')
                     .where('profileCompleted', '==', true)
-                    .where('blocked', '==', false)
-                    .where('rubros', 'array-contains', rubro);
+                    .where('blocked', '==', false);
+                
+                // Aplicar filtro de rubro si no es "todos"
+                if (rubro !== 'todos') {
+                    query = query.where('rubros', 'array-contains', rubro);
+                }
+                
+                // Aplicar filtro de ciudad (ahora en un campo separado)
+                query = query.where('ciudad', '==', ciudad.toLowerCase());
                 
                 const snapshot = await query.get();
                 
                 if (snapshot.empty) {
-                    showMessage('No se encontraron técnicos para tu búsqueda.', 'info');
+                    showMessage(`No se encontraron técnicos en ${ciudad}. Probá con otra ciudad o rubro.`, 'info');
                     return;
                 }
                 
-                // Filtrar y ordenar localmente
+                // Procesar resultados
                 const professionals = [];
                 const now = new Date();
                 
                 snapshot.forEach(doc => {
                     const prof = { id: doc.id, ...doc.data() };
-                    
-                    // Filtrar por zona
-                    if (zona !== 'toda' && (!prof.zonas || !prof.zonas.includes(zona))) {
-                        return;
-                    }
                     
                     // Calcular score para ranking
                     let score = 0;
@@ -852,12 +984,15 @@
                         if (days < 7) score += 5;
                     }
                     
+                    // Verificación adicional
+                    if (prof.verified) score += 20;
+                    
                     prof.score = score;
                     professionals.push(prof);
                 });
                 
                 if (professionals.length === 0) {
-                    showMessage('No hay técnicos disponibles en la zona seleccionada.', 'info');
+                    showMessage(`No hay técnicos disponibles en ${ciudad} para el rubro seleccionado.`, 'info');
                     return;
                 }
                 
@@ -865,10 +1000,10 @@
                 professionals.sort((a, b) => b.score - a.score);
                 
                 // Mostrar resultados
-                displayProfessionals(professionals);
+                displayProfessionals(professionals, ciudad);
                 
                 // Actualizar contador
-                resultsCount.textContent = `${professionals.length} técnico${professionals.length !== 1 ? 's' : ''} encontrado${professionals.length !== 1 ? 's' : ''}`;
+                resultsCount.textContent = `${professionals.length} técnico${professionals.length !== 1 ? 's' : ''} en ${ciudad}`;
                 resultsHeader.style.display = 'flex';
                 
             } catch (error) {
@@ -879,7 +1014,7 @@
             }
         }
 
-        function displayProfessionals(professionals) {
+        function displayProfessionals(professionals, ciudad) {
             const container = document.getElementById('resultsContainer');
             container.innerHTML = '';
             
@@ -890,13 +1025,18 @@
                 const card = document.createElement('div');
                 card.className = 'professional-card';
                 
+                // Formatear teléfono para WhatsApp
+                const phoneFormatted = prof.phone.startsWith('54') ? prof.phone : `54${prof.phone}`;
+                const whatsappMessage = encodeURIComponent(`Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa. Necesito un servicio de ${getRubroName(prof.rubros[0])} en ${ciudad}.`);
+                
                 card.innerHTML = `
                     ${isFeatured ? '<div class="professional-featured">⭐ DESTACADO</div>' : ''}
                     <div class="professional-header">
-                        <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80?text=TÉCNICO'}" 
+                        <img src="${prof.photoUrl || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80'}" 
                              alt="${prof.name}"
                              class="professional-photo"
-                             loading="lazy">
+                             loading="lazy"
+                             onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80'">
                         <div class="professional-info">
                             <h3 class="professional-name">${prof.name}</h3>
                             <div class="professional-rating">
@@ -907,15 +1047,20 @@
                     </div>
                     <div class="professional-body">
                         <div class="professional-services">
-                            ${prof.rubros ? prof.rubros.map(rubro => 
+                            ${prof.rubros ? prof.rubros.slice(0, 3).map(rubro => 
                                 `<span class="service-tag">${getRubroName(rubro)}</span>`
                             ).join('') : ''}
+                            ${prof.rubros && prof.rubros.length > 3 ? 
+                                `<span class="service-tag">+${prof.rubros.length - 3} más</span>` : ''}
                         </div>
                         <p>${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
                     </div>
                     <div class="professional-footer">
-                        <span>📍 ${prof.zonas ? prof.zonas.join(', ') : 'Rosario'}</span>
-                        <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
+                        <div class="professional-location">
+                            📍 ${prof.ciudad ? prof.ciudad.charAt(0).toUpperCase() + prof.ciudad.slice(1) : ciudad}
+                            ${prof.zonas && prof.zonas.length > 0 ? `(${prof.zonas.join(', ')})` : ''}
+                        </div>
+                        <a href="https://wa.me/${phoneFormatted}?text=${whatsappMessage}" 
                            target="_blank"
                            class="btn btn-whatsapp">
                             📱 Contactar
@@ -929,6 +1074,7 @@
 
         function getRubroName(rubroKey) {
             const rubros = {
+                'todos': 'Todos',
                 'plomeria': 'Plomería',
                 'gas': 'Gas',
                 'electricidad': 'Electricidad',
@@ -936,6 +1082,12 @@
                 'albanileria': 'Albañilería',
                 'pintura': 'Pintura',
                 'cerrajeria': 'Cerrajería',
+                'carpinteria': 'Carpintería',
+                'herreria': 'Herrería',
+                'jardineria': 'Jardinería',
+                'limpieza': 'Limpieza',
+                'mudanza': 'Mudanzas',
+                'tecnico': 'Técnico de PC',
                 'otros': 'Otros'
             };
             return rubros[rubroKey] || rubroKey;
@@ -955,6 +1107,100 @@
         }
 
         // ============================================
+        // PWA FUNCTIONS
+        // ============================================
+        function setupPWA() {
+            // Registrar service worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(registration => {
+                            console.log('ServiceWorker registrado:', registration.scope);
+                        })
+                        .catch(error => {
+                            console.log('ServiceWorker falló:', error);
+                        });
+                });
+            }
+            
+            // Manejar instalación de PWA
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Mostrar prompt después de 30 segundos
+                setTimeout(() => {
+                    showInstallPrompt();
+                }, 30000);
+            });
+            
+            // Detectar si ya está instalado
+            window.addEventListener('appinstalled', () => {
+                console.log('App instalada');
+                hideInstallPrompt();
+                deferredPrompt = null;
+            });
+        }
+
+        function showInstallPrompt() {
+            if (deferredPrompt && window.matchMedia('(display-mode: browser)').matches) {
+                const prompt = document.getElementById('installPrompt');
+                prompt.style.display = 'block';
+            }
+        }
+
+        function hideInstallPrompt() {
+            const prompt = document.getElementById('installPrompt');
+            prompt.style.display = 'none';
+        }
+
+        async function installApp() {
+            if (!deferredPrompt) return;
+            
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            
+            if (outcome === 'accepted') {
+                console.log('Usuario aceptó instalar');
+            } else {
+                console.log('Usuario rechazó instalar');
+            }
+            
+            deferredPrompt = null;
+            hideInstallPrompt();
+        }
+
+        // ============================================
+        // MANIFEST.JSON DINÁMICO
+        // ============================================
+        const manifest = {
+            "name": "TecniYa",
+            "short_name": "TecniYa",
+            "description": "Encontrá técnicos certificados en toda Argentina",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#0a4fd8",
+            "theme_color": "#0a4fd8",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>",
+                    "sizes": "192x192",
+                    "type": "image/svg+xml"
+                },
+                {
+                    "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>",
+                    "sizes": "512x512",
+                    "type": "image/svg+xml"
+                }
+            ]
+        };
+
+        // Crear manifest dinámicamente
+        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        document.querySelector('link[rel="manifest"]').href = manifestURL;
+
+        // ============================================
         // MEJORAS DE PERFORMANCE
         // ============================================
         // Lazy loading para imágenes
@@ -963,7 +1209,10 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const img = entry.target;
-                        img.src = img.dataset.src;
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.removeAttribute('data-src');
+                        }
                         imageObserver.unobserve(img);
                     }
                 });
@@ -991,6 +1240,11 @@
 
         // Aplicar debounce al botón de búsqueda
         document.getElementById('searchBtn').addEventListener('click', debounce(searchProfessionals, 500));
+        
+        // Detectar si está en modo standalone (PWA instalada)
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            console.log('Running in PWA mode');
+        }
     </script>
 </body>
 </html>
