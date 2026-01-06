@@ -677,18 +677,17 @@
         }
 
         // ============================================
-        // BANNERS
+        // BANNERS - CORRECCIÓN DEL ERROR DE FIREBASE
         // ============================================
         async function loadBanners() {
             try {
-                const now = new Date();
+                const now = firebase.firestore.Timestamp.now();
                 const snapshot = await db.collection('banners')
                     .where('active', '==', true)
                     .where('position', '==', 'home')
                     .where('startDate', '<=', now)
-                    .where('endDate', '>=', now)
                     .orderBy('priority', 'desc')
-                    .limit(3)
+                    .limit(5)
                     .get();
                 
                 const container = document.getElementById('bannersContainer');
@@ -699,23 +698,39 @@
                 }
                 
                 let bannersHTML = '';
+                
+                // Filtrar client-side los banners cuya fecha de fin sea mayor o igual a ahora
                 snapshot.forEach(doc => {
                     const banner = doc.data();
-                    bannersHTML += `
-                        <div class="banner">
-                            <a href="${banner.link || '#'}" target="_blank" class="banner-link">
-                                <img src="${banner.imageUrl}" 
-                                     alt="${banner.title || 'Banner'}"
-                                     onerror="this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa'">
-                            </a>
-                        </div>
-                    `;
+                    const endDate = banner.endDate ? banner.endDate.toDate() : null;
+                    
+                    // Verificar si el banner aún está vigente
+                    if (!endDate || endDate >= new Date()) {
+                        bannersHTML += `
+                            <div class="banner">
+                                <a href="${banner.link || '#'}" target="_blank" class="banner-link">
+                                    <img src="${banner.imageUrl}" 
+                                         alt="${banner.title || 'Banner'}"
+                                         onerror="this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa'">
+                                </a>
+                            </div>
+                        `;
+                    }
                 });
                 
                 container.innerHTML = bannersHTML;
                 
             } catch (error) {
                 console.error('Error cargando banners:', error);
+                // Mostrar banner por defecto si hay error
+                document.getElementById('bannersContainer').innerHTML = `
+                    <div class="banner">
+                        <a href="#" class="banner-link">
+                            <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
+                                 alt="Banner Promocional">
+                        </a>
+                    </div>
+                `;
             }
         }
 
