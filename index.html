@@ -9,34 +9,30 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
     
-    <!-- CSS -->
+    <!-- CSS Optimizado -->
     <style>
         :root {
             --primary: #0a4fd8;
             --primary-dark: #083bb5;
             --secondary: #1db954;
-            --secondary-dark: #17a344;
             --accent: #ff9800;
             --light: #f8f9fa;
             --dark: #333;
             --gray: #666;
             --light-gray: #e1e5e9;
-            --shadow: 0 4px 12px rgba(10, 79, 216, 0.15);
-            --radius: 12px;
-            --transition: all 0.3s ease;
+            --radius: 8px;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
             color: var(--dark);
             line-height: 1.6;
-            min-height: 100vh;
         }
         
-        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
         
         /* Header */
         .header {
@@ -44,79 +40,61 @@
             color: white;
             padding: 1.5rem 1rem;
             text-align: center;
-            position: relative;
-            overflow: hidden;
         }
         
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 1rem;
-        }
-        
-        .logo-text { font-size: 2.5rem; font-weight: 800; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
-        .tagline { font-size: 1.2rem; opacity: 0.95; max-width: 600px; margin: 0 auto; }
+        .logo-text { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .tagline { font-size: 1.1rem; opacity: 0.95; max-width: 600px; margin: 0 auto; }
         
         /* Stats */
         .stats-container {
             display: flex;
             justify-content: center;
-            gap: 30px;
-            margin: 2rem auto;
+            gap: 15px;
+            margin: 1.5rem auto;
             flex-wrap: wrap;
         }
         
         .stat-card {
             background: white;
-            padding: 1.5rem;
+            padding: 1rem;
             border-radius: var(--radius);
             text-align: center;
-            min-width: 150px;
-            box-shadow: var(--shadow);
+            min-width: 120px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .stat-number {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-label {
-            color: var(--gray);
-            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
         }
         
         /* Search */
         .search-section {
             background: white;
             border-radius: var(--radius);
-            padding: 2.5rem;
-            margin: 2rem auto;
+            padding: 2rem;
+            margin: 1.5rem auto;
             max-width: 800px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
-        .search-title { font-size: 1.8rem; color: var(--primary); margin-bottom: 1.5rem; text-align: center; }
-        .search-grid { display: grid; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .search-title { font-size: 1.6rem; color: var(--primary); margin-bottom: 1.5rem; text-align: center; }
+        .search-grid { display: grid; gap: 1.2rem; margin-bottom: 1.5rem; }
         
         @media (min-width: 768px) {
             .search-grid { grid-template-columns: 1fr 1fr; }
         }
         
-        .form-group { position: relative; }
-        .form-label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark); }
+        .form-label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
         .form-select {
             width: 100%;
-            padding: 1rem;
-            border: 2px solid var(--light-gray);
-            border-radius: 10px;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             font-size: 1rem;
             background: white;
-            transition: var(--transition);
-            cursor: pointer;
         }
         
         /* Buttons */
@@ -124,80 +102,64 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            padding: 1rem 2rem;
-            border-radius: 10px;
+            gap: 8px;
+            padding: 0.9rem 1.5rem;
+            border-radius: 6px;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
             border: none;
             cursor: pointer;
-            transition: var(--transition);
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, #1a60f0 100%);
+            background: var(--primary);
             color: white;
             width: 100%;
         }
         
-        .btn-primary:hover {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, #0a4fd8 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(10, 79, 216, 0.3);
-        }
+        .btn-primary:hover { background: var(--primary-dark); }
         
         .btn-whatsapp {
-            background: linear-gradient(135deg, #1db954 0%, #17a344 100%);
+            background: var(--secondary);
             color: white;
-            padding: 0.8rem 1.5rem;
+            padding: 0.7rem 1.2rem;
         }
         
         /* Professional Cards */
         .professional-grid {
             display: grid;
-            gap: 1.5rem;
+            gap: 1.2rem;
             margin: 2rem 0;
         }
         
         @media (min-width: 768px) {
-            .professional-grid {
-                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            }
+            .professional-grid { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); }
         }
         
         .professional-card {
             background: white;
             border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-            transition: var(--transition);
-            position: relative;
-        }
-        
-        .professional-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
         }
         
         .professional-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--light-gray);
+            padding: 1.2rem;
+            border-bottom: 1px solid #eee;
             display: flex;
             gap: 1rem;
             align-items: center;
         }
         
         .professional-photo {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--primary);
-            flex-shrink: 0;
+            border: 2px solid var(--primary);
         }
         
-        .professional-info { flex: 1; }
-        .professional-name { font-size: 1.3rem; color: var(--dark); margin-bottom: 0.3rem; font-weight: 700; }
+        .professional-name { font-size: 1.2rem; color: var(--dark); margin-bottom: 0.3rem; font-weight: 700; }
         
         .professional-rating {
             display: flex;
@@ -208,11 +170,11 @@
             font-size: 0.9rem;
         }
         
-        .professional-body { padding: 1.5rem; }
+        .professional-body { padding: 1.2rem; }
         .professional-footer {
-            padding: 1rem 1.5rem;
+            padding: 1rem 1.2rem;
             background: #f8f9fa;
-            border-top: 1px solid var(--light-gray);
+            border-top: 1px solid #eee;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -222,21 +184,6 @@
         .ranking-badge {
             display: inline-flex;
             align-items: center;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-left: 8px;
-            gap: 5px;
-        }
-        
-        .ranking-platinum { background: linear-gradient(135deg, #e5e4e2 0%, #b4b4b4 100%); color: #333; }
-        .ranking-gold { background: linear-gradient(135deg, #ffd700 0%, #daa520 100%); color: #333; }
-        .ranking-silver { background: linear-gradient(135deg, #c0c0c0 0%, #a9a9a9 100%); color: #333; }
-        .ranking-bronze { background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%); color: white; }
-        
-        .badge {
-            display: inline-block;
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 0.75rem;
@@ -244,24 +191,37 @@
             margin-left: 8px;
         }
         
+        .ranking-platinum { background: #e5e4e2; color: #333; }
+        .ranking-gold { background: #ffd700; color: #333; }
+        .ranking-silver { background: #c0c0c0; color: #333; }
+        .ranking-bronze { background: #cd7f32; color: white; }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 5px;
+        }
+        
         .badge-featured { background: #ffc107; color: #333; }
         .badge-certified { background: #28a745; color: white; }
         .badge-top { background: #dc3545; color: white; }
-        .badge-fast { background: #17a2b8; color: white; }
         
         /* Stats */
         .ranking-stats {
             display: flex;
-            gap: 15px;
-            margin-top: 10px;
+            gap: 10px;
+            margin-top: 8px;
             flex-wrap: wrap;
         }
         
         .stat-item {
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 0.85rem;
+            gap: 4px;
+            font-size: 0.8rem;
             color: var(--gray);
         }
         
@@ -281,23 +241,21 @@
         
         .modal-content {
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: var(--radius);
             max-width: 500px;
             width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
         }
         
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .modal-close {
-            font-size: 2rem;
+            font-size: 1.8rem;
             cursor: pointer;
             color: var(--gray);
         }
@@ -305,24 +263,14 @@
         .star-rating {
             display: flex;
             gap: 5px;
-            margin: 15px 0;
+            margin: 10px 0;
             direction: rtl;
         }
         
         .star {
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: #ddd;
             cursor: pointer;
-            transition: color 0.2s;
-        }
-        
-        .star:hover,
-        .star:hover ~ .star {
-            color: #ffc107;
-        }
-        
-        .star.selected {
-            color: #ffc107;
         }
         
         /* Loading */
@@ -330,14 +278,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 3rem;
+            padding: 2rem;
         }
         
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary);
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -352,19 +300,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 2rem 0;
+            margin: 1.5rem 0;
             padding: 1rem;
             background: white;
             border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .results-count {
             background: var(--primary);
             color: white;
-            padding: 5px 15px;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
         }
         
@@ -372,15 +320,15 @@
         .footer {
             background: var(--dark);
             color: #aaa;
-            padding: 3rem 1rem;
-            margin-top: 4rem;
+            padding: 2rem 1rem;
+            margin-top: 3rem;
         }
         
         .footer-content {
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            gap: 2rem;
+            gap: 1.5rem;
         }
         
         @media (min-width: 768px) {
@@ -389,19 +337,19 @@
         
         .copyright {
             text-align: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
             border-top: 1px solid #444;
             color: #777;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         
+        /* Responsive */
         @media (max-width: 768px) {
-            .logo { flex-direction: column; }
-            .logo-text { font-size: 2rem; }
+            .logo-text { font-size: 1.8rem; }
             .search-section { padding: 1.5rem; }
             .professional-header { flex-direction: column; text-align: center; }
-            .stats-container { flex-direction: column; align-items: center; }
+            .professional-footer { flex-direction: column; gap: 10px; }
         }
     </style>
 </head>
@@ -409,9 +357,7 @@
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <div class="logo">
-                <h1 class="logo-text">TecniYa</h1>
-            </div>
+            <h1 class="logo-text">TecniYa</h1>
             <p class="tagline">Encontrá técnicos certificados en toda Argentina. Contacto directo por WhatsApp.</p>
         </div>
     </header>
@@ -460,12 +406,10 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Zona/Barrio</label>
-                <select id="zonaSelect" class="form-select">
-                    <option value="">Todas las zonas</option>
-                </select>
+                <input type="text" id="zonaInput" class="form-select" placeholder="Ej: Centro, Norte...">
             </div>
         </div>
-        <div class="btn-group" style="display: flex; gap: 15px; margin-top: 20px;">
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
             <button id="searchBtn" class="btn btn-primary">🔍 Buscar técnico</button>
             <button id="showAllBtn" class="btn" style="background: #6c757d; color: white;">📋 Ver todos</button>
         </div>
@@ -490,20 +434,18 @@
                 <h3>⭐ Calificar Técnico</h3>
                 <span class="modal-close" onclick="closeRatingModal()">×</span>
             </div>
-            <div id="ratingModalBody">
-                <!-- Dynamic content -->
-            </div>
+            <div id="ratingModalBody"></div>
         </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <div class="footer-section">
+            <div>
                 <h3>TecniYa</h3>
                 <p>Conectamos a los argentinos con técnicos certificados.</p>
             </div>
-            <div class="footer-section">
+            <div>
                 <h3>Contacto</h3>
                 <p>📱 WhatsApp: 341 755-8966</p>
                 <p>📍 Argentina</p>
@@ -547,7 +489,6 @@
             "CABA": ["Capital Federal"],
             "Catamarca": ["San Fernando del Valle de Catamarca", "Valle Viejo", "Andalgalá"],
             "Chaco": ["Resistencia", "Barranqueras", "Fontana", "Presidencia Roque Sáenz Peña"],
-            "Chubut": ["Rawson", "Comodoro Rivadavia", "Trelew", "Puerto Madryn"],
             "Córdoba": ["Córdoba", "Villa María", "Río Cuarto", "Alta Gracia", "Villa Carlos Paz", "Jesús María"],
             "Corrientes": ["Corrientes", "Goya", "Mercedes", "Curuzú Cuatiá"],
             "Entre Ríos": ["Paraná", "Concordia", "Gualeguaychú", "Concepción del Uruguay"],
@@ -573,9 +514,14 @@
         // INICIALIZACIÓN
         // ============================================
         document.addEventListener('DOMContentLoaded', async () => {
-            await initFirebase();
-            initApp();
-            updateStats();
+            try {
+                await initFirebase();
+                initApp();
+                updateStats();
+                loadAllProfessionals();
+            } catch (error) {
+                console.error('Error inicial:', error);
+            }
         });
 
         async function initFirebase() {
@@ -585,13 +531,12 @@
                 }
                 db = firebase.firestore();
             } catch (error) {
-                console.error('Firebase init error:', error);
+                console.error('Error Firebase:', error);
             }
         }
 
         function initApp() {
             loadProvincias();
-            loadAllProfessionals();
             
             document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
             document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
@@ -633,101 +578,59 @@
         }
 
         // ============================================
-        // SISTEMA DE RANKING
+        // SISTEMA DE RANKING SIMPLIFICADO
         // ============================================
         async function calculateProfessionalRanking(professional) {
             try {
-                // Get approved ratings (last 3 months)
-                const threeMonthsAgo = new Date();
-                threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-                
                 const ratingsSnapshot = await db.collection('ratings')
                     .where('professionalId', '==', professional.id)
                     .where('status', '==', 'approved')
-                    .where('createdAt', '>=', threeMonthsAgo)
                     .get();
                 
                 let totalRatings = 0;
                 let sumRatings = 0;
-                let recentActivity = false;
                 
                 ratingsSnapshot.forEach(doc => {
                     totalRatings++;
                     sumRatings += doc.data().rating;
-                    recentActivity = true;
                 });
                 
-                // Calculate average rating
                 const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
                 
-                // ============================================
-                // CÁLCULO DE PUNTAJE DE RANKING (0-100)
-                // ============================================
+                // Calcular score simplificado
                 let score = 0;
+                score += averageRating * 10; // 0-50 puntos por rating
                 
-                // 1. CALIDAD DE CALIFICACIONES (25 puntos máximo)
-                score += averageRating * 5; // 5 puntos por cada estrella
-                
-                // 2. CANTIDAD DE CALIFICACIONES (20 puntos máximo)
-                const ratingQuantity = Math.min(totalRatings, 100);
-                score += ratingQuantity * 0.2;
-                
-                // 3. TIEMPO DE RESPUESTA (15 puntos)
-                if (professional.avgResponseTime) {
-                    if (professional.avgResponseTime < 4) score += 15;
-                    else if (professional.avgResponseTime < 8) score += 12;
-                    else if (professional.avgResponseTime < 24) score += 8;
-                    else if (professional.avgResponseTime < 48) score += 4;
-                }
-                
-                // 4. TRABAJOS COMPLETADOS (10 puntos)
+                // Puntos por cantidad de trabajos
                 if (professional.completedJobs) {
-                    score += Math.min(professional.completedJobs * 0.1, 10);
+                    score += Math.min(professional.completedJobs, 20);
                 }
                 
-                // 5. CERTIFICACIONES (10 puntos)
-                if (professional.certifications && professional.certifications.length > 0) {
-                    score += Math.min(professional.certifications.length * 2, 10);
-                }
-                
-                // 6. COMPLETITUD DEL PERFIL (20 puntos)
-                let profileScore = 0;
-                if (professional.photoUrl) profileScore += 5;
-                if (professional.bio && professional.bio.length > 50) profileScore += 5;
-                if (professional.zonas && professional.zonas.length > 0) profileScore += 5;
-                if (professional.rubros && professional.rubros.length > 0) profileScore += 5;
-                score += profileScore;
-                
-                // 7. EXPERIENCIA (10 puntos)
+                // Puntos por experiencia
                 if (professional.experienceYears) {
                     score += Math.min(professional.experienceYears, 10);
                 }
                 
-                // 8. ACTIVIDAD RECIENTE (10 puntos)
+                // Puntos por certificaciones
+                if (professional.certifications) {
+                    score += professional.certifications.length * 3;
+                }
+                
+                // Puntos por actividad reciente
                 if (professional.lastActive) {
                     const lastActiveDate = professional.lastActive.toDate();
                     const daysSince = (new Date() - lastActiveDate) / (1000 * 60 * 60 * 24);
                     if (daysSince < 7) score += 10;
-                    else if (daysSince < 30) score += 7;
-                    else if (daysSince < 90) score += 4;
                 }
                 
-                // 9. PERFIL DESTACADO (5 puntos)
-                if (professional.isFeatured) {
-                    score += 5;
-                }
-                
-                // Asegurar que el score esté entre 0 y 100
                 score = Math.min(Math.max(score, 0), 100);
                 const rankingScore = Math.round(score);
                 
-                // Determinar nivel de ranking
-                let rankingLevel = 'Bronce';
-                if (rankingScore >= 90) rankingLevel = 'Platino';
-                else if (rankingScore >= 80) rankingLevel = 'Oro';
-                else if (rankingScore >= 70) rankingLevel = 'Plata';
-                else if (rankingScore >= 60) rankingLevel = 'Bronce';
-                else rankingLevel = 'Principiante';
+                // Determinar nivel
+                let rankingLevel = 'Principiante';
+                if (rankingScore >= 80) rankingLevel = 'Oro';
+                else if (rankingScore >= 65) rankingLevel = 'Plata';
+                else if (rankingScore >= 50) rankingLevel = 'Bronce';
                 
                 return {
                     ...professional,
@@ -738,7 +641,7 @@
                 };
                 
             } catch (error) {
-                console.error('Error calculating ranking:', error);
+                console.error('Error cálculo ranking:', error);
                 return {
                     ...professional,
                     averageRating: professional.averageRating || 0,
@@ -751,7 +654,6 @@
 
         function getRankingBadge(rankingLevel) {
             const badges = {
-                'Platino': { class: 'ranking-platinum', emoji: '🏆' },
                 'Oro': { class: 'ranking-gold', emoji: '🥇' },
                 'Plata': { class: 'ranking-silver', emoji: '🥈' },
                 'Bronce': { class: 'ranking-bronze', emoji: '🥉' },
@@ -770,8 +672,13 @@
             try {
                 const snapshot = await db.collection('professionals')
                     .where('active', '==', true)
-                    .limit(50)
+                    .limit(30)
                     .get();
+                
+                if (snapshot.empty) {
+                    displayNoResults();
+                    return;
+                }
                 
                 const professionals = await Promise.all(
                     snapshot.docs.map(async doc => {
@@ -780,14 +687,15 @@
                     })
                 );
                 
-                // Ordenar por ranking score (mayor a menor)
+                // Ordenar por ranking
                 professionals.sort((a, b) => b.rankingScore - a.rankingScore);
                 allProfessionals = professionals;
                 
                 displayProfessionals(professionals);
                 
             } catch (error) {
-                console.error('Error loading professionals:', error);
+                console.error('Error cargando profesionales:', error);
+                displayError();
             } finally {
                 hideLoader();
             }
@@ -803,10 +711,16 @@
                 let query = db.collection('professionals').where('active', '==', true);
                 
                 if (provincia) query = query.where('provincia', '==', provincia);
-                if (ciudad) query = query.where('ciudad', '==', ciudad);
+                if (ciudad && ciudad !== '') query = query.where('ciudad', '==', ciudad);
                 if (rubro) query = query.where('rubros', 'array-contains', rubro);
                 
-                const snapshot = await query.limit(50).get();
+                const snapshot = await query.limit(30).get();
+                
+                if (snapshot.empty) {
+                    displayNoResults();
+                    return;
+                }
+                
                 const professionals = await Promise.all(
                     snapshot.docs.map(async doc => {
                         const prof = { id: doc.id, ...doc.data() };
@@ -814,12 +728,12 @@
                     })
                 );
                 
-                // Ordenar por ranking score
                 professionals.sort((a, b) => b.rankingScore - a.rankingScore);
                 displayProfessionals(professionals);
                 
             } catch (error) {
-                console.error('Error searching professionals:', error);
+                console.error('Error buscando:', error);
+                displayError();
             } finally {
                 hideLoader();
             }
@@ -830,12 +744,7 @@
             container.innerHTML = '';
             
             if (professionals.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
-                        <h3>😔 No se encontraron técnicos</h3>
-                        <p>Intenta cambiar los filtros de búsqueda</p>
-                    </div>
-                `;
+                displayNoResults();
                 return;
             }
             
@@ -843,60 +752,49 @@
                 const card = document.createElement('div');
                 card.className = 'professional-card';
                 
-                // Calculate star display
+                // Calcular estrellas
                 const rating = prof.averageRating || 0;
                 const fullStars = Math.floor(rating);
                 const hasHalfStar = rating % 1 >= 0.5;
-                const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
                 
                 let starsHTML = '';
                 for (let i = 0; i < fullStars; i++) starsHTML += '⭐';
                 if (hasHalfStar) starsHTML += '½';
-                for (let i = 0; i < emptyStars; i++) starsHTML += '☆';
-                
-                // Determine position in city/rubro
-                const cityPosition = getPositionInCity(prof);
-                const rubroPosition = getPositionInRubro(prof);
+                for (let i = 0; i < 5 - fullStars - (hasHalfStar ? 1 : 0); i++) starsHTML += '☆';
                 
                 card.innerHTML = `
                     <div class="professional-header">
-                        <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80/0a4fd8/ffffff?text=T'}" 
+                        <img src="${prof.photoUrl || 'https://via.placeholder.com/70x70/0a4fd8/ffffff?text=T'}" 
                              alt="${prof.name}"
-                             class="professional-photo"
-                             onerror="this.src='https://via.placeholder.com/80x80/0a4fd8/ffffff?text=T'">
+                             class="professional-photo">
                         <div class="professional-info">
                             <h3 class="professional-name">${prof.name}</h3>
                             <div class="professional-rating">
                                 ${starsHTML} ${rating.toFixed(1)}
                                 <span>(${prof.totalRatings || 0})</span>
                                 ${getRankingBadge(prof.rankingLevel)}
-                                ${prof.rankingScore >= 90 ? '<span class="badge badge-top">TOP</span>' : ''}
                                 ${prof.isFeatured ? '<span class="badge badge-featured">DESTACADO</span>' : ''}
                                 ${prof.certifications && prof.certifications.length > 0 ? '<span class="badge badge-certified">CERTIFICADO</span>' : ''}
                             </div>
-                            <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.5rem;">
+                            <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.3rem;">
                                 📍 ${prof.ciudad || ''}, ${prof.provincia || ''}
                             </div>
                             <div class="ranking-stats">
                                 <div class="stat-item">🏆 ${prof.rankingScore || 0}/100</div>
-                                ${cityPosition ? `<div class="stat-item">📍 #${cityPosition} en ${prof.ciudad}</div>` : ''}
-                                ${rubroPosition && prof.rubros ? `<div class="stat-item">⭐ #${rubroPosition} en ${prof.rubros[0]}</div>` : ''}
-                                ${prof.avgResponseTime ? `<div class="stat-item">⏱️ ${prof.avgResponseTime}h respuesta</div>` : ''}
                                 ${prof.completedJobs ? `<div class="stat-item">✅ ${prof.completedJobs} trabajos</div>` : ''}
+                                ${prof.experienceYears ? `<div class="stat-item">📅 ${prof.experienceYears} años</div>` : ''}
                             </div>
                         </div>
                     </div>
                     <div class="professional-body">
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem;">
-                            ${prof.rubros ? prof.rubros.map(r => `<span style="background: #f1f6ff; color: #0a4fd8; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem;">${r}</span>`).join('') : ''}
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.8rem;">
+                            ${prof.rubros ? prof.rubros.map(r => `<span style="background: #f1f6ff; color: #0a4fd8; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem;">${r}</span>`).join('') : ''}
                         </div>
-                        <p>${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
-                        ${prof.certifications && prof.certifications.length > 0 ? 
-                            `<p style="margin-top: 0.5rem;"><small>📜 <strong>Certificaciones:</strong> ${prof.certifications.join(', ')}</small></p>` : ''}
+                        <p style="font-size: 0.95rem;">${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
                     </div>
                     <div class="professional-footer">
-                        <span>${prof.zonas ? prof.zonas.join(', ') : 'Toda la ciudad'}</span>
-                        <div style="display: flex; gap: 10px;">
+                        <span style="font-size: 0.9rem;">${prof.zonas ? prof.zonas.join(', ') : 'Toda la ciudad'}</span>
+                        <div style="display: flex; gap: 8px;">
                             <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
                                target="_blank"
                                class="btn btn-whatsapp">
@@ -904,7 +802,7 @@
                             </a>
                             <button onclick="openRatingModal('${prof.id}', '${prof.name}')" 
                                     class="btn" 
-                                    style="background: #6c757d; color: white;">
+                                    style="background: #6c757d; color: white; font-size: 0.9rem;">
                                 ⭐ Calificar
                             </button>
                         </div>
@@ -915,30 +813,28 @@
             });
             
             document.getElementById('resultsHeader').style.display = 'flex';
-            document.getElementById('resultsCount').textContent = `${professionals.length} técnicos encontrados`;
+            document.getElementById('resultsCount').textContent = `${professionals.length} técnicos`;
         }
 
-        function getPositionInCity(professional) {
-            if (!allProfessionals.length || !professional.ciudad) return null;
-            
-            const cityProfessionals = allProfessionals.filter(p => 
-                p.ciudad === professional.ciudad && p.rankingScore
-            ).sort((a, b) => b.rankingScore - a.rankingScore);
-            
-            const position = cityProfessionals.findIndex(p => p.id === professional.id) + 1;
-            return position > 0 ? position : null;
+        function displayNoResults() {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
+                    <h3>😔 No se encontraron técnicos</h3>
+                    <p>Intenta cambiar los filtros de búsqueda</p>
+                </div>
+            `;
+            document.getElementById('resultsHeader').style.display = 'none';
         }
 
-        function getPositionInRubro(professional) {
-            if (!allProfessionals.length || !professional.rubros || professional.rubros.length === 0) return null;
-            
-            const rubro = professional.rubros[0];
-            const rubroProfessionals = allProfessionals.filter(p => 
-                p.rubros && p.rubros.includes(rubro) && p.rankingScore
-            ).sort((a, b) => b.rankingScore - a.rankingScore);
-            
-            const position = rubroProfessionals.findIndex(p => p.id === professional.id) + 1;
-            return position > 0 ? position : null;
+        function displayError() {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
+                    <h3>⚠️ Error al cargar</h3>
+                    <p>Por favor, intenta nuevamente</p>
+                </div>
+            `;
         }
 
         // ============================================
@@ -957,39 +853,35 @@
                     <span class="star" data-value="1">★</span>
                 </div>
                 <p id="ratingText" style="text-align: center; margin: 10px 0; color: #666;">Seleccioná una calificación</p>
-                <textarea id="ratingComment" placeholder="Contanos tu experiencia (opcional)" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin: 15px 0; min-height: 100px;"></textarea>
-                <input type="tel" id="clientPhone" placeholder="Tu número de WhatsApp (ej: 3415555555)" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 15px;">
+                <textarea id="ratingComment" placeholder="Contanos tu experiencia (opcional)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin: 10px 0; min-height: 80px; font-size: 0.95rem;"></textarea>
+                <input type="tel" id="clientPhone" placeholder="Tu número de WhatsApp (ej: 3415555555)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 15px; font-size: 0.95rem;">
                 <div style="display: flex; gap: 10px;">
                     <button onclick="submitRating()" class="btn btn-primary" style="flex: 1;">Enviar Calificación</button>
                     <button onclick="closeRatingModal()" class="btn" style="background: #6c757d; color: white; flex: 1;">Cancelar</button>
                 </div>
             `;
             
-            // Star rating logic
+            // Configurar estrellas
             const stars = document.querySelectorAll('#starContainer .star');
+            let selectedRating = 0;
+            
             stars.forEach(star => {
                 star.addEventListener('mouseover', function() {
                     const value = parseInt(this.dataset.value);
-                    updateStars(value);
+                    highlightStars(value);
                     updateRatingText(value);
                 });
                 
                 star.addEventListener('click', function() {
-                    const value = parseInt(this.dataset.value);
-                    updateStars(value);
-                    updateRatingText(value);
-                    document.getElementById('ratingModalBody').dataset.selectedRating = value;
+                    selectedRating = parseInt(this.dataset.value);
+                    highlightStars(selectedRating);
+                    updateRatingText(selectedRating);
                 });
             });
             
             document.getElementById('starContainer').addEventListener('mouseleave', function() {
-                const selected = document.getElementById('ratingModalBody').dataset.selectedRating;
-                if (selected) {
-                    updateStars(parseInt(selected));
-                    updateRatingText(parseInt(selected));
-                } else {
-                    resetStars();
-                }
+                highlightStars(selectedRating);
+                updateRatingText(selectedRating);
             });
             
             document.getElementById('ratingModal').style.display = 'flex';
@@ -1000,18 +892,12 @@
             currentRatingProfessional = null;
         }
 
-        function updateStars(rating) {
+        function highlightStars(rating) {
             const stars = document.querySelectorAll('#starContainer .star');
             stars.forEach(star => {
                 const value = parseInt(star.dataset.value);
                 star.style.color = value <= rating ? '#ffc107' : '#ddd';
             });
-        }
-
-        function resetStars() {
-            const stars = document.querySelectorAll('#starContainer .star');
-            stars.forEach(star => star.style.color = '#ddd');
-            document.getElementById('ratingText').textContent = 'Seleccioná una calificación';
         }
 
         function updateRatingText(rating) {
@@ -1022,11 +908,23 @@
                 4: '😊 Muy Bueno',
                 5: '😍 Excelente'
             };
-            document.getElementById('ratingText').textContent = texts[rating] || '';
+            const textEl = document.getElementById('ratingText');
+            if (textEl) {
+                textEl.textContent = texts[rating] || 'Seleccioná una calificación';
+            }
         }
 
         async function submitRating() {
-            const selectedRating = document.getElementById('ratingModalBody').dataset.selectedRating;
+            const stars = document.querySelectorAll('#starContainer .star');
+            let selectedRating = 0;
+            
+            stars.forEach(star => {
+                if (star.style.color === 'rgb(255, 193, 7)') {
+                    const value = parseInt(star.dataset.value);
+                    if (value > selectedRating) selectedRating = value;
+                }
+            });
+            
             const comment = document.getElementById('ratingComment').value.trim();
             const clientPhone = document.getElementById('clientPhone').value.trim();
             
@@ -1041,40 +939,21 @@
             }
             
             try {
-                // Save rating
                 await db.collection('ratings').add({
                     professionalId: currentRatingProfessional.id,
-                    rating: parseInt(selectedRating),
+                    rating: selectedRating,
                     comment: comment,
                     clientPhone: clientPhone,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    status: 'pending', // pending, approved, rejected
-                    ipAddress: await getIPAddress()
+                    status: 'pending'
                 });
                 
                 alert('¡Gracias por tu calificación! Será revisada antes de publicarse.');
                 closeRatingModal();
                 
-                // Reload professionals to show updated ratings
-                if (document.getElementById('provinciaSelect').value) {
-                    searchProfessionals();
-                } else {
-                    loadAllProfessionals();
-                }
-                
             } catch (error) {
-                console.error('Error submitting rating:', error);
-                alert('Error al enviar la calificación. Por favor intentá nuevamente.');
-            }
-        }
-
-        async function getIPAddress() {
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
-                return data.ip;
-            } catch {
-                return 'unknown';
+                console.error('Error enviando calificación:', error);
+                alert('Error al enviar. Por favor intentá nuevamente.');
             }
         }
 
@@ -1085,24 +964,14 @@
             try {
                 const statsContainer = document.getElementById('statsContainer');
                 
-                // Get total professionals
                 const profSnapshot = await db.collection('professionals')
                     .where('active', '==', true)
                     .get();
                 
-                // Get average rating
-                let totalRating = 0;
-                let countWithRating = 0;
-                profSnapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data.averageRating) {
-                        totalRating += data.averageRating;
-                        countWithRating++;
-                    }
-                });
-                const avgRating = countWithRating > 0 ? (totalRating / countWithRating).toFixed(1) : '0.0';
+                const ratingsSnapshot = await db.collection('ratings')
+                    .where('status', '==', 'approved')
+                    .get();
                 
-                // Get total cities
                 const cities = new Set();
                 profSnapshot.forEach(doc => {
                     const data = doc.data();
@@ -1115,21 +984,21 @@
                         <div class="stat-label">Técnicos Activos</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">${avgRating}/5</div>
-                        <div class="stat-label">Rating Promedio</div>
+                        <div class="stat-number">${ratingsSnapshot.size}</div>
+                        <div class="stat-label">Calificaciones</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-number">24h</div>
-                        <div class="stat-label">Respuesta Rápida</div>
+                        <div class="stat-label">Respuesta</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-number">${cities.size}</div>
-                        <div class="stat-label">Ciudades Activas</div>
+                        <div class="stat-label">Ciudades</div>
                     </div>
                 `;
                 
             } catch (error) {
-                console.error('Error updating stats:', error);
+                console.error('Error actualizando stats:', error);
             }
         }
 
@@ -1144,39 +1013,11 @@
             document.getElementById('loader').style.display = 'none';
         }
 
-        // Initialize with sample data if empty
-        async function initializeSampleData() {
-            const snapshot = await db.collection('professionals').get();
-            if (snapshot.empty) {
-                // Add sample professionals
-                const samplePros = [
-                    {
-                        name: "Juan Pérez",
-                        phone: "3415551234",
-                        provincia: "Santa Fe",
-                        ciudad: "Rosario",
-                        rubros: ["plomeria", "gas"],
-                        bio: "Plomero matriculado con 15 años de experiencia.",
-                        photoUrl: "https://randomuser.me/api/portraits/men/32.jpg",
-                        active: true,
-                        isFeatured: true,
-                        certifications: ["Gasista Matriculado"],
-                        completedJobs: 45,
-                        avgResponseTime: 4,
-                        experienceYears: 15,
-                        zonas: ["Centro", "Norte"],
-                        rankingScore: 85,
-                        rankingLevel: "Oro",
-                        averageRating: 4.8,
-                        totalRatings: 12,
-                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                    }
-                ];
-                
-                for (const pro of samplePros) {
-                    await db.collection('professionals').add(pro);
-                }
-                console.log("Sample data added");
+        // Manejar clic fuera del modal para cerrar
+        window.onclick = function(event) {
+            const modal = document.getElementById('ratingModal');
+            if (event.target == modal) {
+                closeRatingModal();
             }
         }
     </script>
