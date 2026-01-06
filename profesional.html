@@ -34,7 +34,6 @@
             --light-gray: #e1e5e9;
             --shadow: 0 4px 12px rgba(10, 79, 216, 0.15);
             --radius: 12px;
-            --transition: all 0.3s ease;
         }
         
         * {
@@ -65,25 +64,12 @@
             color: white;
             padding: 1.5rem 1rem;
             position: relative;
-            overflow: hidden;
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
         
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
-            z-index: 1;
         }
         
         .logo {
@@ -126,7 +112,6 @@
             overflow: hidden;
             box-shadow: var(--shadow);
             margin: 2rem auto;
-            max-width: 1400px;
         }
         
         .tabs-header {
@@ -143,15 +128,9 @@
             cursor: pointer;
             border-bottom: 3px solid transparent;
             white-space: nowrap;
-            transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-        
-        .tab:hover {
-            background-color: #f8f9fa;
-            color: var(--primary);
         }
         
         .tab.active {
@@ -170,12 +149,6 @@
         .panel {
             display: none;
             padding: 2.5rem;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         
         .panel.active {
@@ -226,7 +199,6 @@
             border-radius: 10px;
             font-size: 1rem;
             background: white;
-            transition: var(--transition);
         }
         
         .form-input:focus, .form-select:focus, .form-textarea:focus {
@@ -256,13 +228,7 @@
             padding: 14px 18px;
             border-radius: 8px;
             cursor: pointer;
-            transition: var(--transition);
             border: 2px solid transparent;
-        }
-        
-        .checkbox-label:hover {
-            border-color: var(--primary);
-            background: #f1f6ff;
         }
         
         .checkbox-label input {
@@ -278,12 +244,6 @@
             border-radius: 12px;
             text-align: center;
             margin-bottom: 2rem;
-            transition: var(--transition);
-        }
-        
-        .photo-section:hover {
-            border-color: var(--primary);
-            background: #f8f9fa;
         }
         
         .photo-preview {
@@ -321,7 +281,6 @@
             font-size: 1rem;
             border: none;
             cursor: pointer;
-            transition: var(--transition);
             text-decoration: none;
         }
         
@@ -331,44 +290,23 @@
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, #1a60f0 100%);
+            background: var(--primary);
             color: white;
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(10, 79, 216, 0.3);
         }
         
         .btn-success {
-            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+            background: var(--secondary);
             color: white;
-        }
-        
-        .btn-success:hover:not(:disabled) {
-            background: linear-gradient(135deg, var(--secondary-dark) 0%, #128c3a 100%);
-            transform: translateY(-2px);
         }
         
         .btn-danger {
-            background: linear-gradient(135deg, var(--danger) 0%, #c82333 100%);
+            background: var(--danger);
             color: white;
         }
         
-        .btn-danger:hover:not(:disabled) {
-            background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
-            transform: translateY(-2px);
-        }
-        
         .btn-warning {
-            background: linear-gradient(135deg, var(--warning) 0%, #e0a800 100%);
+            background: var(--warning);
             color: #333;
-        }
-        
-        .btn-warning:hover:not(:disabled) {
-            background: linear-gradient(135deg, #e0a800 0%, #d39e00 100%);
-            transform: translateY(-2px);
         }
         
         .btn-secondary {
@@ -423,7 +361,7 @@
         }
         
         .status-featured {
-            background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
+            background: #ffd700;
             color: #333;
         }
         
@@ -446,9 +384,8 @@
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary) 0%, #1a60f0 100%);
+            background: var(--primary);
             border-radius: 4px;
-            transition: width 0.5s ease;
         }
         
         /* ===== RANKING SECTION ===== */
@@ -478,22 +415,22 @@
         }
         
         .ranking-platinum {
-            background: linear-gradient(135deg, #e5e4e2 0%, #b4b4b4 100%);
+            background: #e5e4e2;
             color: #333;
         }
         
         .ranking-gold {
-            background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
+            background: #ffd700;
             color: #333;
         }
         
         .ranking-silver {
-            background: linear-gradient(135deg, #c0c0c0 0%, #a9a9a9 100%);
+            background: #c0c0c0;
             color: #333;
         }
         
         .ranking-bronze {
-            background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%);
+            background: #cd7f32;
             color: white;
         }
         
@@ -537,12 +474,6 @@
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: var(--transition);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
         
         .stat-value {
@@ -613,14 +544,7 @@
             border-radius: 12px;
             padding: 2rem;
             text-align: center;
-            transition: var(--transition);
             cursor: pointer;
-        }
-        
-        .featured-plan:hover {
-            border-color: var(--primary);
-            transform: translateY(-5px);
-            box-shadow: var(--shadow);
         }
         
         .featured-plan.selected {
@@ -769,18 +693,6 @@
             border-radius: 12px;
             margin-bottom: 1.5rem;
             font-weight: 600;
-            animation: slideIn 0.3s ease;
-        }
-        
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         
         .message-success {
@@ -822,10 +734,6 @@
         .data-table td {
             padding: 1rem;
             border-bottom: 1px solid var(--light-gray);
-        }
-        
-        .data-table tr:hover {
-            background: #f8f9fa;
         }
         
         /* ===== FILTERS ===== */
@@ -974,7 +882,7 @@
                 <div class="form-group">
                     <label class="form-label">Contraseña *</label>
                     <input type="password" id="registerPassword" class="form-input" 
-                           placeholder="Mínimo 6 caracteres" required minlength="6">
+                       placeholder="Mínimo 6 caracteres" required minlength="6">
                 </div>
                 <div class="btn-group">
                     <button type="submit" class="btn btn-success">
@@ -2404,13 +2312,6 @@
                     ? professionalData.rubros[0] 
                     : 'Tu Rubro';
             }
-        }
-
-        async function calculatePositions() {
-            // Esta función calcularía las posiciones en ciudad y rubro
-            // Por ahora es un placeholder
-            console.log('Calculando posiciones...');
-            return { cityPosition: 0, rubroPosition: 0 };
         }
 
         async function recalculateRanking() {
