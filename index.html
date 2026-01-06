@@ -34,40 +34,96 @@
         
         .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
         
-        /* Header */
+        /* Header con logo */
         .header {
-            background: linear-gradient(135deg, var(--primary) 0%, #1a60f0 100%);
-            color: white;
-            padding: 1.5rem 1rem;
-            text-align: center;
-        }
-        
-        .logo-text { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
-        .tagline { font-size: 1.1rem; opacity: 0.95; max-width: 600px; margin: 0 auto; }
-        
-        /* Stats */
-        .stats-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 1.5rem auto;
-            flex-wrap: wrap;
-        }
-        
-        .stat-card {
             background: white;
-            padding: 1rem;
-            border-radius: var(--radius);
+            color: var(--dark);
+            padding: 1rem 1rem;
             text-align: center;
-            min-width: 120px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.3rem;
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo-img {
+            height: 70px;
+            width: auto;
+            object-fit: contain;
+        }
+        
+        .tagline { 
+            font-size: 1rem; 
+            color: var(--gray);
+            max-width: 600px; 
+            margin: 0 auto; 
+        }
+        
+        /* Banners Container */
+        .banners-container {
+            margin: 1.5rem auto;
+        }
+        
+        .banner {
+            width: 100%;
+            margin-bottom: 1rem;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .banner img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .banner-link {
+            display: block;
+            text-decoration: none;
+        }
+        
+        /* Install Prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .install-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 1rem;
+        }
+        
+        .install-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 0.5rem;
         }
         
         /* Search */
@@ -346,25 +402,44 @@
         
         /* Responsive */
         @media (max-width: 768px) {
-            .logo-text { font-size: 1.8rem; }
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .logo-img {
+                height: 50px;
+            }
+            
             .search-section { padding: 1.5rem; }
             .professional-header { flex-direction: column; text-align: center; }
             .professional-footer { flex-direction: column; gap: 10px; }
+            
+            .install-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .professional-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
+    <!-- Header con Logo -->
     <header class="header">
-        <div class="container">
-            <h1 class="logo-text">TecniYa</h1>
+        <div class="container header-content">
+            <img src="logo.png" alt="TecniYa" class="logo-img" 
+                 onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"%230a4fd8\"/><text x=\"50\" y=\"70\" text-anchor=\"middle\" font-size=\"60\" fill=\"white\">🔧</text></svg>';">
             <p class="tagline">Encontrá técnicos certificados en toda Argentina. Contacto directo por WhatsApp.</p>
         </div>
     </header>
 
-    <!-- Stats -->
-    <div class="container stats-container" id="statsContainer">
-        <!-- Stats se cargan dinámicamente -->
+    <!-- Banners desde Panel Admin -->
+    <div class="container banners-container" id="bannersContainer">
+        <!-- Los banners se cargan dinámicamente -->
     </div>
 
     <!-- Search -->
@@ -438,6 +513,14 @@
         </div>
     </div>
 
+    <!-- Install Prompt -->
+    <div id="installPrompt" class="install-prompt">
+        <div class="install-content">
+            <span>📱 Instalá TecniYa en tu teléfono para acceder rápido</span>
+            <button onclick="closeInstallPrompt()" class="install-close">×</button>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
@@ -449,6 +532,13 @@
                 <h3>Contacto</h3>
                 <p>📱 WhatsApp: 341 755-8966</p>
                 <p>📍 Argentina</p>
+            </div>
+            <div>
+                <h3>Promociones</h3>
+                <p>¿Tenés una promoción especial? Contactanos por WhatsApp</p>
+                <a href="https://wa.me/3417558966" target="_blank" class="btn btn-whatsapp" style="margin-top: 10px;">
+                    💬 Contactar por WhatsApp
+                </a>
             </div>
         </div>
         <div class="copyright">
@@ -480,6 +570,7 @@
         let db;
         let currentRatingProfessional = null;
         let allProfessionals = [];
+        let deferredPrompt;
 
         // ============================================
         // DATOS DE PROVINCIAS Y CIUDADES
@@ -517,8 +608,9 @@
             try {
                 await initFirebase();
                 initApp();
-                updateStats();
+                loadBanners();
                 loadAllProfessionals();
+                checkInstallPrompt();
             } catch (error) {
                 console.error('Error inicial:', error);
             }
@@ -541,6 +633,13 @@
             document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
             document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
             document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
+            
+            // Evento para PWA
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                showInstallPrompt();
+            });
         }
 
         // ============================================
@@ -578,6 +677,75 @@
         }
 
         // ============================================
+        // BANNERS
+        // ============================================
+        async function loadBanners() {
+            try {
+                const now = new Date();
+                const snapshot = await db.collection('banners')
+                    .where('active', '==', true)
+                    .where('position', '==', 'home')
+                    .where('startDate', '<=', now)
+                    .where('endDate', '>=', now)
+                    .orderBy('priority', 'desc')
+                    .limit(3)
+                    .get();
+                
+                const container = document.getElementById('bannersContainer');
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '';
+                    return;
+                }
+                
+                let bannersHTML = '';
+                snapshot.forEach(doc => {
+                    const banner = doc.data();
+                    bannersHTML += `
+                        <div class="banner">
+                            <a href="${banner.link || '#'}" target="_blank" class="banner-link">
+                                <img src="${banner.imageUrl}" 
+                                     alt="${banner.title || 'Banner'}"
+                                     onerror="this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa'">
+                            </a>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = bannersHTML;
+                
+            } catch (error) {
+                console.error('Error cargando banners:', error);
+            }
+        }
+
+        // ============================================
+        // INSTALL PROMPT
+        // ============================================
+        function showInstallPrompt() {
+            const prompt = document.getElementById('installPrompt');
+            prompt.style.display = 'block';
+            
+            // Guardar en localStorage que se mostró
+            localStorage.setItem('installPromptShown', 'true');
+        }
+
+        function closeInstallPrompt() {
+            const prompt = document.getElementById('installPrompt');
+            prompt.style.display = 'none';
+        }
+
+        function checkInstallPrompt() {
+            // Mostrar solo si no se ha mostrado antes y es móvil
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const alreadyShown = localStorage.getItem('installPromptShown');
+            
+            if (isMobile && !alreadyShown && deferredPrompt) {
+                setTimeout(() => showInstallPrompt(), 3000);
+            }
+        }
+
+        // ============================================
         // SISTEMA DE RANKING SIMPLIFICADO
         // ============================================
         async function calculateProfessionalRanking(professional) {
@@ -599,7 +767,7 @@
                 
                 // Calcular score simplificado
                 let score = 0;
-                score += averageRating * 10; // 0-50 puntos por rating
+                score += averageRating * 10;
                 
                 // Puntos por cantidad de trabajos
                 if (professional.completedJobs) {
@@ -958,51 +1126,6 @@
         }
 
         // ============================================
-        // ESTADÍSTICAS
-        // ============================================
-        async function updateStats() {
-            try {
-                const statsContainer = document.getElementById('statsContainer');
-                
-                const profSnapshot = await db.collection('professionals')
-                    .where('active', '==', true)
-                    .get();
-                
-                const ratingsSnapshot = await db.collection('ratings')
-                    .where('status', '==', 'approved')
-                    .get();
-                
-                const cities = new Set();
-                profSnapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data.ciudad) cities.add(data.ciudad);
-                });
-                
-                statsContainer.innerHTML = `
-                    <div class="stat-card">
-                        <div class="stat-number">${profSnapshot.size}</div>
-                        <div class="stat-label">Técnicos Activos</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${ratingsSnapshot.size}</div>
-                        <div class="stat-label">Calificaciones</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">24h</div>
-                        <div class="stat-label">Respuesta</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${cities.size}</div>
-                        <div class="stat-label">Ciudades</div>
-                    </div>
-                `;
-                
-            } catch (error) {
-                console.error('Error actualizando stats:', error);
-            }
-        }
-
-        // ============================================
         // UTILIDADES
         // ============================================
         function showLoader() {
@@ -1020,6 +1143,14 @@
                 closeRatingModal();
             }
         }
+        
+        // Manejar clic fuera del install prompt
+        window.addEventListener('click', function(event) {
+            const prompt = document.getElementById('installPrompt');
+            if (event.target === prompt) {
+                closeInstallPrompt();
+            }
+        });
     </script>
 </body>
 </html>
