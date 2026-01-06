@@ -1725,7 +1725,7 @@
         // ============================================
         // VARIABLES GLOBALES
         // ============================================
-        let auth, db, currentUser, professionalId, professionalData;
+        let auth, db, currentUser, professionalId = null, professionalData = null;
         let budgets = [];
         let featuredHistory = [];
         
@@ -1744,8 +1744,10 @@
         // ============================================
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // Inicializar Firebase
-                firebase.initializeApp(firebaseConfig);
+                // Inicializar Firebase solo si no está ya inicializado
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
                 auth = firebase.auth();
                 db = firebase.firestore();
                 
@@ -2126,6 +2128,307 @@
         }
 
         // ============================================
+        // SISTEMA DE RANKING - CORREGIDO
+        // ============================================
+        async function loadRankingData() {
+            if (!professionalId) return;
+            
+            showGlobalLoader(true);
+            
+            try {
+                const doc = await db.collection('professionals').doc(professionalId).get();
+                if (!doc.exists) return;
+                
+                professionalData = { id: doc.id, ...doc.data() };
+                
+                // Calcular ranking actual
+                await calculateRanking();
+                updateRankingUI();
+                
+                // Actualizar estadísticas
+                updateUserInfo();
+                updateProfileStatus();
+                
+            } catch (error) {
+                console.error('Error cargando ranking:', error);
+                showMessage('profileMessage', 'Error cargando datos de ranking', 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        async function calculateRanking() {
+            if (!professionalData) return;
+            
+            try {
+                // Obtener calificaciones aprobadas (últimos 3 meses)
+                const threeMonthsAgo = new Date();
+                threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                
+                let totalRatings = 0;
+                let sumRatings = 0;
+                
+                try {
+                    const ratingsSnapshot = await db.collection('ratings')
+                        .where('professionalId', '==', professionalId)
+                        .where('status', '==', 'approved')
+                        .where('createdAt', '>=', threeMonthsAgo)
+                        .get();
+                    
+                    ratingsSnapshot.forEach(doc => {
+                        totalRatings++;
+                        sumRatings += doc.data().rating || 0;
+                    });
+                } catch (error) {
+                    console.log('No se encontraron calificaciones:', error);
+                }
+                
+                // Calcular rating promedio
+                const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
+                
+                // ============================================
+                // CÁLCULO DE PUNTAJE DE RANKING (0-100)
+                // ============================================
+                let score = 0;
+                
+                // 1. CALIDAD DE CALIFICACIONES (25 puntos)
+                score += averageRating * 5;
+                
+                // 2. CANTIDAD DE CALIFICACIONES (20 puntos)
+                const ratingQuantity = Math.min(totalRatings, 100);
+                score += ratingQuantity * 0.2;
+                
+                // 3. TIEMPO DE RESPUESTA (15 puntos)
+                if (professionalData.avgResponseTime) {
+                    if (professionalData.avgResponseTime < 4) score += 15;
+                    else if (professionalData.avgResponseTime < 8) score += 12;
+                    else if (professionalData.avgResponseTime < 24) score += 8;
+                    else if (professionalData.avgResponseTime < 48) score += 4;
+                }
+                
+                // 4. TRABAJOS COMPLETADOS (10 puntos)
+                if (professionalData.completedJobs) {
+                    score += Math.min(professionalData.completedJobs * 0.1, 10);
+                }
+                
+                // 5. CERTIFICACIONES (10 puntos)
+                if (professionalData.certifications && professionalData.certifications.length > 0) {
+                    score += Math.min(professionalData.certifications.length * 2, 10);
+                }
+                
+                // 6. COMPLETITUD DEL PERFIL (20 puntos)
+                let profileScore = 0;
+                if (professionalData.photoUrl) profileScore += 5;
+                if (professionalData.bio && professionalData.bio.length > 50) profileScore += 5;
+                if (professionalData.zonas && professionalData.zonas.length > 0) profileScore += 5;
+                if (professionalData.rubros && professionalData.rubros.length > 0) profileScore += 5;
+                score += profileScore;
+                
+                // 7. EXPERIENCIA (10 puntos)
+                if (professionalData.experienceYears) {
+                    score += Math.min(professionalData.experienceYears, 10);
+                }
+                
+                // 8. ACTIVIDAD RECIENTE (10 puntos)
+                if (professionalData.lastActive) {
+                    try {
+                        const lastActiveDate = professionalData.lastActive.toDate
+                            ? professionalData.lastActive.toDate()
+                            : new Date(professionalData.lastActive);
+                        const daysSince = (new Date() - lastActiveDate) / (1000 * 60 * 60 * 24);
+                        if (daysSince < 7) score += 10;
+                        else if (daysSince < 30) score += 7;
+                        else if (daysSince < 90) score += 4;
+                    } catch (error) {
+                        console.log('Error calculando actividad:', error);
+                    }
+                }
+                
+                // 9. PERFIL DESTACADO (5 puntos)
+                if (professionalData.isFeatured) {
+                    if (professionalData.featuredUntil) {
+                        try {
+                            const featuredUntil = professionalData.featuredUntil.toDate
+                                ? professionalData.featuredUntil.toDate()
+                                : new Date(professionalData.featuredUntil);
+                            if (featuredUntil > new Date()) {
+                                score += 5;
+                            }
+                        } catch (error) {
+                            console.log('Error verificando destacado:', error);
+                        }
+                    }
+                }
+                
+                // Asegurar que el score esté entre 0 y 100
+                score = Math.min(Math.max(score, 0), 100);
+                const rankingScore = Math.round(score);
+                
+                // Determinar nivel de ranking
+                let rankingLevel = 'Bronce';
+                if (rankingScore >= 90) rankingLevel = 'Platino';
+                else if (rankingScore >= 80) rankingLevel = 'Oro';
+                else if (rankingScore >= 70) rankingLevel = 'Plata';
+                else if (rankingScore >= 60) rankingLevel = 'Bronce';
+                else rankingLevel = 'Principiante';
+                
+                // Actualizar professionalData con los nuevos cálculos
+                professionalData.averageRating = averageRating;
+                professionalData.totalRatings = totalRatings;
+                professionalData.rankingScore = rankingScore;
+                professionalData.rankingLevel = rankingLevel;
+                
+                // Actualizar en la base de datos
+                await db.collection('professionals').doc(professionalId).update({
+                    averageRating: averageRating,
+                    totalRatings: totalRatings,
+                    rankingScore: rankingScore,
+                    rankingLevel: rankingLevel,
+                    rankingUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                return { averageRating, totalRatings, rankingScore, rankingLevel };
+                
+            } catch (error) {
+                console.error('Error calculando ranking:', error);
+                return {
+                    averageRating: professionalData.averageRating || 0,
+                    totalRatings: professionalData.totalRatings || 0,
+                    rankingScore: professionalData.rankingScore || 0,
+                    rankingLevel: professionalData.rankingLevel || 'Principiante'
+                };
+            }
+        }
+
+        function updateRankingUI() {
+            if (!professionalData) return;
+            
+            // Actualizar el puntaje total
+            document.getElementById('rankingScore').textContent = professionalData.rankingScore || 0;
+            document.getElementById('rankingProgress').style.width = `${professionalData.rankingScore || 0}%`;
+            document.getElementById('rankingProgressText').textContent = `${professionalData.rankingScore || 0}% completado`;
+            
+            // Actualizar el nivel
+            const levelBadge = document.getElementById('rankingLevelBadge');
+            if (levelBadge) {
+                levelBadge.textContent = professionalData.rankingLevel ? professionalData.rankingLevel.toUpperCase() : 'BRONCE';
+                levelBadge.className = 'ranking-badge ranking-' + (professionalData.rankingLevel ? professionalData.rankingLevel.toLowerCase() : 'bronce');
+            }
+            
+            // Actualizar factores individuales
+            // Factor de calificaciones (max 25)
+            let ratingFactor = (professionalData.averageRating || 0) * 5;
+            if (document.getElementById('ratingScore')) {
+                document.getElementById('ratingScore').textContent = `${Math.round(ratingFactor)}/25`;
+                document.getElementById('ratingProgress').style.width = `${(ratingFactor / 25) * 100}%`;
+            }
+            
+            // Factor de respuesta (max 15)
+            let responseFactor = 0;
+            if (professionalData.avgResponseTime) {
+                if (professionalData.avgResponseTime < 4) responseFactor = 15;
+                else if (professionalData.avgResponseTime < 8) responseFactor = 12;
+                else if (professionalData.avgResponseTime < 24) responseFactor = 8;
+                else if (professionalData.avgResponseTime < 48) responseFactor = 4;
+            }
+            if (document.getElementById('responseScore')) {
+                document.getElementById('responseScore').textContent = `${responseFactor}/15`;
+                document.getElementById('responseProgress').style.width = `${(responseFactor / 15) * 100}%`;
+            }
+            
+            // Factor de perfil (max 20)
+            let profileFactor = 0;
+            if (professionalData.photoUrl) profileFactor += 5;
+            if (professionalData.bio && professionalData.bio.length > 50) profileFactor += 5;
+            if (professionalData.zonas && professionalData.zonas.length > 0) profileFactor += 5;
+            if (professionalData.rubros && professionalData.rubros.length > 0) profileFactor += 5;
+            if (document.getElementById('profileScore')) {
+                document.getElementById('profileScore').textContent = `${profileFactor}/20`;
+                document.getElementById('profileProgress').style.width = `${(profileFactor / 20) * 100}%`;
+            }
+            
+            // Factor de experiencia (max 15)
+            let experienceFactor = Math.min(professionalData.experienceYears || 0, 15);
+            if (document.getElementById('experienceScore')) {
+                document.getElementById('experienceScore').textContent = `${experienceFactor}/15`;
+                document.getElementById('experienceProgress').style.width = `${(experienceFactor / 15) * 100}%`;
+            }
+            
+            // Factor de actividad (max 10)
+            let activityFactor = 0;
+            if (professionalData.lastActive) {
+                try {
+                    const lastActiveDate = professionalData.lastActive.toDate
+                        ? professionalData.lastActive.toDate()
+                        : new Date(professionalData.lastActive);
+                    const daysSince = (new Date() - lastActiveDate) / (1000 * 60 * 60 * 24);
+                    if (daysSince < 7) activityFactor = 10;
+                    else if (daysSince < 30) activityFactor = 7;
+                    else if (daysSince < 90) activityFactor = 4;
+                } catch (error) {
+                    console.log('Error calculando actividad para UI:', error);
+                }
+            }
+            if (document.getElementById('activityScore')) {
+                document.getElementById('activityScore').textContent = `${activityFactor}/10`;
+                document.getElementById('activityProgress').style.width = `${(activityFactor / 10) * 100}%`;
+            }
+            
+            // Factor de destacado (max 5)
+            let featuredFactor = 0;
+            if (professionalData.isFeatured && professionalData.featuredUntil) {
+                try {
+                    const featuredUntil = professionalData.featuredUntil.toDate
+                        ? professionalData.featuredUntil.toDate()
+                        : new Date(professionalData.featuredUntil);
+                    if (featuredUntil > new Date()) {
+                        featuredFactor = 5;
+                    }
+                } catch (error) {
+                    console.log('Error verificando destacado para UI:', error);
+                }
+            }
+            if (document.getElementById('featuredScore')) {
+                document.getElementById('featuredScore').textContent = `${featuredFactor}/5`;
+                document.getElementById('featuredProgress').style.width = `${(featuredFactor / 5) * 100}%`;
+            }
+            
+            // Actualizar ranking en ciudad y rubro (placeholder por ahora)
+            if (document.getElementById('cityRank')) {
+                document.getElementById('cityRank').textContent = '#0';
+                document.getElementById('rankingCity').textContent = professionalData.ciudad || 'Tu Ciudad';
+            }
+            if (document.getElementById('rubroRank')) {
+                document.getElementById('rubroRank').textContent = '#0';
+                document.getElementById('rankingRubro').textContent = professionalData.rubros && professionalData.rubros.length > 0 
+                    ? professionalData.rubros[0] 
+                    : 'Tu Rubro';
+            }
+        }
+
+        async function calculatePositions() {
+            // Esta función calcularía las posiciones en ciudad y rubro
+            // Por ahora es un placeholder
+            console.log('Calculando posiciones...');
+            return { cityPosition: 0, rubroPosition: 0 };
+        }
+
+        async function recalculateRanking() {
+            showGlobalLoader(true);
+            
+            try {
+                await calculateRanking();
+                updateRankingUI();
+                showMessage('profileMessage', '✅ Ranking recalculado correctamente', 'success');
+            } catch (error) {
+                console.error('Error recalculando ranking:', error);
+                showMessage('profileMessage', 'Error recalculando ranking', 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        // ============================================
         // SISTEMA DE DESTACADOS
         // ============================================
         function loadFeaturedPlans() {
@@ -2186,7 +2489,9 @@
                 
                 if (professionalData.isFeatured && professionalData.featuredUntil) {
                     const now = new Date();
-                    const featuredUntil = professionalData.featuredUntil.toDate();
+                    const featuredUntil = professionalData.featuredUntil.toDate
+                        ? professionalData.featuredUntil.toDate()
+                        : new Date(professionalData.featuredUntil);
                     const daysRemaining = Math.ceil((featuredUntil - now) / (1000 * 60 * 60 * 24));
                     
                     if (daysRemaining > 0) {
@@ -2194,7 +2499,7 @@
                         statusBadge.textContent = 'DESTACADO';
                         statusBadge.className = 'status-badge status-featured';
                         
-                        const totalDays = Math.ceil((featuredUntil - professionalData.featuredSince?.toDate() || featuredUntil) / (1000 * 60 * 60 * 24));
+                        const totalDays = Math.ceil((featuredUntil - (professionalData.featuredSince?.toDate() || featuredUntil)) / (1000 * 60 * 60 * 24));
                         const percentage = Math.round((daysRemaining / totalDays) * 100);
                         
                         featuredInfo.innerHTML = `
@@ -2996,96 +3301,190 @@
         }
 
         // ============================================
-        // SISTEMA DE RANKING (existente)
-        // ============================================
-        async function loadRankingData() {
-            if (!professionalId) return;
-            
-            showGlobalLoader(true);
-            
-            try {
-                const doc = await db.collection('professionals').doc(professionalId).get();
-                professionalData = { id: doc.id, ...doc.data() };
-                
-                await calculateRanking();
-                updateRankingUI();
-                await calculatePositions();
-                
-            } catch (error) {
-                console.error('Error cargando ranking:', error);
-                showMessage('profileMessage', 'Error cargando datos de ranking', 'error');
-            } finally {
-                showGlobalLoader(false);
-            }
-        }
-
-        async function calculateRanking() {
-            if (!professionalData) return;
-            
-            // Calcular factores del ranking (código existente)
-            // ... (mantener el código existente de cálculo de ranking)
-            
-            // Actualizar en la base de datos
-            await db.collection('professionals').doc(professionalId).update({
-                rankingScore: rankingData.score,
-                rankingUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        }
-
-        function updateRankingUI() {
-            // ... (código existente para actualizar UI del ranking)
-        }
-
-        async function calculatePositions() {
-            // ... (código existente para calcular posiciones)
-        }
-
-        async function recalculateRanking() {
-            showGlobalLoader(true);
-            
-            try {
-                await calculateRanking();
-                await calculatePositions();
-                updateRankingUI();
-                showMessage('profileMessage', '✅ Ranking recalculado correctamente', 'success');
-            } catch (error) {
-                console.error('Error recalculando ranking:', error);
-                showMessage('profileMessage', 'Error recalculando ranking', 'error');
-            } finally {
-                showGlobalLoader(false);
-            }
-        }
-
-        // ============================================
-        // CALIFICACIONES (existente)
+        // CALIFICACIONES
         // ============================================
         async function loadRatings() {
-            // ... (código existente para cargar calificaciones)
+            if (!professionalId) return;
+            
+            try {
+                const snapshot = await db.collection('ratings')
+                    .where('professionalId', '==', professionalId)
+                    .where('status', '==', 'approved')
+                    .orderBy('createdAt', 'desc')
+                    .limit(50)
+                    .get();
+                
+                const container = document.getElementById('ratingsList');
+                if (!container) return;
+                
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--gray);">
+                            📝 No hay calificaciones aún
+                        </div>
+                    `;
+                    
+                    // Actualizar promedio y total
+                    document.getElementById('averageRating').textContent = '0.0';
+                    document.getElementById('totalRatingsCount').textContent = '0';
+                    return;
+                }
+                
+                let totalRating = 0;
+                let count = 0;
+                let html = '';
+                
+                snapshot.forEach(doc => {
+                    const rating = doc.data();
+                    const date = rating.createdAt ? 
+                        rating.createdAt.toDate().toLocaleDateString('es-AR') : 'Fecha desconocida';
+                    const stars = '⭐'.repeat(rating.rating) + '☆'.repeat(5 - rating.rating);
+                    
+                    totalRating += rating.rating;
+                    count++;
+                    
+                    html += `
+                        <div class="rating-card">
+                            <div class="rating-header">
+                                <div class="rating-stars">${stars}</div>
+                                <div class="rating-date">${date}</div>
+                            </div>
+                            ${rating.comment ? `<p>${rating.comment}</p>` : ''}
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                // Actualizar promedio y total
+                const average = totalRating / count;
+                document.getElementById('averageRating').textContent = average.toFixed(1);
+                document.getElementById('totalRatingsCount').textContent = count;
+                
+            } catch (error) {
+                console.error('Error cargando calificaciones:', error);
+            }
         }
 
         // ============================================
-        // ESTADÍSTICAS (existente)
+        // ESTADÍSTICAS DETALLADAS
         // ============================================
         async function loadDetailedStats() {
-            // ... (código existente para cargar estadísticas)
+            if (!professionalData) return;
+            
+            // Actualizar estadísticas básicas
+            document.getElementById('statsRanking').textContent = professionalData.rankingScore || 0;
+            document.getElementById('statsAverageRating').textContent = professionalData.averageRating ? professionalData.averageRating.toFixed(1) : '0.0';
+            document.getElementById('statsTotalRatings').textContent = professionalData.totalRatings || 0;
+            document.getElementById('statsCompletedJobs').textContent = professionalData.completedJobs || 0;
+            document.getElementById('statsExperience').textContent = professionalData.experienceYears || 0;
+            document.getElementById('statsResponseTime').textContent = professionalData.avgResponseTime ? `${professionalData.avgResponseTime}h` : 'N/A';
         }
 
         // ============================================
-        // GESTIÓN DEL PERFIL (existente)
+        // GESTIÓN DEL PERFIL
         // ============================================
         async function saveProfile(e) {
             e.preventDefault();
             
-            // Validaciones y guardado (código existente)
-            // ... (mantener el código existente de guardar perfil)
+            if (!professionalId) {
+                showMessage('profileMessage', 'Error: No se encontró el ID del profesional', 'error');
+                return;
+            }
+            
+            // Validar campos requeridos
+            const name = document.getElementById('profileName').value.trim();
+            const phone = document.getElementById('profilePhone').value.trim();
+            const provincia = document.getElementById('profileProvincia').value;
+            const ciudad = document.getElementById('profileCiudad').value;
+            const zonas = document.getElementById('profileZonas').value.split(',').map(z => z.trim()).filter(z => z);
+            const bio = document.getElementById('profileBio').value.trim();
+            const experienceYears = parseInt(document.getElementById('profileExperience').value) || 0;
+            const photoUrl = document.getElementById('photoUrl').value.trim();
+            
+            if (!name || !phone || !provincia || !ciudad || zonas.length === 0 || !bio || !experienceYears || !photoUrl) {
+                showMessage('profileMessage', 'Completá todos los campos obligatorios (*)', 'error');
+                return;
+            }
+            
+            // Obtener rubros seleccionados
+            const rubros = [];
+            document.querySelectorAll('#rubrosCheckbox input:checked').forEach(checkbox => {
+                rubros.push(checkbox.value);
+            });
+            
+            if (rubros.length === 0) {
+                showMessage('profileMessage', 'Seleccioná al menos un rubro', 'error');
+                return;
+            }
+            
+            showGlobalLoader(true);
+            
+            try {
+                // Preparar datos para actualizar
+                const updateData = {
+                    name,
+                    phone,
+                    provincia,
+                    ciudad,
+                    zonas,
+                    rubros,
+                    bio,
+                    experienceYears,
+                    photoUrl,
+                    certifications: document.getElementById('profileCertifications').value.split(',').map(c => c.trim()).filter(c => c),
+                    completedJobs: parseInt(document.getElementById('profileCompletedJobs').value) || 0,
+                    avgResponseTime: parseInt(document.getElementById('profileResponseTime').value) || null,
+                    profileCompleted: true,
+                    lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                // Actualizar en Firestore
+                await db.collection('professionals').doc(professionalId).update(updateData);
+                
+                // Actualizar professionalData local
+                professionalData = { ...professionalData, ...updateData };
+                
+                // Actualizar UI
+                updateProfileStatus();
+                updateUserInfo();
+                
+                // Recalcular ranking
+                await calculateRanking();
+                updateRankingUI();
+                
+                showMessage('profileMessage', '✅ Perfil guardado correctamente', 'success');
+                
+            } catch (error) {
+                console.error('Error guardando perfil:', error);
+                showMessage('profileMessage', 'Error guardando perfil: ' + error.message, 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
         }
 
         async function updateActivity() {
-            // ... (código existente para actualizar actividad)
+            if (!professionalId) return;
+            
+            try {
+                await db.collection('professionals').doc(professionalId).update({
+                    lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showMessage('profileMessage', '✅ Actividad actualizada', 'success');
+                
+                // Recalcular ranking
+                await loadRankingData();
+                
+            } catch (error) {
+                console.error('Error actualizando actividad:', error);
+                showMessage('profileMessage', 'Error actualizando actividad', 'error');
+            }
         }
 
         // ============================================
-        // UTILIDADES (existente)
+        // UTILIDADES
         // ============================================
         function loadProvincias() {
             const provincias = [
