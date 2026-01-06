@@ -2278,29 +2278,38 @@
             
             professionalUnsubscribe = professionalRef.onSnapshot((doc) => {
                 if (doc.exists) {
-                    professionalData = { id: doc.id, ...doc.data() };
+                    const newData = doc.data();
+                    
+                    // Verificar si las certificaciones fueron habilitadas
+                    const wereCertificationsDisabled = professionalData && !professionalData.certificationsEnabled;
+                    const areCertificationsEnabled = newData.certificationsEnabled === true;
+                    
+                    // Actualizar datos del profesional
+                    professionalData = { id: doc.id, ...newData };
                     
                     // Actualizar UI con los nuevos datos
                     updateProfileUI();
                     updateUserInfo();
                     updateRankingUI();
                     
-                    // Mostrar mensaje si las certificaciones fueron habilitadas
-                    if (professionalData.certificationsEnabled) {
-                        const certInput = document.getElementById('profileCertifications');
-                        const certContainer = document.getElementById('certificationsContainer');
-                        const certMessage = document.getElementById('certificationsMessage');
+                    // Mostrar mensaje si las certificaciones fueron habilitadas ahora
+                    if (wereCertificationsDisabled && areCertificationsEnabled) {
+                        showMessage('profileMessage', '✅ ¡Certificaciones habilitadas! Ya podés agregar tus certificaciones.', 'success');
                         
-                        if (certInput.disabled) {
-                            certInput.disabled = false;
-                            certInput.placeholder = "Ej: Gasista Matriculado, Electricista Certificado";
-                            certContainer.classList.remove('certification-disabled');
-                            certMessage.textContent = "Podés agregar tus certificaciones aquí";
-                            certMessage.style.color = "#28a745";
+                        // Forzar actualización del campo de certificaciones
+                        setTimeout(() => {
+                            const certInput = document.getElementById('profileCertifications');
+                            const certContainer = document.getElementById('certificationsContainer');
+                            const certMessage = document.getElementById('certificationsMessage');
                             
-                            // Mostrar mensaje de éxito
-                            showMessage('profileMessage', '✅ Las certificaciones han sido habilitadas por el administrador', 'success');
-                        }
+                            if (certInput && certContainer && certMessage) {
+                                certInput.disabled = false;
+                                certInput.placeholder = "Ej: Gasista Matriculado, Electricista Certificado";
+                                certContainer.classList.remove('certification-disabled');
+                                certMessage.textContent = "Podés agregar tus certificaciones aquí";
+                                certMessage.style.color = "#28a745";
+                            }
+                        }, 100);
                     }
                 }
             }, (error) => {
@@ -2342,15 +2351,20 @@
             const certMessage = document.getElementById('certificationsMessage');
             
             // Mostrar certificaciones existentes
-            certInput.value = professionalData.certifications ? professionalData.certifications.join(', ') : '';
+            certInput.value = professionalData.certifications ? 
+                (Array.isArray(professionalData.certifications) ? 
+                    professionalData.certifications.join(', ') : 
+                    professionalData.certifications) : 
+                '';
             
             // Habilitar/deshabilitar según el estado
-            if (professionalData.certificationsEnabled) {
+            if (professionalData.certificationsEnabled === true) {
                 certInput.disabled = false;
                 certInput.placeholder = "Ej: Gasista Matriculado, Electricista Certificado";
                 certContainer.classList.remove('certification-disabled');
                 certMessage.textContent = "Podés agregar tus certificaciones aquí";
                 certMessage.style.color = "#28a745";
+                certMessage.style.fontWeight = "bold";
             } else {
                 certInput.disabled = true;
                 certInput.placeholder = "Las certificaciones se habilitan desde el panel de administración";
@@ -3710,9 +3724,12 @@
             try {
                 // Obtener certificaciones (solo si están habilitadas)
                 let certifications = [];
-                if (professionalData.certificationsEnabled) {
-                    const certInput = document.getElementById('profileCertifications').value;
-                    certifications = certInput.split(',').map(c => c.trim()).filter(c => c);
+                if (professionalData.certificationsEnabled === true) {
+                    const certInput = document.getElementById('profileCertifications');
+                    if (certInput && !certInput.disabled) {
+                        const certText = certInput.value.trim();
+                        certifications = certText ? certText.split(',').map(c => c.trim()).filter(c => c) : [];
+                    }
                 }
                 
                 // Preparar datos para actualizar
@@ -3734,10 +3751,13 @@
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
+                // Mantener las certificaciones habilitadas si ya lo estaban
+                if (professionalData.certificationsEnabled === true) {
+                    updateData.certificationsEnabled = true;
+                }
+                
                 // Actualizar en Firestore
                 await db.collection('professionals').doc(professionalId).update(updateData);
-                
-                // El listener actualizará automáticamente professionalData
                 
                 showMessage('profileMessage', '✅ Perfil guardado correctamente', 'success');
                 
