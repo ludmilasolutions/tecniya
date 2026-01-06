@@ -2,15 +2,23 @@
 <html lang="es-AR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TecniYa - Panel del Profesional</title>
     <meta name="description" content="Panel de control para técnicos profesionales. Gestioná tu perfil, destacados, presupuestos y ranking.">
+    <meta name="theme-color" content="#0a4fd8">
     
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
     
+    <!-- Para PWA -->
+    <link rel="manifest" href="manifest.json">
+    
     <!-- Preconnect -->
     <link rel="preconnect" href="https://www.gstatic.com">
+    
+    <!-- jsPDF para PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- CSS -->
     <style>
@@ -44,6 +52,7 @@
             color: var(--dark);
             line-height: 1.6;
             min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
         }
         
         /* ===== LAYOUT ===== */
@@ -51,14 +60,44 @@
             width: 100%;
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 15px;
+        }
+        
+        /* ===== BANNER INSTALACIÓN PWA ===== */
+        .install-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, #1a60f0 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .install-banner-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        
+        .install-banner-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
         
         /* ===== HEADER ===== */
         .header {
             background: linear-gradient(135deg, var(--primary) 0%, #1a60f0 100%);
             color: white;
-            padding: 1.5rem 1rem;
+            padding: 1.2rem 1rem;
             position: relative;
         }
         
@@ -66,6 +105,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
         .logo {
@@ -85,6 +126,7 @@
             justify-content: center;
             color: var(--primary);
             box-shadow: var(--shadow);
+            flex-shrink: 0;
         }
         
         .logo-text {
@@ -99,6 +141,7 @@
         .user-email {
             font-size: 0.9rem;
             opacity: 0.9;
+            word-break: break-all;
         }
         
         /* ===== TABS ===== */
@@ -107,7 +150,7 @@
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: var(--shadow);
-            margin: 2rem auto;
+            margin: 1.5rem auto;
         }
         
         .tabs-header {
@@ -115,11 +158,12 @@
             background: white;
             border-bottom: 2px solid var(--light-gray);
             overflow-x: auto;
-            padding: 0 20px;
+            -webkit-overflow-scrolling: touch;
+            padding: 0 10px;
         }
         
         .tab {
-            padding: 1.2rem 1.5rem;
+            padding: 1rem;
             font-weight: 600;
             cursor: pointer;
             border-bottom: 3px solid transparent;
@@ -127,6 +171,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-shrink: 0;
+            font-size: 0.9rem;
         }
         
         .tab.active {
@@ -144,7 +190,7 @@
         /* ===== PANELS ===== */
         .panel {
             display: none;
-            padding: 2.5rem;
+            padding: 1.5rem;
         }
         
         .panel.active {
@@ -154,8 +200,8 @@
         /* ===== LOGIN ===== */
         .login-container {
             max-width: 500px;
-            margin: 4rem auto;
-            padding: 2.5rem;
+            margin: 3rem auto;
+            padding: 2rem;
             background: white;
             border-radius: 16px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
@@ -163,7 +209,7 @@
         }
         
         .login-title {
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: var(--primary);
             margin-bottom: 1.5rem;
             font-weight: 700;
@@ -172,12 +218,12 @@
         .login-subtitle {
             color: var(--gray);
             margin-bottom: 2rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
         
         /* ===== FORMS ===== */
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
         
         .form-label {
@@ -185,16 +231,18 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--dark);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         
         .form-input, .form-select, .form-textarea {
             width: 100%;
-            padding: 1rem;
+            padding: 0.9rem;
             border: 2px solid var(--light-gray);
             border-radius: 10px;
             font-size: 1rem;
             background: white;
+            -webkit-appearance: none;
+            appearance: none;
         }
         
         .form-input:focus, .form-select:focus, .form-textarea:focus {
@@ -204,65 +252,68 @@
         }
         
         .form-textarea {
-            min-height: 120px;
+            min-height: 100px;
             resize: vertical;
         }
         
         /* ===== CHECKBOX GROUPS ===== */
         .checkbox-group {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
             margin-top: 10px;
         }
         
         .checkbox-label {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             background: #f8f9fa;
-            padding: 14px 18px;
+            padding: 12px;
             border-radius: 8px;
             cursor: pointer;
             border: 2px solid transparent;
+            font-size: 0.9rem;
         }
         
         .checkbox-label input {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             cursor: pointer;
+            flex-shrink: 0;
         }
         
         /* ===== PHOTO UPLOAD ===== */
         .photo-section {
             border: 3px dashed var(--light-gray);
-            padding: 2.5rem;
+            padding: 1.5rem;
             border-radius: 12px;
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         .photo-preview {
-            width: 200px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
             object-fit: cover;
             border-radius: 12px;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             border: 3px solid white;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
         .photo-url-input {
-            max-width: 500px;
+            max-width: 100%;
             margin: 0 auto;
         }
         
         .photo-info {
-            margin-top: 1.5rem;
+            margin-top: 1rem;
             padding: 1rem;
             background: #e9f7fe;
             border-radius: 8px;
             border-left: 4px solid var(--primary);
+            font-size: 0.9rem;
         }
         
         /* ===== BUTTONS ===== */
@@ -270,24 +321,35 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            padding: 1rem 2rem;
+            gap: 8px;
+            padding: 0.9rem 1.5rem;
             border-radius: 10px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             border: none;
             cursor: pointer;
             text-decoration: none;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
         }
         
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none !important;
         }
         
         .btn-primary {
             background: var(--primary);
             color: white;
+        }
+        
+        .btn-primary:active {
+            background: var(--primary-dark);
         }
         
         .btn-success {
@@ -312,22 +374,22 @@
         
         .btn-sm {
             padding: 0.5rem 1rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         
         .btn-group {
             display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
             flex-wrap: wrap;
         }
         
         /* ===== STATUS CARDS ===== */
         .status-card {
             background: white;
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 12px;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             border-left: 4px solid var(--accent);
         }
@@ -337,13 +399,15 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .status-badge {
-            padding: 8px 20px;
+            padding: 6px 15px;
             border-radius: 20px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
         
         .status-complete {
@@ -382,24 +446,27 @@
             height: 100%;
             background: var(--primary);
             border-radius: 4px;
+            transition: width 0.5s ease;
         }
         
         /* ===== RANKING SECTION ===== */
         .ranking-header {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         
         .ranking-score {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 800;
             color: var(--primary);
         }
         
         .ranking-level {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--gray);
         }
         
@@ -432,14 +499,14 @@
         
         .ranking-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
         }
         
         .ranking-factor {
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
@@ -453,47 +520,47 @@
         
         .factor-score {
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         /* ===== STATS SECTION ===== */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
         }
         
         .stat-card {
             background: white;
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
         
         .stat-value {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
         
         .stat-label {
             color: var(--gray);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         
         /* ===== RATINGS SECTION ===== */
         .ratings-container {
             background: white;
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         .rating-card {
-            padding: 1.5rem;
+            padding: 1.2rem;
             border: 1px solid var(--light-gray);
             border-radius: 8px;
             margin-bottom: 1rem;
@@ -505,98 +572,102 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .rating-stars {
             color: var(--warning);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         .rating-date {
             color: var(--gray);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         
         /* ===== PROFILE FORM ===== */
         .profile-form-section {
             background: white;
-            padding: 2.5rem;
+            padding: 1.5rem;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         /* ===== FEATURED SECTION ===== */
         .featured-plans {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 2rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 1.5rem 0;
         }
         
         .featured-plan {
             background: white;
             border: 2px solid var(--light-gray);
             border-radius: 12px;
-            padding: 2rem;
+            padding: 1.5rem;
             text-align: center;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         
         .featured-plan.selected {
             border-color: var(--primary);
             background: #f1f6ff;
+            transform: translateY(-5px);
         }
         
         .featured-plan-title {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
         
         .featured-plan-price {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 800;
-            margin: 1rem 0;
+            margin: 0.8rem 0;
         }
         
         .featured-plan-features {
             list-style: none;
             text-align: left;
-            margin: 1.5rem 0;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
         }
         
         .featured-plan-features li {
-            padding: 0.5rem 0;
+            padding: 0.4rem 0;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         
-        /* ===== TRANSFER DETAILS ===== */
+        /* ===== TRANSFERENCIA DETALLES ===== */
         .transfer-details {
-            background: #f1f6ff;
-            border: 2px solid var(--primary);
+            background: #f8f9fa;
+            padding: 1.5rem;
             border-radius: 12px;
-            padding: 2rem;
-            margin: 2rem 0;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--primary);
         }
         
         .transfer-details h4 {
-            color: var(--primary);
             margin-bottom: 1rem;
-            font-size: 1.3rem;
+            color: var(--primary);
         }
         
         .transfer-details p {
             margin-bottom: 0.8rem;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
         
         .transfer-details strong {
             color: var(--dark);
-            min-width: 120px;
+            min-width: 100px;
             display: inline-block;
         }
         
@@ -604,7 +675,7 @@
         .budget-card {
             background: white;
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1.2rem;
             margin-bottom: 1rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             border-left: 4px solid var(--info);
@@ -613,14 +684,16 @@
         .budget-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .budget-status {
             padding: 6px 12px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
         
@@ -648,6 +721,7 @@
             display: flex;
             gap: 0.5rem;
             margin-top: 1rem;
+            flex-wrap: wrap;
         }
         
         .modal {
@@ -661,23 +735,25 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 15px;
         }
         
         .modal-content {
             background: white;
-            width: 90%;
+            width: 100%;
             max-width: 800px;
             max-height: 90vh;
             border-radius: 16px;
             overflow-y: auto;
-            padding: 2rem;
+            padding: 1.5rem;
+            -webkit-overflow-scrolling: touch;
         }
         
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         .modal-close {
@@ -686,12 +762,13 @@
             font-size: 1.5rem;
             cursor: pointer;
             color: var(--gray);
+            padding: 5px;
         }
         
         .item-row {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr auto;
-            gap: 1rem;
+            gap: 0.8rem;
             align-items: center;
             margin-bottom: 1rem;
             padding: 1rem;
@@ -702,19 +779,31 @@
         .total-row {
             display: flex;
             justify-content: flex-end;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             padding-top: 1rem;
             border-top: 2px solid var(--light-gray);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
         }
         
         /* ===== MESSAGES ===== */
         .message {
-            padding: 1.5rem;
+            padding: 1.2rem;
             border-radius: 12px;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .message-success {
@@ -743,6 +832,7 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
         }
         
         .data-table th {
@@ -751,6 +841,7 @@
             text-align: left;
             font-weight: 600;
             border-bottom: 2px solid var(--light-gray);
+            white-space: nowrap;
         }
         
         .data-table td {
@@ -761,14 +852,14 @@
         /* ===== FILTERS ===== */
         .filters {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
             flex-wrap: wrap;
         }
         
         .filter-group {
             flex: 1;
-            min-width: 200px;
+            min-width: 150px;
         }
         
         /* ===== LOADER ===== */
@@ -776,14 +867,14 @@
             display: none;
             justify-content: center;
             align-items: center;
-            padding: 3rem;
+            padding: 2rem;
         }
         
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary);
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -791,26 +882,6 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }
-        
-        /* ===== MOBILE OPTIMIZATION ===== */
-        .mobile-install-banner {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: var(--primary);
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            display: none;
-            z-index: 9999;
-        }
-        
-        .mobile-install-banner .btn {
-            background: white;
-            color: var(--primary);
-            margin-left: 10px;
         }
         
         /* ===== RESPONSIVE ===== */
@@ -822,25 +893,33 @@
             }
             
             .tabs-header {
-                flex-direction: column;
+                flex-direction: row;
+                padding: 0;
             }
             
             .tab {
+                padding: 0.8rem;
+                font-size: 0.85rem;
+                min-width: 120px;
                 justify-content: center;
-                padding: 1rem;
             }
             
             .logout-btn {
                 margin-left: 0;
-                margin-top: 1rem;
+                margin-top: 0;
             }
             
             .panel {
-                padding: 1.5rem;
+                padding: 1rem;
             }
             
             .btn-group {
                 flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
             }
             
             .ranking-header {
@@ -849,8 +928,8 @@
             }
             
             .photo-preview {
-                width: 150px;
-                height: 150px;
+                width: 120px;
+                height: 120px;
             }
             
             .item-row {
@@ -862,23 +941,126 @@
                 padding: 1rem;
             }
             
-            .featured-plan {
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .featured-plans {
+                grid-template-columns: 1fr;
+            }
+            
+            .ranking-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 1rem auto;
                 padding: 1.5rem;
             }
             
-            .featured-plan-price {
-                font-size: 2rem;
+            .logo-text {
+                font-size: 1.2rem;
             }
             
-            .mobile-install-banner {
-                display: flex;
-                justify-content: center;
-                align-items: center;
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
             }
+            
+            .status-card, .profile-form-section, .ratings-container {
+                padding: 1rem;
+            }
+            
+            .btn {
+                padding: 0.8rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .form-input, .form-select, .form-textarea {
+                padding: 0.8rem;
+            }
+        }
+        
+        /* ===== PWA INSTALL STYLES ===== */
+        .pwa-install-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(10, 79, 216, 0.3);
+            border: none;
+            cursor: pointer;
+            z-index: 999;
+            font-size: 1.5rem;
+        }
+        
+        /* ===== CERTIFICACIONES HABILITADAS ===== */
+        .certification-disabled {
+            opacity: 0.6;
+            pointer-events: none;
+            position: relative;
+        }
+        
+        .certification-disabled::after {
+            content: "Habilitado con plan 12 meses";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
         }
     </style>
 </head>
 <body>
+    <!-- BANNER INSTALACIÓN -->
+    <div id="installBanner" class="install-banner">
+        <div class="container install-banner-content">
+            <div>
+                <strong>📱 Instalar TecniYa Pro</strong>
+                <p style="margin: 5px 0 0 0; font-size: 0.9rem;">Para mejor experiencia, instala nuestra app</p>
+            </div>
+            <button class="install-banner-close" id="closeInstallBanner">×</button>
+        </div>
+    </div>
+    
     <!-- LOGIN CONTAINER -->
     <div id="loginContainer" class="container login-container">
         <div class="logo" style="justify-content: center; margin-bottom: 1.5rem;">
@@ -912,7 +1094,7 @@
             </button>
         </div>
         
-        <!-- REGISTRO -->
+        <!-- REGISTRO - CORREGIDO -->
         <div id="registerSection" style="display: none; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--light-gray);">
             <h3 style="color: var(--primary); margin-bottom: 1.5rem; font-size: 1.3rem;">Registro de Profesional</h3>
             
@@ -925,9 +1107,9 @@
                 <div class="form-group">
                     <label class="form-label">Teléfono WhatsApp *</label>
                     <input type="tel" id="registerPhone" class="form-input" 
-                           placeholder="5493411234567 (sin +)" required pattern="[0-9]{10,13}">
+                           placeholder="3417558966 (sin 0 y sin 15)" required pattern="[0-9]{10}">
                     <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
-                        Sin +, comenzá con el código de país (54 para Argentina)
+                        Sin 0 y sin 15, solo el número ej: 3417558966
                     </small>
                 </div>
                 <div class="form-group">
@@ -989,8 +1171,14 @@
                 <div class="tab" data-tab="featured">
                     ⭐ Destacados
                 </div>
+                <div class="tab" data-tab="budgets">
+                    💰 Presupuestos
+                </div>
                 <div class="tab" data-tab="ratings">
                     ⭐ Calificaciones
+                </div>
+                <div class="tab" data-tab="stats">
+                    📊 Estadísticas
                 </div>
                 <div class="tab logout-btn" id="logoutBtn">
                     🚪 Cerrar Sesión
@@ -1015,10 +1203,10 @@
                                 <div class="ranking-level" id="rankingLevel">Puntaje de 0 a 100</div>
                             </div>
                             <div>
-                                <div style="font-size: 1.1rem; color: var(--dark); margin-bottom: 0.5rem;">
+                                <div style="font-size: 1rem; color: var(--dark); margin-bottom: 0.5rem;">
                                     📍 <strong id="cityRank">#0</strong> en <span id="rankingCity">Tu Ciudad</span>
                                 </div>
-                                <div style="font-size: 1.1rem; color: var(--dark);">
+                                <div style="font-size: 1rem; color: var(--dark);">
                                     ⭐ <strong id="rubroRank">#0</strong> en <span id="rankingRubro">Tu Rubro</span>
                                 </div>
                             </div>
@@ -1038,7 +1226,7 @@
                                 <h4>⭐ Calificaciones</h4>
                                 <span class="factor-score" id="ratingScore">0/25</span>
                             </div>
-                            <p style="color: var(--gray); margin-bottom: 10px;">Basado en promedio y cantidad de calificaciones</p>
+                            <p style="color: var(--gray); margin-bottom: 10px; font-size: 0.9rem;">Basado en promedio y cantidad de calificaciones</p>
                             <div class="progress-bar">
                                 <div id="ratingProgress" class="progress-fill" style="width: 0%; background: #ffc107;"></div>
                             </div>
@@ -1049,7 +1237,7 @@
                                 <h4>🚀 Respuesta Rápida</h4>
                                 <span class="factor-score" id="responseScore">0/15</span>
                             </div>
-                            <p style="color: var(--gray); margin-bottom: 10px;">Tiempo promedio de respuesta a clientes</p>
+                            <p style="color: var(--gray); margin-bottom: 10px; font-size: 0.9rem;">Tiempo promedio de respuesta a clientes</p>
                             <div class="progress-bar">
                                 <div id="responseProgress" class="progress-fill" style="width: 0%; background: #17a2b8;"></div>
                             </div>
@@ -1060,7 +1248,7 @@
                                 <h4>📝 Perfil Completo</h4>
                                 <span class="factor-score" id="profileScore">0/20</span>
                             </div>
-                            <p style="color: var(--gray); margin-bottom: 10px;">Foto, descripción, certificaciones, etc.</p>
+                            <p style="color: var(--gray); margin-bottom: 10px; font-size: 0.9rem;">Foto, descripción, certificaciones, etc.</p>
                             <div class="progress-bar">
                                 <div id="profileProgress" class="progress-fill" style="width: 0%; background: #28a745;"></div>
                             </div>
@@ -1071,7 +1259,7 @@
                                 <h4>💼 Experiencia</h4>
                                 <span class="factor-score" id="experienceScore">0/15</span>
                             </div>
-                            <p style="color: var(--gray); margin-bottom: 10px;">Años de experiencia y trabajos completados</p>
+                            <p style="color: var(--gray); margin-bottom: 10px; font-size: 0.9rem;">Años de experiencia y trabajos completados</p>
                             <div class="progress-bar">
                                 <div id="experienceProgress" class="progress-fill" style="width: 0%; background: #6f42c1;"></div>
                             </div>
@@ -1082,7 +1270,7 @@
                                 <h4>✅ Actividad</h4>
                                 <span class="factor-score" id="activityScore">0/10</span>
                             </div>
-                            <p style="color: var(--gray); margin-bottom: 10px;">Última actividad y constancia</p>
+                            <p style="color: var(--gray); margin-bottom: 10px; font-size: 0.9rem;">Última actividad y constancia</p>
                             <div class="progress-bar">
                                 <div id="activityProgress" class="progress-fill" style="width: 0%; background: #fd7e14;"></div>
                             </div>
@@ -1093,7 +1281,7 @@
                                 <h4>🌟 Destacado</h4>
                                 <span class="factor-score" id="featuredScore">0/5</span>
                             </div>
-                            <p style="color: var(--gray); margin-bottom: 10px;">Perfil destacado en la plataforma</p>
+                            <p style="color: var(--gray); margin-bottom: 10px; font-size: 0.9rem;">Perfil destacado en la plataforma</p>
                             <div class="progress-bar">
                                 <div id="featuredProgress" class="progress-fill" style="width: 0%; background: #ffc107;"></div>
                             </div>
@@ -1102,7 +1290,7 @@
                     
                     <div class="profile-form-section">
                         <h3>📈 ¿Cómo mejorar mi ranking?</h3>
-                        <ul style="margin: 1.5rem 0; padding-left: 1.5rem; color: var(--dark);">
+                        <ul style="margin: 1.5rem 0; padding-left: 1.5rem; color: var(--dark); font-size: 0.95rem;">
                             <li style="margin-bottom: 0.8rem;"><strong>✅ Completá tu perfil:</strong> Foto profesional, descripción detallada, certificaciones</li>
                             <li style="margin-bottom: 0.8rem;"><strong>🚀 Responde rápido:</strong> Atendé las consultas en menos de 24 horas</li>
                             <li style="margin-bottom: 0.8rem;"><strong>⭐ Pedí calificaciones:</strong> Solicitá a tus clientes que te califiquen</li>
@@ -1122,7 +1310,7 @@
                     </div>
                 </div>
                 
-                <!-- PROFILE PANEL -->
+                <!-- PROFILE PANEL - CORREGIDO -->
                 <div id="profilePanel" class="panel">
                     <div class="status-card">
                         <div class="status-header">
@@ -1150,7 +1338,7 @@
                         <div class="form-group">
                             <label class="form-label">Teléfono WhatsApp *</label>
                             <input type="tel" id="profilePhone" class="form-input" 
-                                   placeholder="5493411234567 (sin +)" required pattern="[0-9]{10,13}">
+                                   placeholder="3417558966 (sin 0 y sin 15)" required pattern="[0-9]{10}">
                             <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
                                 Los clientes te contactarán por este número
                             </small>
@@ -1248,15 +1436,15 @@
                                 <input type="url" id="photoUrl" class="form-input" 
                                        placeholder="https://ejemplo.com/foto-profesional.jpg" 
                                        pattern="https?://.+" required>
-                                <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
+                                <small style="color: var(--gray); display: block; margin-top: 0.5rem; font-size: 0.9rem;">
                                     La foto debe ser clara y profesional (preferentemente con fondo blanco)
                                 </small>
                             </div>
                             
                             <div class="photo-info">
                                 <h4>🌟 ¿Cómo subir mi foto?</h4>
-                                <p style="margin-bottom: 0.5rem;">Servicios gratuitos recomendados:</p>
-                                <ul>
+                                <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">Servicios gratuitos recomendados:</p>
+                                <ul style="font-size: 0.85rem;">
                                     <li><a href="https://imgur.com" target="_blank">Imgur.com</a> - Subí y copia el enlace directo</li>
                                     <li><a href="https://postimages.org" target="_blank">Postimages.org</a> - Simple y rápido</li>
                                     <li><a href="https://imgbb.com" target="_blank">ImgBB.com</a> - Sin registro necesario</li>
@@ -1280,10 +1468,24 @@
                                    min="0" max="50" required>
                         </div>
                         
-                        <div class="form-group">
-                            <label class="form-label">Certificaciones (separar con comas)</label>
+                        <!-- CERTIFICACIONES SOLO HABILITADAS POR ADMIN -->
+                        <div class="form-group" id="certificationsContainer">
+                            <label class="form-label">Certificaciones (habilitadas por administración)</label>
                             <input type="text" id="profileCertifications" class="form-input" 
-                                   placeholder="Ej: Gasista Matriculado, Electricista Certificado">
+                                   placeholder="Las certificaciones se habilitan desde el panel de administración" disabled>
+                            <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
+                                Contactá al administrador para habilitar certificaciones
+                            </small>
+                        </div>
+                        
+                        <!-- TRABAJOS COMPLETADOS AUTOMÁTICO -->
+                        <div class="form-group">
+                            <label class="form-label">Trabajos completados</label>
+                            <input type="number" id="profileCompletedJobs" class="form-input" 
+                                   min="0" value="0" readonly style="background-color: #f8f9fa;">
+                            <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
+                                Este campo se actualiza automáticamente cuando los clientes califican tus servicios
+                            </small>
                         </div>
                         
                         <div class="form-group">
@@ -1305,7 +1507,7 @@
                     <div id="profileMessage" class="message" style="display: none; margin-top: 1.5rem;"></div>
                 </div>
                 
-                <!-- FEATURED PANEL -->
+                <!-- FEATURED PANEL - CORREGIDO -->
                 <div id="featuredPanel" class="panel">
                     <div class="status-card">
                         <div class="status-header">
@@ -1331,22 +1533,36 @@
                     
                     <div class="profile-form-section">
                         <h3>🌟 Planes de Destacado</h3>
-                        <p style="color: var(--gray); margin-bottom: 1rem;">
-                            <strong>SOLO PAGO CON TRANSFERENCIA BANCARIA</strong>
+                        <p style="color: var(--gray); margin-bottom: 2rem;">
+                            Seleccioná un plan para destacar tu perfil y aparecer primero en las búsquedas.
+                            <strong>Pago exclusivamente por transferencia bancaria.</strong>
                         </p>
                         
                         <div class="featured-plans" id="featuredPlansContainer">
                             <!-- Los planes se cargarán dinámicamente -->
                         </div>
                         
-                        <div class="transfer-details" id="transferenciaDetails" style="display: none;">
+                        <!-- DATOS PARA TRANSFERENCIA - SIEMPRE VISIBLES -->
+                        <div class="transfer-details">
                             <h4>📋 Datos para Transferencia Bancaria</h4>
+                            <p><strong>Banco:</strong> Galicia</p>
                             <p><strong>Titular:</strong> TecniYa S.R.L.</p>
                             <p><strong>CUIT:</strong> 30-12345678-9</p>
-                            <p><strong>CBU:</strong> 1234567890123456789012</p>
+                            <p><strong>CBU:</strong> 0070123455501234567890</p>
                             <p><strong>Alias:</strong> TECNIYA.DESTACADOS</p>
-                            <p><strong>Banco:</strong> Banco de la Nación Argentina</p>
-                            <p><strong>Enviar comprobante a:</strong> comprobantes@tecniya.com</p>
+                            <p><strong>Importante:</strong> Enviar comprobante a comprobantes@tecniya.com</p>
+                        </div>
+                        
+                        <div class="form-group" style="margin-top: 2rem;">
+                            <label class="form-label">Método de Pago *</label>
+                            <select id="paymentMethod" class="form-select" required>
+                                <option value="">Seleccioná método de pago</option>
+                                <option value="transferencia">Transferencia Bancaria</option>
+                            </select>
+                        </div>
+                        
+                        <div id="paymentDetails" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
+                            <!-- Se oculta porque la transferencia es el único método -->
                         </div>
                         
                         <div class="btn-group">
@@ -1406,11 +1622,65 @@
                     </div>
                 </div>
                 
+                <!-- BUDGETS PANEL -->
+                <div id="budgetsPanel" class="panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 15px;">
+                        <h3>💰 Mis Presupuestos</h3>
+                        <div class="btn-group" style="margin: 0;">
+                            <button id="newBudgetBtn" class="btn btn-primary">
+                                📝 Nuevo Presupuesto
+                            </button>
+                            <button id="exportBudgetsBtn" class="btn btn-secondary">
+                                📤 Exportar JSON
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-form-section">
+                        <div class="filters">
+                            <div class="filter-group">
+                                <label class="form-label">Estado</label>
+                                <select id="budgetFilterStatus" class="form-select">
+                                    <option value="">Todos</option>
+                                    <option value="borrador">Borrador</option>
+                                    <option value="enviado">Enviado</option>
+                                    <option value="aceptado">Aceptado</option>
+                                    <option value="rechazado">Rechazado</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="form-label">Cliente</label>
+                                <input type="text" id="budgetFilterClient" class="form-input" placeholder="Buscar por cliente">
+                            </div>
+                            <div class="filter-group">
+                                <label class="form-label">Desde</label>
+                                <input type="date" id="budgetFilterFrom" class="form-input">
+                            </div>
+                            <div class="filter-group">
+                                <label class="form-label">Hasta</label>
+                                <input type="date" id="budgetFilterTo" class="form-input">
+                            </div>
+                            <div class="filter-group">
+                                <button id="applyBudgetFilters" class="btn btn-secondary" style="margin-top: 1.5rem;">
+                                    🔍 Filtrar
+                                </button>
+                                <button id="resetBudgetFilters" class="btn btn-danger" style="margin-top: 1.5rem;">
+                                    🔄 Limpiar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="budgetsList">
+                            <!-- Lista de presupuestos se cargará aquí -->
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- RATINGS PANEL -->
                 <div id="ratingsPanel" class="panel">
                     <div class="ratings-container">
                         <h3>⭐ Mis Calificaciones</h3>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 1.5rem 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 1.5rem 0; flex-wrap: wrap; gap: 20px;">
                             <div>
                                 <div style="font-size: 2rem; font-weight: 700; color: var(--primary);" id="averageRating">0.0</div>
                                 <div style="color: var(--gray);">Rating promedio</div>
@@ -1427,17 +1697,163 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="profile-form-section">
+                        <h3>📊 Distribución de Calificaciones</h3>
+                        <div id="ratingsDistribution" style="margin-top: 1.5rem;">
+                            <!-- Se generará dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- STATS PANEL -->
+                <div id="statsPanel" class="panel">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Estadísticas Detalladas</h3>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="statsRanking">0</div>
+                            <div class="stat-label">🏆 Puntaje de ranking</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statsAverageRating">0.0</div>
+                            <div class="stat-label">⭐ Rating promedio</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statsTotalRatings">0</div>
+                            <div class="stat-label">📝 Calificaciones</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statsCompletedJobs">0</div>
+                            <div class="stat-label">✅ Trabajos completados</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statsExperience">0</div>
+                            <div class="stat-label">📅 Años de experiencia</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statsResponseTime">0h</div>
+                            <div class="stat-label">🚀 Tiempo de respuesta</div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-form-section">
+                        <h3>📈 Historial del Ranking</h3>
+                        <div id="rankingHistory" style="margin-top: 1.5rem;">
+                            <div style="text-align: center; padding: 2rem; color: var(--gray);">
+                                No hay historial de ranking disponible
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-form-section">
+                        <h3>🎯 Comparativa con Promedios</h3>
+                        <div id="comparisonStats" style="margin-top: 1.5rem;">
+                            <!-- Se generará dinámicamente -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- MOBILE INSTALL BANNER -->
-    <div class="mobile-install-banner" id="mobileInstallBanner">
-        <span>📲 Instalar TecniYa Pro en tu teléfono</span>
-        <button onclick="suggestInstallation()" class="btn btn-sm">Instalar</button>
-        <button onclick="hideInstallBanner()" class="btn btn-sm" style="background: transparent; color: white;">✕</button>
+    <!-- MODAL PARA PRESUPUESTOS -->
+    <div id="budgetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="budgetModalTitle">Nuevo Presupuesto</h3>
+                <button class="modal-close" onclick="closeBudgetModal()">&times;</button>
+            </div>
+            
+            <form id="budgetForm">
+                <input type="hidden" id="budgetId">
+                
+                <div class="form-group">
+                    <label class="form-label">Cliente (Nombre y Teléfono) *</label>
+                    <input type="text" id="budgetClient" class="form-input" 
+                           placeholder="Ej: Juan Pérez - 3411234567" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Descripción del Trabajo *</label>
+                    <textarea id="budgetDescription" class="form-textarea" 
+                              placeholder="Describí el trabajo a realizar..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Items del Presupuesto</label>
+                    <div id="budgetItems">
+                        <!-- Items dinámicos se agregarán aquí -->
+                    </div>
+                    <button type="button" id="addItemBtn" class="btn btn-secondary">
+                        ➕ Agregar Item
+                    </button>
+                </div>
+                
+                <div id="budgetTotal" class="total-row">
+                    Total: $<span id="budgetTotalAmount">0.00</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Notas Adicionales</label>
+                    <textarea id="budgetNotes" class="form-textarea" 
+                              placeholder="Notas adicionales, condiciones de pago, garantía..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Estado *</label>
+                    <select id="budgetStatus" class="form-select" required>
+                        <option value="borrador">Borrador</option>
+                        <option value="enviado">Enviado</option>
+                        <option value="aceptado">Aceptado</option>
+                        <option value="rechazado">Rechazado</option>
+                    </select>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">
+                        💾 Guardar Presupuesto
+                    </button>
+                    <button type="button" id="generatePdfBtn" class="btn btn-success">
+                        📄 Generar PDF
+                    </button>
+                    <button type="button" id="sendWhatsAppBtn" class="btn btn-secondary">
+                        💬 Enviar por WhatsApp
+                    </button>
+                    <button type="button" onclick="closeBudgetModal()" class="btn btn-danger">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+    
+    <!-- MODAL PARA VISTA PREVIA PDF -->
+    <div id="pdfPreviewModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Vista Previa del PDF</h3>
+                <button class="modal-close" onclick="closePdfPreview()">&times;</button>
+            </div>
+            <div id="pdfPreviewContent" style="padding: 1rem; background: white; border-radius: 8px;">
+                <!-- Vista previa del PDF se generará aquí -->
+            </div>
+            <div class="btn-group" style="margin-top: 2rem;">
+                <button id="downloadPdfBtn" class="btn btn-primary">
+                    ⬇️ Descargar PDF
+                </button>
+                <button id="printPdfBtn" class="btn btn-secondary">
+                    🖨️ Imprimir
+                </button>
+                <button onclick="closePdfPreview()" class="btn btn-danger">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- BOTÓN INSTALAR PWA -->
+    <button id="installPWA" class="pwa-install-btn" style="display: none;">📱</button>
     
     <!-- LOADER GLOBAL -->
     <div id="globalLoader" class="loader">
@@ -1466,19 +1882,17 @@
         // VARIABLES GLOBALES
         // ============================================
         let auth, db, currentUser, professionalId = null, professionalData = null;
+        let budgets = [];
         let featuredHistory = [];
+        let deferredPrompt = null;
         
-        // Precios configurados para destacados - CORREGIDO
+        // Precios CORREGIDOS para destacados (solo transferencia)
         const FEATURED_PRICES = {
-            1: { price: 5000, label: "1 mes" },
-            2: { price: 9000, label: "2 meses (promo)" },
-            3: { price: 13000, label: "3 meses (promo)" },
-            6: { price: 24000, label: "6 meses (promo)" },
-            12: { price: 45000, label: "12 meses (promo)" }
+            1: { price: 5000, label: "1 mes", promo: false },
+            3: { price: 12500, label: "3 meses", promo: true },
+            6: { price: 22500, label: "6 meses", promo: true },
+            12: { price: 40000, label: "12 meses", promo: true, enableCertifications: true }
         };
-        
-        // Precio proporcional para meses adicionales
-        const PRO_PROMO_PRICE_PER_MONTH = 3750; // 45000 / 12
         
         let selectedFeaturedPlan = null;
 
@@ -1503,11 +1917,11 @@
                 // Cargar planes destacados
                 loadFeaturedPlans();
                 
+                // Configurar PWA
+                setupPWA();
+                
                 // Verificar estado de autenticación
                 checkAuthState();
-                
-                // Mostrar banner de instalación en móviles
-                checkMobileAndSuggestInstall();
                 
             } catch (error) {
                 console.error('Error inicializando:', error);
@@ -1516,36 +1930,46 @@
         });
 
         // ============================================
-        // FUNCIONES DE INSTALACIÓN PARA MÓVILES
+        // CONFIGURACIÓN PWA
         // ============================================
-        function checkMobileAndSuggestInstall() {
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            if (isMobile) {
+        function setupPWA() {
+            // Mostrar banner de instalación
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Mostrar banner después de 5 segundos
                 setTimeout(() => {
-                    document.getElementById('mobileInstallBanner').style.display = 'flex';
-                }, 3000);
-            }
-        }
+                    if (deferredPrompt && !isAppInstalled()) {
+                        document.getElementById('installBanner').style.display = 'block';
+                        document.getElementById('installPWA').style.display = 'flex';
+                    }
+                }, 5000);
+            });
 
-        function suggestInstallation() {
-            if (window.navigator.standalone) {
-                showMessage('loginMessage', '✅ La aplicación ya está instalada', 'success');
-                return;
-            }
-            
-            if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-                alert('Para instalar TecniYa Pro en iOS:\n1. Toca el botón Compartir\n2. Desplázate hacia abajo\n3. Selecciona "Agregar a pantalla de inicio"');
-            } else if (/Android/.test(navigator.userAgent)) {
-                alert('Para instalar TecniYa Pro en Android:\n1. Toca el menú (tres puntos)\n2. Selecciona "Agregar a pantalla de inicio"\n3. Confirma la instalación');
-            } else {
-                alert('En Chrome o Edge:\n1. Haz clic en el icono de instalación (⏬) en la barra de direcciones\n2. Selecciona "Instalar TecniYa Pro"');
-            }
-            
-            hideInstallBanner();
-        }
+            // Botón de instalación
+            document.getElementById('installPWA')?.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        document.getElementById('installBanner').style.display = 'none';
+                        document.getElementById('installPWA').style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                }
+            });
 
-        function hideInstallBanner() {
-            document.getElementById('mobileInstallBanner').style.display = 'none';
+            // Cerrar banner
+            document.getElementById('closeInstallBanner')?.addEventListener('click', () => {
+                document.getElementById('installBanner').style.display = 'none';
+            });
+
+            // Verificar si ya está instalado
+            function isAppInstalled() {
+                return window.matchMedia('(display-mode: standalone)').matches || 
+                       window.navigator.standalone === true;
+            }
         }
 
         // ============================================
@@ -1573,13 +1997,23 @@
             document.getElementById('photoUrl')?.addEventListener('input', updatePhotoPreview);
             document.getElementById('profileProvincia')?.addEventListener('change', handleProvinciaChange);
             
-            // Featured system
+            // Featured system - CORREGIDO
             document.getElementById('activateFeaturedBtn')?.addEventListener('click', activateFeatured);
             document.getElementById('extendFeaturedBtn')?.addEventListener('click', extendFeatured);
+            document.getElementById('paymentMethod')?.addEventListener('change', showPaymentDetails);
             document.getElementById('applyFeaturedFilters')?.addEventListener('click', loadFeaturedHistory);
             
-            // Quitar campo de trabajos realizados (ahora es automático)
-            document.getElementById('profileCompletedJobs')?.remove();
+            // Budgets system
+            document.getElementById('newBudgetBtn')?.addEventListener('click', () => openBudgetModal());
+            document.getElementById('exportBudgetsBtn')?.addEventListener('click', exportBudgetsToJson);
+            document.getElementById('applyBudgetFilters')?.addEventListener('click', loadBudgets);
+            document.getElementById('resetBudgetFilters')?.addEventListener('click', resetBudgetFilters);
+            document.getElementById('addItemBtn')?.addEventListener('click', addBudgetItem);
+            document.getElementById('budgetForm')?.addEventListener('submit', saveBudget);
+            document.getElementById('generatePdfBtn')?.addEventListener('click', generateBudgetPdf);
+            document.getElementById('sendWhatsAppBtn')?.addEventListener('click', sendBudgetViaWhatsApp);
+            document.getElementById('downloadPdfBtn')?.addEventListener('click', downloadBudgetPdf);
+            document.getElementById('printPdfBtn')?.addEventListener('click', printBudgetPdf);
         }
 
         // ============================================
@@ -1599,11 +2033,16 @@
 
         async function handleLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
+            const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             
             if (!email || !password) {
                 showMessage('loginMessage', 'Ingresá email y contraseña', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('loginMessage', 'La contraseña debe tener al menos 6 caracteres', 'error');
                 return;
             }
             
@@ -1618,6 +2057,8 @@
                 if (error.code === 'auth/user-not-found') message = 'Usuario no encontrado';
                 else if (error.code === 'auth/wrong-password') message = 'Contraseña incorrecta';
                 else if (error.code === 'auth/invalid-email') message = 'Email inválido';
+                else if (error.code === 'auth/user-disabled') message = 'Usuario deshabilitado';
+                else if (error.code === 'auth/too-many-requests') message = 'Demasiados intentos. Intentá más tarde';
                 showMessage('loginMessage', '❌ ' + message, 'error');
             } finally {
                 showGlobalLoader(false);
@@ -1627,12 +2068,12 @@
         async function handleRegister(e) {
             e.preventDefault();
             
-            const name = document.getElementById('registerName').value;
-            const phone = document.getElementById('registerPhone').value;
-            const email = document.getElementById('registerEmail').value;
+            const name = document.getElementById('registerName').value.trim();
+            const phone = document.getElementById('registerPhone').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value;
             
-            // Validaciones
+            // Validaciones mejoradas
             if (!name || !phone || !email || !password) {
                 showMessage('loginMessage', 'Completá todos los campos', 'error');
                 return;
@@ -1643,14 +2084,27 @@
                 return;
             }
             
-            if (!/^\d{10,13}$/.test(phone)) {
-                showMessage('loginMessage', 'Teléfono inválido. Ejemplo: 5493411234567', 'error');
+            if (!/^\d{10}$/.test(phone)) {
+                showMessage('loginMessage', 'Teléfono inválido. Debe tener 10 dígitos sin 0 y sin 15. Ej: 3417558966', 'error');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showMessage('loginMessage', 'Email inválido', 'error');
                 return;
             }
             
             showGlobalLoader(true);
             
             try {
+                // Verificar si el email ya existe
+                const methods = await auth.fetchSignInMethodsForEmail(email);
+                if (methods.length > 0) {
+                    showMessage('loginMessage', '❌ Este email ya está registrado', 'error');
+                    showGlobalLoader(false);
+                    return;
+                }
+                
                 // Crear usuario
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 
@@ -1671,6 +2125,7 @@
                     rubros: [],
                     certifications: [],
                     experienceYears: 0,
+                    completedJobs: 0,
                     avgResponseTime: null,
                     active: true,
                     profileCompleted: false,
@@ -1679,10 +2134,9 @@
                     rankingScore: 0,
                     averageRating: 0,
                     totalRatings: 0,
+                    certificationsEnabled: false,
                     lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    // Campo automático para trabajos completados
-                    completedJobs: 0 // Inicializado en 0, se actualizará automáticamente
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
                 professionalId = professionalRef.id;
@@ -1697,10 +2151,16 @@
                 if (error.code === 'auth/email-already-in-use') message = 'El email ya está registrado';
                 else if (error.code === 'auth/invalid-email') message = 'Email inválido';
                 else if (error.code === 'auth/weak-password') message = 'Contraseña demasiado débil';
+                else if (error.code === 'auth/network-request-failed') message = 'Error de conexión. Verificá tu internet';
                 showMessage('loginMessage', '❌ ' + message, 'error');
             } finally {
                 showGlobalLoader(false);
             }
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
         }
 
         function handleLogout() {
@@ -1752,8 +2212,12 @@
             } else if (tabId === 'featured') {
                 loadFeaturedStatus();
                 loadFeaturedHistory();
+            } else if (tabId === 'budgets') {
+                loadBudgets();
             } else if (tabId === 'ratings') {
                 loadRatings();
+            } else if (tabId === 'stats') {
+                loadDetailedStats();
             }
         }
 
@@ -1779,15 +2243,6 @@
                 professionalId = doc.id;
                 professionalData = { id: doc.id, ...doc.data() };
                 
-                // Verificar si el perfil está completo
-                if (!professionalData.profileCompleted) {
-                    // Verificar qué campos faltan
-                    const missingFields = checkMissingProfileFields();
-                    if (missingFields.length > 0) {
-                        showMessage('profileMessage', `Completá estos campos: ${missingFields.join(', ')}`, 'error');
-                    }
-                }
-                
                 // Actualizar UI
                 updateProfileUI();
                 updateUserInfo();
@@ -1801,34 +2256,6 @@
             } finally {
                 showGlobalLoader(false);
             }
-        }
-
-        function checkMissingProfileFields() {
-            if (!professionalData) return [];
-            
-            const requiredFields = [
-                { field: 'name', label: 'Nombre' },
-                { field: 'phone', label: 'Teléfono' },
-                { field: 'photoUrl', label: 'Foto' },
-                { field: 'provincia', label: 'Provincia' },
-                { field: 'ciudad', label: 'Ciudad' },
-                { field: 'zonas', label: 'Zonas', check: (val) => val && val.length > 0 },
-                { field: 'rubros', label: 'Rubros', check: (val) => val && val.length > 0 },
-                { field: 'bio', label: 'Descripción' },
-                { field: 'experienceYears', label: 'Experiencia' }
-            ];
-            
-            const missing = [];
-            requiredFields.forEach(({ field, label, check }) => {
-                const value = professionalData[field];
-                if (check) {
-                    if (!check(value)) missing.push(label);
-                } else if (!value) {
-                    missing.push(label);
-                }
-            });
-            
-            return missing;
         }
 
         function updateUserInfo() {
@@ -1855,9 +2282,23 @@
             document.getElementById('profileBio').value = professionalData.bio || '';
             document.getElementById('photoUrl').value = professionalData.photoUrl || '';
             document.getElementById('profileExperience').value = professionalData.experienceYears || 0;
+            document.getElementById('profileCompletedJobs').value = professionalData.completedJobs || 0;
             document.getElementById('profileResponseTime').value = professionalData.avgResponseTime || '';
             document.getElementById('profileCertifications').value = professionalData.certifications ? professionalData.certifications.join(', ') : '';
             document.getElementById('profileZonas').value = professionalData.zonas ? professionalData.zonas.join(', ') : '';
+            
+            // Habilitar/deshabilitar certificaciones según admin
+            const certContainer = document.getElementById('certificationsContainer');
+            const certInput = document.getElementById('profileCertifications');
+            if (professionalData.certificationsEnabled) {
+                certInput.disabled = false;
+                certInput.placeholder = "Ej: Gasista Matriculado, Electricista Certificado";
+                certContainer.classList.remove('certification-disabled');
+            } else {
+                certInput.disabled = true;
+                certInput.placeholder = "Las certificaciones se habilitan desde el panel de administración";
+                certContainer.classList.add('certification-disabled');
+            }
             
             // Ubicación
             if (professionalData.provincia) {
@@ -1930,7 +2371,7 @@
         }
 
         // ============================================
-        // SISTEMA DE RANKING - CORREGIDO
+        // SISTEMA DE RANKING
         // ============================================
         async function loadRankingData() {
             if (!professionalId) return;
@@ -2008,12 +2449,12 @@
                     else if (professionalData.avgResponseTime < 48) score += 4;
                 }
                 
-                // 4. TRABAJOS COMPLETADOS (10 puntos) - AHORA AUTOMÁTICO
+                // 4. TRABAJOS COMPLETADOS (10 puntos)
                 if (professionalData.completedJobs) {
                     score += Math.min(professionalData.completedJobs * 0.1, 10);
                 }
                 
-                // 5. CERTIFICACIONES (10 puntos) - HABILITADO POR ADMIN
+                // 5. CERTIFICACIONES (10 puntos)
                 if (professionalData.certifications && professionalData.certifications.length > 0) {
                     score += Math.min(professionalData.certifications.length * 2, 10);
                 }
@@ -2195,18 +2636,13 @@
                 document.getElementById('featuredProgress').style.width = `${(featuredFactor / 5) * 100}%`;
             }
             
-            // Actualizar ranking en ciudad y rubro
-            if (professionalData.cityPosition) {
-                document.getElementById('cityRank').textContent = `#${professionalData.cityPosition}`;
-            }
-            if (professionalData.rubroPosition) {
-                document.getElementById('rubroRank').textContent = `#${professionalData.rubroPosition}`;
-            }
-            
-            if (document.getElementById('rankingCity')) {
+            // Actualizar ranking en ciudad y rubro (placeholder por ahora)
+            if (document.getElementById('cityRank')) {
+                document.getElementById('cityRank').textContent = '#0';
                 document.getElementById('rankingCity').textContent = professionalData.ciudad || 'Tu Ciudad';
             }
-            if (document.getElementById('rankingRubro')) {
+            if (document.getElementById('rubroRank')) {
+                document.getElementById('rubroRank').textContent = '#0';
                 document.getElementById('rankingRubro').textContent = professionalData.rubros && professionalData.rubros.length > 0 
                     ? professionalData.rubros[0] 
                     : 'Tu Rubro';
@@ -2238,29 +2674,21 @@
             let html = '';
             
             Object.entries(FEATURED_PRICES).forEach(([months, data]) => {
-                let priceText = `$${data.price}`;
-                let promoText = '';
-                
-                // Calcular precio proporcional para meses adicionales
-                if (parseInt(months) > 1) {
-                    const pricePerMonth = data.price / parseInt(months);
-                    promoText = `<div style="font-size: 0.9rem; color: #28a745; margin-top: 5px;">
-                        💰 $${Math.round(pricePerMonth)}/mes (promo)
-                    </div>`;
-                }
-                
+                const pricePerMonth = Math.round(data.price / months);
                 html += `
                     <div class="featured-plan" data-months="${months}" onclick="selectFeaturedPlan(${months})">
                         <div class="featured-plan-title">${data.label}</div>
-                        <div class="featured-plan-price">${priceText}</div>
-                        ${promoText}
+                        <div class="featured-plan-price">$${data.price.toLocaleString('es-AR')}</div>
+                        <small style="color: ${data.promo ? 'var(--secondary)' : 'var(--gray)'};">
+                            ${data.promo ? `💰 $${pricePerMonth.toLocaleString('es-AR')}/mes (PROMO)` : `$${pricePerMonth.toLocaleString('es-AR')}/mes`}
+                        </small>
                         <ul class="featured-plan-features">
                             <li>✅ Aparecé primero en búsquedas</li>
                             <li>✅ Badge especial en tu perfil</li>
                             <li>✅ +5 puntos en el ranking</li>
                             <li>✅ Mayor visibilidad</li>
                             <li>✅ Más clientes potenciales</li>
-                            ${parseInt(months) === 12 ? '<li>✅ Habilita certificaciones</li>' : ''}
+                            ${data.enableCertifications ? '<li><strong>✅ Habilita certificaciones</strong></li>' : ''}
                         </ul>
                         <button class="btn btn-primary btn-sm">
                             Seleccionar
@@ -2285,23 +2713,9 @@
                 selectedFeaturedPlan = months;
                 document.getElementById('activateFeaturedBtn').disabled = false;
                 
-                // Mostrar datos de transferencia
-                document.getElementById('transferenciaDetails').style.display = 'block';
-                
-                // Mostrar precio proporcional si es más de 1 mes
-                const price = FEATURED_PRICES[months].price;
-                if (months > 1) {
-                    const pricePerMonth = Math.round(price / months);
-                    const promoPrice = document.createElement('div');
-                    promoPrice.style.color = '#28a745';
-                    promoPrice.style.marginTop = '10px';
-                    promoPrice.innerHTML = `💰 <strong>Promoción:</strong> $${pricePerMonth}/mes ($${price} total)`;
-                    
-                    // Agregar al plan seleccionado
-                    const existingPromo = selectedPlan.querySelector('.promo-price');
-                    if (existingPromo) existingPromo.remove();
-                    promoPrice.className = 'promo-price';
-                    selectedPlan.appendChild(promoPrice);
+                // Mostrar mensaje sobre certificaciones si es plan de 12 meses
+                if (months == 12) {
+                    showMessage('profileMessage', '🌟 El plan de 12 meses habilita las certificaciones en tu perfil', 'info');
                 }
             }
         }
@@ -2358,20 +2772,6 @@
                         // Mostrar botón de extender
                         activateBtn.style.display = 'none';
                         extendBtn.style.display = 'inline-flex';
-                        
-                        // Mostrar si habilita certificaciones (12 meses)
-                        const monthsFeatured = Math.ceil(totalDays / 30);
-                        if (monthsFeatured >= 12) {
-                            featuredInfo.innerHTML += `
-                                <div style="margin-top: 1rem; padding: 1rem; background: #d4edda; border-radius: 8px; border-left: 4px solid #28a745;">
-                                    <strong>✅ Certificaciones habilitadas</strong>
-                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
-                                        Tu destacado de 12 meses te habilita para cargar certificaciones.
-                                        Contactá al administrador para que las habilite en tu perfil.
-                                    </p>
-                                </div>
-                            `;
-                        }
                         
                     } else {
                         // Destacado expirado
@@ -2478,8 +2878,8 @@
                         <tr>
                             <td>${date}</td>
                             <td>${transaction.duration} meses</td>
-                            <td>${transaction.paymentMethod || 'Transferencia'}</td>
-                            <td>$${transaction.amount || '0'}</td>
+                            <td>${transaction.paymentMethod || '-'}</td>
+                            <td>$${(transaction.amount || '0').toLocaleString('es-AR')}</td>
                             <td>${statusBadge}</td>
                             <td>${expires}</td>
                         </tr>
@@ -2508,8 +2908,14 @@
                 return;
             }
             
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            if (!paymentMethod) {
+                showMessage('profileMessage', 'Seleccioná un método de pago', 'error');
+                return;
+            }
+            
             const plan = FEATURED_PRICES[selectedFeaturedPlan];
-            if (!confirm(`¿Confirmás la activación del destacado por ${plan.label} por $${plan.price}?\n\nPAGO ÚNICAMENTE CON TRANSFERENCIA BANCARIA`)) {
+            if (!confirm(`¿Confirmás la activación del destacado por ${plan.label} por $${plan.price.toLocaleString('es-AR')}?`)) {
                 return;
             }
             
@@ -2533,16 +2939,24 @@
                     expiresAt: expiresAt
                 });
                 
-                showMessage('profileMessage', '✅ Solicitud de destacado creada. Realizá la transferencia y envía el comprobante.', 'success');
+                // Si es plan de 12 meses, habilitar certificaciones
+                if (selectedFeaturedPlan == 12) {
+                    await db.collection('professionals').doc(professionalId).update({
+                        certificationsEnabled: true
+                    });
+                    professionalData.certificationsEnabled = true;
+                    updateProfileUI();
+                }
                 
                 // Recargar estado
                 await loadFeaturedStatus();
                 await loadFeaturedHistory();
                 
+                showMessage('profileMessage', '✅ Solicitud de destacado enviada. Enviá el comprobante de transferencia a comprobantes@tecniya.com', 'success');
+                
                 // Resetear selección
                 selectedFeaturedPlan = null;
                 document.getElementById('activateFeaturedBtn').disabled = true;
-                document.getElementById('transferenciaDetails').style.display = 'none';
                 document.querySelectorAll('.featured-plan').forEach(plan => {
                     plan.classList.remove('selected');
                 });
@@ -2556,13 +2970,575 @@
         }
 
         function extendFeatured() {
-            // Enviar mensaje predefinido por WhatsApp
+            // Enviar mensaje de WhatsApp predefinido
             const phone = "3417558966";
-            const message = `Hola, soy ${professionalData.name} (ID: ${professionalId}). Quiero extender mi servicio destacado. Mi perfil: ${window.location.origin}`;
-            const encodedMessage = encodeURIComponent(message);
-            window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+            const message = `Hola, soy ${professionalData.name}. Quiero extender mi servicio destacado en TecniYa. Mi email: ${professionalData.email}`;
+            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function showPaymentDetails() {
+            const method = document.getElementById('paymentMethod').value;
+            const details = document.getElementById('paymentDetails');
             
-            showMessage('profileMessage', '📱 Abriendo WhatsApp para solicitar extensión', 'info');
+            if (!method) {
+                details.style.display = 'none';
+                return;
+            }
+            
+            details.style.display = 'block';
+        }
+
+        // ============================================
+        // SISTEMA DE PRESUPUESTOS
+        // ============================================
+        async function loadBudgets() {
+            if (!professionalId) return;
+            
+            showGlobalLoader(true);
+            
+            try {
+                let query = db.collection('budgets')
+                    .where('professionalId', '==', professionalId)
+                    .orderBy('createdAt', 'desc');
+                
+                // Aplicar filtros
+                const statusFilter = document.getElementById('budgetFilterStatus').value;
+                const clientFilter = document.getElementById('budgetFilterClient').value;
+                const fromFilter = document.getElementById('budgetFilterFrom').value;
+                const toFilter = document.getElementById('budgetFilterTo').value;
+                
+                if (statusFilter) {
+                    query = query.where('status', '==', statusFilter);
+                }
+                
+                if (clientFilter) {
+                    query = query.where('client', '>=', clientFilter)
+                               .where('client', '<=', clientFilter + '\uf8ff');
+                }
+                
+                if (fromFilter) {
+                    const fromDate = new Date(fromFilter);
+                    query = query.where('createdAt', '>=', fromDate);
+                }
+                
+                if (toFilter) {
+                    const toDate = new Date(toFilter);
+                    toDate.setHours(23, 59, 59, 999);
+                    query = query.where('createdAt', '<=', toDate);
+                }
+                
+                const snapshot = await query.get();
+                budgets = [];
+                const container = document.getElementById('budgetsList');
+                
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--gray);">
+                            📝 No hay presupuestos creados.
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                
+                snapshot.forEach(doc => {
+                    const budget = { id: doc.id, ...doc.data() };
+                    budgets.push(budget);
+                    
+                    const date = budget.createdAt ? 
+                        budget.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                    
+                    let statusBadge = '';
+                    switch(budget.status) {
+                        case 'borrador':
+                            statusBadge = '<span class="budget-status status-draft">BORRADOR</span>';
+                            break;
+                        case 'enviado':
+                            statusBadge = '<span class="budget-status status-sent">ENVIADO</span>';
+                            break;
+                        case 'aceptado':
+                            statusBadge = '<span class="budget-status status-accepted">ACEPTADO</span>';
+                            break;
+                        case 'rechazado':
+                            statusBadge = '<span class="budget-status status-rejected">RECHAZADO</span>';
+                            break;
+                    }
+                    
+                    html += `
+                        <div class="budget-card">
+                            <div class="budget-header">
+                                <div>
+                                    <h4 style="margin: 0;">${budget.client || 'Sin cliente'}</h4>
+                                    <p style="color: var(--gray); margin: 0.5rem 0;">${date}</p>
+                                </div>
+                                <div>
+                                    ${statusBadge}
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-top: 0.5rem;">
+                                        $${(budget.total || '0').toLocaleString('es-AR')}
+                                    </div>
+                                </div>
+                            </div>
+                            <p style="color: var(--dark); margin-bottom: 1rem;">${budget.description || ''}</p>
+                            <div class="budget-actions">
+                                <button onclick="editBudget('${doc.id}')" class="btn btn-primary btn-sm">
+                                    ✏️ Editar
+                                </button>
+                                <button onclick="generateBudgetPdf('${doc.id}')" class="btn btn-secondary btn-sm">
+                                    📄 PDF
+                                </button>
+                                <button onclick="sendBudgetViaWhatsApp('${doc.id}')" class="btn btn-success btn-sm">
+                                    💬 WhatsApp
+                                </button>
+                                <button onclick="deleteBudget('${doc.id}')" class="btn btn-danger btn-sm">
+                                    🗑️ Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error cargando presupuestos:', error);
+                document.getElementById('budgetsList').innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--danger);">
+                        ❌ Error cargando presupuestos
+                    </div>
+                `;
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        function resetBudgetFilters() {
+            document.getElementById('budgetFilterStatus').value = '';
+            document.getElementById('budgetFilterClient').value = '';
+            document.getElementById('budgetFilterFrom').value = '';
+            document.getElementById('budgetFilterTo').value = '';
+            loadBudgets();
+        }
+
+        function openBudgetModal(budgetId = null) {
+            const modal = document.getElementById('budgetModal');
+            const title = document.getElementById('budgetModalTitle');
+            const form = document.getElementById('budgetForm');
+            
+            if (budgetId) {
+                // Editar presupuesto existente
+                const budget = budgets.find(b => b.id === budgetId);
+                if (budget) {
+                    title.textContent = 'Editar Presupuesto';
+                    document.getElementById('budgetId').value = budgetId;
+                    document.getElementById('budgetClient').value = budget.client || '';
+                    document.getElementById('budgetDescription').value = budget.description || '';
+                    document.getElementById('budgetNotes').value = budget.notes || '';
+                    document.getElementById('budgetStatus').value = budget.status || 'borrador';
+                    
+                    // Cargar items
+                    const itemsContainer = document.getElementById('budgetItems');
+                    itemsContainer.innerHTML = '';
+                    if (budget.items && budget.items.length > 0) {
+                        budget.items.forEach(item => {
+                            addBudgetItem(item);
+                        });
+                    } else {
+                        addBudgetItem();
+                    }
+                    
+                    updateBudgetTotal();
+                }
+            } else {
+                // Nuevo presupuesto
+                title.textContent = 'Nuevo Presupuesto';
+                form.reset();
+                document.getElementById('budgetId').value = '';
+                document.getElementById('budgetItems').innerHTML = '';
+                addBudgetItem();
+                updateBudgetTotal();
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeBudgetModal() {
+            document.getElementById('budgetModal').style.display = 'none';
+        }
+
+        function addBudgetItem(itemData = null) {
+            const container = document.getElementById('budgetItems');
+            const itemId = Date.now() + Math.random();
+            
+            const itemHtml = `
+                <div class="item-row" id="item-${itemId}">
+                    <input type="text" class="form-input item-description" 
+                           placeholder="Descripción" value="${itemData?.description || ''}" 
+                           oninput="updateBudgetTotal()">
+                    <input type="number" class="form-input item-quantity" 
+                           placeholder="Cantidad" min="1" value="${itemData?.quantity || 1}" 
+                           oninput="updateBudgetTotal()">
+                    <input type="number" class="form-input item-price" 
+                           placeholder="Precio unitario" step="0.01" min="0" 
+                           value="${itemData?.price || 0}" oninput="updateBudgetTotal()">
+                    <input type="text" class="form-input item-total" 
+                           placeholder="Total" readonly value="${itemData?.total || '0.00'}">
+                    <button type="button" class="btn btn-danger btn-sm" 
+                            onclick="removeBudgetItem('${itemId}')">🗑️</button>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', itemHtml);
+            updateBudgetTotal();
+        }
+
+        function removeBudgetItem(itemId) {
+            const item = document.getElementById(`item-${itemId}`);
+            if (item) {
+                item.remove();
+                updateBudgetTotal();
+            }
+        }
+
+        function updateBudgetTotal() {
+            let total = 0;
+            document.querySelectorAll('.item-row').forEach(row => {
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                const itemTotal = quantity * price;
+                
+                row.querySelector('.item-total').value = itemTotal.toFixed(2);
+                total += itemTotal;
+            });
+            
+            document.getElementById('budgetTotalAmount').textContent = total.toFixed(2);
+        }
+
+        async function saveBudget(e) {
+            e.preventDefault();
+            
+            // Recolectar items
+            const items = [];
+            document.querySelectorAll('.item-row').forEach(row => {
+                const description = row.querySelector('.item-description').value;
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                const total = quantity * price;
+                
+                if (description) {
+                    items.push({
+                        description,
+                        quantity,
+                        price,
+                        total
+                    });
+                }
+            });
+            
+            if (items.length === 0) {
+                showMessage('profileMessage', 'Agregá al menos un item al presupuesto', 'error');
+                return;
+            }
+            
+            const budgetData = {
+                professionalId,
+                professionalName: professionalData.name,
+                client: document.getElementById('budgetClient').value,
+                description: document.getElementById('budgetDescription').value,
+                items,
+                notes: document.getElementById('budgetNotes').value,
+                status: document.getElementById('budgetStatus').value,
+                total: parseFloat(document.getElementById('budgetTotalAmount').textContent),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            showGlobalLoader(true);
+            
+            try {
+                const budgetId = document.getElementById('budgetId').value;
+                
+                if (budgetId) {
+                    // Actualizar presupuesto existente
+                    await db.collection('budgets').doc(budgetId).update(budgetData);
+                    showMessage('profileMessage', '✅ Presupuesto actualizado correctamente', 'success');
+                } else {
+                    // Crear nuevo presupuesto
+                    await db.collection('budgets').add(budgetData);
+                    showMessage('profileMessage', '✅ Presupuesto creado correctamente', 'success');
+                }
+                
+                closeBudgetModal();
+                loadBudgets();
+                
+            } catch (error) {
+                console.error('Error guardando presupuesto:', error);
+                showMessage('profileMessage', 'Error guardando presupuesto', 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        async function deleteBudget(budgetId) {
+            if (!confirm('¿Estás seguro de querer eliminar este presupuesto?')) return;
+            
+            showGlobalLoader(true);
+            
+            try {
+                await db.collection('budgets').doc(budgetId).delete();
+                showMessage('profileMessage', '✅ Presupuesto eliminado correctamente', 'success');
+                loadBudgets();
+            } catch (error) {
+                console.error('Error eliminando presupuesto:', error);
+                showMessage('profileMessage', 'Error eliminando presupuesto', 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        function editBudget(budgetId) {
+            openBudgetModal(budgetId);
+        }
+
+        function generateBudgetPdf(budgetId = null) {
+            let budget;
+            
+            if (budgetId) {
+                // Generar PDF de presupuesto específico
+                budget = budgets.find(b => b.id === budgetId);
+                if (!budget) return;
+            } else {
+                // Generar PDF del presupuesto actual en el modal
+                const client = document.getElementById('budgetClient').value;
+                const description = document.getElementById('budgetDescription').value;
+                const notes = document.getElementById('budgetNotes').value;
+                const total = document.getElementById('budgetTotalAmount').textContent;
+                
+                // Recolectar items
+                const items = [];
+                document.querySelectorAll('.item-row').forEach(row => {
+                    const description = row.querySelector('.item-description').value;
+                    const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                    const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                    const total = quantity * price;
+                    
+                    if (description) {
+                        items.push({ description, quantity, price, total });
+                    }
+                });
+                
+                budget = {
+                    client,
+                    description,
+                    items,
+                    notes,
+                    total,
+                    createdAt: new Date(),
+                    professionalName: professionalData.name
+                };
+            }
+            
+            // Crear contenido HTML para el PDF
+            const pdfContent = document.createElement('div');
+            pdfContent.style.padding = '20px';
+            pdfContent.style.fontFamily = 'Arial, sans-serif';
+            
+            const date = budget.createdAt?.toDate ? 
+                budget.createdAt.toDate().toLocaleDateString('es-AR') : 
+                new Date().toLocaleDateString('es-AR');
+            
+            pdfContent.innerHTML = `
+                <h1 style="color: #0a4fd8; text-align: center;">PRESUPUESTO</h1>
+                <div style="margin-bottom: 30px;">
+                    <p><strong>Profesional:</strong> ${budget.professionalName || professionalData.name}</p>
+                    <p><strong>Cliente:</strong> ${budget.client}</p>
+                    <p><strong>Fecha:</strong> ${date}</p>
+                    <p><strong>Descripción:</strong> ${budget.description}</p>
+                </div>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                    <thead>
+                        <tr style="background: #f8f9fa;">
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Descripción</th>
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Cantidad</th>
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Precio Unit.</th>
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${budget.items.map(item => `
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 10px;">${item.description}</td>
+                                <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item.quantity}</td>
+                                <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">$${item.price.toFixed(2)}</td>
+                                <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">$${item.total.toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: #f8f9fa; font-weight: bold;">
+                            <td colspan="3" style="border: 1px solid #ddd; padding: 10px; text-align: right;">TOTAL:</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">$${parseFloat(budget.total).toFixed(2)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                
+                ${budget.notes ? `
+                <div style="margin-bottom: 30px;">
+                    <h3>Notas:</h3>
+                    <p>${budget.notes}</p>
+                </div>
+                ` : ''}
+                
+                <div style="margin-top: 50px; padding-top: 20px; border-top: 2px solid #0a4fd8;">
+                    <p style="text-align: center; color: #666;">
+                        Presupuesto válido por 30 días.<br>
+                        Contacto: ${professionalData.phone} | ${professionalData.email}
+                    </p>
+                </div>
+            `;
+            
+            // Mostrar vista previa
+            document.getElementById('pdfPreviewContent').innerHTML = '';
+            document.getElementById('pdfPreviewContent').appendChild(pdfContent);
+            document.getElementById('pdfPreviewModal').style.display = 'flex';
+            
+            // Guardar referencia al budget para la descarga
+            window.currentPdfBudget = budget;
+        }
+
+        function closePdfPreview() {
+            document.getElementById('pdfPreviewModal').style.display = 'none';
+        }
+
+        function downloadBudgetPdf() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Obtener contenido HTML
+            const content = document.getElementById('pdfPreviewContent');
+            
+            // Generar PDF
+            doc.html(content, {
+                callback: function(doc) {
+                    doc.save(`Presupuesto-${window.currentPdfBudget.client}-${new Date().getTime()}.pdf`);
+                },
+                margin: [10, 10, 10, 10],
+                autoPaging: 'text',
+                x: 0,
+                y: 0,
+                width: 190,
+                windowWidth: 800
+            });
+        }
+
+        function printBudgetPdf() {
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Presupuesto - ${window.currentPdfBudget.client}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { border: 1px solid #ddd; padding: 10px; }
+                        th { background: #f8f9fa; }
+                        .total { font-weight: bold; background: #f8f9fa; }
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${document.getElementById('pdfPreviewContent').innerHTML}
+                    <div class="no-print" style="margin-top: 30px; text-align: center;">
+                        <button onclick="window.print()" style="padding: 10px 20px; background: #0a4fd8; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            🖨️ Imprimir
+                        </button>
+                        <button onclick="window.close()" style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                            Cerrar
+                        </button>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        function sendBudgetViaWhatsApp(budgetId = null) {
+            let budget;
+            
+            if (budgetId) {
+                budget = budgets.find(b => b.id === budgetId);
+            } else {
+                budget = window.currentPdfBudget;
+            }
+            
+            if (!budget) {
+                showMessage('profileMessage', 'No hay presupuesto para enviar', 'error');
+                return;
+            }
+            
+            // Extraer teléfono del cliente
+            let phone = '';
+            const clientText = budget.client || '';
+            const phoneMatch = clientText.match(/\d{10,13}/);
+            if (phoneMatch) {
+                phone = phoneMatch[0];
+            }
+            
+            if (!phone) {
+                showMessage('profileMessage', 'No se encontró teléfono en los datos del cliente', 'error');
+                return;
+            }
+            
+            // Crear mensaje
+            const date = budget.createdAt?.toDate ? 
+                budget.createdAt.toDate().toLocaleDateString('es-AR') : 
+                new Date().toLocaleDateString('es-AR');
+            
+            let message = `*PRESUPUESTO - ${budget.professionalName || professionalData.name}*\n\n`;
+            message += `*Cliente:* ${budget.client}\n`;
+            message += `*Fecha:* ${date}\n`;
+            message += `*Descripción:* ${budget.description}\n\n`;
+            message += `*ITEMS:*\n`;
+            
+            budget.items.forEach((item, index) => {
+                message += `${index + 1}. ${item.description} - ${item.quantity} x $${item.price} = $${item.total}\n`;
+            });
+            
+            message += `\n*TOTAL: $${parseFloat(budget.total).toFixed(2)}*\n\n`;
+            
+            if (budget.notes) {
+                message += `*Notas:* ${budget.notes}\n\n`;
+            }
+            
+            message += `Presupuesto válido por 30 días.\n`;
+            message += `Contacto: ${professionalData.phone}`;
+            
+            // Codificar mensaje para URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Abrir WhatsApp
+            window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+        }
+
+        function exportBudgetsToJson() {
+            if (budgets.length === 0) {
+                showMessage('profileMessage', 'No hay presupuestos para exportar', 'info');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(budgets, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `presupuestos-${professionalData.name}-${new Date().getTime()}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
         }
 
         // ============================================
@@ -2632,7 +3608,22 @@
         }
 
         // ============================================
-        // GESTIÓN DEL PERFIL
+        // ESTADÍSTICAS DETALLADAS
+        // ============================================
+        async function loadDetailedStats() {
+            if (!professionalData) return;
+            
+            // Actualizar estadísticas básicas
+            document.getElementById('statsRanking').textContent = professionalData.rankingScore || 0;
+            document.getElementById('statsAverageRating').textContent = professionalData.averageRating ? professionalData.averageRating.toFixed(1) : '0.0';
+            document.getElementById('statsTotalRatings').textContent = professionalData.totalRatings || 0;
+            document.getElementById('statsCompletedJobs').textContent = professionalData.completedJobs || 0;
+            document.getElementById('statsExperience').textContent = professionalData.experienceYears || 0;
+            document.getElementById('statsResponseTime').textContent = professionalData.avgResponseTime ? `${professionalData.avgResponseTime}h` : 'N/A';
+        }
+
+        // ============================================
+        // GESTIÓN DEL PERFIL - CORREGIDA
         // ============================================
         async function saveProfile(e) {
             e.preventDefault();
@@ -2654,6 +3645,11 @@
             
             if (!name || !phone || !provincia || !ciudad || zonas.length === 0 || !bio || !experienceYears || !photoUrl) {
                 showMessage('profileMessage', 'Completá todos los campos obligatorios (*)', 'error');
+                return;
+            }
+            
+            if (!/^\d{10}$/.test(phone)) {
+                showMessage('profileMessage', 'Teléfono inválido. Debe tener 10 dígitos sin 0 y sin 15. Ej: 3417558966', 'error');
                 return;
             }
             
@@ -2682,7 +3678,10 @@
                     bio,
                     experienceYears,
                     photoUrl,
-                    certifications: document.getElementById('profileCertifications').value.split(',').map(c => c.trim()).filter(c => c),
+                    certifications: professionalData.certificationsEnabled ? 
+                        document.getElementById('profileCertifications').value.split(',').map(c => c.trim()).filter(c => c) : 
+                        [],
+                    completedJobs: professionalData.completedJobs || 0, // Mantener valor actual (automático)
                     avgResponseTime: parseInt(document.getElementById('profileResponseTime').value) || null,
                     profileCompleted: true,
                     lastActive: firebase.firestore.FieldValue.serverTimestamp(),
@@ -2842,9 +3841,11 @@
         window.recalculateRanking = recalculateRanking;
         window.switchTab = switchTab;
         window.selectFeaturedPlan = selectFeaturedPlan;
-        window.extendFeatured = extendFeatured;
-        window.suggestInstallation = suggestInstallation;
-        window.hideInstallBanner = hideInstallBanner;
+        window.editBudget = editBudget;
+        window.deleteBudget = deleteBudget;
+        window.closeBudgetModal = closeBudgetModal;
+        window.closePdfPreview = closePdfPreview;
+        window.removeBudgetItem = removeBudgetItem;
     </script>
 </body>
 </html>
