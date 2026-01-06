@@ -3642,38 +3642,8 @@
                                 window.close();
                             }, 1000);
                         }
-                    </script>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-        }
 
-        function printBudgetPdf() {
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Presupuesto - ${window.currentPdfBudget?.client || 'Cliente'}</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 20px; }
-                        @media print {
-                            @page { margin: 20mm; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${document.getElementById('pdfPreviewContent')?.innerHTML || ''}
-                    <div style="margin-top: 30px; text-align: center;">
-                        <button onclick="window.print()" style="padding: 10px 20px; background: #0a4fd8; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                            🖨️ Imprimir
-                        </button>
-                        <button onclick="window.close()" style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
-                            Cerrar
-                        </button>
-                    </div>
-                </body>
-                </html>
+
             `);
             printWindow.document.close();
         }
