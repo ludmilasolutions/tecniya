@@ -686,8 +686,9 @@
                     .where('active', '==', true)
                     .where('position', '==', 'home')
                     .where('startDate', '<=', now)
-                    .orderBy('priority', 'desc')
-                    .limit(5)
+                    .orderBy('startDate', 'desc')  // Primero ordenar por startDate
+                    .orderBy('priority', 'desc')   // Luego por prioridad
+                    .limit(10)
                     .get();
                 
                 const container = document.getElementById('bannersContainer');
@@ -698,6 +699,7 @@
                 }
                 
                 let bannersHTML = '';
+                const currentDate = new Date();
                 
                 // Filtrar client-side los banners cuya fecha de fin sea mayor o igual a ahora
                 snapshot.forEach(doc => {
@@ -705,7 +707,7 @@
                     const endDate = banner.endDate ? banner.endDate.toDate() : null;
                     
                     // Verificar si el banner aún está vigente
-                    if (!endDate || endDate >= new Date()) {
+                    if (!endDate || endDate >= currentDate) {
                         bannersHTML += `
                             <div class="banner">
                                 <a href="${banner.link || '#'}" target="_blank" class="banner-link">
@@ -719,6 +721,18 @@
                 });
                 
                 container.innerHTML = bannersHTML;
+                
+                // Si no hay banners activos, mostrar uno por defecto
+                if (!bannersHTML) {
+                    container.innerHTML = `
+                        <div class="banner">
+                            <a href="#" class="banner-link">
+                                <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
+                                     alt="Banner Promocional">
+                            </a>
+                        </div>
+                    `;
+                }
                 
             } catch (error) {
                 console.error('Error cargando banners:', error);
