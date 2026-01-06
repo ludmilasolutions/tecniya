@@ -1468,12 +1468,13 @@
                                    min="0" max="50" required>
                         </div>
                         
-                        <!-- CERTIFICACIONES SOLO HABILITADAS POR ADMIN -->
+                        <!-- CERTIFICACIONES - AHORA SE HABILITAN CORRECTAMENTE -->
                         <div class="form-group" id="certificationsContainer">
-                            <label class="form-label">Certificaciones (habilitadas por administración)</label>
+                            <label class="form-label">Certificaciones</label>
                             <input type="text" id="profileCertifications" class="form-input" 
-                                   placeholder="Las certificaciones se habilitan desde el panel de administración" disabled>
-                            <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
+                                   placeholder="Ej: Gasista Matriculado, Electricista Certificado" 
+                                   value="" disabled>
+                            <small style="color: var(--gray); display: block; margin-top: 0.5rem;" id="certificationsMessage">
                                 Contactá al administrador para habilitar certificaciones
                             </small>
                         </div>
@@ -1885,6 +1886,7 @@
         let budgets = [];
         let featuredHistory = [];
         let deferredPrompt = null;
+        let professionalUnsubscribe = null; // Para el listener en tiempo real
         
         // Precios CORREGIDOS para destacados (solo transferencia)
         const FEATURED_PRICES = {
@@ -2134,7 +2136,7 @@
                     rankingScore: 0,
                     averageRating: 0,
                     totalRatings: 0,
-                    certificationsEnabled: false,
+                    certificationsEnabled: false, // Por defecto deshabilitado
                     lastActive: firebase.firestore.FieldValue.serverTimestamp(),
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
@@ -2165,6 +2167,11 @@
 
         function handleLogout() {
             if (confirm('¿Estás seguro de querer cerrar sesión?')) {
+                // Detener el listener en tiempo real
+                if (professionalUnsubscribe) {
+                    professionalUnsubscribe();
+                    professionalUnsubscribe = null;
+                }
                 auth.signOut();
             }
         }
@@ -2208,7 +2215,9 @@
             
             // Cargar datos específicos de la pestaña
             if (tabId === 'ranking') {
-                loadRankingData();
+                // Los datos ya se cargan en tiempo real
+            } else if (tabId === 'profile') {
+                // Los datos ya se cargan en tiempo real
             } else if (tabId === 'featured') {
                 loadFeaturedStatus();
                 loadFeaturedHistory();
@@ -2222,7 +2231,7 @@
         }
 
         // ============================================
-        // CARGA DE DATOS DEL PROFESIONAL
+        // CARGA DE DATOS DEL PROFESIONAL - CORREGIDO CON LISTENER
         // ============================================
         async function loadProfessionalProfile() {
             showGlobalLoader(true);
@@ -2241,11 +2250,9 @@
                 
                 const doc = snapshot.docs[0];
                 professionalId = doc.id;
-                professionalData = { id: doc.id, ...doc.data() };
                 
-                // Actualizar UI
-                updateProfileUI();
-                updateUserInfo();
+                // Configurar listener en tiempo real para el documento del profesional
+                setupProfessionalListener();
                 
                 // Cargar datos de ranking
                 await loadRankingData();
@@ -2256,6 +2263,49 @@
             } finally {
                 showGlobalLoader(false);
             }
+        }
+
+        function setupProfessionalListener() {
+            if (!professionalId) return;
+            
+            // Si ya hay un listener activo, removerlo
+            if (professionalUnsubscribe) {
+                professionalUnsubscribe();
+            }
+            
+            // Establecer listener en tiempo real
+            const professionalRef = db.collection('professionals').doc(professionalId);
+            
+            professionalUnsubscribe = professionalRef.onSnapshot((doc) => {
+                if (doc.exists) {
+                    professionalData = { id: doc.id, ...doc.data() };
+                    
+                    // Actualizar UI con los nuevos datos
+                    updateProfileUI();
+                    updateUserInfo();
+                    updateRankingUI();
+                    
+                    // Mostrar mensaje si las certificaciones fueron habilitadas
+                    if (professionalData.certificationsEnabled) {
+                        const certInput = document.getElementById('profileCertifications');
+                        const certContainer = document.getElementById('certificationsContainer');
+                        const certMessage = document.getElementById('certificationsMessage');
+                        
+                        if (certInput.disabled) {
+                            certInput.disabled = false;
+                            certInput.placeholder = "Ej: Gasista Matriculado, Electricista Certificado";
+                            certContainer.classList.remove('certification-disabled');
+                            certMessage.textContent = "Podés agregar tus certificaciones aquí";
+                            certMessage.style.color = "#28a745";
+                            
+                            // Mostrar mensaje de éxito
+                            showMessage('profileMessage', '✅ Las certificaciones han sido habilitadas por el administrador', 'success');
+                        }
+                    }
+                }
+            }, (error) => {
+                console.error('Error en listener del profesional:', error);
+            });
         }
 
         function updateUserInfo() {
@@ -2284,20 +2334,29 @@
             document.getElementById('profileExperience').value = professionalData.experienceYears || 0;
             document.getElementById('profileCompletedJobs').value = professionalData.completedJobs || 0;
             document.getElementById('profileResponseTime').value = professionalData.avgResponseTime || '';
-            document.getElementById('profileCertifications').value = professionalData.certifications ? professionalData.certifications.join(', ') : '';
             document.getElementById('profileZonas').value = professionalData.zonas ? professionalData.zonas.join(', ') : '';
             
-            // Habilitar/deshabilitar certificaciones según admin
-            const certContainer = document.getElementById('certificationsContainer');
+            // CERTIFICACIONES - CORREGIDO: Ahora se habilita correctamente
             const certInput = document.getElementById('profileCertifications');
+            const certContainer = document.getElementById('certificationsContainer');
+            const certMessage = document.getElementById('certificationsMessage');
+            
+            // Mostrar certificaciones existentes
+            certInput.value = professionalData.certifications ? professionalData.certifications.join(', ') : '';
+            
+            // Habilitar/deshabilitar según el estado
             if (professionalData.certificationsEnabled) {
                 certInput.disabled = false;
                 certInput.placeholder = "Ej: Gasista Matriculado, Electricista Certificado";
                 certContainer.classList.remove('certification-disabled');
+                certMessage.textContent = "Podés agregar tus certificaciones aquí";
+                certMessage.style.color = "#28a745";
             } else {
                 certInput.disabled = true;
                 certInput.placeholder = "Las certificaciones se habilitan desde el panel de administración";
                 certContainer.classList.add('certification-disabled');
+                certMessage.textContent = "Contactá al administrador para habilitar certificaciones";
+                certMessage.style.color = "#666";
             }
             
             // Ubicación
@@ -2379,18 +2438,8 @@
             showGlobalLoader(true);
             
             try {
-                const doc = await db.collection('professionals').doc(professionalId).get();
-                if (!doc.exists) return;
-                
-                professionalData = { id: doc.id, ...doc.data() };
-                
                 // Calcular ranking actual
                 await calculateRanking();
-                updateRankingUI();
-                
-                // Actualizar estadísticas
-                updateUserInfo();
-                updateProfileStatus();
                 
             } catch (error) {
                 console.error('Error cargando ranking:', error);
@@ -2514,12 +2563,6 @@
                 else if (rankingScore >= 70) rankingLevel = 'Plata';
                 else if (rankingScore >= 60) rankingLevel = 'Bronce';
                 else rankingLevel = 'Principiante';
-                
-                // Actualizar professionalData con los nuevos cálculos
-                professionalData.averageRating = averageRating;
-                professionalData.totalRatings = totalRatings;
-                professionalData.rankingScore = rankingScore;
-                professionalData.rankingLevel = rankingLevel;
                 
                 // Actualizar en la base de datos
                 await db.collection('professionals').doc(professionalId).update({
@@ -2654,7 +2697,6 @@
             
             try {
                 await calculateRanking();
-                updateRankingUI();
                 showMessage('profileMessage', '✅ Ranking recalculado correctamente', 'success');
             } catch (error) {
                 console.error('Error recalculando ranking:', error);
@@ -2944,8 +2986,7 @@
                     await db.collection('professionals').doc(professionalId).update({
                         certificationsEnabled: true
                     });
-                    professionalData.certificationsEnabled = true;
-                    updateProfileUI();
+                    // El listener actualizará automáticamente la UI
                 }
                 
                 // Recargar estado
@@ -3667,6 +3708,13 @@
             showGlobalLoader(true);
             
             try {
+                // Obtener certificaciones (solo si están habilitadas)
+                let certifications = [];
+                if (professionalData.certificationsEnabled) {
+                    const certInput = document.getElementById('profileCertifications').value;
+                    certifications = certInput.split(',').map(c => c.trim()).filter(c => c);
+                }
+                
                 // Preparar datos para actualizar
                 const updateData = {
                     name,
@@ -3678,10 +3726,8 @@
                     bio,
                     experienceYears,
                     photoUrl,
-                    certifications: professionalData.certificationsEnabled ? 
-                        document.getElementById('profileCertifications').value.split(',').map(c => c.trim()).filter(c => c) : 
-                        [],
-                    completedJobs: professionalData.completedJobs || 0, // Mantener valor actual (automático)
+                    certifications: certifications,
+                    completedJobs: professionalData.completedJobs || 0,
                     avgResponseTime: parseInt(document.getElementById('profileResponseTime').value) || null,
                     profileCompleted: true,
                     lastActive: firebase.firestore.FieldValue.serverTimestamp(),
@@ -3691,16 +3737,7 @@
                 // Actualizar en Firestore
                 await db.collection('professionals').doc(professionalId).update(updateData);
                 
-                // Actualizar professionalData local
-                professionalData = { ...professionalData, ...updateData };
-                
-                // Actualizar UI
-                updateProfileStatus();
-                updateUserInfo();
-                
-                // Recalcular ranking
-                await calculateRanking();
-                updateRankingUI();
+                // El listener actualizará automáticamente professionalData
                 
                 showMessage('profileMessage', '✅ Perfil guardado correctamente', 'success');
                 
@@ -3721,9 +3758,6 @@
                 });
                 
                 showMessage('profileMessage', '✅ Actividad actualizada', 'success');
-                
-                // Recalcular ranking
-                await loadRankingData();
                 
             } catch (error) {
                 console.error('Error actualizando actividad:', error);
