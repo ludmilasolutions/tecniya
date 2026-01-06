@@ -1141,7 +1141,7 @@
         auth = firebase.auth();
 
         // ============================================
-        // FUNCIÓN loadRankingConfig - AÑADIDA
+        // FUNCIÓN loadRankingConfig
         // ============================================
         async function loadRankingConfig() {
             try {
@@ -1172,7 +1172,7 @@
                     document.getElementById('adminPanel').style.display = 'block';
                     loadDashboard();
                     loadProvinciasSelect();
-                    loadRankingConfig(); // CORREGIDO: Ahora existe esta función
+                    loadRankingConfig();
                     loadConfig();
                 } else {
                     auth.signOut();
@@ -1609,7 +1609,7 @@
         }
 
         // ============================================
-        // TABLA DE RANKING - CORREGIDA (QUITAR DUPLICADO)
+        // TABLA DE RANKING
         // ============================================
         async function loadRankingTable() {
             showLoader();
@@ -1769,7 +1769,7 @@
         }
 
         // ============================================
-        // PROFESIONALES - CORREGIDA (SEPARAR PUNTAJE Y NIVEL)
+        // PROFESIONALES
         // ============================================
         async function loadProfessionals() {
             showLoader();
@@ -1913,7 +1913,7 @@
         }
 
         // ============================================
-        // CALIFICACIONES - AGREGAR LINK DE WHATSAPP
+        // CALIFICACIONES
         // ============================================
         async function loadRatings() {
             showLoader();
@@ -2011,7 +2011,6 @@
             }
         }
 
-        // Función para contactar cliente por WhatsApp
         function contactClientByWhatsApp(phone, professionalName) {
             const message = `Hola, soy de TecniYa. Estamos verificando tu calificación para el profesional ${professionalName}. ¿Podrías confirmar si realizaste el servicio?`;
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
@@ -2060,7 +2059,7 @@
         }
 
         // ============================================
-        // BANNERS - FUNCIONES MEJORADAS
+        // BANNERS - FUNCIONES MEJORADAS CON EDICIÓN
         // ============================================
         async function loadBanners() {
             showLoader();
@@ -2137,13 +2136,9 @@
             }
         }
 
-        // Función para mostrar/ocultar formulario de banner
-        function showBannerForm() {
+        // Función para mostrar formulario de banner (nuevo o edición)
+        async function showBannerForm(bannerId = null) {
             document.getElementById('bannerForm').style.display = 'block';
-            document.getElementById('bannerFormTitle').textContent = 'Nuevo Banner';
-            document.getElementById('bannerFormElement').reset();
-            document.getElementById('bannerId').value = '';
-            document.getElementById('bannerImagePreview').innerHTML = '';
             
             // Cargar provincias en el select
             const provinciaSelect = document.getElementById('bannerProvincia');
@@ -2154,6 +2149,106 @@
                 option.textContent = provincia;
                 provinciaSelect.appendChild(option);
             });
+            
+            // Cargar ciudades cuando se selecciona provincia
+            provinciaSelect.addEventListener('change', function() {
+                const ciudadSelect = document.getElementById('bannerCiudad');
+                ciudadSelect.innerHTML = '<option value="">Seleccioná ciudad</option>';
+                
+                if (this.value && provinciasCiudades[this.value]) {
+                    ciudadSelect.disabled = false;
+                    provinciasCiudades[this.value].forEach(ciudad => {
+                        const option = document.createElement('option');
+                        option.value = ciudad;
+                        option.textContent = ciudad;
+                        ciudadSelect.appendChild(option);
+                    });
+                } else {
+                    ciudadSelect.disabled = true;
+                }
+            });
+            
+            if (bannerId) {
+                // Modo edición
+                document.getElementById('bannerFormTitle').textContent = 'Editar Banner';
+                document.getElementById('bannerId').value = bannerId;
+                
+                // Cargar datos del banner
+                const doc = await db.collection('banners').doc(bannerId).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    
+                    // Llenar formulario con datos existentes
+                    document.getElementById('bannerTitle').value = data.title || '';
+                    document.getElementById('bannerLink').value = data.link || '';
+                    document.getElementById('bannerImageUrl').value = data.imageUrl || '';
+                    document.getElementById('bannerAmbito').value = data.ambito || 'nacional';
+                    document.getElementById('bannerPosition').value = data.position || 'home';
+                    document.getElementById('bannerStartDate').value = data.startDate ? data.startDate.toDate().toISOString().split('T')[0] : '';
+                    document.getElementById('bannerEndDate').value = data.endDate ? data.endDate.toDate().toISOString().split('T')[0] : '';
+                    document.getElementById('bannerPriority').value = data.priority || 5;
+                    document.getElementById('bannerActive').checked = data.active !== false;
+                    
+                    // Llenar ubicación
+                    if (data.ambito !== 'nacional' && data.provincia && data.provincia !== 'toda') {
+                        document.getElementById('bannerProvincia').value = data.provincia;
+                        
+                        // Disparar evento para cargar ciudades
+                        const event = new Event('change');
+                        document.getElementById('bannerProvincia').dispatchEvent(event);
+                        
+                        // Esperar un momento para cargar la ciudad
+                        setTimeout(() => {
+                            if (data.ciudad && data.ciudad !== 'toda') {
+                                document.getElementById('bannerCiudad').value = data.ciudad;
+                            }
+                        }, 100);
+                    }
+                    
+                    // Mostrar campos de ubicación si no es nacional
+                    toggleBannerLocation();
+                    
+                    // Limpiar checkboxes de rubros
+                    document.querySelectorAll('input[name="bannerRubros"]').forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    
+                    // Marcar rubros seleccionados
+                    if (data.rubros && Array.isArray(data.rubros)) {
+                        data.rubros.forEach(rubro => {
+                            const checkbox = document.querySelector(`input[name="bannerRubros"][value="${rubro}"]`);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                            }
+                        });
+                    }
+                    
+                    // Mostrar preview de imagen
+                    if (data.imageUrl) {
+                        const preview = document.getElementById('bannerImagePreview');
+                        preview.innerHTML = `
+                            <div class="banner-preview">
+                                <img src="${data.imageUrl}" class="banner-preview-img" 
+                                     onerror="this.src='https://via.placeholder.com/800x200/0a4fd8/ffffff?text=Imagen+no+disponible'">
+                            </div>
+                        `;
+                    }
+                }
+            } else {
+                // Modo nuevo
+                document.getElementById('bannerFormTitle').textContent = 'Nuevo Banner';
+                document.getElementById('bannerFormElement').reset();
+                document.getElementById('bannerId').value = '';
+                document.getElementById('bannerImagePreview').innerHTML = '';
+                
+                // Establecer fechas por defecto
+                const today = new Date();
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 30);
+                
+                document.getElementById('bannerStartDate').value = today.toISOString().split('T')[0];
+                document.getElementById('bannerEndDate').value = tomorrow.toISOString().split('T')[0];
+            }
         }
 
         function hideBannerForm() {
@@ -2211,7 +2306,6 @@
                 endDate: new Date(document.getElementById('bannerEndDate').value),
                 priority: parseInt(document.getElementById('bannerPriority').value),
                 active: document.getElementById('bannerActive').checked,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
             
@@ -2233,6 +2327,7 @@
                     showMessage('loginMessage', '✅ Banner actualizado correctamente', 'success');
                 } else {
                     // Crear nuevo banner
+                    bannerData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                     await db.collection('banners').add(bannerData);
                     showMessage('loginMessage', '✅ Banner creado correctamente', 'success');
                 }
@@ -2247,6 +2342,28 @@
                 hideLoader();
             }
         });
+
+        // Función para editar banner
+        window.editBanner = function(bannerId) {
+            showBannerForm(bannerId);
+        };
+
+        // Función para eliminar banner
+        window.deleteBanner = function(bannerId) {
+            if (confirm('¿Estás seguro de eliminar este banner? Esta acción no se puede deshacer.')) {
+                showLoader();
+                db.collection('banners').doc(bannerId).delete()
+                    .then(() => {
+                        hideLoader();
+                        showMessage('loginMessage', '✅ Banner eliminado correctamente', 'success');
+                        loadBanners();
+                    })
+                    .catch(error => {
+                        hideLoader();
+                        showMessage('loginMessage', '❌ Error eliminando banner: ' + error.message, 'error');
+                    });
+            }
+        };
 
         // ============================================
         // CONFIGURACIÓN
