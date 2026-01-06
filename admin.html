@@ -1867,6 +1867,10 @@
                         <td>
                             <div class="btn-group">
                                 <button onclick="viewProfessionalDetail('${id}')" class="btn btn-sm">👁 Ver</button>
+                                ${!data.certificationsEnabled ? 
+                                    `<button onclick="enableCertifications('${id}')" class="btn btn-info btn-sm">📜 Hab. Certificaciones</button>` : 
+                                    ''
+                                }
                                 ${featuredActive ? 
                                     `<button onclick="deactivateFeatured('${id}')" class="btn btn-warning btn-sm">⭐ Desactivar</button>` : 
                                     `<button onclick="activateFeatured('${id}')" class="btn btn-success btn-sm">⭐ Destacar</button>`
@@ -2520,6 +2524,7 @@
                         <p>${data.profileCompleted ? '✅ COMPLETO' : '❌ INCOMPLETO'}</p>
                         <p>${data.blocked ? '🚫 BLOQUEADO' : '✅ ACTIVO'}</p>
                         <p>${data.certified ? '✅ CERTIFICADO' : '❌ NO CERTIFICADO'}</p>
+                        <p>${data.certificationsEnabled ? '✅ Certificaciones habilitadas' : '❌ Certificaciones no habilitadas'}</p>
                     </div>
                     
                     <div style="background: ${featuredActive ? '#fff3cd' : '#f8f9fa'}; padding: 20px; border-radius: 12px;">
@@ -2593,16 +2598,46 @@
             if (!months || isNaN(months) || months < 1) return;
             
             const now = new Date();
-            const featuredUntil = new Date(now.setMonth(now.getMonth() + parseInt(months)));
+            const featuredUntil = new Date(now);
+            featuredUntil.setMonth(featuredUntil.getMonth() + parseInt(months));
             
-            await db.collection('professionals').doc(id).update({
+            // Si son 12 meses, habilitar certificaciones
+            const updateData = {
                 isFeatured: true,
                 featuredUntil: featuredUntil,
                 featuredAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            };
+            
+            if (parseInt(months) === 12) {
+                updateData.certificationsEnabled = true;
+                alert('🌟 ¡Plan de 12 meses activado! Las certificaciones han sido habilitadas para este profesional.');
+            }
+            
+            await db.collection('professionals').doc(id).update(updateData);
             
             loadProfessionals();
-            showMessage('loginMessage', '✅ Servicio destacado activado', 'success');
+            showMessage('loginMessage', `✅ Servicio destacado activado por ${months} meses${parseInt(months) === 12 ? ' (certificaciones habilitadas)' : ''}`, 'success');
+        };
+
+        window.enableCertifications = async function(id) {
+            if (confirm('¿Habilitar certificaciones para este profesional? Esto le permitirá agregar sus certificaciones en su panel.')) {
+                showLoader();
+                
+                try {
+                    await db.collection('professionals').doc(id).update({
+                        certificationsEnabled: true,
+                        certificationsUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    hideLoader();
+                    showMessage('loginMessage', '✅ Certificaciones habilitadas correctamente', 'success');
+                    loadProfessionals();
+                    
+                } catch (error) {
+                    hideLoader();
+                    showMessage('loginMessage', '❌ Error habilitando certificaciones: ' + error.message, 'error');
+                }
+            }
         };
 
         window.deactivateFeatured = async function(id) {
