@@ -12,10 +12,6 @@
     <!-- Preconnect -->
     <link rel="preconnect" href="https://www.gstatic.com">
     
-    <!-- jsPDF para PDFs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
     <!-- CSS -->
     <style>
         /* ===== VARIABLES & RESET ===== */
@@ -578,6 +574,32 @@
             gap: 10px;
         }
         
+        /* ===== TRANSFER DETAILS ===== */
+        .transfer-details {
+            background: #f1f6ff;
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .transfer-details h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .transfer-details p {
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+        
+        .transfer-details strong {
+            color: var(--dark);
+            min-width: 120px;
+            display: inline-block;
+        }
+        
         /* ===== BUDGETS SECTION ===== */
         .budget-card {
             background: white;
@@ -771,6 +793,26 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* ===== MOBILE OPTIMIZATION ===== */
+        .mobile-install-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            display: none;
+            z-index: 9999;
+        }
+        
+        .mobile-install-banner .btn {
+            background: white;
+            color: var(--primary);
+            margin-left: 10px;
+        }
+        
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .header-content {
@@ -818,6 +860,20 @@
             
             .modal-content {
                 padding: 1rem;
+            }
+            
+            .featured-plan {
+                padding: 1.5rem;
+            }
+            
+            .featured-plan-price {
+                font-size: 2rem;
+            }
+            
+            .mobile-install-banner {
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
         }
     </style>
@@ -933,14 +989,8 @@
                 <div class="tab" data-tab="featured">
                     ⭐ Destacados
                 </div>
-                <div class="tab" data-tab="budgets">
-                    💰 Presupuestos
-                </div>
                 <div class="tab" data-tab="ratings">
                     ⭐ Calificaciones
-                </div>
-                <div class="tab" data-tab="stats">
-                    📊 Estadísticas
                 </div>
                 <div class="tab logout-btn" id="logoutBtn">
                     🚪 Cerrar Sesión
@@ -1237,12 +1287,6 @@
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Trabajos completados (aproximado)</label>
-                            <input type="number" id="profileCompletedJobs" class="form-input" 
-                                   min="0" value="0">
-                        </div>
-                        
-                        <div class="form-group">
                             <label class="form-label">Tiempo promedio de respuesta (en horas)</label>
                             <input type="number" id="profileResponseTime" class="form-input" 
                                    min="0" placeholder="Ej: 4 (para menos de 4 horas)">
@@ -1287,37 +1331,22 @@
                     
                     <div class="profile-form-section">
                         <h3>🌟 Planes de Destacado</h3>
-                        <p style="color: var(--gray); margin-bottom: 2rem;">
-                            Seleccioná un plan para destacar tu perfil y aparecer primero en las búsquedas.
+                        <p style="color: var(--gray); margin-bottom: 1rem;">
+                            <strong>SOLO PAGO CON TRANSFERENCIA BANCARIA</strong>
                         </p>
                         
                         <div class="featured-plans" id="featuredPlansContainer">
                             <!-- Los planes se cargarán dinámicamente -->
                         </div>
                         
-                        <div class="form-group" style="margin-top: 2rem;">
-                            <label class="form-label">Método de Pago *</label>
-                            <select id="paymentMethod" class="form-select" required>
-                                <option value="">Seleccioná método de pago</option>
-                                <option value="transferencia">Transferencia Bancaria</option>
-                                <option value="mercadopago">Mercado Pago</option>
-                                <option value="efectivo">Efectivo</option>
-                                <option value="gratis">Gratis (Promoción/Admin)</option>
-                            </select>
-                        </div>
-                        
-                        <div id="paymentDetails" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
-                            <h4>Detalles del Pago</h4>
-                            <div id="transferenciaDetails" style="display: none;">
-                                <p><strong>CBU:</strong> 1234567890123456789012</p>
-                                <p><strong>Alias:</strong> TECNIYA.DESTACADOS</p>
-                                <p><strong>Titular:</strong> TecniYa S.R.L.</p>
-                                <p><strong>CUIT:</strong> 30-12345678-9</p>
-                                <p>Enviar comprobante a: comprobantes@tecniya.com</p>
-                            </div>
-                            <div id="mercadopagoDetails" style="display: none;">
-                                <p>Serás redirigido a Mercado Pago para completar el pago.</p>
-                            </div>
+                        <div class="transfer-details" id="transferenciaDetails" style="display: none;">
+                            <h4>📋 Datos para Transferencia Bancaria</h4>
+                            <p><strong>Titular:</strong> TecniYa S.R.L.</p>
+                            <p><strong>CUIT:</strong> 30-12345678-9</p>
+                            <p><strong>CBU:</strong> 1234567890123456789012</p>
+                            <p><strong>Alias:</strong> TECNIYA.DESTACADOS</p>
+                            <p><strong>Banco:</strong> Banco de la Nación Argentina</p>
+                            <p><strong>Enviar comprobante a:</strong> comprobantes@tecniya.com</p>
                         </div>
                         
                         <div class="btn-group">
@@ -1377,60 +1406,6 @@
                     </div>
                 </div>
                 
-                <!-- BUDGETS PANEL -->
-                <div id="budgetsPanel" class="panel">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                        <h3>💰 Mis Presupuestos</h3>
-                        <div class="btn-group" style="margin: 0;">
-                            <button id="newBudgetBtn" class="btn btn-primary">
-                                📝 Nuevo Presupuesto
-                            </button>
-                            <button id="exportBudgetsBtn" class="btn btn-secondary">
-                                📤 Exportar JSON
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="profile-form-section">
-                        <div class="filters">
-                            <div class="filter-group">
-                                <label class="form-label">Estado</label>
-                                <select id="budgetFilterStatus" class="form-select">
-                                    <option value="">Todos</option>
-                                    <option value="borrador">Borrador</option>
-                                    <option value="enviado">Enviado</option>
-                                    <option value="aceptado">Aceptado</option>
-                                    <option value="rechazado">Rechazado</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label class="form-label">Cliente</label>
-                                <input type="text" id="budgetFilterClient" class="form-input" placeholder="Buscar por cliente">
-                            </div>
-                            <div class="filter-group">
-                                <label class="form-label">Desde</label>
-                                <input type="date" id="budgetFilterFrom" class="form-input">
-                            </div>
-                            <div class="filter-group">
-                                <label class="form-label">Hasta</label>
-                                <input type="date" id="budgetFilterTo" class="form-input">
-                            </div>
-                            <div class="filter-group">
-                                <button id="applyBudgetFilters" class="btn btn-secondary" style="margin-top: 1.5rem;">
-                                    🔍 Filtrar
-                                </button>
-                                <button id="resetBudgetFilters" class="btn btn-danger" style="margin-top: 1.5rem;">
-                                    🔄 Limpiar
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div id="budgetsList">
-                            <!-- Lista de presupuestos se cargará aquí -->
-                        </div>
-                    </div>
-                </div>
-                
                 <!-- RATINGS PANEL -->
                 <div id="ratingsPanel" class="panel">
                     <div class="ratings-container">
@@ -1452,159 +1427,16 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="profile-form-section">
-                        <h3>📊 Distribución de Calificaciones</h3>
-                        <div id="ratingsDistribution" style="margin-top: 1.5rem;">
-                            <!-- Se generará dinámicamente -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- STATS PANEL -->
-                <div id="statsPanel" class="panel">
-                    <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Estadísticas Detalladas</h3>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value" id="statsRanking">0</div>
-                            <div class="stat-label">🏆 Puntaje de ranking</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="statsAverageRating">0.0</div>
-                            <div class="stat-label">⭐ Rating promedio</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="statsTotalRatings">0</div>
-                            <div class="stat-label">📝 Calificaciones</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="statsCompletedJobs">0</div>
-                            <div class="stat-label">✅ Trabajos completados</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="statsExperience">0</div>
-                            <div class="stat-label">📅 Años de experiencia</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="statsResponseTime">0h</div>
-                            <div class="stat-label">🚀 Tiempo de respuesta</div>
-                        </div>
-                    </div>
-                    
-                    <div class="profile-form-section">
-                        <h3>📈 Historial del Ranking</h3>
-                        <div id="rankingHistory" style="margin-top: 1.5rem;">
-                            <div style="text-align: center; padding: 2rem; color: var(--gray);">
-                                No hay historial de ranking disponible
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="profile-form-section">
-                        <h3>🎯 Comparativa con Promedios</h3>
-                        <div id="comparisonStats" style="margin-top: 1.5rem;">
-                            <!-- Se generará dinámicamente -->
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- MODAL PARA PRESUPUESTOS -->
-    <div id="budgetModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="budgetModalTitle">Nuevo Presupuesto</h3>
-                <button class="modal-close" onclick="closeBudgetModal()">&times;</button>
-            </div>
-            
-            <form id="budgetForm">
-                <input type="hidden" id="budgetId">
-                
-                <div class="form-group">
-                    <label class="form-label">Cliente (Nombre y Teléfono) *</label>
-                    <input type="text" id="budgetClient" class="form-input" 
-                           placeholder="Ej: Juan Pérez - 3411234567" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Descripción del Trabajo *</label>
-                    <textarea id="budgetDescription" class="form-textarea" 
-                              placeholder="Describí el trabajo a realizar..." required></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Items del Presupuesto</label>
-                    <div id="budgetItems">
-                        <!-- Items dinámicos se agregarán aquí -->
-                    </div>
-                    <button type="button" id="addItemBtn" class="btn btn-secondary">
-                        ➕ Agregar Item
-                    </button>
-                </div>
-                
-                <div id="budgetTotal" class="total-row">
-                    Total: $<span id="budgetTotalAmount">0.00</span>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Notas Adicionales</label>
-                    <textarea id="budgetNotes" class="form-textarea" 
-                              placeholder="Notas adicionales, condiciones de pago, garantía..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Estado *</label>
-                    <select id="budgetStatus" class="form-select" required>
-                        <option value="borrador">Borrador</option>
-                        <option value="enviado">Enviado</option>
-                        <option value="aceptado">Aceptado</option>
-                        <option value="rechazado">Rechazado</option>
-                    </select>
-                </div>
-                
-                <div class="btn-group">
-                    <button type="submit" class="btn btn-primary">
-                        💾 Guardar Presupuesto
-                    </button>
-                    <button type="button" id="generatePdfBtn" class="btn btn-success">
-                        📄 Generar PDF
-                    </button>
-                    <button type="button" id="sendWhatsAppBtn" class="btn btn-secondary">
-                        💬 Enviar por WhatsApp
-                    </button>
-                    <button type="button" onclick="closeBudgetModal()" class="btn btn-danger">
-                        Cancelar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- MODAL PARA VISTA PREVIA PDF -->
-    <div id="pdfPreviewModal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h3>Vista Previa del PDF</h3>
-                <button class="modal-close" onclick="closePdfPreview()">&times;</button>
-            </div>
-            <div id="pdfPreviewContent" style="padding: 1rem; background: white; border-radius: 8px;">
-                <!-- Vista previa del PDF se generará aquí -->
-            </div>
-            <div class="btn-group" style="margin-top: 2rem;">
-                <button id="downloadPdfBtn" class="btn btn-primary">
-                    ⬇️ Descargar PDF
-                </button>
-                <button id="printPdfBtn" class="btn btn-secondary">
-                    🖨️ Imprimir
-                </button>
-                <button onclick="closePdfPreview()" class="btn btn-danger">
-                    Cerrar
-                </button>
-            </div>
-        </div>
+    <!-- MOBILE INSTALL BANNER -->
+    <div class="mobile-install-banner" id="mobileInstallBanner">
+        <span>📲 Instalar TecniYa Pro en tu teléfono</span>
+        <button onclick="suggestInstallation()" class="btn btn-sm">Instalar</button>
+        <button onclick="hideInstallBanner()" class="btn btn-sm" style="background: transparent; color: white;">✕</button>
     </div>
     
     <!-- LOADER GLOBAL -->
@@ -1634,16 +1466,19 @@
         // VARIABLES GLOBALES
         // ============================================
         let auth, db, currentUser, professionalId = null, professionalData = null;
-        let budgets = [];
         let featuredHistory = [];
         
-        // Precios configurados para destacados
+        // Precios configurados para destacados - CORREGIDO
         const FEATURED_PRICES = {
-            1: { price: 1000, label: "1 mes" },
-            3: { price: 2500, label: "3 meses" },
-            6: { price: 4500, label: "6 meses" },
-            12: { price: 8000, label: "12 meses" }
+            1: { price: 5000, label: "1 mes" },
+            2: { price: 9000, label: "2 meses (promo)" },
+            3: { price: 13000, label: "3 meses (promo)" },
+            6: { price: 24000, label: "6 meses (promo)" },
+            12: { price: 45000, label: "12 meses (promo)" }
         };
+        
+        // Precio proporcional para meses adicionales
+        const PRO_PROMO_PRICE_PER_MONTH = 3750; // 45000 / 12
         
         let selectedFeaturedPlan = null;
 
@@ -1671,11 +1506,47 @@
                 // Verificar estado de autenticación
                 checkAuthState();
                 
+                // Mostrar banner de instalación en móviles
+                checkMobileAndSuggestInstall();
+                
             } catch (error) {
                 console.error('Error inicializando:', error);
                 showMessage('loginMessage', 'Error al inicializar la aplicación', 'error');
             }
         });
+
+        // ============================================
+        // FUNCIONES DE INSTALACIÓN PARA MÓVILES
+        // ============================================
+        function checkMobileAndSuggestInstall() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile) {
+                setTimeout(() => {
+                    document.getElementById('mobileInstallBanner').style.display = 'flex';
+                }, 3000);
+            }
+        }
+
+        function suggestInstallation() {
+            if (window.navigator.standalone) {
+                showMessage('loginMessage', '✅ La aplicación ya está instalada', 'success');
+                return;
+            }
+            
+            if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                alert('Para instalar TecniYa Pro en iOS:\n1. Toca el botón Compartir\n2. Desplázate hacia abajo\n3. Selecciona "Agregar a pantalla de inicio"');
+            } else if (/Android/.test(navigator.userAgent)) {
+                alert('Para instalar TecniYa Pro en Android:\n1. Toca el menú (tres puntos)\n2. Selecciona "Agregar a pantalla de inicio"\n3. Confirma la instalación');
+            } else {
+                alert('En Chrome o Edge:\n1. Haz clic en el icono de instalación (⏬) en la barra de direcciones\n2. Selecciona "Instalar TecniYa Pro"');
+            }
+            
+            hideInstallBanner();
+        }
+
+        function hideInstallBanner() {
+            document.getElementById('mobileInstallBanner').style.display = 'none';
+        }
 
         // ============================================
         // SETUP DE EVENT LISTENERS
@@ -1705,24 +1576,14 @@
             // Featured system
             document.getElementById('activateFeaturedBtn')?.addEventListener('click', activateFeatured);
             document.getElementById('extendFeaturedBtn')?.addEventListener('click', extendFeatured);
-            document.getElementById('paymentMethod')?.addEventListener('change', showPaymentDetails);
             document.getElementById('applyFeaturedFilters')?.addEventListener('click', loadFeaturedHistory);
             
-            // Budgets system
-            document.getElementById('newBudgetBtn')?.addEventListener('click', () => openBudgetModal());
-            document.getElementById('exportBudgetsBtn')?.addEventListener('click', exportBudgetsToJson);
-            document.getElementById('applyBudgetFilters')?.addEventListener('click', loadBudgets);
-            document.getElementById('resetBudgetFilters')?.addEventListener('click', resetBudgetFilters);
-            document.getElementById('addItemBtn')?.addEventListener('click', addBudgetItem);
-            document.getElementById('budgetForm')?.addEventListener('submit', saveBudget);
-            document.getElementById('generatePdfBtn')?.addEventListener('click', generateBudgetPdf);
-            document.getElementById('sendWhatsAppBtn')?.addEventListener('click', sendBudgetViaWhatsApp);
-            document.getElementById('downloadPdfBtn')?.addEventListener('click', downloadBudgetPdf);
-            document.getElementById('printPdfBtn')?.addEventListener('click', printBudgetPdf);
+            // Quitar campo de trabajos realizados (ahora es automático)
+            document.getElementById('profileCompletedJobs')?.remove();
         }
 
         // ============================================
-        // AUTENTICACIÓN
+        // AUTENTICACIÓN - CORREGIDA
         // ============================================
         function checkAuthState() {
             auth.onAuthStateChanged(async (user) => {
@@ -1810,7 +1671,6 @@
                     rubros: [],
                     certifications: [],
                     experienceYears: 0,
-                    completedJobs: 0,
                     avgResponseTime: null,
                     active: true,
                     profileCompleted: false,
@@ -1820,7 +1680,9 @@
                     averageRating: 0,
                     totalRatings: 0,
                     lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    // Campo automático para trabajos completados
+                    completedJobs: 0 // Inicializado en 0, se actualizará automáticamente
                 });
                 
                 professionalId = professionalRef.id;
@@ -1890,12 +1752,8 @@
             } else if (tabId === 'featured') {
                 loadFeaturedStatus();
                 loadFeaturedHistory();
-            } else if (tabId === 'budgets') {
-                loadBudgets();
             } else if (tabId === 'ratings') {
                 loadRatings();
-            } else if (tabId === 'stats') {
-                loadDetailedStats();
             }
         }
 
@@ -1921,6 +1779,15 @@
                 professionalId = doc.id;
                 professionalData = { id: doc.id, ...doc.data() };
                 
+                // Verificar si el perfil está completo
+                if (!professionalData.profileCompleted) {
+                    // Verificar qué campos faltan
+                    const missingFields = checkMissingProfileFields();
+                    if (missingFields.length > 0) {
+                        showMessage('profileMessage', `Completá estos campos: ${missingFields.join(', ')}`, 'error');
+                    }
+                }
+                
                 // Actualizar UI
                 updateProfileUI();
                 updateUserInfo();
@@ -1934,6 +1801,34 @@
             } finally {
                 showGlobalLoader(false);
             }
+        }
+
+        function checkMissingProfileFields() {
+            if (!professionalData) return [];
+            
+            const requiredFields = [
+                { field: 'name', label: 'Nombre' },
+                { field: 'phone', label: 'Teléfono' },
+                { field: 'photoUrl', label: 'Foto' },
+                { field: 'provincia', label: 'Provincia' },
+                { field: 'ciudad', label: 'Ciudad' },
+                { field: 'zonas', label: 'Zonas', check: (val) => val && val.length > 0 },
+                { field: 'rubros', label: 'Rubros', check: (val) => val && val.length > 0 },
+                { field: 'bio', label: 'Descripción' },
+                { field: 'experienceYears', label: 'Experiencia' }
+            ];
+            
+            const missing = [];
+            requiredFields.forEach(({ field, label, check }) => {
+                const value = professionalData[field];
+                if (check) {
+                    if (!check(value)) missing.push(label);
+                } else if (!value) {
+                    missing.push(label);
+                }
+            });
+            
+            return missing;
         }
 
         function updateUserInfo() {
@@ -1960,7 +1855,6 @@
             document.getElementById('profileBio').value = professionalData.bio || '';
             document.getElementById('photoUrl').value = professionalData.photoUrl || '';
             document.getElementById('profileExperience').value = professionalData.experienceYears || 0;
-            document.getElementById('profileCompletedJobs').value = professionalData.completedJobs || 0;
             document.getElementById('profileResponseTime').value = professionalData.avgResponseTime || '';
             document.getElementById('profileCertifications').value = professionalData.certifications ? professionalData.certifications.join(', ') : '';
             document.getElementById('profileZonas').value = professionalData.zonas ? professionalData.zonas.join(', ') : '';
@@ -2114,12 +2008,12 @@
                     else if (professionalData.avgResponseTime < 48) score += 4;
                 }
                 
-                // 4. TRABAJOS COMPLETADOS (10 puntos)
+                // 4. TRABAJOS COMPLETADOS (10 puntos) - AHORA AUTOMÁTICO
                 if (professionalData.completedJobs) {
                     score += Math.min(professionalData.completedJobs * 0.1, 10);
                 }
                 
-                // 5. CERTIFICACIONES (10 puntos)
+                // 5. CERTIFICACIONES (10 puntos) - HABILITADO POR ADMIN
                 if (professionalData.certifications && professionalData.certifications.length > 0) {
                     score += Math.min(professionalData.certifications.length * 2, 10);
                 }
@@ -2301,13 +2195,18 @@
                 document.getElementById('featuredProgress').style.width = `${(featuredFactor / 5) * 100}%`;
             }
             
-            // Actualizar ranking en ciudad y rubro (placeholder por ahora)
-            if (document.getElementById('cityRank')) {
-                document.getElementById('cityRank').textContent = '#0';
+            // Actualizar ranking en ciudad y rubro
+            if (professionalData.cityPosition) {
+                document.getElementById('cityRank').textContent = `#${professionalData.cityPosition}`;
+            }
+            if (professionalData.rubroPosition) {
+                document.getElementById('rubroRank').textContent = `#${professionalData.rubroPosition}`;
+            }
+            
+            if (document.getElementById('rankingCity')) {
                 document.getElementById('rankingCity').textContent = professionalData.ciudad || 'Tu Ciudad';
             }
-            if (document.getElementById('rubroRank')) {
-                document.getElementById('rubroRank').textContent = '#0';
+            if (document.getElementById('rankingRubro')) {
                 document.getElementById('rankingRubro').textContent = professionalData.rubros && professionalData.rubros.length > 0 
                     ? professionalData.rubros[0] 
                     : 'Tu Rubro';
@@ -2330,7 +2229,7 @@
         }
 
         // ============================================
-        // SISTEMA DE DESTACADOS
+        // SISTEMA DE DESTACADOS - CORREGIDO
         // ============================================
         function loadFeaturedPlans() {
             const container = document.getElementById('featuredPlansContainer');
@@ -2339,16 +2238,29 @@
             let html = '';
             
             Object.entries(FEATURED_PRICES).forEach(([months, data]) => {
+                let priceText = `$${data.price}`;
+                let promoText = '';
+                
+                // Calcular precio proporcional para meses adicionales
+                if (parseInt(months) > 1) {
+                    const pricePerMonth = data.price / parseInt(months);
+                    promoText = `<div style="font-size: 0.9rem; color: #28a745; margin-top: 5px;">
+                        💰 $${Math.round(pricePerMonth)}/mes (promo)
+                    </div>`;
+                }
+                
                 html += `
                     <div class="featured-plan" data-months="${months}" onclick="selectFeaturedPlan(${months})">
                         <div class="featured-plan-title">${data.label}</div>
-                        <div class="featured-plan-price">$${data.price}</div>
+                        <div class="featured-plan-price">${priceText}</div>
+                        ${promoText}
                         <ul class="featured-plan-features">
                             <li>✅ Aparecé primero en búsquedas</li>
                             <li>✅ Badge especial en tu perfil</li>
                             <li>✅ +5 puntos en el ranking</li>
                             <li>✅ Mayor visibilidad</li>
                             <li>✅ Más clientes potenciales</li>
+                            ${parseInt(months) === 12 ? '<li>✅ Habilita certificaciones</li>' : ''}
                         </ul>
                         <button class="btn btn-primary btn-sm">
                             Seleccionar
@@ -2372,6 +2284,25 @@
                 selectedPlan.classList.add('selected');
                 selectedFeaturedPlan = months;
                 document.getElementById('activateFeaturedBtn').disabled = false;
+                
+                // Mostrar datos de transferencia
+                document.getElementById('transferenciaDetails').style.display = 'block';
+                
+                // Mostrar precio proporcional si es más de 1 mes
+                const price = FEATURED_PRICES[months].price;
+                if (months > 1) {
+                    const pricePerMonth = Math.round(price / months);
+                    const promoPrice = document.createElement('div');
+                    promoPrice.style.color = '#28a745';
+                    promoPrice.style.marginTop = '10px';
+                    promoPrice.innerHTML = `💰 <strong>Promoción:</strong> $${pricePerMonth}/mes ($${price} total)`;
+                    
+                    // Agregar al plan seleccionado
+                    const existingPromo = selectedPlan.querySelector('.promo-price');
+                    if (existingPromo) existingPromo.remove();
+                    promoPrice.className = 'promo-price';
+                    selectedPlan.appendChild(promoPrice);
+                }
             }
         }
 
@@ -2427,6 +2358,20 @@
                         // Mostrar botón de extender
                         activateBtn.style.display = 'none';
                         extendBtn.style.display = 'inline-flex';
+                        
+                        // Mostrar si habilita certificaciones (12 meses)
+                        const monthsFeatured = Math.ceil(totalDays / 30);
+                        if (monthsFeatured >= 12) {
+                            featuredInfo.innerHTML += `
+                                <div style="margin-top: 1rem; padding: 1rem; background: #d4edda; border-radius: 8px; border-left: 4px solid #28a745;">
+                                    <strong>✅ Certificaciones habilitadas</strong>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+                                        Tu destacado de 12 meses te habilita para cargar certificaciones.
+                                        Contactá al administrador para que las habilite en tu perfil.
+                                    </p>
+                                </div>
+                            `;
+                        }
                         
                     } else {
                         // Destacado expirado
@@ -2533,7 +2478,7 @@
                         <tr>
                             <td>${date}</td>
                             <td>${transaction.duration} meses</td>
-                            <td>${transaction.paymentMethod || '-'}</td>
+                            <td>${transaction.paymentMethod || 'Transferencia'}</td>
                             <td>$${transaction.amount || '0'}</td>
                             <td>${statusBadge}</td>
                             <td>${expires}</td>
@@ -2563,13 +2508,8 @@
                 return;
             }
             
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            if (!paymentMethod) {
-                showMessage('profileMessage', 'Seleccioná un método de pago', 'error');
-                return;
-            }
-            
-            if (!confirm(`¿Confirmás la activación del destacado por ${FEATURED_PRICES[selectedFeaturedPlan].label} por $${FEATURED_PRICES[selectedFeaturedPlan].price}?`)) {
+            const plan = FEATURED_PRICES[selectedFeaturedPlan];
+            if (!confirm(`¿Confirmás la activación del destacado por ${plan.label} por $${plan.price}?\n\nPAGO ÚNICAMENTE CON TRANSFERENCIA BANCARIA`)) {
                 return;
             }
             
@@ -2586,34 +2526,23 @@
                     professionalId,
                     professionalName: professionalData.name,
                     duration: selectedFeaturedPlan,
-                    amount: paymentMethod === 'gratis' ? 0 : FEATURED_PRICES[selectedFeaturedPlan].price,
-                    paymentMethod,
-                    status: paymentMethod === 'gratis' ? 'activo' : 'pendiente',
+                    amount: plan.price,
+                    paymentMethod: 'transferencia',
+                    status: 'pendiente',
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     expiresAt: expiresAt
                 });
                 
-                // Actualizar perfil si es gratis
-                if (paymentMethod === 'gratis') {
-                    await db.collection('professionals').doc(professionalId).update({
-                        isFeatured: true,
-                        featuredSince: firebase.firestore.FieldValue.serverTimestamp(),
-                        featuredUntil: expiresAt
-                    });
-                    
-                    professionalData.isFeatured = true;
-                    professionalData.featuredUntil = expiresAt;
-                }
+                showMessage('profileMessage', '✅ Solicitud de destacado creada. Realizá la transferencia y envía el comprobante.', 'success');
                 
                 // Recargar estado
                 await loadFeaturedStatus();
                 await loadFeaturedHistory();
                 
-                showMessage('profileMessage', '✅ Destacado activado correctamente', 'success');
-                
                 // Resetear selección
                 selectedFeaturedPlan = null;
                 document.getElementById('activateFeaturedBtn').disabled = true;
+                document.getElementById('transferenciaDetails').style.display = 'none';
                 document.querySelectorAll('.featured-plan').forEach(plan => {
                     plan.classList.remove('selected');
                 });
@@ -2627,578 +2556,13 @@
         }
 
         function extendFeatured() {
-            // Similar a activateFeatured pero para extender
-            document.getElementById('activateFeaturedBtn').style.display = 'none';
-            document.getElementById('extendFeaturedBtn').style.display = 'inline-flex';
-            showMessage('profileMessage', 'Seleccioná un nuevo plan para extender tu destacado', 'info');
-        }
-
-        function showPaymentDetails() {
-            const method = document.getElementById('paymentMethod').value;
-            const details = document.getElementById('paymentDetails');
-            const transferencia = document.getElementById('transferenciaDetails');
-            const mercadopago = document.getElementById('mercadopagoDetails');
-            
-            if (!method) {
-                details.style.display = 'none';
-                return;
-            }
-            
-            details.style.display = 'block';
-            transferencia.style.display = method === 'transferencia' ? 'block' : 'none';
-            mercadopago.style.display = method === 'mercadopago' ? 'block' : 'none';
-        }
-
-        // ============================================
-        // SISTEMA DE PRESUPUESTOS
-        // ============================================
-        async function loadBudgets() {
-            if (!professionalId) return;
-            
-            showGlobalLoader(true);
-            
-            try {
-                let query = db.collection('budgets')
-                    .where('professionalId', '==', professionalId)
-                    .orderBy('createdAt', 'desc');
-                
-                // Aplicar filtros
-                const statusFilter = document.getElementById('budgetFilterStatus').value;
-                const clientFilter = document.getElementById('budgetFilterClient').value;
-                const fromFilter = document.getElementById('budgetFilterFrom').value;
-                const toFilter = document.getElementById('budgetFilterTo').value;
-                
-                if (statusFilter) {
-                    query = query.where('status', '==', statusFilter);
-                }
-                
-                if (clientFilter) {
-                    query = query.where('client', '>=', clientFilter)
-                               .where('client', '<=', clientFilter + '\uf8ff');
-                }
-                
-                if (fromFilter) {
-                    const fromDate = new Date(fromFilter);
-                    query = query.where('createdAt', '>=', fromDate);
-                }
-                
-                if (toFilter) {
-                    const toDate = new Date(toFilter);
-                    toDate.setHours(23, 59, 59, 999);
-                    query = query.where('createdAt', '<=', toDate);
-                }
-                
-                const snapshot = await query.get();
-                budgets = [];
-                const container = document.getElementById('budgetsList');
-                
-                if (snapshot.empty) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: 2rem; color: var(--gray);">
-                            📝 No hay presupuestos creados.
-                        </div>
-                    `;
-                    return;
-                }
-                
-                let html = '';
-                
-                snapshot.forEach(doc => {
-                    const budget = { id: doc.id, ...doc.data() };
-                    budgets.push(budget);
-                    
-                    const date = budget.createdAt ? 
-                        budget.createdAt.toDate().toLocaleDateString('es-AR') : '-';
-                    
-                    let statusBadge = '';
-                    switch(budget.status) {
-                        case 'borrador':
-                            statusBadge = '<span class="budget-status status-draft">BORRADOR</span>';
-                            break;
-                        case 'enviado':
-                            statusBadge = '<span class="budget-status status-sent">ENVIADO</span>';
-                            break;
-                        case 'aceptado':
-                            statusBadge = '<span class="budget-status status-accepted">ACEPTADO</span>';
-                            break;
-                        case 'rechazado':
-                            statusBadge = '<span class="budget-status status-rejected">RECHAZADO</span>';
-                            break;
-                    }
-                    
-                    html += `
-                        <div class="budget-card">
-                            <div class="budget-header">
-                                <div>
-                                    <h4 style="margin: 0;">${budget.client || 'Sin cliente'}</h4>
-                                    <p style="color: var(--gray); margin: 0.5rem 0;">${date}</p>
-                                </div>
-                                <div>
-                                    ${statusBadge}
-                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-top: 0.5rem;">
-                                        $${budget.total || '0'}
-                                    </div>
-                                </div>
-                            </div>
-                            <p style="color: var(--dark); margin-bottom: 1rem;">${budget.description || ''}</p>
-                            <div class="budget-actions">
-                                <button onclick="editBudget('${doc.id}')" class="btn btn-primary btn-sm">
-                                    ✏️ Editar
-                                </button>
-                                <button onclick="generateBudgetPdf('${doc.id}')" class="btn btn-secondary btn-sm">
-                                    📄 PDF
-                                </button>
-                                <button onclick="sendBudgetViaWhatsApp('${doc.id}')" class="btn btn-success btn-sm">
-                                    💬 WhatsApp
-                                </button>
-                                <button onclick="deleteBudget('${doc.id}')" class="btn btn-danger btn-sm">
-                                    🗑️ Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                container.innerHTML = html;
-                
-            } catch (error) {
-                console.error('Error cargando presupuestos:', error);
-                document.getElementById('budgetsList').innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: var(--danger);">
-                        ❌ Error cargando presupuestos
-                    </div>
-                `;
-            } finally {
-                showGlobalLoader(false);
-            }
-        }
-
-        function resetBudgetFilters() {
-            document.getElementById('budgetFilterStatus').value = '';
-            document.getElementById('budgetFilterClient').value = '';
-            document.getElementById('budgetFilterFrom').value = '';
-            document.getElementById('budgetFilterTo').value = '';
-            loadBudgets();
-        }
-
-        function openBudgetModal(budgetId = null) {
-            const modal = document.getElementById('budgetModal');
-            const title = document.getElementById('budgetModalTitle');
-            const form = document.getElementById('budgetForm');
-            
-            if (budgetId) {
-                // Editar presupuesto existente
-                const budget = budgets.find(b => b.id === budgetId);
-                if (budget) {
-                    title.textContent = 'Editar Presupuesto';
-                    document.getElementById('budgetId').value = budgetId;
-                    document.getElementById('budgetClient').value = budget.client || '';
-                    document.getElementById('budgetDescription').value = budget.description || '';
-                    document.getElementById('budgetNotes').value = budget.notes || '';
-                    document.getElementById('budgetStatus').value = budget.status || 'borrador';
-                    
-                    // Cargar items
-                    const itemsContainer = document.getElementById('budgetItems');
-                    itemsContainer.innerHTML = '';
-                    if (budget.items && budget.items.length > 0) {
-                        budget.items.forEach(item => {
-                            addBudgetItem(item);
-                        });
-                    } else {
-                        addBudgetItem();
-                    }
-                    
-                    updateBudgetTotal();
-                }
-            } else {
-                // Nuevo presupuesto
-                title.textContent = 'Nuevo Presupuesto';
-                form.reset();
-                document.getElementById('budgetId').value = '';
-                document.getElementById('budgetItems').innerHTML = '';
-                addBudgetItem();
-                updateBudgetTotal();
-            }
-            
-            modal.style.display = 'flex';
-        }
-
-        function closeBudgetModal() {
-            document.getElementById('budgetModal').style.display = 'none';
-        }
-
-        function addBudgetItem(itemData = null) {
-            const container = document.getElementById('budgetItems');
-            const itemId = Date.now() + Math.random();
-            
-            const itemHtml = `
-                <div class="item-row" id="item-${itemId}">
-                    <input type="text" class="form-input item-description" 
-                           placeholder="Descripción" value="${itemData?.description || ''}" 
-                           oninput="updateBudgetTotal()">
-                    <input type="number" class="form-input item-quantity" 
-                           placeholder="Cantidad" min="1" value="${itemData?.quantity || 1}" 
-                           oninput="updateBudgetTotal()">
-                    <input type="number" class="form-input item-price" 
-                           placeholder="Precio unitario" step="0.01" min="0" 
-                           value="${itemData?.price || 0}" oninput="updateBudgetTotal()">
-                    <input type="text" class="form-input item-total" 
-                           placeholder="Total" readonly value="${itemData?.total || '0.00'}">
-                    <button type="button" class="btn btn-danger btn-sm" 
-                            onclick="removeBudgetItem('${itemId}')">🗑️</button>
-                </div>
-            `;
-            
-            container.insertAdjacentHTML('beforeend', itemHtml);
-            updateBudgetTotal();
-        }
-
-        function removeBudgetItem(itemId) {
-            const item = document.getElementById(`item-${itemId}`);
-            if (item) {
-                item.remove();
-                updateBudgetTotal();
-            }
-        }
-
-        function updateBudgetTotal() {
-            let total = 0;
-            document.querySelectorAll('.item-row').forEach(row => {
-                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
-                const price = parseFloat(row.querySelector('.item-price').value) || 0;
-                const itemTotal = quantity * price;
-                
-                row.querySelector('.item-total').value = itemTotal.toFixed(2);
-                total += itemTotal;
-            });
-            
-            document.getElementById('budgetTotalAmount').textContent = total.toFixed(2);
-        }
-
-        async function saveBudget(e) {
-            e.preventDefault();
-            
-            // Recolectar items
-            const items = [];
-            document.querySelectorAll('.item-row').forEach(row => {
-                const description = row.querySelector('.item-description').value;
-                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
-                const price = parseFloat(row.querySelector('.item-price').value) || 0;
-                const total = quantity * price;
-                
-                if (description) {
-                    items.push({
-                        description,
-                        quantity,
-                        price,
-                        total
-                    });
-                }
-            });
-            
-            if (items.length === 0) {
-                showMessage('profileMessage', 'Agregá al menos un item al presupuesto', 'error');
-                return;
-            }
-            
-            const budgetData = {
-                professionalId,
-                professionalName: professionalData.name,
-                client: document.getElementById('budgetClient').value,
-                description: document.getElementById('budgetDescription').value,
-                items,
-                notes: document.getElementById('budgetNotes').value,
-                status: document.getElementById('budgetStatus').value,
-                total: parseFloat(document.getElementById('budgetTotalAmount').textContent),
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            showGlobalLoader(true);
-            
-            try {
-                const budgetId = document.getElementById('budgetId').value;
-                
-                if (budgetId) {
-                    // Actualizar presupuesto existente
-                    await db.collection('budgets').doc(budgetId).update(budgetData);
-                    showMessage('profileMessage', '✅ Presupuesto actualizado correctamente', 'success');
-                } else {
-                    // Crear nuevo presupuesto
-                    await db.collection('budgets').add(budgetData);
-                    showMessage('profileMessage', '✅ Presupuesto creado correctamente', 'success');
-                }
-                
-                closeBudgetModal();
-                loadBudgets();
-                
-            } catch (error) {
-                console.error('Error guardando presupuesto:', error);
-                showMessage('profileMessage', 'Error guardando presupuesto', 'error');
-            } finally {
-                showGlobalLoader(false);
-            }
-        }
-
-        async function deleteBudget(budgetId) {
-            if (!confirm('¿Estás seguro de querer eliminar este presupuesto?')) return;
-            
-            showGlobalLoader(true);
-            
-            try {
-                await db.collection('budgets').doc(budgetId).delete();
-                showMessage('profileMessage', '✅ Presupuesto eliminado correctamente', 'success');
-                loadBudgets();
-            } catch (error) {
-                console.error('Error eliminando presupuesto:', error);
-                showMessage('profileMessage', 'Error eliminando presupuesto', 'error');
-            } finally {
-                showGlobalLoader(false);
-            }
-        }
-
-        function editBudget(budgetId) {
-            openBudgetModal(budgetId);
-        }
-
-        function generateBudgetPdf(budgetId = null) {
-            let budget;
-            
-            if (budgetId) {
-                // Generar PDF de presupuesto específico
-                budget = budgets.find(b => b.id === budgetId);
-                if (!budget) return;
-            } else {
-                // Generar PDF del presupuesto actual en el modal
-                const client = document.getElementById('budgetClient').value;
-                const description = document.getElementById('budgetDescription').value;
-                const notes = document.getElementById('budgetNotes').value;
-                const total = document.getElementById('budgetTotalAmount').textContent;
-                
-                // Recolectar items
-                const items = [];
-                document.querySelectorAll('.item-row').forEach(row => {
-                    const description = row.querySelector('.item-description').value;
-                    const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
-                    const price = parseFloat(row.querySelector('.item-price').value) || 0;
-                    const total = quantity * price;
-                    
-                    if (description) {
-                        items.push({ description, quantity, price, total });
-                    }
-                });
-                
-                budget = {
-                    client,
-                    description,
-                    items,
-                    notes,
-                    total,
-                    createdAt: new Date(),
-                    professionalName: professionalData.name
-                };
-            }
-            
-            // Crear contenido HTML para el PDF
-            const pdfContent = document.createElement('div');
-            pdfContent.style.padding = '20px';
-            pdfContent.style.fontFamily = 'Arial, sans-serif';
-            
-            const date = budget.createdAt?.toDate ? 
-                budget.createdAt.toDate().toLocaleDateString('es-AR') : 
-                new Date().toLocaleDateString('es-AR');
-            
-            pdfContent.innerHTML = `
-                <h1 style="color: #0a4fd8; text-align: center;">PRESUPUESTO</h1>
-                <div style="margin-bottom: 30px;">
-                    <p><strong>Profesional:</strong> ${budget.professionalName || professionalData.name}</p>
-                    <p><strong>Cliente:</strong> ${budget.client}</p>
-                    <p><strong>Fecha:</strong> ${date}</p>
-                    <p><strong>Descripción:</strong> ${budget.description}</p>
-                </div>
-                
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
-                    <thead>
-                        <tr style="background: #f8f9fa;">
-                            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Descripción</th>
-                            <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Cantidad</th>
-                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Precio Unit.</th>
-                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${budget.items.map(item => `
-                            <tr>
-                                <td style="border: 1px solid #ddd; padding: 10px;">${item.description}</td>
-                                <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item.quantity}</td>
-                                <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">$${item.price.toFixed(2)}</td>
-                                <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">$${item.total.toFixed(2)}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                    <tfoot>
-                        <tr style="background: #f8f9fa; font-weight: bold;">
-                            <td colspan="3" style="border: 1px solid #ddd; padding: 10px; text-align: right;">TOTAL:</td>
-                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">$${parseFloat(budget.total).toFixed(2)}</td>
-                        </tr>
-                    </tfoot>
-                </table>
-                
-                ${budget.notes ? `
-                <div style="margin-bottom: 30px;">
-                    <h3>Notas:</h3>
-                    <p>${budget.notes}</p>
-                </div>
-                ` : ''}
-                
-                <div style="margin-top: 50px; padding-top: 20px; border-top: 2px solid #0a4fd8;">
-                    <p style="text-align: center; color: #666;">
-                        Presupuesto válido por 30 días.<br>
-                        Contacto: ${professionalData.phone} | ${professionalData.email}
-                    </p>
-                </div>
-            `;
-            
-            // Mostrar vista previa
-            document.getElementById('pdfPreviewContent').innerHTML = '';
-            document.getElementById('pdfPreviewContent').appendChild(pdfContent);
-            document.getElementById('pdfPreviewModal').style.display = 'flex';
-            
-            // Guardar referencia al budget para la descarga
-            window.currentPdfBudget = budget;
-        }
-
-        function closePdfPreview() {
-            document.getElementById('pdfPreviewModal').style.display = 'none';
-        }
-
-        function downloadBudgetPdf() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Obtener contenido HTML
-            const content = document.getElementById('pdfPreviewContent');
-            
-            // Generar PDF
-            doc.html(content, {
-                callback: function(doc) {
-                    doc.save(`Presupuesto-${window.currentPdfBudget.client}-${new Date().getTime()}.pdf`);
-                },
-                margin: [10, 10, 10, 10],
-                autoPaging: 'text',
-                x: 0,
-                y: 0,
-                width: 190,
-                windowWidth: 800
-            });
-        }
-
-        function printBudgetPdf() {
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Presupuesto - ${window.currentPdfBudget.client}</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 20px; }
-                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                        th, td { border: 1px solid #ddd; padding: 10px; }
-                        th { background: #f8f9fa; }
-                        .total { font-weight: bold; background: #f8f9fa; }
-                        @media print {
-                            .no-print { display: none; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${document.getElementById('pdfPreviewContent').innerHTML}
-                    <div class="no-print" style="margin-top: 30px; text-align: center;">
-                        <button onclick="window.print()" style="padding: 10px 20px; background: #0a4fd8; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                            🖨️ Imprimir
-                        </button>
-                        <button onclick="window.close()" style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
-                            Cerrar
-                        </button>
-                    </div>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-        }
-
-        function sendBudgetViaWhatsApp(budgetId = null) {
-            let budget;
-            
-            if (budgetId) {
-                budget = budgets.find(b => b.id === budgetId);
-            } else {
-                budget = window.currentPdfBudget;
-            }
-            
-            if (!budget) {
-                showMessage('profileMessage', 'No hay presupuesto para enviar', 'error');
-                return;
-            }
-            
-            // Extraer teléfono del cliente
-            let phone = '';
-            const clientText = budget.client || '';
-            const phoneMatch = clientText.match(/\d{10,13}/);
-            if (phoneMatch) {
-                phone = phoneMatch[0];
-            }
-            
-            if (!phone) {
-                showMessage('profileMessage', 'No se encontró teléfono en los datos del cliente', 'error');
-                return;
-            }
-            
-            // Crear mensaje
-            const date = budget.createdAt?.toDate ? 
-                budget.createdAt.toDate().toLocaleDateString('es-AR') : 
-                new Date().toLocaleDateString('es-AR');
-            
-            let message = `*PRESUPUESTO - ${budget.professionalName || professionalData.name}*\n\n`;
-            message += `*Cliente:* ${budget.client}\n`;
-            message += `*Fecha:* ${date}\n`;
-            message += `*Descripción:* ${budget.description}\n\n`;
-            message += `*ITEMS:*\n`;
-            
-            budget.items.forEach((item, index) => {
-                message += `${index + 1}. ${item.description} - ${item.quantity} x $${item.price} = $${item.total}\n`;
-            });
-            
-            message += `\n*TOTAL: $${parseFloat(budget.total).toFixed(2)}*\n\n`;
-            
-            if (budget.notes) {
-                message += `*Notas:* ${budget.notes}\n\n`;
-            }
-            
-            message += `Presupuesto válido por 30 días.\n`;
-            message += `Contacto: ${professionalData.phone}`;
-            
-            // Codificar mensaje para URL
+            // Enviar mensaje predefinido por WhatsApp
+            const phone = "3417558966";
+            const message = `Hola, soy ${professionalData.name} (ID: ${professionalId}). Quiero extender mi servicio destacado. Mi perfil: ${window.location.origin}`;
             const encodedMessage = encodeURIComponent(message);
-            
-            // Abrir WhatsApp
             window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-        }
-
-        function exportBudgetsToJson() {
-            if (budgets.length === 0) {
-                showMessage('profileMessage', 'No hay presupuestos para exportar', 'info');
-                return;
-            }
             
-            const dataStr = JSON.stringify(budgets, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `presupuestos-${professionalData.name}-${new Date().getTime()}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
+            showMessage('profileMessage', '📱 Abriendo WhatsApp para solicitar extensión', 'info');
         }
 
         // ============================================
@@ -3268,21 +2632,6 @@
         }
 
         // ============================================
-        // ESTADÍSTICAS DETALLADAS
-        // ============================================
-        async function loadDetailedStats() {
-            if (!professionalData) return;
-            
-            // Actualizar estadísticas básicas
-            document.getElementById('statsRanking').textContent = professionalData.rankingScore || 0;
-            document.getElementById('statsAverageRating').textContent = professionalData.averageRating ? professionalData.averageRating.toFixed(1) : '0.0';
-            document.getElementById('statsTotalRatings').textContent = professionalData.totalRatings || 0;
-            document.getElementById('statsCompletedJobs').textContent = professionalData.completedJobs || 0;
-            document.getElementById('statsExperience').textContent = professionalData.experienceYears || 0;
-            document.getElementById('statsResponseTime').textContent = professionalData.avgResponseTime ? `${professionalData.avgResponseTime}h` : 'N/A';
-        }
-
-        // ============================================
         // GESTIÓN DEL PERFIL
         // ============================================
         async function saveProfile(e) {
@@ -3334,7 +2683,6 @@
                     experienceYears,
                     photoUrl,
                     certifications: document.getElementById('profileCertifications').value.split(',').map(c => c.trim()).filter(c => c),
-                    completedJobs: parseInt(document.getElementById('profileCompletedJobs').value) || 0,
                     avgResponseTime: parseInt(document.getElementById('profileResponseTime').value) || null,
                     profileCompleted: true,
                     lastActive: firebase.firestore.FieldValue.serverTimestamp(),
@@ -3494,11 +2842,9 @@
         window.recalculateRanking = recalculateRanking;
         window.switchTab = switchTab;
         window.selectFeaturedPlan = selectFeaturedPlan;
-        window.editBudget = editBudget;
-        window.deleteBudget = deleteBudget;
-        window.closeBudgetModal = closeBudgetModal;
-        window.closePdfPreview = closePdfPreview;
-        window.removeBudgetItem = removeBudgetItem;
+        window.extendFeatured = extendFeatured;
+        window.suggestInstallation = suggestInstallation;
+        window.hideInstallBanner = hideInstallBanner;
     </script>
 </body>
 </html>
