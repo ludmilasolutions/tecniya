@@ -64,9 +64,10 @@
             margin: 0 auto; 
         }
         
-        /* Banners Container */
+        /* Banners Container - CORREGIDO */
         .banners-container {
             margin: 1.5rem auto;
+            max-width: 1200px;
         }
         
         .banner {
@@ -75,12 +76,15 @@
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
         }
         
         .banner img {
             width: 100%;
             height: auto;
             display: block;
+            max-height: 200px;
+            object-fit: cover;
         }
         
         .banner-link {
@@ -126,7 +130,7 @@
             padding: 0 0.5rem;
         }
         
-        /* Search */
+        /* Search - SIN FILTRO DE ZONA */
         .search-section {
             background: white;
             border-radius: var(--radius);
@@ -181,7 +185,7 @@
             padding: 0.7rem 1.2rem;
         }
         
-        /* Professional Cards */
+        /* Professional Cards - CON CERTIFICACIONES */
         .professional-grid {
             display: grid;
             gap: 1.2rem;
@@ -197,6 +201,20 @@
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .professional-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .professional-card.featured {
+            border: 2px solid var(--accent);
+        }
+        
+        .professional-card.professional-plan {
+            border: 2px solid var(--primary);
         }
         
         .professional-header {
@@ -224,6 +242,7 @@
             color: var(--accent);
             font-weight: 600;
             font-size: 0.9rem;
+            flex-wrap: wrap;
         }
         
         .professional-body { padding: 1.2rem; }
@@ -263,6 +282,7 @@
         
         .badge-featured { background: #ffc107; color: #333; }
         .badge-certified { background: #28a745; color: white; }
+        .badge-12months { background: #17a2b8; color: white; }
         .badge-top { background: #dc3545; color: white; }
         
         /* Stats */
@@ -279,6 +299,35 @@
             gap: 4px;
             font-size: 0.8rem;
             color: var(--gray);
+        }
+        
+        /* Certificaciones */
+        .certifications {
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px dashed #eee;
+        }
+        
+        .certifications-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+        
+        .certifications-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .certification-item {
+            background: #e8f4ff;
+            color: var(--primary);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
         
         /* Rating Modal */
@@ -372,6 +421,30 @@
             font-weight: 600;
         }
         
+        /* Sorting Options */
+        .sorting-options {
+            display: flex;
+            gap: 10px;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .sort-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .sort-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
         /* Footer */
         .footer {
             background: var(--dark);
@@ -418,10 +491,18 @@
                 flex-direction: column;
                 text-align: center;
             }
+            
+            .banner img {
+                max-height: 150px;
+            }
         }
         
         @media (max-width: 480px) {
             .professional-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -437,12 +518,12 @@
         </div>
     </header>
 
-    <!-- Banners desde Panel Admin -->
+    <!-- Banners desde Panel Admin - CORREGIDO -->
     <div class="container banners-container" id="bannersContainer">
         <!-- Los banners se cargan dinámicamente -->
     </div>
 
-    <!-- Search -->
+    <!-- Search - SIN FILTRO DE ZONA -->
     <section class="container search-section">
         <h2 class="search-title">¿Qué servicio necesitás?</h2>
         <div class="search-grid">
@@ -459,30 +540,24 @@
                 </select>
             </div>
         </div>
-        <div class="search-grid">
-            <div class="form-group">
-                <label class="form-label">Rubro</label>
-                <select id="rubroSelect" class="form-select">
-                    <option value="">Todos los rubros</option>
-                    <option value="plomeria">Plomería</option>
-                    <option value="gas">Gas</option>
-                    <option value="electricidad">Electricidad</option>
-                    <option value="aire">Aire Acondicionado</option>
-                    <option value="albanileria">Albañilería</option>
-                    <option value="pintura">Pintura</option>
-                    <option value="cerrajeria">Cerrajería</option>
-                    <option value="jardineria">Jardinería</option>
-                    <option value="herreria">Herrería</option>
-                    <option value="carpinteria">Carpintería</option>
-                    <option value="limpieza">Limpieza</option>
-                    <option value="mudanzas">Mudanzas</option>
-                    <option value="otros">Otros servicios</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Zona/Barrio</label>
-                <input type="text" id="zonaInput" class="form-select" placeholder="Ej: Centro, Norte...">
-            </div>
+        <div class="form-group">
+            <label class="form-label">Rubro</label>
+            <select id="rubroSelect" class="form-select">
+                <option value="">Todos los rubros</option>
+                <option value="plomeria">Plomería</option>
+                <option value="gas">Gas</option>
+                <option value="electricidad">Electricidad</option>
+                <option value="aire">Aire Acondicionado</option>
+                <option value="albanileria">Albañilería</option>
+                <option value="pintura">Pintura</option>
+                <option value="cerrajeria">Cerrajería</option>
+                <option value="jardineria">Jardinería</option>
+                <option value="herreria">Herrería</option>
+                <option value="carpinteria">Carpintería</option>
+                <option value="limpieza">Limpieza</option>
+                <option value="mudanzas">Mudanzas</option>
+                <option value="otros">Otros servicios</option>
+            </select>
         </div>
         <div style="display: flex; gap: 12px; margin-top: 20px;">
             <button id="searchBtn" class="btn btn-primary">🔍 Buscar técnico</button>
@@ -496,6 +571,15 @@
             <h2>Técnicos Disponibles</h2>
             <span class="results-count" id="resultsCount"></span>
         </div>
+        
+        <!-- Sorting Options -->
+        <div class="sorting-options" id="sortingOptions" style="display: none;">
+            <button class="sort-btn active" data-sort="ranking">🏆 Mejor Ranking</button>
+            <button class="sort-btn" data-sort="featured">⭐ Destacados</button>
+            <button class="sort-btn" data-sort="professional">✅ Profesionales Verificados</button>
+            <button class="sort-btn" data-sort="rating">⭐ Mejor Calificación</button>
+        </div>
+        
         <div class="loader" id="loader" style="display: none;">
             <div class="spinner"></div>
         </div>
@@ -571,6 +655,7 @@
         let currentRatingProfessional = null;
         let allProfessionals = [];
         let deferredPrompt;
+        let currentSort = 'ranking';
 
         // ============================================
         // DATOS DE PROVINCIAS Y CIUDADES
@@ -580,6 +665,7 @@
             "CABA": ["Capital Federal"],
             "Catamarca": ["San Fernando del Valle de Catamarca", "Valle Viejo", "Andalgalá"],
             "Chaco": ["Resistencia", "Barranqueras", "Fontana", "Presidencia Roque Sáenz Peña"],
+            "Chubut": ["Rawson", "Comodoro Rivadavia", "Trelew", "Puerto Madryn"],
             "Córdoba": ["Córdoba", "Villa María", "Río Cuarto", "Alta Gracia", "Villa Carlos Paz", "Jesús María"],
             "Corrientes": ["Corrientes", "Goya", "Mercedes", "Curuzú Cuatiá"],
             "Entre Ríos": ["Paraná", "Concordia", "Gualeguaychú", "Concepción del Uruguay"],
@@ -634,6 +720,18 @@
             document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
             document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
             
+            // Eventos para ordenamiento
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remover clase active de todos
+                    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+                    // Agregar clase active al clickeado
+                    this.classList.add('active');
+                    currentSort = this.dataset.sort;
+                    sortAndDisplayProfessionals();
+                });
+            });
+            
             // Evento para PWA
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
@@ -677,18 +775,19 @@
         }
 
         // ============================================
-        // BANNERS - CORRECCIÓN DEL ERROR DE FIREBASE
+        // BANNERS - CORREGIDOS (Respetan configuración del panel admin)
         // ============================================
         async function loadBanners() {
             try {
                 const now = firebase.firestore.Timestamp.now();
+                
+                // Obtener banners activos para la posición "home"
                 const snapshot = await db.collection('banners')
                     .where('active', '==', true)
                     .where('position', '==', 'home')
                     .where('startDate', '<=', now)
-                    .orderBy('startDate', 'desc')  // Primero ordenar por startDate
-                    .orderBy('priority', 'desc')   // Luego por prioridad
-                    .limit(10)
+                    .orderBy('priority', 'desc')
+                    .limit(5)
                     .get();
                 
                 const container = document.getElementById('bannersContainer');
@@ -701,7 +800,6 @@
                 let bannersHTML = '';
                 const currentDate = new Date();
                 
-                // Filtrar client-side los banners cuya fecha de fin sea mayor o igual a ahora
                 snapshot.forEach(doc => {
                     const banner = doc.data();
                     const endDate = banner.endDate ? banner.endDate.toDate() : null;
@@ -712,8 +810,8 @@
                             <div class="banner">
                                 <a href="${banner.link || '#'}" target="_blank" class="banner-link">
                                     <img src="${banner.imageUrl}" 
-                                         alt="${banner.title || 'Banner'}"
-                                         onerror="this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa'">
+                                         alt="${banner.title || 'Banner TecniYa'}"
+                                         onerror="this.src='https://via.placeholder.com/1200x200/0a4fd8/ffffff?text=Banner+TecniYa'">
                                 </a>
                             </div>
                         `;
@@ -727,8 +825,8 @@
                     container.innerHTML = `
                         <div class="banner">
                             <a href="#" class="banner-link">
-                                <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
-                                     alt="Banner Promocional">
+                                <img src="https://via.placeholder.com/1200x200/0a4fd8/ffffff?text=TecniYa+-+Técnicos+Certificados" 
+                                     alt="Banner Promocional TecniYa">
                             </a>
                         </div>
                     `;
@@ -740,8 +838,8 @@
                 document.getElementById('bannersContainer').innerHTML = `
                     <div class="banner">
                         <a href="#" class="banner-link">
-                            <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
-                                 alt="Banner Promocional">
+                            <img src="https://via.placeholder.com/1200x200/0a4fd8/ffffff?text=TecniYa+-+Técnicos+Certificados" 
+                                 alt="Banner Promocional TecniYa">
                         </a>
                     </div>
                 `;
@@ -775,66 +873,98 @@
         }
 
         // ============================================
-        // SISTEMA DE RANKING SIMPLIFICADO
+        // SISTEMA DE RANKING MEJORADO (con ordenamiento)
         // ============================================
         async function calculateProfessionalRanking(professional) {
             try {
+                // Obtener calificaciones aprobadas de los últimos 6 meses
+                const sixMonthsAgo = new Date();
+                sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+                
                 const ratingsSnapshot = await db.collection('ratings')
                     .where('professionalId', '==', professional.id)
                     .where('status', '==', 'approved')
+                    .where('createdAt', '>=', sixMonthsAgo)
                     .get();
                 
                 let totalRatings = 0;
                 let sumRatings = 0;
+                let completedJobs = 0;
                 
                 ratingsSnapshot.forEach(doc => {
                     totalRatings++;
                     sumRatings += doc.data().rating;
+                    if (doc.data().jobCompleted) {
+                        completedJobs++;
+                    }
                 });
                 
                 const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
                 
-                // Calcular score simplificado
+                // Calcular score mejorado
                 let score = 0;
-                score += averageRating * 10;
                 
-                // Puntos por cantidad de trabajos
-                if (professional.completedJobs) {
-                    score += Math.min(professional.completedJobs, 20);
+                // Puntos por calificación (40% del total)
+                score += averageRating * 8; // Máximo 40 puntos
+                
+                // Puntos por cantidad de trabajos (20% del total)
+                if (completedJobs) {
+                    score += Math.min(completedJobs * 0.4, 20);
                 }
                 
-                // Puntos por experiencia
+                // Puntos por experiencia (15% del total)
                 if (professional.experienceYears) {
-                    score += Math.min(professional.experienceYears, 10);
+                    score += Math.min(professional.experienceYears * 0.75, 15);
                 }
                 
-                // Puntos por certificaciones
-                if (professional.certifications) {
-                    score += professional.certifications.length * 3;
+                // Puntos por certificaciones (15% del total)
+                if (professional.certifications && professional.certifications.length > 0) {
+                    score += Math.min(professional.certifications.length * 3, 15);
                 }
                 
-                // Puntos por actividad reciente
+                // Puntos por actividad reciente (10% del total)
                 if (professional.lastActive) {
-                    const lastActiveDate = professional.lastActive.toDate();
+                    const lastActiveDate = professional.lastActive.toDate ? 
+                        professional.lastActive.toDate() : new Date(professional.lastActive);
                     const daysSince = (new Date() - lastActiveDate) / (1000 * 60 * 60 * 24);
                     if (daysSince < 7) score += 10;
+                    else if (daysSince < 30) score += 5;
+                    else if (daysSince < 90) score += 2;
                 }
                 
+                // Bonus por Plan Profesional (12 meses) - NUEVO
+                if (professional.hasProfessionalPlan) {
+                    score += 10;
+                }
+                
+                // Bonus por destacado activo
+                const now = new Date();
+                if (professional.isFeatured && professional.featuredUntil) {
+                    const featuredUntil = professional.featuredUntil.toDate ? 
+                        professional.featuredUntil.toDate() : new Date(professional.featuredUntil);
+                    if (featuredUntil > now) {
+                        score += 5;
+                    }
+                }
+                
+                // Asegurar que el score esté entre 0 y 100
                 score = Math.min(Math.max(score, 0), 100);
                 const rankingScore = Math.round(score);
                 
                 // Determinar nivel
                 let rankingLevel = 'Principiante';
-                if (rankingScore >= 80) rankingLevel = 'Oro';
-                else if (rankingScore >= 65) rankingLevel = 'Plata';
-                else if (rankingScore >= 50) rankingLevel = 'Bronce';
+                if (rankingScore >= 90) rankingLevel = 'Platino';
+                else if (rankingScore >= 80) rankingLevel = 'Oro';
+                else if (rankingScore >= 70) rankingLevel = 'Plata';
+                else if (rankingScore >= 60) rankingLevel = 'Bronce';
                 
                 return {
                     ...professional,
                     averageRating,
                     totalRatings,
                     rankingScore,
-                    rankingLevel
+                    rankingLevel,
+                    completedJobs: professional.completedJobs || completedJobs
                 };
                 
             } catch (error) {
@@ -844,13 +974,15 @@
                     averageRating: professional.averageRating || 0,
                     totalRatings: professional.totalRatings || 0,
                     rankingScore: professional.rankingScore || 0,
-                    rankingLevel: professional.rankingLevel || 'Principiante'
+                    rankingLevel: professional.rankingLevel || 'Principiante',
+                    completedJobs: professional.completedJobs || 0
                 };
             }
         }
 
         function getRankingBadge(rankingLevel) {
             const badges = {
+                'Platino': { class: 'ranking-platinum', emoji: '🏆' },
                 'Oro': { class: 'ranking-gold', emoji: '🥇' },
                 'Plata': { class: 'ranking-silver', emoji: '🥈' },
                 'Bronce': { class: 'ranking-bronze', emoji: '🥉' },
@@ -862,6 +994,51 @@
         }
 
         // ============================================
+        // ORDENAMIENTO DE PROFESIONALES (Ranking mejorado)
+        // ============================================
+        function sortProfessionals(professionals, sortType = 'ranking') {
+            const now = new Date();
+            
+            return [...professionals].sort((a, b) => {
+                // Primero: Profesionales con Plan de 12 meses (hasProfessionalPlan)
+                if (a.hasProfessionalPlan && !b.hasProfessionalPlan) return -1;
+                if (!a.hasProfessionalPlan && b.hasProfessionalPlan) return 1;
+                
+                // Segundo: Destacados activos
+                const aIsFeaturedActive = a.isFeatured && a.featuredUntil && 
+                    (a.featuredUntil.toDate ? a.featuredUntil.toDate() : new Date(a.featuredUntil)) > now;
+                const bIsFeaturedActive = b.isFeatured && b.featuredUntil && 
+                    (b.featuredUntil.toDate ? b.featuredUntil.toDate() : new Date(b.featuredUntil)) > now;
+                
+                if (aIsFeaturedActive && !bIsFeaturedActive) return -1;
+                if (!aIsFeaturedActive && bIsFeaturedActive) return 1;
+                
+                // Tercero: Ordenar según el criterio seleccionado
+                switch(sortType) {
+                    case 'featured':
+                        // Ya ordenados por destacados arriba
+                        return b.rankingScore - a.rankingScore;
+                        
+                    case 'professional':
+                        // Profesionales verificados (con certificaciones o alta calificación)
+                        const aIsProfessional = (a.certifications && a.certifications.length > 0) || a.averageRating >= 4.5;
+                        const bIsProfessional = (b.certifications && b.certifications.length > 0) || b.averageRating >= 4.5;
+                        
+                        if (aIsProfessional && !bIsProfessional) return -1;
+                        if (!aIsProfessional && bIsProfessional) return 1;
+                        return b.rankingScore - a.rankingScore;
+                        
+                    case 'rating':
+                        return (b.averageRating || 0) - (a.averageRating || 0);
+                        
+                    case 'ranking':
+                    default:
+                        return b.rankingScore - a.rankingScore;
+                }
+            });
+        }
+
+        // ============================================
         // CARGA Y MUESTRA DE PROFESIONALES
         // ============================================
         async function loadAllProfessionals() {
@@ -869,7 +1046,8 @@
             try {
                 const snapshot = await db.collection('professionals')
                     .where('active', '==', true)
-                    .limit(30)
+                    .where('profileCompleted', '==', true)
+                    .limit(50)
                     .get();
                 
                 if (snapshot.empty) {
@@ -884,11 +1062,8 @@
                     })
                 );
                 
-                // Ordenar por ranking
-                professionals.sort((a, b) => b.rankingScore - a.rankingScore);
                 allProfessionals = professionals;
-                
-                displayProfessionals(professionals);
+                sortAndDisplayProfessionals();
                 
             } catch (error) {
                 console.error('Error cargando profesionales:', error);
@@ -905,13 +1080,15 @@
             const rubro = document.getElementById('rubroSelect').value;
             
             try {
-                let query = db.collection('professionals').where('active', '==', true);
+                let query = db.collection('professionals')
+                    .where('active', '==', true)
+                    .where('profileCompleted', '==', true);
                 
                 if (provincia) query = query.where('provincia', '==', provincia);
                 if (ciudad && ciudad !== '') query = query.where('ciudad', '==', ciudad);
                 if (rubro) query = query.where('rubros', 'array-contains', rubro);
                 
-                const snapshot = await query.limit(30).get();
+                const snapshot = await query.limit(50).get();
                 
                 if (snapshot.empty) {
                     displayNoResults();
@@ -925,8 +1102,8 @@
                     })
                 );
                 
-                professionals.sort((a, b) => b.rankingScore - a.rankingScore);
-                displayProfessionals(professionals);
+                allProfessionals = professionals;
+                sortAndDisplayProfessionals();
                 
             } catch (error) {
                 console.error('Error buscando:', error);
@@ -934,6 +1111,11 @@
             } finally {
                 hideLoader();
             }
+        }
+
+        function sortAndDisplayProfessionals() {
+            const sortedProfessionals = sortProfessionals(allProfessionals, currentSort);
+            displayProfessionals(sortedProfessionals);
         }
 
         function displayProfessionals(professionals) {
@@ -947,7 +1129,17 @@
             
             professionals.forEach(prof => {
                 const card = document.createElement('div');
-                card.className = 'professional-card';
+                
+                // Determinar clase especial para la tarjeta
+                const now = new Date();
+                const isFeaturedActive = prof.isFeatured && prof.featuredUntil && 
+                    (prof.featuredUntil.toDate ? prof.featuredUntil.toDate() : new Date(prof.featuredUntil)) > now;
+                
+                let cardClass = 'professional-card';
+                if (prof.hasProfessionalPlan) cardClass += ' professional-plan';
+                else if (isFeaturedActive) cardClass += ' featured';
+                
+                card.className = cardClass;
                 
                 // Calcular estrellas
                 const rating = prof.averageRating || 0;
@@ -958,6 +1150,21 @@
                 for (let i = 0; i < fullStars; i++) starsHTML += '⭐';
                 if (hasHalfStar) starsHTML += '½';
                 for (let i = 0; i < 5 - fullStars - (hasHalfStar ? 1 : 0); i++) starsHTML += '☆';
+                
+                // Construir HTML de certificaciones
+                let certificationsHTML = '';
+                if (prof.certifications && prof.certifications.length > 0) {
+                    certificationsHTML = `
+                        <div class="certifications">
+                            <div class="certifications-title">📜 Certificaciones:</div>
+                            <div class="certifications-list">
+                                ${prof.certifications.map(cert => 
+                                    `<span class="certification-item">${cert}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
                 
                 card.innerHTML = `
                     <div class="professional-header">
@@ -970,7 +1177,8 @@
                                 ${starsHTML} ${rating.toFixed(1)}
                                 <span>(${prof.totalRatings || 0})</span>
                                 ${getRankingBadge(prof.rankingLevel)}
-                                ${prof.isFeatured ? '<span class="badge badge-featured">DESTACADO</span>' : ''}
+                                ${isFeaturedActive ? '<span class="badge badge-featured">DESTACADO</span>' : ''}
+                                ${prof.hasProfessionalPlan ? '<span class="badge badge-12months">PLAN 12 MESES</span>' : ''}
                                 ${prof.certifications && prof.certifications.length > 0 ? '<span class="badge badge-certified">CERTIFICADO</span>' : ''}
                             </div>
                             <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.3rem;">
@@ -988,6 +1196,7 @@
                             ${prof.rubros ? prof.rubros.map(r => `<span style="background: #f1f6ff; color: #0a4fd8; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem;">${r}</span>`).join('') : ''}
                         </div>
                         <p style="font-size: 0.95rem;">${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
+                        ${certificationsHTML}
                     </div>
                     <div class="professional-footer">
                         <span style="font-size: 0.9rem;">${prof.zonas ? prof.zonas.join(', ') : 'Toda la ciudad'}</span>
@@ -1010,6 +1219,7 @@
             });
             
             document.getElementById('resultsHeader').style.display = 'flex';
+            document.getElementById('sortingOptions').style.display = 'flex';
             document.getElementById('resultsCount').textContent = `${professionals.length} técnicos`;
         }
 
@@ -1022,6 +1232,7 @@
                 </div>
             `;
             document.getElementById('resultsHeader').style.display = 'none';
+            document.getElementById('sortingOptions').style.display = 'none';
         }
 
         function displayError() {
@@ -1138,11 +1349,13 @@
             try {
                 await db.collection('ratings').add({
                     professionalId: currentRatingProfessional.id,
+                    professionalName: currentRatingProfessional.name,
                     rating: selectedRating,
                     comment: comment,
                     clientPhone: clientPhone,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    status: 'pending'
+                    status: 'pending',
+                    jobCompleted: true
                 });
                 
                 alert('¡Gracias por tu calificación! Será revisada antes de publicarse.');
