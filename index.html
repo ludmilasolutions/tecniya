@@ -775,19 +775,18 @@
         }
 
         // ============================================
-        // BANNERS - CORREGIDOS (Respetan configuración del panel admin)
+        // BANNERS - CORREGIDOS (Solución al error de Firebase)
         // ============================================
         async function loadBanners() {
             try {
-                const now = firebase.firestore.Timestamp.now();
-                
-                // Obtener banners activos para la posición "home"
+                // CORRECCIÓN: No usar filtro de desigualdad con orderBy diferente
+                // Obtenemos todos los banners activos para la posición home
+                // y filtramos por fecha en el cliente
                 const snapshot = await db.collection('banners')
                     .where('active', '==', true)
                     .where('position', '==', 'home')
-                    .where('startDate', '<=', now)
                     .orderBy('priority', 'desc')
-                    .limit(5)
+                    .limit(10)
                     .get();
                 
                 const container = document.getElementById('bannersContainer');
@@ -799,19 +798,26 @@
                 
                 let bannersHTML = '';
                 const currentDate = new Date();
+                const banners = [];
                 
                 snapshot.forEach(doc => {
-                    const banner = doc.data();
+                    const banner = { id: doc.id, ...doc.data() };
+                    banners.push(banner);
+                });
+                
+                // Filtrar por fecha de inicio y fin en el cliente
+                banners.forEach(banner => {
+                    const startDate = banner.startDate ? banner.startDate.toDate() : new Date(0);
                     const endDate = banner.endDate ? banner.endDate.toDate() : null;
                     
-                    // Verificar si el banner aún está vigente
-                    if (!endDate || endDate >= currentDate) {
+                    // Verificar si el banner está vigente
+                    if (startDate <= currentDate && (!endDate || endDate >= currentDate)) {
                         bannersHTML += `
                             <div class="banner">
                                 <a href="${banner.link || '#'}" target="_blank" class="banner-link">
                                     <img src="${banner.imageUrl}" 
                                          alt="${banner.title || 'Banner TecniYa'}"
-                                         onerror="this.src='https://via.placeholder.com/1200x200/0a4fd8/ffffff?text=Banner+TecniYa'">
+                                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwMCIgaGVpZ2h0PSIyMDAiIHZpZXdCb3g9IjAgMCAxMjAwIDIwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMGE0ZmQ4Ii8+Cjx0ZXh0IHg9IjYwMCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+VGVjbmlZYSAtIFTDqWNuaWNvcyBDZXJ0aWZpY2Fkb3M8L3RleHQ+Cjwvc3ZnPgo='">
                                 </a>
                             </div>
                         `;
@@ -825,7 +831,7 @@
                     container.innerHTML = `
                         <div class="banner">
                             <a href="#" class="banner-link">
-                                <img src="https://via.placeholder.com/1200x200/0a4fd8/ffffff?text=TecniYa+-+Técnicos+Certificados" 
+                                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwMCIgaGVpZ2h0PSIyMDAiIHZpZXdCb3g9IjAgMCAxMjAwIDIwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMGE0ZmQ4Ii8+Cjx0ZXh0IHg9IjYwMCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+VGVjbmlZYSAtIFTDqWNuaWNvcyBDZXJ0aWZpY2Fkb3M8L3RleHQ+Cjwvc3ZnPgo=" 
                                      alt="Banner Promocional TecniYa">
                             </a>
                         </div>
@@ -838,7 +844,7 @@
                 document.getElementById('bannersContainer').innerHTML = `
                     <div class="banner">
                         <a href="#" class="banner-link">
-                            <img src="https://via.placeholder.com/1200x200/0a4fd8/ffffff?text=TecniYa+-+Técnicos+Certificados" 
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwMCIgaGVpZ2h0PSIyMDAiIHZpZXdCb3g9IjAgMCAxMjAwIDIwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMGE0ZmQ4Ii8+Cjx0ZXh0IHg9IjYwMCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+VGVjbmlZYSAtIFTDqWNuaWNvcyBDZXJ0aWZpY2Fkb3M8L3RleHQ+Cjwvc3ZnPgo=" 
                                  alt="Banner Promocional TecniYa">
                         </a>
                     </div>
@@ -1168,9 +1174,10 @@
                 
                 card.innerHTML = `
                     <div class="professional-header">
-                        <img src="${prof.photoUrl || 'https://via.placeholder.com/70x70/0a4fd8/ffffff?text=T'}" 
+                        <img src="${prof.photoUrl || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzAiIGhlaWdodD0iNzAiIHZpZXdCb3g9IjAgMCA3MCA3MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzUiIGN5PSIzNSIgcj0iMzUiIGZpbGw9IiMwYTRmZDgiLz4KPHBhdGggZD0iTTQxIDQxSDM5VjI5SDQxVjQxWk00MSA0M1Y0NUgzOVY0M0g0MVpNMzUgMjVDMzAuMDMgMjUgMjYgMjkuMDMgMjYgMzRDMjYgMzguOTcgMzAuMDMgNDMgMzUgNDNDMzkuOTcgNDMgNDQgMzguOTcgNDQgMzRDNDQgMjkuMDMgMzkuOTcgMjUgMzUgMjVaTTM1IDQxQzMxLjEzIDQxIDI4IDM3Ljg3IDI4IDM0QzI4IDMwLjEzIDMxLjEzIDI3IDM1IDI3QzM4Ljg3IDI3IDQyIDMwLjEzIDQyIDM0QzQyIDM3Ljg3IDM4Ljg3IDQxIDM1IDQxWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg=='}" 
                              alt="${prof.name}"
-                             class="professional-photo">
+                             class="professional-photo"
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzAiIGhlaWdodD0iNzAiIHZpZXdCb3g9IjAgMCA3MCA3MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzUiIGN5PSIzNSIgcj0iMzUiIGZpbGw9IiMwYTRmZDgiLz4KPHBhdGggZD0iTTQxIDQxSDM5VjI5SDQxVjQxWk00MSA0M1Y0NUgzOVY0M0g0MVpNMzUgMjVDMzAuMDMgMjUgMjYgMjkuMDMgMjYgMzRDMjYgMzguOTcgMzAuMDMgNDMgMzUgNDNDMzkuOTcgNDMgNDQgMzguOTcgNDQgMzRDNDQgMjkuMDMgMzkuOTcgMjUgMzUgMjVaTTM1IDQxQzMxLjEzIDQxIDI4IDM3Ljg3IDI4IDM0QzI4IDMwLjEzIDMxLjEzIDI3IDM1IDI3QzM4Ljg3IDI3IDQyIDMwLjEzIDQyIDM0QzQyIDM3Ljg3IDM4Ljg3IDQxIDM1IDQxWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg=='">
                         <div class="professional-info">
                             <h3 class="professional-name">${prof.name}</h3>
                             <div class="professional-rating">
@@ -1193,7 +1200,7 @@
                     </div>
                     <div class="professional-body">
                         <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.8rem;">
-                            ${prof.rubros ? prof.rubros.map(r => `<span style="background: #f1f6ff; color: #0a4fd8; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem;">${r}</span>`).join('') : ''}
+                            ${prof.rubros ? prof.rubros.map(r => `<span style="background: #f1f6ff; color: #0a4fd8; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem;">${getRubroName(r)}</span>`).join('') : ''}
                         </div>
                         <p style="font-size: 0.95rem;">${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
                         ${certificationsHTML}
@@ -1201,12 +1208,12 @@
                     <div class="professional-footer">
                         <span style="font-size: 0.9rem;">${prof.zonas ? prof.zonas.join(', ') : 'Toda la ciudad'}</span>
                         <div style="display: flex; gap: 8px;">
-                            <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
+                            <a href="https://wa.me/${prof.phone}?text=Hola ${encodeURIComponent(prof.name.split(' ')[0])}, te contacto desde TecniYa" 
                                target="_blank"
                                class="btn btn-whatsapp">
                                 📱 Contactar
                             </a>
-                            <button onclick="openRatingModal('${prof.id}', '${prof.name}')" 
+                            <button onclick="openRatingModal('${prof.id}', '${prof.name.replace(/'/g, "\\'")}')" 
                                     class="btn" 
                                     style="background: #6c757d; color: white; font-size: 0.9rem;">
                                 ⭐ Calificar
@@ -1221,6 +1228,25 @@
             document.getElementById('resultsHeader').style.display = 'flex';
             document.getElementById('sortingOptions').style.display = 'flex';
             document.getElementById('resultsCount').textContent = `${professionals.length} técnicos`;
+        }
+
+        function getRubroName(rubroKey) {
+            const rubros = {
+                'plomeria': 'Plomería',
+                'gas': 'Gas',
+                'electricidad': 'Electricidad',
+                'aire': 'Aire Acondicionado',
+                'albanileria': 'Albañilería',
+                'pintura': 'Pintura',
+                'cerrajeria': 'Cerrajería',
+                'jardineria': 'Jardinería',
+                'herreria': 'Herrería',
+                'carpinteria': 'Carpintería',
+                'limpieza': 'Limpieza',
+                'mudanzas': 'Mudanzas',
+                'otros': 'Otros servicios'
+            };
+            return rubros[rubroKey] || rubroKey;
         }
 
         function displayNoResults() {
