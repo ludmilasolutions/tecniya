@@ -9,6 +9,12 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
     
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a4fd8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <!-- Preconnect -->
     <link rel="preconnect" href="https://www.gstatic.com">
     
@@ -370,6 +376,11 @@
             color: #721c24;
         }
         
+        .status-professional {
+            background: #007bff;
+            color: white;
+        }
+        
         .progress-indicator {
             margin-top: 1rem;
         }
@@ -431,6 +442,11 @@
         
         .ranking-bronze {
             background: #cd7f32;
+            color: white;
+        }
+        
+        .ranking-beginner {
+            background: #6c757d;
             color: white;
         }
         
@@ -771,42 +787,47 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* ===== INSTALL APP BANNER ===== */
-        .install-banner {
+        /* ===== INSTALL PROMPT ===== */
+        .install-prompt {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: none;
+            max-width: 300px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .install-btn {
             background: var(--primary);
             color: white;
-            padding: 1rem;
-            text-align: center;
-            z-index: 9999;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            display: none;
-        }
-        
-        .install-banner-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .install-banner-text {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .install-banner-close {
-            background: none;
             border: none;
-            color: white;
-            font-size: 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: 600;
+        }
+        
+        /* ===== CERTIFICATIONS UPLOAD ===== */
+        .certification-upload {
+            border: 2px dashed var(--light-gray);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 1rem 0;
+            background: #f8f9fa;
+        }
+        
+        .certification-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--light-gray);
         }
         
         /* ===== RESPONSIVE ===== */
@@ -858,19 +879,23 @@
                 padding: 1rem;
             }
             
-            .install-banner-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .install-banner-text {
-                flex-direction: column;
-                text-align: center;
+            .install-prompt {
+                left: 20px;
+                right: 20px;
+                max-width: none;
             }
         }
     </style>
 </head>
 <body>
+    <!-- INSTALL PROMPT -->
+    <div id="installPrompt" class="install-prompt">
+        <p style="margin-bottom: 0.5rem; font-weight: 600;">📱 Instalar TecniYa Pro</p>
+        <p style="font-size: 0.9rem; color: var(--gray); margin-bottom: 1rem;">Instalá la app para un acceso rápido desde tu teléfono</p>
+        <button id="installBtn" class="install-btn">Instalar</button>
+        <button id="dismissInstall" style="margin-left: 0.5rem; background: none; border: none; color: var(--gray); cursor: pointer;">Más tarde</button>
+    </div>
+    
     <!-- LOGIN CONTAINER -->
     <div id="loginContainer" class="container login-container">
         <div class="logo" style="justify-content: center; margin-bottom: 1.5rem;">
@@ -917,9 +942,9 @@
                 <div class="form-group">
                     <label class="form-label">Teléfono WhatsApp *</label>
                     <input type="tel" id="registerPhone" class="form-input" 
-                           placeholder="5493411234567 (sin +)" required pattern="[0-9]{10,13}">
+                           placeholder="3417558966" required pattern="[0-9]{10,13}">
                     <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
-                        Sin +, comenzá con el código de país (54 para Argentina)
+                        Ejemplo: 3417558966 (sin 0 ni 15)
                     </small>
                 </div>
                 <div class="form-group">
@@ -987,8 +1012,8 @@
                 <div class="tab" data-tab="ratings">
                     ⭐ Calificaciones
                 </div>
-                <div class="tab" data-tab="stats">
-                    📊 Estadísticas
+                <div class="tab" data-tab="certifications">
+                    📜 Certificaciones
                 </div>
                 <div class="tab logout-btn" id="logoutBtn">
                     🚪 Cerrar Sesión
@@ -1002,15 +1027,15 @@
                     <div class="status-card">
                         <div class="status-header">
                             <h2>🏆 Mi Ranking Personal</h2>
-                            <span id="rankingLevelBadge" class="ranking-badge ranking-bronze">
-                                BRONCE
+                            <span id="rankingLevelBadge" class="ranking-badge ranking-beginner">
+                                PRINCIPIANTE
                             </span>
                         </div>
                         
                         <div class="ranking-header">
                             <div>
                                 <div class="ranking-score" id="rankingScore">0</div>
-                                <div class="ranking-level" id="rankingLevel">Puntaje de 0 a 100</div>
+                                <div class="ranking-level" id="rankingLevel">Nivel: Principiante</div>
                             </div>
                             <div>
                                 <div style="font-size: 1.1rem; color: var(--dark); margin-bottom: 0.5rem;">
@@ -1104,7 +1129,7 @@
                             <li style="margin-bottom: 0.8rem;"><strong>✅ Completá tu perfil:</strong> Foto profesional, descripción detallada, certificaciones</li>
                             <li style="margin-bottom: 0.8rem;"><strong>🚀 Responde rápido:</strong> Atendé las consultas en menos de 24 horas</li>
                             <li style="margin-bottom: 0.8rem;"><strong>⭐ Pedí calificaciones:</strong> Solicitá a tus clientes que te califiquen</li>
-                            <li style="margin-bottom: 0.8rem;"><strong>📝 Actualizá tu experiencia:</strong> Agregá años de experiencia y trabajos completados</li>
+                            <li style="margin-bottom: 0.8rem;"><strong>📝 Actualizá tu experiencia:</strong> Agregá años de experiencia</li>
                             <li style="margin-bottom: 0.8rem;"><strong>💼 Mantenete activo:</strong> Actualizá tu perfil regularmente</li>
                             <li style="margin-bottom: 0.8rem;"><strong>🌟 Considerá ser destacado:</strong> Los perfiles destacados tienen +5 puntos</li>
                         </ul>
@@ -1148,7 +1173,7 @@
                         <div class="form-group">
                             <label class="form-label">Teléfono WhatsApp *</label>
                             <input type="tel" id="profilePhone" class="form-input" 
-                                   placeholder="5493411234567 (sin +)" required pattern="[0-9]{10,13}">
+                                   placeholder="3417558966" required pattern="[0-9]{10,13}">
                             <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
                                 Los clientes te contactarán por este número
                             </small>
@@ -1278,35 +1303,6 @@
                                    min="0" max="50" required>
                         </div>
                         
-                        <div class="form-group">
-                            <label class="form-label">Certificaciones</label>
-                            <input type="text" id="profileCertifications" class="form-input" 
-                                   placeholder="Ej: Gasista Matriculado, Electricista Certificado"
-                                   <?php if (!$tienePlanProfesional): ?>disabled<?php endif; ?>>
-                            <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
-                                <?php if ($tienePlanProfesional): ?>
-                                    Podés subir certificaciones porque tenés Plan Profesional activo.
-                                <?php else: ?>
-                                    Necesitás Plan Profesional activo para subir certificaciones.
-                                <?php endif; ?>
-                            </small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Trabajos realizados (automático)</label>
-                            <input type="number" id="profileCompletedJobs" class="form-input" 
-                                   min="0" value="0" readonly>
-                            <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
-                                Este número se actualiza automáticamente cuando los clientes confirman tu trabajo.
-                            </small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Tiempo promedio de respuesta (en horas)</label>
-                            <input type="number" id="profileResponseTime" class="form-input" 
-                                   min="0" placeholder="Ej: 4 (para menos de 4 horas)">
-                        </div>
-                        
                         <div class="btn-group">
                             <button type="submit" class="btn btn-primary">
                                 💾 Guardar perfil
@@ -1345,36 +1341,28 @@
                     </div>
                     
                     <div class="profile-form-section">
-                        <h3>🌟 Planes de Destacado - Solo Transferencia Bancaria</h3>
-                        <p style="color: var(--gray); margin-bottom: 2rem;">
-                            Seleccioná un plan para destacar tu perfil y aparecer primero en las búsquedas.
+                        <h3>🌟 Planes de Destacado</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">
+                            <strong>💳 Método de pago:</strong> Solo transferencia bancaria
                         </p>
                         
                         <div class="featured-plans" id="featuredPlansContainer">
                             <!-- Los planes se cargarán dinámicamente -->
                         </div>
                         
-                        <div class="form-group" style="margin-top: 2rem;">
-                            <label class="form-label">Método de Pago *</label>
-                            <select id="paymentMethod" class="form-select" required>
-                                <option value="">Seleccioná método de pago</option>
-                                <option value="transferencia">Transferencia Bancaria</option>
-                            </select>
-                        </div>
-                        
-                        <div id="paymentDetails" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
+                        <div id="transferenciaDetails" style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
                             <h4>📋 Datos para Transferencia</h4>
-                            <div id="transferenciaDetails" style="display: block;">
-                                <p><strong>Banco:</strong> Banco Provincia</p>
-                                <p><strong>CBU:</strong> 0140449504000034567890</p>
-                                <p><strong>Alias:</strong> TECNIYA.DESTACADOS</p>
-                                <p><strong>Titular:</strong> TecniYa S.R.L.</p>
-                                <p><strong>CUIT:</strong> 30-12345678-9</p>
-                                <p><strong>Importante:</strong> Enviar comprobante a WhatsApp: 3417558966</p>
-                                <p style="margin-top: 1rem; padding: 0.5rem; background: #fff3cd; border-radius: 4px;">
-                                    <strong>⚠️ Atención:</strong> Solo se aceptan transferencias bancarias. El pago de 12 meses habilita certificaciones.
-                                </p>
+                            <div style="margin-top: 1rem;">
+                                <p><strong>🏦 Banco:</strong> Banco de la Nación Argentina</p>
+                                <p><strong>💰 CBU:</strong> 0110599540000415590015</p>
+                                <p><strong>📝 Alias:</strong> TECNIYA.DESTACADOS</p>
+                                <p><strong>👤 Titular:</strong> TecniYa S.R.L.</p>
+                                <p><strong>📊 CUIT:</strong> 30-12345678-9</p>
+                                <p><strong>📧 Enviar comprobante a:</strong> comprobantes@tecniya.com</p>
                             </div>
+                            <p style="margin-top: 1rem; color: var(--primary); font-weight: 600;">
+                                ✅ Pagando 12 meses habilita certificaciones
+                            </p>
                         </div>
                         
                         <div class="btn-group">
@@ -1436,58 +1424,59 @@
                 
                 <!-- BUDGETS PANEL -->
                 <div id="budgetsPanel" class="panel">
-                    <div id="budgetAccessMessage" class="message" style="display: none; margin-bottom: 2rem;"></div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h3>💰 Mis Presupuestos</h3>
+                        <div class="btn-group" style="margin: 0;">
+                            <button id="newBudgetBtn" class="btn btn-primary" disabled>
+                                📝 Nuevo Presupuesto
+                            </button>
+                            <button id="exportBudgetsBtn" class="btn btn-secondary">
+                                📤 Exportar JSON
+                            </button>
+                        </div>
+                    </div>
                     
-                    <div id="budgetsContent" style="display: none;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                            <h3>💰 Mis Presupuestos</h3>
-                            <div class="btn-group" style="margin: 0;">
-                                <button id="newBudgetBtn" class="btn btn-primary">
-                                    📝 Nuevo Presupuesto
+                    <div id="budgetPlanWarning" class="message message-warning" style="display: none;">
+                        <p>⚠️ <strong>Necesitás plan Destacado activo para crear presupuestos.</strong></p>
+                        <p>Activate un plan destacado en la pestaña "⭐ Destacados" para habilitar esta función.</p>
+                    </div>
+                    
+                    <div class="profile-form-section" id="budgetSection" style="display: none;">
+                        <div class="filters">
+                            <div class="filter-group">
+                                <label class="form-label">Estado</label>
+                                <select id="budgetFilterStatus" class="form-select">
+                                    <option value="">Todos</option>
+                                    <option value="borrador">Borrador</option>
+                                    <option value="enviado">Enviado</option>
+                                    <option value="aceptado">Aceptado</option>
+                                    <option value="rechazado">Rechazado</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="form-label">Cliente</label>
+                                <input type="text" id="budgetFilterClient" class="form-input" placeholder="Buscar por cliente">
+                            </div>
+                            <div class="filter-group">
+                                <label class="form-label">Desde</label>
+                                <input type="date" id="budgetFilterFrom" class="form-input">
+                            </div>
+                            <div class="filter-group">
+                                <label class="form-label">Hasta</label>
+                                <input type="date" id="budgetFilterTo" class="form-input">
+                            </div>
+                            <div class="filter-group">
+                                <button id="applyBudgetFilters" class="btn btn-secondary" style="margin-top: 1.5rem;">
+                                    🔍 Filtrar
                                 </button>
-                                <button id="exportBudgetsBtn" class="btn btn-secondary">
-                                    📤 Exportar JSON
+                                <button id="resetBudgetFilters" class="btn btn-danger" style="margin-top: 1.5rem;">
+                                    🔄 Limpiar
                                 </button>
                             </div>
                         </div>
                         
-                        <div class="profile-form-section">
-                            <div class="filters">
-                                <div class="filter-group">
-                                    <label class="form-label">Estado</label>
-                                    <select id="budgetFilterStatus" class="form-select">
-                                        <option value="">Todos</option>
-                                        <option value="borrador">Borrador</option>
-                                        <option value="enviado">Enviado</option>
-                                        <option value="aceptado">Aceptado</option>
-                                        <option value="rechazado">Rechazado</option>
-                                    </select>
-                                </div>
-                                <div class="filter-group">
-                                    <label class="form-label">Cliente</label>
-                                    <input type="text" id="budgetFilterClient" class="form-input" placeholder="Buscar por cliente">
-                                </div>
-                                <div class="filter-group">
-                                    <label class="form-label">Desde</label>
-                                    <input type="date" id="budgetFilterFrom" class="form-input">
-                                </div>
-                                <div class="filter-group">
-                                    <label class="form-label">Hasta</label>
-                                    <input type="date" id="budgetFilterTo" class="form-input">
-                                </div>
-                                <div class="filter-group">
-                                    <button id="applyBudgetFilters" class="btn btn-secondary" style="margin-top: 1.5rem;">
-                                        🔍 Filtrar
-                                    </button>
-                                    <button id="resetBudgetFilters" class="btn btn-danger" style="margin-top: 1.5rem;">
-                                        🔄 Limpiar
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div id="budgetsList">
-                                <!-- Lista de presupuestos se cargará aquí -->
-                            </div>
+                        <div id="budgetsList">
+                            <!-- Lista de presupuestos se cargará aquí -->
                         </div>
                     </div>
                 </div>
@@ -1504,6 +1493,10 @@
                             <div>
                                 <div style="font-size: 2rem; font-weight: 700; color: var(--secondary);" id="totalRatingsCount">0</div>
                                 <div style="color: var(--gray);">Total de calificaciones</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 2rem; font-weight: 700; color: var(--accent);" id="completedJobsCount">0</div>
+                                <div style="color: var(--gray);">Trabajos completados</div>
                             </div>
                         </div>
                         
@@ -1522,50 +1515,68 @@
                     </div>
                 </div>
                 
-                <!-- STATS PANEL -->
-                <div id="statsPanel" class="panel">
-                    <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Estadísticas Detalladas</h3>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value" id="statsRanking">0</div>
-                            <div class="stat-label">🏆 Puntaje de ranking</div>
+                <!-- CERTIFICATIONS PANEL -->
+                <div id="certificationsPanel" class="panel">
+                    <div class="status-card">
+                        <div class="status-header">
+                            <h3>Estado de Certificaciones</h3>
+                            <span id="certificationStatusBadge" class="status-badge status-incomplete">
+                                NO DISPONIBLE
+                            </span>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="statsAverageRating">0.0</div>
-                            <div class="stat-label">⭐ Rating promedio</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="statsTotalRatings">0</div>
-                            <div class="stat-label">📝 Calificaciones</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="statsCompletedJobs">0</div>
-                            <div class="stat-label">✅ Trabajos completados</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="statsExperience">0</div>
-                            <div class="stat-label">📅 Años de experiencia</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="statsResponseTime">0h</div>
-                            <div class="stat-label">🚀 Tiempo de respuesta</div>
+                        
+                        <div id="certificationInfo">
+                            <p style="color: var(--gray); margin-bottom: 1rem;">
+                                Las certificaciones están disponibles solo con Plan Profesional activo.
+                            </p>
+                            <p><strong>✅ Plan Profesional incluye:</strong></p>
+                            <ul style="margin: 1rem 0 1rem 1.5rem; color: var(--dark);">
+                                <li>Subida de certificaciones verificadas</li>
+                                <li>Badge especial en tu perfil</li>
+                                <li>Mayor confianza para los clientes</li>
+                                <li>+10 puntos en el ranking</li>
+                            </ul>
+                            <p><strong>💡 ¿Cómo activar Plan Profesional?</strong></p>
+                            <p>Completá 12 meses de plan Destacado para habilitar las certificaciones automáticamente.</p>
                         </div>
                     </div>
                     
-                    <div class="profile-form-section">
-                        <h3>📈 Historial del Ranking</h3>
-                        <div id="rankingHistory" style="margin-top: 1.5rem;">
-                            <div style="text-align: center; padding: 2rem; color: var(--gray);">
-                                No hay historial de ranking disponible
+                    <div id="certificationUploadSection" style="display: none;">
+                        <div class="profile-form-section">
+                            <h3>📜 Subir Certificaciones</h3>
+                            <div class="certification-upload">
+                                <p><strong>➕ Agregar nueva certificación</strong></p>
+                                <div class="form-group">
+                                    <label class="form-label">Título de la certificación *</label>
+                                    <input type="text" id="certificationTitle" class="form-input" placeholder="Ej: Gasista Matriculado Clase III">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Institución emisora *</label>
+                                    <input type="text" id="certificationInstitution" class="form-input" placeholder="Ej: ENARGAS">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Número de certificación</label>
+                                    <input type="text" id="certificationNumber" class="form-input" placeholder="Número de matrícula">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">URL del documento (PDF o imagen)</label>
+                                    <input type="url" id="certificationUrl" class="form-input" placeholder="https://ejemplo.com/certificado.pdf">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Fecha de emisión</label>
+                                    <input type="date" id="certificationDate" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Fecha de vencimiento (opcional)</label>
+                                    <input type="date" id="certificationExpiry" class="form-input">
+                                </div>
+                                <button id="addCertificationBtn" class="btn btn-primary">➕ Agregar Certificación</button>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <div class="profile-form-section">
-                        <h3>🎯 Comparativa con Promedios</h3>
-                        <div id="comparisonStats" style="margin-top: 1.5rem;">
-                            <!-- Se generará dinámicamente -->
+                            
+                            <h4 style="margin-top: 2rem;">📋 Mis Certificaciones</h4>
+                            <div id="certificationsList">
+                                <!-- Lista de certificaciones se cargará aquí -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1668,20 +1679,6 @@
         </div>
     </div>
     
-    <!-- INSTALL APP BANNER -->
-    <div id="installBanner" class="install-banner">
-        <div class="install-banner-content">
-            <div class="install-banner-text">
-                <span>📱</span>
-                <span>¿Querés acceder más rápido a TecniYa? Agregá esta web a tu pantalla de inicio.</span>
-            </div>
-            <div>
-                <button id="installBtn" class="btn btn-light btn-sm">Agregar</button>
-                <button id="closeInstallBanner" class="install-banner-close">×</button>
-            </div>
-        </div>
-    </div>
-    
     <!-- LOADER GLOBAL -->
     <div id="globalLoader" class="loader">
         <div class="spinner"></div>
@@ -1711,34 +1708,15 @@
         let auth, db, currentUser, professionalId = null, professionalData = null;
         let budgets = [];
         let featuredHistory = [];
+        let certifications = [];
+        let deferredPrompt;
         
         // Precios configurados para destacados - CORREGIDOS
         const FEATURED_PRICES = {
-            1: { 
-                price: 5000, 
-                label: "1 mes",
-                originalPrice: 5000,
-                discount: 0
-            },
-            3: { 
-                price: 13500, // 5000*3*0.9 = 13500 (10% off)
-                label: "3 meses (10% off)",
-                originalPrice: 15000,
-                discount: 10
-            },
-            6: { 
-                price: 24000, // 5000*6*0.8 = 24000 (20% off)
-                label: "6 meses (20% off)",
-                originalPrice: 30000,
-                discount: 20
-            },
-            12: { 
-                price: 42000, // 5000*12*0.7 = 42000 (30% off)
-                label: "12 meses (30% off) + Certificaciones",
-                originalPrice: 60000,
-                discount: 30,
-                enablesCertifications: true
-            }
+            1: { price: 5000, label: "1 mes", pricePerMonth: 5000 },
+            3: { price: 13500, label: "3 meses", pricePerMonth: 4500 },
+            6: { price: 24000, label: "6 meses", pricePerMonth: 4000 },
+            12: { price: 42000, label: "12 meses", pricePerMonth: 3500 }
         };
         
         let selectedFeaturedPlan = null;
@@ -1767,14 +1745,49 @@
                 // Verificar estado de autenticación
                 checkAuthState();
                 
-                // Mostrar banner de instalación en dispositivos móviles
-                showInstallBanner();
+                // PWA Install Prompt
+                setupPWA();
                 
             } catch (error) {
                 console.error('Error inicializando:', error);
                 showMessage('loginMessage', 'Error al inicializar la aplicación', 'error');
             }
         });
+
+        // ============================================
+        // PWA INSTALL PROMPT
+        // ============================================
+        function setupPWA() {
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Mostrar el botón de instalación después de 5 segundos
+                setTimeout(() => {
+                    if (deferredPrompt) {
+                        document.getElementById('installPrompt').style.display = 'block';
+                    }
+                }, 5000);
+            });
+
+            document.getElementById('installBtn').addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                
+                if (outcome === 'accepted') {
+                    console.log('Usuario aceptó instalar la PWA');
+                }
+                
+                deferredPrompt = null;
+                document.getElementById('installPrompt').style.display = 'none';
+            });
+
+            document.getElementById('dismissInstall').addEventListener('click', () => {
+                document.getElementById('installPrompt').style.display = 'none';
+            });
+        }
 
         // ============================================
         // SETUP DE EVENT LISTENERS
@@ -1803,8 +1816,7 @@
             
             // Featured system
             document.getElementById('activateFeaturedBtn')?.addEventListener('click', activateFeatured);
-            document.getElementById('extendFeaturedBtn')?.addEventListener('click', () => extendFeatured());
-            document.getElementById('paymentMethod')?.addEventListener('change', showPaymentDetails);
+            document.getElementById('extendFeaturedBtn')?.addEventListener('click', extendFeatured);
             document.getElementById('applyFeaturedFilters')?.addEventListener('click', loadFeaturedHistory);
             
             // Budgets system
@@ -1819,52 +1831,19 @@
             document.getElementById('downloadPdfBtn')?.addEventListener('click', downloadBudgetPdf);
             document.getElementById('printPdfBtn')?.addEventListener('click', printBudgetPdf);
             
-            // Install banner
-            document.getElementById('closeInstallBanner')?.addEventListener('click', () => {
-                document.getElementById('installBanner').style.display = 'none';
-            });
-            
-            document.getElementById('installBtn')?.addEventListener('click', () => {
-                if ('serviceWorker' in navigator && 'PushManager' in window) {
-                    navigator.serviceWorker.register('/sw.js')
-                        .then(() => {
-                            showMessage('loginMessage', '✅ App instalada correctamente', 'success');
-                            document.getElementById('installBanner').style.display = 'none';
-                        })
-                        .catch(error => {
-                            showMessage('loginMessage', '❌ Error instalando la app', 'error');
-                        });
-                } else {
-                    showMessage('loginMessage', 'Tu navegador no soporta instalación de apps', 'info');
-                }
-            });
+            // Certifications
+            document.getElementById('addCertificationBtn')?.addEventListener('click', addCertification);
         }
 
         // ============================================
         // AUTENTICACIÓN - CORREGIDA
         // ============================================
-        async function checkAuthState() {
+        function checkAuthState() {
             auth.onAuthStateChanged(async (user) => {
                 if (user) {
-                    try {
-                        currentUser = user;
-                        const snapshot = await db.collection('professionals')
-                            .where('userId', '==', user.uid)
-                            .limit(1)
-                            .get();
-                        
-                        if (!snapshot.empty) {
-                            await loadProfessionalProfile();
-                            showMainPanel();
-                        } else {
-                            // Usuario existe pero no tiene perfil profesional
-                            showLoginPanel();
-                            showMessage('loginMessage', 'No se encontró tu perfil profesional', 'error');
-                        }
-                    } catch (error) {
-                        console.error('Error verificando perfil:', error);
-                        showLoginPanel();
-                    }
+                    currentUser = user;
+                    await loadProfessionalProfile();
+                    showMainPanel();
                 } else {
                     showLoginPanel();
                 }
@@ -1873,7 +1852,7 @@
 
         async function handleLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim();
+            const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
             if (!email || !password) {
@@ -1892,7 +1871,7 @@
                 if (error.code === 'auth/user-not-found') message = 'Usuario no encontrado';
                 else if (error.code === 'auth/wrong-password') message = 'Contraseña incorrecta';
                 else if (error.code === 'auth/invalid-email') message = 'Email inválido';
-                else if (error.code === 'auth/too-many-requests') message = 'Demasiados intentos. Intenta más tarde';
+                else if (error.code === 'auth/too-many-requests') message = 'Demasiados intentos. Intentá más tarde';
                 showMessage('loginMessage', '❌ ' + message, 'error');
             } finally {
                 showGlobalLoader(false);
@@ -1902,12 +1881,12 @@
         async function handleRegister(e) {
             e.preventDefault();
             
-            const name = document.getElementById('registerName').value.trim();
-            const phone = document.getElementById('registerPhone').value.trim();
-            const email = document.getElementById('registerEmail').value.trim();
+            const name = document.getElementById('registerName').value;
+            const phone = document.getElementById('registerPhone').value;
+            const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             
-            // Validaciones mejoradas
+            // Validaciones
             if (!name || !phone || !email || !password) {
                 showMessage('loginMessage', 'Completá todos los campos', 'error');
                 return;
@@ -1919,26 +1898,13 @@
             }
             
             if (!/^\d{10,13}$/.test(phone)) {
-                showMessage('loginMessage', 'Teléfono inválido. Ejemplo: 5493411234567', 'error');
-                return;
-            }
-            
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showMessage('loginMessage', 'Email inválido', 'error');
+                showMessage('loginMessage', 'Teléfono inválido. Ejemplo: 3417558966', 'error');
                 return;
             }
             
             showGlobalLoader(true);
             
             try {
-                // Verificar si el email ya existe
-                const methods = await auth.fetchSignInMethodsForEmail(email);
-                if (methods.length > 0) {
-                    showMessage('loginMessage', '❌ El email ya está registrado', 'error');
-                    showGlobalLoader(false);
-                    return;
-                }
-                
                 // Crear usuario
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 
@@ -1965,20 +1931,23 @@
                     profileCompleted: false,
                     isFeatured: false,
                     featuredUntil: null,
+                    hasProfessionalPlan: false,
                     rankingScore: 0,
+                    rankingLevel: 'Principiante',
                     averageRating: 0,
                     totalRatings: 0,
-                    hasProfessionalPlan: false,
                     lastActive: firebase.firestore.FieldValue.serverTimestamp(),
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
                 professionalId = professionalRef.id;
                 
-                // Iniciar sesión automáticamente
-                await auth.signInWithEmailAndPassword(email, password);
+                showMessage('loginMessage', '✅ Registro exitoso. Ya podés iniciar sesión.', 'success');
+                toggleRegister();
+                document.getElementById('registerForm').reset();
                 
-                showMessage('loginMessage', '✅ Registro exitoso', 'success');
+                // Auto login después de registro
+                await auth.signInWithEmailAndPassword(email, password);
                 
             } catch (error) {
                 console.error('Error en registro:', error);
@@ -1986,7 +1955,7 @@
                 if (error.code === 'auth/email-already-in-use') message = 'El email ya está registrado';
                 else if (error.code === 'auth/invalid-email') message = 'Email inválido';
                 else if (error.code === 'auth/weak-password') message = 'Contraseña demasiado débil';
-                else if (error.code === 'auth/network-request-failed') message = 'Error de conexión';
+                else if (error.code === 'auth/network-request-failed') message = 'Error de conexión. Verificá tu internet';
                 showMessage('loginMessage', '❌ ' + message, 'error');
             } finally {
                 showGlobalLoader(false);
@@ -2046,8 +2015,8 @@
                 loadBudgets();
             } else if (tabId === 'ratings') {
                 loadRatings();
-            } else if (tabId === 'stats') {
-                loadDetailedStats();
+            } else if (tabId === 'certifications') {
+                loadCertifications();
             }
         }
 
@@ -2065,17 +2034,33 @@
                     .get();
                 
                 if (snapshot.empty) {
-                    showMessage('loginMessage', 'No se encontró tu perfil profesional', 'error');
-                    return;
+                    // Intentar buscar por email como fallback
+                    const emailSnapshot = await db.collection('professionals')
+                        .where('email', '==', currentUser.email)
+                        .limit(1)
+                        .get();
+                    
+                    if (emailSnapshot.empty) {
+                        showMessage('loginMessage', 'No se encontró tu perfil profesional', 'error');
+                        auth.signOut();
+                        return;
+                    }
+                    
+                    const doc = emailSnapshot.docs[0];
+                    professionalId = doc.id;
+                    professionalData = { id: doc.id, ...doc.data() };
+                } else {
+                    const doc = snapshot.docs[0];
+                    professionalId = doc.id;
+                    professionalData = { id: doc.id, ...doc.data() };
                 }
-                
-                const doc = snapshot.docs[0];
-                professionalId = doc.id;
-                professionalData = { id: doc.id, ...doc.data() };
                 
                 // Actualizar UI
                 updateProfileUI();
                 updateUserInfo();
+                
+                // Verificar acceso a funciones
+                checkFeatureAccess();
                 
                 // Cargar datos de ranking
                 await loadRankingData();
@@ -2112,20 +2097,7 @@
             document.getElementById('profileBio').value = professionalData.bio || '';
             document.getElementById('photoUrl').value = professionalData.photoUrl || '';
             document.getElementById('profileExperience').value = professionalData.experienceYears || 0;
-            document.getElementById('profileCompletedJobs').value = professionalData.completedJobs || 0;
-            document.getElementById('profileResponseTime').value = professionalData.avgResponseTime || '';
-            document.getElementById('profileCertifications').value = professionalData.certifications ? professionalData.certifications.join(', ') : '';
             document.getElementById('profileZonas').value = professionalData.zonas ? professionalData.zonas.join(', ') : '';
-            
-            // Habilitar/deshabilitar certificaciones según plan profesional
-            const certInput = document.getElementById('profileCertifications');
-            if (professionalData.hasProfessionalPlan) {
-                certInput.disabled = false;
-                certInput.placeholder = "Ej: Gasista Matriculado, Electricista Certificado";
-            } else {
-                certInput.disabled = true;
-                certInput.placeholder = "Necesitás Plan Profesional activo para subir certificaciones";
-            }
             
             // Ubicación
             if (professionalData.provincia) {
@@ -2198,6 +2170,351 @@
         }
 
         // ============================================
+        // VERIFICAR ACCESO A FUNCIONES
+        // ============================================
+        function checkFeatureAccess() {
+            if (!professionalData) return;
+            
+            const now = new Date();
+            const isFeaturedActive = professionalData.isFeatured && 
+                professionalData.featuredUntil && 
+                professionalData.featuredUntil.toDate() > now;
+            
+            // Presupuestos - SOLO si tiene plan Destacado activo
+            const newBudgetBtn = document.getElementById('newBudgetBtn');
+            const budgetSection = document.getElementById('budgetSection');
+            const budgetPlanWarning = document.getElementById('budgetPlanWarning');
+            
+            if (isFeaturedActive) {
+                newBudgetBtn.disabled = false;
+                budgetSection.style.display = 'block';
+                budgetPlanWarning.style.display = 'none';
+            } else {
+                newBudgetBtn.disabled = true;
+                budgetSection.style.display = 'none';
+                budgetPlanWarning.style.display = 'block';
+            }
+            
+            // Certificaciones - SOLO si tiene Plan Profesional activo
+            const certificationStatusBadge = document.getElementById('certificationStatusBadge');
+            const certificationUploadSection = document.getElementById('certificationUploadSection');
+            
+            if (professionalData.hasProfessionalPlan) {
+                certificationStatusBadge.textContent = 'DISPONIBLE';
+                certificationStatusBadge.className = 'status-badge status-professional';
+                certificationUploadSection.style.display = 'block';
+            } else {
+                certificationStatusBadge.textContent = 'NO DISPONIBLE';
+                certificationStatusBadge.className = 'status-badge status-incomplete';
+                certificationUploadSection.style.display = 'none';
+            }
+        }
+
+        // ============================================
+        // SISTEMA DE RANKING
+        // ============================================
+        async function loadRankingData() {
+            if (!professionalId) return;
+            
+            showGlobalLoader(true);
+            
+            try {
+                const doc = await db.collection('professionals').doc(professionalId).get();
+                if (!doc.exists) return;
+                
+                professionalData = { id: doc.id, ...doc.data() };
+                
+                // Calcular ranking actual
+                await calculateRanking();
+                updateRankingUI();
+                
+                // Actualizar estadísticas
+                updateUserInfo();
+                updateProfileStatus();
+                checkFeatureAccess();
+                
+            } catch (error) {
+                console.error('Error cargando ranking:', error);
+                showMessage('profileMessage', 'Error cargando datos de ranking', 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        async function calculateRanking() {
+            if (!professionalData) return;
+            
+            try {
+                // Obtener calificaciones aprobadas (últimos 3 meses)
+                const threeMonthsAgo = new Date();
+                threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                
+                let totalRatings = 0;
+                let sumRatings = 0;
+                let completedJobs = 0;
+                
+                try {
+                    const ratingsSnapshot = await db.collection('ratings')
+                        .where('professionalId', '==', professionalId)
+                        .where('status', '==', 'approved')
+                        .where('createdAt', '>=', threeMonthsAgo)
+                        .get();
+                    
+                    ratingsSnapshot.forEach(doc => {
+                        totalRatings++;
+                        sumRatings += doc.data().rating || 0;
+                        // Contar trabajos completados desde calificaciones
+                        if (doc.data().jobCompleted) {
+                            completedJobs++;
+                        }
+                    });
+                } catch (error) {
+                    console.log('No se encontraron calificaciones:', error);
+                }
+                
+                // Actualizar trabajos completados automáticamente
+                if (completedJobs > professionalData.completedJobs) {
+                    await db.collection('professionals').doc(professionalId).update({
+                        completedJobs: completedJobs
+                    });
+                    professionalData.completedJobs = completedJobs;
+                }
+                
+                // Calcular rating promedio
+                const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
+                
+                // ============================================
+                // CÁLCULO DE PUNTAJE DE RANKING (0-100)
+                // ============================================
+                let score = 0;
+                
+                // 1. CALIDAD DE CALIFICACIONES (25 puntos)
+                score += averageRating * 5;
+                
+                // 2. CANTIDAD DE CALIFICACIONES (20 puntos)
+                const ratingQuantity = Math.min(totalRatings, 100);
+                score += ratingQuantity * 0.2;
+                
+                // 3. TIEMPO DE RESPUESTA (15 puntos)
+                if (professionalData.avgResponseTime) {
+                    if (professionalData.avgResponseTime < 4) score += 15;
+                    else if (professionalData.avgResponseTime < 8) score += 12;
+                    else if (professionalData.avgResponseTime < 24) score += 8;
+                    else if (professionalData.avgResponseTime < 48) score += 4;
+                }
+                
+                // 4. TRABAJOS COMPLETADOS (10 puntos)
+                score += Math.min(professionalData.completedJobs * 0.1, 10);
+                
+                // 5. CERTIFICACIONES (10 puntos)
+                if (professionalData.hasProfessionalPlan) {
+                    score += 10;
+                }
+                
+                // 6. COMPLETITUD DEL PERFIL (20 puntos)
+                let profileScore = 0;
+                if (professionalData.photoUrl) profileScore += 5;
+                if (professionalData.bio && professionalData.bio.length > 50) profileScore += 5;
+                if (professionalData.zonas && professionalData.zonas.length > 0) profileScore += 5;
+                if (professionalData.rubros && professionalData.rubros.length > 0) profileScore += 5;
+                score += profileScore;
+                
+                // 7. EXPERIENCIA (10 puntos)
+                if (professionalData.experienceYears) {
+                    score += Math.min(professionalData.experienceYears, 10);
+                }
+                
+                // 8. ACTIVIDAD RECIENTE (10 puntos)
+                if (professionalData.lastActive) {
+                    try {
+                        const lastActiveDate = professionalData.lastActive.toDate
+                            ? professionalData.lastActive.toDate()
+                            : new Date(professionalData.lastActive);
+                        const daysSince = (new Date() - lastActiveDate) / (1000 * 60 * 60 * 24);
+                        if (daysSince < 7) score += 10;
+                        else if (daysSince < 30) score += 7;
+                        else if (daysSince < 90) score += 4;
+                    } catch (error) {
+                        console.log('Error calculando actividad:', error);
+                    }
+                }
+                
+                // 9. PERFIL DESTACADO (5 puntos)
+                const now = new Date();
+                if (professionalData.isFeatured && professionalData.featuredUntil) {
+                    try {
+                        const featuredUntil = professionalData.featuredUntil.toDate
+                            ? professionalData.featuredUntil.toDate()
+                            : new Date(professionalData.featuredUntil);
+                        if (featuredUntil > now) {
+                            score += 5;
+                        }
+                    } catch (error) {
+                        console.log('Error verificando destacado:', error);
+                    }
+                }
+                
+                // 10. PLAN PROFESIONAL (5 puntos)
+                if (professionalData.hasProfessionalPlan) {
+                    score += 5;
+                }
+                
+                // Asegurar que el score esté entre 0 y 100
+                score = Math.min(Math.max(score, 0), 100);
+                const rankingScore = Math.round(score);
+                
+                // Determinar nivel de ranking
+                let rankingLevel = 'Principiante';
+                if (rankingScore >= 90) rankingLevel = 'Platino';
+                else if (rankingScore >= 80) rankingLevel = 'Oro';
+                else if (rankingScore >= 70) rankingLevel = 'Plata';
+                else if (rankingScore >= 60) rankingLevel = 'Bronce';
+                
+                // Actualizar professionalData con los nuevos cálculos
+                professionalData.averageRating = averageRating;
+                professionalData.totalRatings = totalRatings;
+                professionalData.rankingScore = rankingScore;
+                professionalData.rankingLevel = rankingLevel;
+                
+                // Actualizar en la base de datos
+                await db.collection('professionals').doc(professionalId).update({
+                    averageRating: averageRating,
+                    totalRatings: totalRatings,
+                    rankingScore: rankingScore,
+                    rankingLevel: rankingLevel,
+                    rankingUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                return { averageRating, totalRatings, rankingScore, rankingLevel };
+                
+            } catch (error) {
+                console.error('Error calculando ranking:', error);
+                return {
+                    averageRating: professionalData.averageRating || 0,
+                    totalRatings: professionalData.totalRatings || 0,
+                    rankingScore: professionalData.rankingScore || 0,
+                    rankingLevel: professionalData.rankingLevel || 'Principiante'
+                };
+            }
+        }
+
+        function updateRankingUI() {
+            if (!professionalData) return;
+            
+            // Actualizar el puntaje total
+            document.getElementById('rankingScore').textContent = professionalData.rankingScore || 0;
+            document.getElementById('rankingProgress').style.width = `${professionalData.rankingScore || 0}%`;
+            document.getElementById('rankingProgressText').textContent = `${professionalData.rankingScore || 0}% completado`;
+            
+            // Actualizar el nivel
+            const levelBadge = document.getElementById('rankingLevelBadge');
+            if (levelBadge) {
+                levelBadge.textContent = professionalData.rankingLevel ? professionalData.rankingLevel.toUpperCase() : 'PRINCIPIANTE';
+                levelBadge.className = 'ranking-badge ranking-' + (professionalData.rankingLevel ? professionalData.rankingLevel.toLowerCase() : 'beginner');
+            }
+            
+            // Actualizar nivel en texto
+            document.getElementById('rankingLevel').textContent = `Nivel: ${professionalData.rankingLevel || 'Principiante'}`;
+            
+            // Actualizar trabajos completados
+            document.getElementById('completedJobsCount').textContent = professionalData.completedJobs || 0;
+            
+            // Actualizar factores individuales
+            // Factor de calificaciones (max 25)
+            let ratingFactor = (professionalData.averageRating || 0) * 5;
+            if (document.getElementById('ratingScore')) {
+                document.getElementById('ratingScore').textContent = `${Math.round(ratingFactor)}/25`;
+                document.getElementById('ratingProgress').style.width = `${(ratingFactor / 25) * 100}%`;
+            }
+            
+            // Factor de respuesta (max 15)
+            let responseFactor = 0;
+            if (professionalData.avgResponseTime) {
+                if (professionalData.avgResponseTime < 4) responseFactor = 15;
+                else if (professionalData.avgResponseTime < 8) responseFactor = 12;
+                else if (professionalData.avgResponseTime < 24) responseFactor = 8;
+                else if (professionalData.avgResponseTime < 48) responseFactor = 4;
+            }
+            if (document.getElementById('responseScore')) {
+                document.getElementById('responseScore').textContent = `${responseFactor}/15`;
+                document.getElementById('responseProgress').style.width = `${(responseFactor / 15) * 100}%`;
+            }
+            
+            // Factor de perfil (max 20)
+            let profileFactor = 0;
+            if (professionalData.photoUrl) profileFactor += 5;
+            if (professionalData.bio && professionalData.bio.length > 50) profileFactor += 5;
+            if (professionalData.zonas && professionalData.zonas.length > 0) profileFactor += 5;
+            if (professionalData.rubros && professionalData.rubros.length > 0) profileFactor += 5;
+            if (document.getElementById('profileScore')) {
+                document.getElementById('profileScore').textContent = `${profileFactor}/20`;
+                document.getElementById('profileProgress').style.width = `${(profileFactor / 20) * 100}%`;
+            }
+            
+            // Factor de experiencia (max 15)
+            let experienceFactor = Math.min(professionalData.experienceYears || 0, 15);
+            if (document.getElementById('experienceScore')) {
+                document.getElementById('experienceScore').textContent = `${experienceFactor}/15`;
+                document.getElementById('experienceProgress').style.width = `${(experienceFactor / 15) * 100}%`;
+            }
+            
+            // Factor de actividad (max 10)
+            let activityFactor = 0;
+            if (professionalData.lastActive) {
+                try {
+                    const lastActiveDate = professionalData.lastActive.toDate
+                        ? professionalData.lastActive.toDate()
+                        : new Date(professionalData.lastActive);
+                    const daysSince = (new Date() - lastActiveDate) / (1000 * 60 * 60 * 24);
+                    if (daysSince < 7) activityFactor = 10;
+                    else if (daysSince < 30) activityFactor = 7;
+                    else if (daysSince < 90) activityFactor = 4;
+                } catch (error) {
+                    console.log('Error calculando actividad para UI:', error);
+                }
+            }
+            if (document.getElementById('activityScore')) {
+                document.getElementById('activityScore').textContent = `${activityFactor}/10`;
+                document.getElementById('activityProgress').style.width = `${(activityFactor / 10) * 100}%`;
+            }
+            
+            // Factor de destacado (max 5)
+            let featuredFactor = 0;
+            const now = new Date();
+            if (professionalData.isFeatured && professionalData.featuredUntil) {
+                try {
+                    const featuredUntil = professionalData.featuredUntil.toDate
+                        ? professionalData.featuredUntil.toDate()
+                        : new Date(professionalData.featuredUntil);
+                    if (featuredUntil > now) {
+                        featuredFactor = 5;
+                    }
+                } catch (error) {
+                    console.log('Error verificando destacado para UI:', error);
+                }
+            }
+            if (document.getElementById('featuredScore')) {
+                document.getElementById('featuredScore').textContent = `${featuredFactor}/5`;
+                document.getElementById('featuredProgress').style.width = `${(featuredFactor / 5) * 100}%`;
+            }
+        }
+
+        async function recalculateRanking() {
+            showGlobalLoader(true);
+            
+            try {
+                await calculateRanking();
+                updateRankingUI();
+                showMessage('profileMessage', '✅ Ranking recalculado correctamente', 'success');
+            } catch (error) {
+                console.error('Error recalculando ranking:', error);
+                showMessage('profileMessage', 'Error recalculando ranking', 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        // ============================================
         // SISTEMA DE DESTACADOS - CORREGIDO
         // ============================================
         function loadFeaturedPlans() {
@@ -2207,28 +2524,21 @@
             let html = '';
             
             Object.entries(FEATURED_PRICES).forEach(([months, data]) => {
-                const hasDiscount = data.discount > 0;
+                const monthlyPrice = data.price / parseInt(months);
                 html += `
                     <div class="featured-plan" data-months="${months}" onclick="selectFeaturedPlan(${months})">
                         <div class="featured-plan-title">${data.label}</div>
-                        ${hasDiscount ? `
-                            <div style="color: var(--gray); text-decoration: line-through;">
-                                $${data.originalPrice}
-                            </div>
-                        ` : ''}
-                        <div class="featured-plan-price">$${data.price}</div>
-                        ${hasDiscount ? `
-                            <div style="color: var(--secondary); font-weight: bold; margin-bottom: 1rem;">
-                                ${data.discount}% DE DESCUENTO
-                            </div>
-                        ` : ''}
+                        <div class="featured-plan-price">$${data.price.toLocaleString('es-AR')}</div>
+                        <div style="color: var(--gray); margin-bottom: 1rem;">
+                            $${monthlyPrice.toLocaleString('es-AR', {minimumFractionDigits: 2})}/mes
+                        </div>
                         <ul class="featured-plan-features">
                             <li>✅ Aparecé primero en búsquedas</li>
                             <li>✅ Badge especial en tu perfil</li>
                             <li>✅ +5 puntos en el ranking</li>
                             <li>✅ Mayor visibilidad</li>
-                            <li>✅ Más clientes potenciales</li>
-                            ${data.enablesCertifications ? '<li>✅ Habilita certificaciones</li>' : ''}
+                            <li>✅ Habilitá presupuestos</li>
+                            ${parseInt(months) === 12 ? '<li>✅ <strong>Habilita certificaciones</strong></li>' : ''}
                         </ul>
                         <button class="btn btn-primary btn-sm">
                             Seleccionar
@@ -2252,23 +2562,229 @@
                 selectedPlan.classList.add('selected');
                 selectedFeaturedPlan = months;
                 document.getElementById('activateFeaturedBtn').disabled = false;
-                
-                // Mostrar detalles de pago automáticamente
-                document.getElementById('paymentMethod').value = 'transferencia';
-                showPaymentDetails();
             }
         }
 
-        function showPaymentDetails() {
-            const method = document.getElementById('paymentMethod').value;
-            const details = document.getElementById('paymentDetails');
+        async function loadFeaturedStatus() {
+            if (!professionalId) return;
             
-            if (!method) {
-                details.style.display = 'none';
-                return;
+            try {
+                const doc = await db.collection('professionals').doc(professionalId).get();
+                professionalData = { id: doc.id, ...doc.data() };
+                
+                const featuredInfo = document.getElementById('featuredInfo');
+                const statusBadge = document.getElementById('featuredStatusBadge');
+                const progressContainer = document.getElementById('featuredProgressContainer');
+                const activateBtn = document.getElementById('activateFeaturedBtn');
+                const extendBtn = document.getElementById('extendFeaturedBtn');
+                
+                const now = new Date();
+                if (professionalData.isFeatured && professionalData.featuredUntil) {
+                    const featuredUntil = professionalData.featuredUntil.toDate
+                        ? professionalData.featuredUntil.toDate()
+                        : new Date(professionalData.featuredUntil);
+                    const daysRemaining = Math.ceil((featuredUntil - now) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysRemaining > 0) {
+                        // Destacado activo
+                        statusBadge.textContent = 'DESTACADO';
+                        statusBadge.className = 'status-badge status-featured';
+                        
+                        featuredInfo.innerHTML = `
+                            <p style="color: var(--gray); margin-bottom: 1rem;">
+                                ✅ Tu perfil está destacado y aparece primero en las búsquedas.
+                            </p>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: 700; color: var(--primary);">${daysRemaining}</div>
+                                    <div style="color: var(--gray); font-size: 0.9rem;">Días restantes</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: 700; color: var(--secondary);">${featuredUntil.toLocaleDateString('es-AR')}</div>
+                                    <div style="color: var(--gray); font-size: 0.9rem;">Vence el</div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Mostrar progreso
+                        progressContainer.style.display = 'block';
+                        const totalDays = 30; // Asumiendo 30 días por mes
+                        const percentage = Math.round((daysRemaining / totalDays) * 100);
+                        document.getElementById('featuredDaysProgress').style.width = `${percentage}%`;
+                        document.getElementById('featuredDaysText').textContent = `${daysRemaining} días restantes`;
+                        
+                        // Mostrar botón de extender
+                        activateBtn.style.display = 'none';
+                        extendBtn.style.display = 'inline-flex';
+                        
+                    } else {
+                        // Destacado expirado
+                        statusBadge.textContent = 'EXPIRADO';
+                        statusBadge.className = 'status-badge status-expired';
+                        featuredInfo.innerHTML = `
+                            <p style="color: var(--gray); margin-bottom: 1rem;">
+                                Tu destacado ha expirado. Renoválo para seguir apareciendo primero.
+                            </p>
+                        `;
+                        progressContainer.style.display = 'none';
+                        activateBtn.style.display = 'inline-flex';
+                        extendBtn.style.display = 'none';
+                    }
+                } else {
+                    // No destacado
+                    statusBadge.textContent = 'NO DESTACADO';
+                    statusBadge.className = 'status-badge status-incomplete';
+                    featuredInfo.innerHTML = `
+                        <p style="color: var(--gray); margin-bottom: 1rem;">
+                            Tu perfil no está destacado actualmente. Los perfiles destacados aparecen primero en las búsquedas.
+                        </p>
+                        <p><strong>💳 Método de pago:</strong> Solo transferencia bancaria</p>
+                    `;
+                    progressContainer.style.display = 'none';
+                    activateBtn.style.display = 'inline-flex';
+                    extendBtn.style.display = 'none';
+                }
+                
+                // Verificar si califica para Plan Profesional
+                checkProfessionalPlanEligibility();
+                
+            } catch (error) {
+                console.error('Error cargando estado de destacado:', error);
             }
+        }
+
+        function checkProfessionalPlanEligibility() {
+            if (!professionalData) return;
             
-            details.style.display = 'block';
+            // Verificar si tiene 12 meses de destacado acumulado
+            // En una implementación real, habría que verificar el historial
+            // Por ahora, solo verificamos si tiene plan destacado de 12 meses activo
+            if (professionalData.isFeatured && professionalData.featuredUntil) {
+                const featuredUntil = professionalData.featuredUntil.toDate
+                    ? professionalData.featuredUntil.toDate()
+                    : new Date(professionalData.featuredUntil);
+                const now = new Date();
+                const monthsDiff = (featuredUntil.getFullYear() - now.getFullYear()) * 12 + 
+                                  (featuredUntil.getMonth() - now.getMonth());
+                
+                if (monthsDiff >= 12 && !professionalData.hasProfessionalPlan) {
+                    // Habilitar Plan Profesional automáticamente
+                    enableProfessionalPlan();
+                }
+            }
+        }
+
+        async function enableProfessionalPlan() {
+            try {
+                await db.collection('professionals').doc(professionalId).update({
+                    hasProfessionalPlan: true,
+                    professionalPlanEnabledAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                professionalData.hasProfessionalPlan = true;
+                showMessage('profileMessage', '✅ ¡Felicidades! Ahora tenés Plan Profesional activo', 'success');
+                checkFeatureAccess();
+                
+            } catch (error) {
+                console.error('Error habilitando Plan Profesional:', error);
+            }
+        }
+
+        async function loadFeaturedHistory() {
+            if (!professionalId) return;
+            
+            showGlobalLoader(true);
+            
+            try {
+                let query = db.collection('featuredTransactions')
+                    .where('professionalId', '==', professionalId)
+                    .orderBy('createdAt', 'desc');
+                
+                // Aplicar filtros
+                const statusFilter = document.getElementById('featuredFilterStatus').value;
+                const fromFilter = document.getElementById('featuredFilterFrom').value;
+                const toFilter = document.getElementById('featuredFilterTo').value;
+                
+                if (statusFilter) {
+                    query = query.where('status', '==', statusFilter);
+                }
+                
+                if (fromFilter) {
+                    const fromDate = new Date(fromFilter);
+                    query = query.where('createdAt', '>=', fromDate);
+                }
+                
+                if (toFilter) {
+                    const toDate = new Date(toFilter);
+                    toDate.setHours(23, 59, 59, 999);
+                    query = query.where('createdAt', '<=', toDate);
+                }
+                
+                const snapshot = await query.get();
+                const tbody = document.getElementById('featuredHistoryBody');
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: var(--gray);">
+                                No hay transacciones registradas.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                featuredHistory = [];
+                
+                snapshot.forEach(doc => {
+                    const transaction = { id: doc.id, ...doc.data() };
+                    featuredHistory.push(transaction);
+                    
+                    const date = transaction.createdAt ? 
+                        transaction.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                    const expires = transaction.expiresAt ? 
+                        transaction.expiresAt.toDate().toLocaleDateString('es-AR') : '-';
+                    
+                    let statusBadge = '';
+                    switch(transaction.status) {
+                        case 'activo':
+                            statusBadge = '<span class="badge badge-success">ACTIVO</span>';
+                            break;
+                        case 'expirado':
+                            statusBadge = '<span class="badge badge-danger">EXPIRADO</span>';
+                            break;
+                        case 'pendiente':
+                            statusBadge = '<span class="badge badge-warning">PENDIENTE</span>';
+                            break;
+                    }
+                    
+                    html += `
+                        <tr>
+                            <td>${date}</td>
+                            <td>${transaction.duration} meses</td>
+                            <td>${transaction.paymentMethod || 'Transferencia'}</td>
+                            <td>$${(transaction.amount || '0').toLocaleString('es-AR')}</td>
+                            <td>${statusBadge}</td>
+                            <td>${expires}</td>
+                        </tr>
+                    `;
+                });
+                
+                tbody.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error cargando historial:', error);
+                document.getElementById('featuredHistoryBody').innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--danger);">
+                            ❌ Error cargando historial
+                        </td>
+                    </tr>
+                `;
+            } finally {
+                showGlobalLoader(false);
+            }
         }
 
         async function activateFeatured() {
@@ -2277,13 +2793,7 @@
                 return;
             }
             
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            if (!paymentMethod) {
-                showMessage('profileMessage', 'Seleccioná un método de pago', 'error');
-                return;
-            }
-            
-            if (!confirm(`¿Confirmás la activación del destacado por ${FEATURED_PRICES[selectedFeaturedPlan].label} por $${FEATURED_PRICES[selectedFeaturedPlan].price}?`)) {
+            if (!confirm(`¿Confirmás la activación del destacado por ${FEATURED_PRICES[selectedFeaturedPlan].label} por $${FEATURED_PRICES[selectedFeaturedPlan].price.toLocaleString('es-AR')}?`)) {
                 return;
             }
             
@@ -2295,51 +2805,19 @@
                 const expiresAt = new Date();
                 expiresAt.setMonth(expiresAt.getMonth() + parseInt(selectedFeaturedPlan));
                 
-                // Actualizar perfil si es plan de 12 meses (habilita certificaciones)
-                const updateData = {
-                    isFeatured: true,
-                    featuredSince: firebase.firestore.FieldValue.serverTimestamp(),
-                    featuredUntil: expiresAt
-                };
-                
-                if (selectedFeaturedPlan == 12 && FEATURED_PRICES[12].enablesCertifications) {
-                    updateData.hasProfessionalPlan = true;
-                    updateData.professionalPlanActivatedAt = firebase.firestore.FieldValue.serverTimestamp();
-                }
-                
-                await db.collection('professionals').doc(professionalId).update(updateData);
-                
                 // Crear transacción
                 await db.collection('featuredTransactions').add({
                     professionalId,
                     professionalName: professionalData.name,
                     duration: selectedFeaturedPlan,
                     amount: FEATURED_PRICES[selectedFeaturedPlan].price,
-                    paymentMethod,
-                    status: 'activo',
+                    paymentMethod: 'transferencia',
+                    status: 'pendiente',
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    expiresAt: expiresAt,
-                    enablesCertifications: selectedFeaturedPlan == 12
+                    expiresAt: expiresAt
                 });
                 
-                // Actualizar datos locales
-                professionalData.isFeatured = true;
-                professionalData.featuredUntil = expiresAt;
-                if (selectedFeaturedPlan == 12) {
-                    professionalData.hasProfessionalPlan = true;
-                }
-                
-                // Recargar estado
-                await loadFeaturedStatus();
-                await loadFeaturedHistory();
-                
-                // Habilitar campo de certificaciones si corresponde
-                if (selectedFeaturedPlan == 12) {
-                    document.getElementById('profileCertifications').disabled = false;
-                    document.getElementById('profileCertifications').placeholder = "Ej: Gasista Matriculado, Electricista Certificado";
-                }
-                
-                showMessage('profileMessage', '✅ Destacado activado correctamente', 'success');
+                showMessage('profileMessage', '✅ Solicitud de destacado enviada. Realizá la transferencia y envianos el comprobante.', 'success');
                 
                 // Resetear selección
                 selectedFeaturedPlan = null;
@@ -2347,6 +2825,9 @@
                 document.querySelectorAll('.featured-plan').forEach(plan => {
                     plan.classList.remove('selected');
                 });
+                
+                // Recargar historial
+                await loadFeaturedHistory();
                 
             } catch (error) {
                 console.error('Error activando destacado:', error);
@@ -2357,43 +2838,17 @@
         }
 
         function extendFeatured() {
-            const phone = '3417558966';
-            const message = `Hola, soy ${professionalData.name} (ID: ${professionalId}). Solicito extender mi plan destacado. Mis datos: ${professionalData.email} - ${professionalData.phone}. Por favor, contáctenme para proceder.`;
-            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+            const phoneNumber = "3417558966";
+            const message = `Hola, soy ${professionalData.name}. Quiero extender mi plan destacado. Mi email: ${professionalData.email}`;
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
         }
 
         // ============================================
-        // SISTEMA DE PRESUPUESTOS - CON RESTRICCIÓN
+        // SISTEMA DE PRESUPUESTOS
         // ============================================
         async function loadBudgets() {
             if (!professionalId) return;
-            
-            const now = new Date();
-            const featuredActive = professionalData.isFeatured && professionalData.featuredUntil && 
-                                  professionalData.featuredUntil.toDate() > now;
-            
-            const accessMessage = document.getElementById('budgetAccessMessage');
-            const budgetsContent = document.getElementById('budgetsContent');
-            
-            if (!featuredActive) {
-                accessMessage.innerHTML = `
-                    <div class="message message-warning">
-                        <h3>🔒 Plan Destacado Requerido</h3>
-                        <p>Para acceder a la función de presupuestos, necesitás tener un plan destacado activo.</p>
-                        <div class="btn-group" style="margin-top: 1rem;">
-                            <button onclick="switchTab('featured')" class="btn btn-primary">
-                                ⭐ Ver planes destacados
-                            </button>
-                        </div>
-                    </div>
-                `;
-                accessMessage.style.display = 'block';
-                budgetsContent.style.display = 'none';
-                return;
-            }
-            
-            accessMessage.style.display = 'none';
-            budgetsContent.style.display = 'block';
             
             showGlobalLoader(true);
             
@@ -2476,7 +2931,7 @@
                                 <div>
                                     ${statusBadge}
                                     <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-top: 0.5rem;">
-                                        $${budget.total || '0'}
+                                        $${(budget.total || '0').toLocaleString('es-AR')}
                                     </div>
                                 </div>
                             </div>
@@ -2513,62 +2968,747 @@
             }
         }
 
+        function resetBudgetFilters() {
+            document.getElementById('budgetFilterStatus').value = '';
+            document.getElementById('budgetFilterClient').value = '';
+            document.getElementById('budgetFilterFrom').value = '';
+            document.getElementById('budgetFilterTo').value = '';
+            loadBudgets();
+        }
+
+        function openBudgetModal(budgetId = null) {
+            const now = new Date();
+            const isFeaturedActive = professionalData.isFeatured && 
+                professionalData.featuredUntil && 
+                professionalData.featuredUntil.toDate() > now;
+            
+            if (!isFeaturedActive) {
+                showMessage('profileMessage', 'Necesitás plan Destacado activo para crear presupuestos', 'error');
+                return;
+            }
+            
+            const modal = document.getElementById('budgetModal');
+            const title = document.getElementById('budgetModalTitle');
+            const form = document.getElementById('budgetForm');
+            
+            if (budgetId) {
+                // Editar presupuesto existente
+                const budget = budgets.find(b => b.id === budgetId);
+                if (budget) {
+                    title.textContent = 'Editar Presupuesto';
+                    document.getElementById('budgetId').value = budgetId;
+                    document.getElementById('budgetClient').value = budget.client || '';
+                    document.getElementById('budgetDescription').value = budget.description || '';
+                    document.getElementById('budgetNotes').value = budget.notes || '';
+                    document.getElementById('budgetStatus').value = budget.status || 'borrador';
+                    
+                    // Cargar items
+                    const itemsContainer = document.getElementById('budgetItems');
+                    itemsContainer.innerHTML = '';
+                    if (budget.items && budget.items.length > 0) {
+                        budget.items.forEach(item => {
+                            addBudgetItem(item);
+                        });
+                    } else {
+                        addBudgetItem();
+                    }
+                    
+                    updateBudgetTotal();
+                }
+            } else {
+                // Nuevo presupuesto
+                title.textContent = 'Nuevo Presupuesto';
+                form.reset();
+                document.getElementById('budgetId').value = '';
+                document.getElementById('budgetItems').innerHTML = '';
+                addBudgetItem();
+                updateBudgetTotal();
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeBudgetModal() {
+            document.getElementById('budgetModal').style.display = 'none';
+        }
+
+        function addBudgetItem(itemData = null) {
+            const container = document.getElementById('budgetItems');
+            const itemId = Date.now() + Math.random();
+            
+            const itemHtml = `
+                <div class="item-row" id="item-${itemId}">
+                    <input type="text" class="form-input item-description" 
+                           placeholder="Descripción" value="${itemData?.description || ''}" 
+                           oninput="updateBudgetTotal()">
+                    <input type="number" class="form-input item-quantity" 
+                           placeholder="Cantidad" min="1" value="${itemData?.quantity || 1}" 
+                           oninput="updateBudgetTotal()">
+                    <input type="number" class="form-input item-price" 
+                           placeholder="Precio unitario" step="0.01" min="0" 
+                           value="${itemData?.price || 0}" oninput="updateBudgetTotal()">
+                    <input type="text" class="form-input item-total" 
+                           placeholder="Total" readonly value="${itemData?.total || '0.00'}">
+                    <button type="button" class="btn btn-danger btn-sm" 
+                            onclick="removeBudgetItem('${itemId}')">🗑️</button>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', itemHtml);
+            updateBudgetTotal();
+        }
+
+        function removeBudgetItem(itemId) {
+            const item = document.getElementById(`item-${itemId}`);
+            if (item) {
+                item.remove();
+                updateBudgetTotal();
+            }
+        }
+
+        function updateBudgetTotal() {
+            let total = 0;
+            document.querySelectorAll('.item-row').forEach(row => {
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                const itemTotal = quantity * price;
+                
+                row.querySelector('.item-total').value = itemTotal.toFixed(2);
+                total += itemTotal;
+            });
+            
+            document.getElementById('budgetTotalAmount').textContent = total.toFixed(2);
+        }
+
+        async function saveBudget(e) {
+            e.preventDefault();
+            
+            // Recolectar items
+            const items = [];
+            document.querySelectorAll('.item-row').forEach(row => {
+                const description = row.querySelector('.item-description').value;
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                const total = quantity * price;
+                
+                if (description) {
+                    items.push({
+                        description,
+                        quantity,
+                        price,
+                        total
+                    });
+                }
+            });
+            
+            if (items.length === 0) {
+                showMessage('profileMessage', 'Agregá al menos un item al presupuesto', 'error');
+                return;
+            }
+            
+            const budgetData = {
+                professionalId,
+                professionalName: professionalData.name,
+                client: document.getElementById('budgetClient').value,
+                description: document.getElementById('budgetDescription').value,
+                items,
+                notes: document.getElementById('budgetNotes').value,
+                status: document.getElementById('budgetStatus').value,
+                total: parseFloat(document.getElementById('budgetTotalAmount').textContent),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            showGlobalLoader(true);
+            
+            try {
+                const budgetId = document.getElementById('budgetId').value;
+                
+                if (budgetId) {
+                    // Actualizar presupuesto existente
+                    await db.collection('budgets').doc(budgetId).update(budgetData);
+                    showMessage('profileMessage', '✅ Presupuesto actualizado correctamente', 'success');
+                } else {
+                    // Crear nuevo presupuesto
+                    await db.collection('budgets').add(budgetData);
+                    showMessage('profileMessage', '✅ Presupuesto creado correctamente', 'success');
+                }
+                
+                closeBudgetModal();
+                loadBudgets();
+                
+            } catch (error) {
+                console.error('Error guardando presupuesto:', error);
+                showMessage('profileMessage', 'Error guardando presupuesto', 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        async function deleteBudget(budgetId) {
+            if (!confirm('¿Estás seguro de querer eliminar este presupuesto?')) return;
+            
+            showGlobalLoader(true);
+            
+            try {
+                await db.collection('budgets').doc(budgetId).delete();
+                showMessage('profileMessage', '✅ Presupuesto eliminado correctamente', 'success');
+                loadBudgets();
+            } catch (error) {
+                console.error('Error eliminando presupuesto:', error);
+                showMessage('profileMessage', 'Error eliminando presupuesto', 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        function editBudget(budgetId) {
+            openBudgetModal(budgetId);
+        }
+
+        function generateBudgetPdf(budgetId = null) {
+            let budget;
+            
+            if (budgetId) {
+                // Generar PDF de presupuesto específico
+                budget = budgets.find(b => b.id === budgetId);
+                if (!budget) return;
+            } else {
+                // Generar PDF del presupuesto actual en el modal
+                const client = document.getElementById('budgetClient').value;
+                const description = document.getElementById('budgetDescription').value;
+                const notes = document.getElementById('budgetNotes').value;
+                const total = document.getElementById('budgetTotalAmount').textContent;
+                
+                // Recolectar items
+                const items = [];
+                document.querySelectorAll('.item-row').forEach(row => {
+                    const description = row.querySelector('.item-description').value;
+                    const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                    const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                    const total = quantity * price;
+                    
+                    if (description) {
+                        items.push({ description, quantity, price, total });
+                    }
+                });
+                
+                budget = {
+                    client,
+                    description,
+                    items,
+                    notes,
+                    total,
+                    createdAt: new Date(),
+                    professionalName: professionalData.name
+                };
+            }
+            
+            // Crear contenido HTML para el PDF
+            const pdfContent = document.createElement('div');
+            pdfContent.style.padding = '20px';
+            pdfContent.style.fontFamily = 'Arial, sans-serif';
+            
+            const date = budget.createdAt?.toDate ? 
+                budget.createdAt.toDate().toLocaleDateString('es-AR') : 
+                new Date().toLocaleDateString('es-AR');
+            
+            pdfContent.innerHTML = `
+                <h1 style="color: #0a4fd8; text-align: center;">PRESUPUESTO</h1>
+                <div style="margin-bottom: 30px;">
+                    <p><strong>Profesional:</strong> ${budget.professionalName || professionalData.name}</p>
+                    <p><strong>Cliente:</strong> ${budget.client}</p>
+                    <p><strong>Fecha:</strong> ${date}</p>
+                    <p><strong>Descripción:</strong> ${budget.description}</p>
+                </div>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                    <thead>
+                        <tr style="background: #f8f9fa;">
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Descripción</th>
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Cantidad</th>
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Precio Unit.</th>
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${budget.items.map(item => `
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 10px;">${item.description}</td>
+                                <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item.quantity}</td>
+                                <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">$${item.price.toFixed(2)}</td>
+                                <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">$${item.total.toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: #f8f9fa; font-weight: bold;">
+                            <td colspan="3" style="border: 1px solid #ddd; padding: 10px; text-align: right;">TOTAL:</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">$${parseFloat(budget.total).toFixed(2)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                
+                ${budget.notes ? `
+                <div style="margin-bottom: 30px;">
+                    <h3>Notas:</h3>
+                    <p>${budget.notes}</p>
+                </div>
+                ` : ''}
+                
+                <div style="margin-top: 50px; padding-top: 20px; border-top: 2px solid #0a4fd8;">
+                    <p style="text-align: center; color: #666;">
+                        Presupuesto válido por 30 días.<br>
+                        Contacto: ${professionalData.phone} | ${professionalData.email}
+                    </p>
+                </div>
+            `;
+            
+            // Mostrar vista previa
+            document.getElementById('pdfPreviewContent').innerHTML = '';
+            document.getElementById('pdfPreviewContent').appendChild(pdfContent);
+            document.getElementById('pdfPreviewModal').style.display = 'flex';
+            
+            // Guardar referencia al budget para la descarga
+            window.currentPdfBudget = budget;
+        }
+
+        function closePdfPreview() {
+            document.getElementById('pdfPreviewModal').style.display = 'none';
+        }
+
+        function downloadBudgetPdf() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Obtener contenido HTML
+            const content = document.getElementById('pdfPreviewContent');
+            
+            // Generar PDF
+            doc.html(content, {
+                callback: function(doc) {
+                    doc.save(`Presupuesto-${window.currentPdfBudget.client}-${new Date().getTime()}.pdf`);
+                },
+                margin: [10, 10, 10, 10],
+                autoPaging: 'text',
+                x: 0,
+                y: 0,
+                width: 190,
+                windowWidth: 800
+            });
+        }
+
+        function printBudgetPdf() {
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Presupuesto - ${window.currentPdfBudget.client}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { border: 1px solid #ddd; padding: 10px; }
+                        th { background: #f8f9fa; }
+                        .total { font-weight: bold; background: #f8f9fa; }
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${document.getElementById('pdfPreviewContent').innerHTML}
+                    <div class="no-print" style="margin-top: 30px; text-align: center;">
+                        <button onclick="window.print()" style="padding: 10px 20px; background: #0a4fd8; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            🖨️ Imprimir
+                        </button>
+                        <button onclick="window.close()" style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                            Cerrar
+                        </button>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        function sendBudgetViaWhatsApp(budgetId = null) {
+            let budget;
+            
+            if (budgetId) {
+                budget = budgets.find(b => b.id === budgetId);
+            } else {
+                budget = window.currentPdfBudget;
+            }
+            
+            if (!budget) {
+                showMessage('profileMessage', 'No hay presupuesto para enviar', 'error');
+                return;
+            }
+            
+            // Extraer teléfono del cliente
+            let phone = '';
+            const clientText = budget.client || '';
+            const phoneMatch = clientText.match(/\d{10,13}/);
+            if (phoneMatch) {
+                phone = phoneMatch[0];
+            }
+            
+            if (!phone) {
+                showMessage('profileMessage', 'No se encontró teléfono en los datos del cliente', 'error');
+                return;
+            }
+            
+            // Crear mensaje
+            const date = budget.createdAt?.toDate ? 
+                budget.createdAt.toDate().toLocaleDateString('es-AR') : 
+                new Date().toLocaleDateString('es-AR');
+            
+            let message = `*PRESUPUESTO - ${budget.professionalName || professionalData.name}*\n\n`;
+            message += `*Cliente:* ${budget.client}\n`;
+            message += `*Fecha:* ${date}\n`;
+            message += `*Descripción:* ${budget.description}\n\n`;
+            message += `*ITEMS:*\n`;
+            
+            budget.items.forEach((item, index) => {
+                message += `${index + 1}. ${item.description} - ${item.quantity} x $${item.price} = $${item.total}\n`;
+            });
+            
+            message += `\n*TOTAL: $${parseFloat(budget.total).toFixed(2)}*\n\n`;
+            
+            if (budget.notes) {
+                message += `*Notas:* ${budget.notes}\n\n`;
+            }
+            
+            message += `Presupuesto válido por 30 días.\n`;
+            message += `Contacto: ${professionalData.phone}`;
+            
+            // Codificar mensaje para URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Abrir WhatsApp
+            window.open(`https://wa.me/549${phone}?text=${encodedMessage}`, '_blank');
+        }
+
+        function exportBudgetsToJson() {
+            if (budgets.length === 0) {
+                showMessage('profileMessage', 'No hay presupuestos para exportar', 'info');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(budgets, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `presupuestos-${professionalData.name}-${new Date().getTime()}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
         // ============================================
-        // TRABAJOS REALIZADOS - ACTUALIZACIÓN AUTOMÁTICA
+        // CALIFICACIONES
         // ============================================
-        async function updateCompletedJobs() {
+        async function loadRatings() {
             if (!professionalId) return;
             
             try {
-                // Contar calificaciones aprobadas como trabajos completados
                 const snapshot = await db.collection('ratings')
                     .where('professionalId', '==', professionalId)
                     .where('status', '==', 'approved')
+                    .orderBy('createdAt', 'desc')
+                    .limit(50)
                     .get();
                 
-                const completedJobs = snapshot.size;
+                const container = document.getElementById('ratingsList');
+                if (!container) return;
                 
-                // Actualizar en la base de datos
-                await db.collection('professionals').doc(professionalId).update({
-                    completedJobs: completedJobs
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--gray);">
+                            📝 No hay calificaciones aún
+                        </div>
+                    `;
+                    
+                    // Actualizar promedio y total
+                    document.getElementById('averageRating').textContent = '0.0';
+                    document.getElementById('totalRatingsCount').textContent = '0';
+                    document.getElementById('completedJobsCount').textContent = professionalData.completedJobs || '0';
+                    return;
+                }
+                
+                let totalRating = 0;
+                let count = 0;
+                let html = '';
+                
+                snapshot.forEach(doc => {
+                    const rating = doc.data();
+                    const date = rating.createdAt ? 
+                        rating.createdAt.toDate().toLocaleDateString('es-AR') : 'Fecha desconocida';
+                    const stars = '⭐'.repeat(rating.rating) + '☆'.repeat(5 - rating.rating);
+                    
+                    totalRating += rating.rating;
+                    count++;
+                    
+                    html += `
+                        <div class="rating-card">
+                            <div class="rating-header">
+                                <div class="rating-stars">${stars}</div>
+                                <div class="rating-date">${date}</div>
+                            </div>
+                            ${rating.comment ? `<p>${rating.comment}</p>` : ''}
+                            ${rating.jobCompleted ? `<p style="color: var(--success); font-size: 0.9rem;">✅ Trabajo completado</p>` : ''}
+                        </div>
+                    `;
                 });
                 
-                // Actualizar datos locales
-                professionalData.completedJobs = completedJobs;
+                container.innerHTML = html;
                 
-                // Actualizar UI si está en el panel de perfil
-                if (document.getElementById('profileCompletedJobs')) {
-                    document.getElementById('profileCompletedJobs').value = completedJobs;
-                }
+                // Actualizar promedio y total
+                const average = totalRating / count;
+                document.getElementById('averageRating').textContent = average.toFixed(1);
+                document.getElementById('totalRatingsCount').textContent = count;
+                document.getElementById('completedJobsCount').textContent = professionalData.completedJobs || '0';
                 
             } catch (error) {
-                console.error('Error actualizando trabajos completados:', error);
+                console.error('Error cargando calificaciones:', error);
             }
         }
 
         // ============================================
-        // INSTALACIÓN DE APP
+        // CERTIFICACIONES
         // ============================================
-        function showInstallBanner() {
-            // Detectar si es dispositivo móvil
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        async function loadCertifications() {
+            if (!professionalId || !professionalData.hasProfessionalPlan) return;
             
-            if (isMobile) {
-                // Verificar si ya mostró el banner antes (usando localStorage)
-                const bannerShown = localStorage.getItem('installBannerShown');
+            try {
+                const snapshot = await db.collection('certifications')
+                    .where('professionalId', '==', professionalId)
+                    .orderBy('createdAt', 'desc')
+                    .get();
                 
-                if (!bannerShown) {
-                    // Mostrar banner después de 5 segundos
-                    setTimeout(() => {
-                        document.getElementById('installBanner').style.display = 'block';
-                        localStorage.setItem('installBannerShown', 'true');
-                    }, 5000);
+                const container = document.getElementById('certificationsList');
+                if (!container) return;
+                
+                certifications = [];
+                
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--gray);">
+                            📝 No hay certificaciones cargadas
+                        </div>
+                    `;
+                    return;
                 }
+                
+                let html = '';
+                
+                snapshot.forEach(doc => {
+                    const cert = { id: doc.id, ...doc.data() };
+                    certifications.push(cert);
+                    
+                    const date = cert.issueDate ? 
+                        new Date(cert.issueDate).toLocaleDateString('es-AR') : '';
+                    const expiry = cert.expiryDate ? 
+                        `Vence: ${new Date(cert.expiryDate).toLocaleDateString('es-AR')}` : 'Sin vencimiento';
+                    
+                    html += `
+                        <div class="certification-item">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                <div>
+                                    <h4 style="margin: 0;">${cert.title}</h4>
+                                    <p style="color: var(--gray); margin: 0.25rem 0;">${cert.institution}</p>
+                                    ${cert.certificationNumber ? `<p style="font-size: 0.9rem; color: var(--dark);">Nº: ${cert.certificationNumber}</p>` : ''}
+                                </div>
+                                <button onclick="deleteCertification('${doc.id}')" class="btn btn-danger btn-sm">🗑️</button>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: var(--gray);">
+                                <span>${date}</span>
+                                <span>${expiry}</span>
+                            </div>
+                            ${cert.documentUrl ? `
+                                <div style="margin-top: 0.5rem;">
+                                    <a href="${cert.documentUrl}" target="_blank" style="color: var(--primary); text-decoration: none;">
+                                        📄 Ver documento
+                                    </a>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error cargando certificaciones:', error);
+            }
+        }
+
+        async function addCertification() {
+            if (!professionalData.hasProfessionalPlan) {
+                showMessage('profileMessage', 'Necesitás Plan Profesional activo para subir certificaciones', 'error');
+                return;
+            }
+            
+            const title = document.getElementById('certificationTitle').value;
+            const institution = document.getElementById('certificationInstitution').value;
+            const certificationNumber = document.getElementById('certificationNumber').value;
+            const documentUrl = document.getElementById('certificationUrl').value;
+            const issueDate = document.getElementById('certificationDate').value;
+            const expiryDate = document.getElementById('certificationExpiry').value;
+            
+            if (!title || !institution) {
+                showMessage('profileMessage', 'Completá título e institución', 'error');
+                return;
+            }
+            
+            const certificationData = {
+                professionalId,
+                professionalName: professionalData.name,
+                title,
+                institution,
+                certificationNumber,
+                documentUrl,
+                issueDate,
+                expiryDate,
+                status: 'pendiente',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            try {
+                await db.collection('certifications').add(certificationData);
+                
+                // Limpiar formulario
+                document.getElementById('certificationTitle').value = '';
+                document.getElementById('certificationInstitution').value = '';
+                document.getElementById('certificationNumber').value = '';
+                document.getElementById('certificationUrl').value = '';
+                document.getElementById('certificationDate').value = '';
+                document.getElementById('certificationExpiry').value = '';
+                
+                showMessage('profileMessage', '✅ Certificación enviada para revisión', 'success');
+                loadCertifications();
+                
+            } catch (error) {
+                console.error('Error agregando certificación:', error);
+                showMessage('profileMessage', 'Error agregando certificación', 'error');
+            }
+        }
+
+        async function deleteCertification(certificationId) {
+            if (!confirm('¿Estás seguro de querer eliminar esta certificación?')) return;
+            
+            try {
+                await db.collection('certifications').doc(certificationId).delete();
+                showMessage('profileMessage', '✅ Certificación eliminada', 'success');
+                loadCertifications();
+            } catch (error) {
+                console.error('Error eliminando certificación:', error);
+                showMessage('profileMessage', 'Error eliminando certificación', 'error');
             }
         }
 
         // ============================================
-        // FUNCIONES AUXILIARES (mantener las existentes)
+        // GESTIÓN DEL PERFIL
+        // ============================================
+        async function saveProfile(e) {
+            e.preventDefault();
+            
+            if (!professionalId) {
+                showMessage('profileMessage', 'Error: No se encontró el ID del profesional', 'error');
+                return;
+            }
+            
+            // Validar campos requeridos
+            const name = document.getElementById('profileName').value.trim();
+            const phone = document.getElementById('profilePhone').value.trim();
+            const provincia = document.getElementById('profileProvincia').value;
+            const ciudad = document.getElementById('profileCiudad').value;
+            const zonas = document.getElementById('profileZonas').value.split(',').map(z => z.trim()).filter(z => z);
+            const bio = document.getElementById('profileBio').value.trim();
+            const experienceYears = parseInt(document.getElementById('profileExperience').value) || 0;
+            const photoUrl = document.getElementById('photoUrl').value.trim();
+            
+            if (!name || !phone || !provincia || !ciudad || zonas.length === 0 || !bio || !experienceYears || !photoUrl) {
+                showMessage('profileMessage', 'Completá todos los campos obligatorios (*)', 'error');
+                return;
+            }
+            
+            // Obtener rubros seleccionados
+            const rubros = [];
+            document.querySelectorAll('#rubrosCheckbox input:checked').forEach(checkbox => {
+                rubros.push(checkbox.value);
+            });
+            
+            if (rubros.length === 0) {
+                showMessage('profileMessage', 'Seleccioná al menos un rubro', 'error');
+                return;
+            }
+            
+            showGlobalLoader(true);
+            
+            try {
+                // Preparar datos para actualizar
+                const updateData = {
+                    name,
+                    phone,
+                    provincia,
+                    ciudad,
+                    zonas,
+                    rubros,
+                    bio,
+                    experienceYears,
+                    photoUrl,
+                    profileCompleted: true,
+                    lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                // Actualizar en Firestore
+                await db.collection('professionals').doc(professionalId).update(updateData);
+                
+                // Actualizar professionalData local
+                professionalData = { ...professionalData, ...updateData };
+                
+                // Actualizar UI
+                updateProfileStatus();
+                updateUserInfo();
+                
+                // Recalcular ranking
+                await calculateRanking();
+                updateRankingUI();
+                
+                showMessage('profileMessage', '✅ Perfil guardado correctamente', 'success');
+                
+            } catch (error) {
+                console.error('Error guardando perfil:', error);
+                showMessage('profileMessage', 'Error guardando perfil: ' + error.message, 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        async function updateActivity() {
+            if (!professionalId) return;
+            
+            try {
+                await db.collection('professionals').doc(professionalId).update({
+                    lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showMessage('profileMessage', '✅ Actividad actualizada', 'success');
+                
+                // Recalcular ranking
+                await loadRankingData();
+                
+            } catch (error) {
+                console.error('Error actualizando actividad:', error);
+                showMessage('profileMessage', 'Error actualizando actividad', 'error');
+            }
+        }
+
+        // ============================================
+        // UTILIDADES
         // ============================================
         function loadProvincias() {
             const provincias = [
@@ -2672,7 +3812,7 @@
         }
 
         // ============================================
-        // FUNCIONES GLOBALES (mantener las existentes)
+        // FUNCIONES GLOBALES
         // ============================================
         window.recalculateRanking = recalculateRanking;
         window.switchTab = switchTab;
@@ -2682,60 +3822,7 @@
         window.closeBudgetModal = closeBudgetModal;
         window.closePdfPreview = closePdfPreview;
         window.removeBudgetItem = removeBudgetItem;
-
-        // Añadir funciones faltantes (simplificadas para cumplir con el límite)
-        async function saveProfile(e) {
-            e.preventDefault();
-            if (!professionalId) return;
-            
-            showGlobalLoader(true);
-            try {
-                // Recolectar datos del formulario
-                const updateData = {
-                    name: document.getElementById('profileName').value,
-                    phone: document.getElementById('profilePhone').value,
-                    bio: document.getElementById('profileBio').value,
-                    photoUrl: document.getElementById('photoUrl').value,
-                    experienceYears: parseInt(document.getElementById('profileExperience').value) || 0,
-                    avgResponseTime: parseInt(document.getElementById('profileResponseTime').value) || null,
-                    provincia: document.getElementById('profileProvincia').value,
-                    ciudad: document.getElementById('profileCiudad').value,
-                    zonas: document.getElementById('profileZonas').value.split(',').map(z => z.trim()).filter(z => z),
-                    certifications: professionalData.hasProfessionalPlan ? 
-                        document.getElementById('profileCertifications').value.split(',').map(c => c.trim()).filter(c => c) : 
-                        professionalData.certifications || [],
-                    rubros: Array.from(document.querySelectorAll('#rubrosCheckbox input:checked')).map(cb => cb.value),
-                    profileCompleted: true,
-                    lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                await db.collection('professionals').doc(professionalId).update(updateData);
-                professionalData = { ...professionalData, ...updateData };
-                
-                updateProfileStatus();
-                updateUserInfo();
-                showMessage('profileMessage', '✅ Perfil guardado correctamente', 'success');
-            } catch (error) {
-                console.error('Error guardando perfil:', error);
-                showMessage('profileMessage', 'Error guardando perfil', 'error');
-            } finally {
-                showGlobalLoader(false);
-            }
-        }
-
-        async function updateActivity() {
-            if (!professionalId) return;
-            try {
-                await db.collection('professionals').doc(professionalId).update({
-                    lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                showMessage('profileMessage', '✅ Actividad actualizada', 'success');
-            } catch (error) {
-                console.error('Error actualizando actividad:', error);
-                showMessage('profileMessage', 'Error actualizando actividad', 'error');
-            }
-        }
+        window.deleteCertification = deleteCertification;
     </script>
 </body>
 </html>
