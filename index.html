@@ -6,8 +6,11 @@
     <title>TecniYa - Encontrá técnicos certificados en Argentina</title>
     <meta name="description" content="Plomería, electricidad, gas, aire acondicionado. Técnicos verificados con contacto directo por WhatsApp.">
     
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
+    
+    <!-- CSS Optimizado -->
     <style>
-        /* ===== VARIABLES & RESET ===== */
         :root {
             --primary: #0a4fd8;
             --primary-dark: #083bb5;
@@ -31,7 +34,7 @@
         
         .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
         
-        /* ===== HEADER ===== */
+        /* Header con logo */
         .header {
             background: white;
             color: var(--dark);
@@ -61,10 +64,9 @@
             margin: 0 auto; 
         }
         
-        /* ===== BANNERS ===== */
+        /* Banners Container */
         .banners-container {
             margin: 1.5rem auto;
-            min-height: 150px;
         }
         
         .banner {
@@ -86,7 +88,45 @@
             text-decoration: none;
         }
         
-        /* ===== SEARCH ===== */
+        /* Install Prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .install-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 1rem;
+        }
+        
+        .install-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 0.5rem;
+        }
+        
+        /* Search */
         .search-section {
             background: white;
             border-radius: var(--radius);
@@ -96,30 +136,15 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
-        .search-title { 
-            font-size: 1.6rem; 
-            color: var(--primary); 
-            margin-bottom: 1.5rem; 
-            text-align: center; 
-        }
-        
-        .search-grid { 
-            display: grid; 
-            gap: 1.2rem; 
-            margin-bottom: 1.5rem; 
-        }
+        .search-title { font-size: 1.6rem; color: var(--primary); margin-bottom: 1.5rem; text-align: center; }
+        .search-grid { display: grid; gap: 1.2rem; margin-bottom: 1.5rem; }
         
         @media (min-width: 768px) {
             .search-grid { grid-template-columns: 1fr 1fr; }
         }
         
-        .form-label { 
-            display: block; 
-            font-weight: 600; 
-            margin-bottom: 0.5rem; 
-        }
-        
-        .form-select, .form-input {
+        .form-label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+        .form-select {
             width: 100%;
             padding: 0.8rem;
             border: 1px solid #ddd;
@@ -128,7 +153,7 @@
             background: white;
         }
         
-        /* ===== BUTTONS ===== */
+        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -140,12 +165,12 @@
             font-size: 1rem;
             border: none;
             cursor: pointer;
-            transition: all 0.3s;
         }
         
         .btn-primary {
             background: var(--primary);
             color: white;
+            width: 100%;
         }
         
         .btn-primary:hover { background: var(--primary-dark); }
@@ -156,12 +181,7 @@
             padding: 0.7rem 1.2rem;
         }
         
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        
-        /* ===== PROFESSIONAL CARDS ===== */
+        /* Professional Cards */
         .professional-grid {
             display: grid;
             gap: 1.2rem;
@@ -177,12 +197,6 @@
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            transition: transform 0.3s;
-        }
-        
-        .professional-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
         }
         
         .professional-header {
@@ -201,12 +215,7 @@
             border: 2px solid var(--primary);
         }
         
-        .professional-name { 
-            font-size: 1.2rem; 
-            color: var(--dark); 
-            margin-bottom: 0.3rem; 
-            font-weight: 700; 
-        }
+        .professional-name { font-size: 1.2rem; color: var(--dark); margin-bottom: 0.3rem; font-weight: 700; }
         
         .professional-rating {
             display: flex;
@@ -217,10 +226,7 @@
             font-size: 0.9rem;
         }
         
-        .professional-body { 
-            padding: 1.2rem; 
-        }
-        
+        .professional-body { padding: 1.2rem; }
         .professional-footer {
             padding: 1rem 1.2rem;
             background: #f8f9fa;
@@ -230,26 +236,7 @@
             align-items: center;
         }
         
-        /* ===== BADGES ===== */
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 15px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            margin-left: 5px;
-        }
-        
-        .badge-featured { 
-            background: #ffc107; 
-            color: #333; 
-        }
-        
-        .badge-verified { 
-            background: #28a745; 
-            color: white; 
-        }
-        
+        /* Ranking Badges */
         .ranking-badge {
             display: inline-flex;
             align-items: center;
@@ -265,7 +252,106 @@
         .ranking-silver { background: #c0c0c0; color: #333; }
         .ranking-bronze { background: #cd7f32; color: white; }
         
-        /* ===== RESULTS HEADER ===== */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 5px;
+        }
+        
+        .badge-featured { background: #ffc107; color: #333; }
+        .badge-certified { background: #28a745; color: white; }
+        .badge-top { background: #dc3545; color: white; }
+        
+        /* Stats */
+        .ranking-stats {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        /* Rating Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-close {
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+            direction: rtl;
+        }
+        
+        .star {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+        }
+        
+        /* Loading */
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Results Header */
         .results-header {
             display: flex;
             justify-content: space-between;
@@ -286,50 +372,7 @@
             font-weight: 600;
         }
         
-        /* ===== LOADER ===== */
-        .loader {
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 3rem;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* ===== MESSAGES ===== */
-        .message {
-            padding: 1rem;
-            border-radius: var(--radius);
-            margin: 1rem 0;
-            text-align: center;
-            font-weight: 600;
-        }
-        
-        .message-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-left: 4px solid #17a2b8;
-        }
-        
-        .message-error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-        
-        /* ===== FOOTER ===== */
+        /* Footer */
         .footer {
             background: var(--dark);
             color: #aaa;
@@ -357,7 +400,7 @@
             font-size: 0.85rem;
         }
         
-        /* ===== RESPONSIVE ===== */
+        /* Responsive */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -370,23 +413,22 @@
             .search-section { padding: 1.5rem; }
             .professional-header { flex-direction: column; text-align: center; }
             .professional-footer { flex-direction: column; gap: 10px; }
-            .results-header { flex-direction: column; gap: 15px; text-align: center; }
+            
+            .install-content {
+                flex-direction: column;
+                text-align: center;
+            }
         }
         
         @media (max-width: 480px) {
             .professional-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .professional-photo {
-                width: 60px;
-                height: 60px;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- HEADER -->
+    <!-- Header con Logo -->
     <header class="header">
         <div class="container header-content">
             <img src="logo.png" alt="TecniYa" class="logo-img" 
@@ -395,12 +437,12 @@
         </div>
     </header>
 
-    <!-- BANNERS -->
+    <!-- Banners desde Panel Admin -->
     <div class="container banners-container" id="bannersContainer">
         <!-- Los banners se cargan dinámicamente -->
     </div>
 
-    <!-- SEARCH -->
+    <!-- Search -->
     <section class="container search-section">
         <h2 class="search-title">¿Qué servicio necesitás?</h2>
         <div class="search-grid">
@@ -439,32 +481,47 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Zona/Barrio</label>
-                <input type="text" id="zonaInput" class="form-input" placeholder="Ej: Centro, Norte...">
+                <input type="text" id="zonaInput" class="form-select" placeholder="Ej: Centro, Norte...">
             </div>
         </div>
         <div style="display: flex; gap: 12px; margin-top: 20px;">
             <button id="searchBtn" class="btn btn-primary">🔍 Buscar técnico</button>
-            <button id="showAllBtn" class="btn btn-secondary">📋 Ver todos</button>
+            <button id="showAllBtn" class="btn" style="background: #6c757d; color: white;">📋 Ver todos</button>
         </div>
     </section>
 
-    <!-- RESULTS -->
+    <!-- Results -->
     <section class="container">
         <div class="results-header" id="resultsHeader" style="display: none;">
             <h2>Técnicos Disponibles</h2>
             <span class="results-count" id="resultsCount"></span>
         </div>
-        
-        <div class="loader" id="loader">
+        <div class="loader" id="loader" style="display: none;">
             <div class="spinner"></div>
         </div>
-        
-        <div id="messageContainer" class="message" style="display: none;"></div>
-        
         <div class="professional-grid" id="resultsContainer"></div>
     </section>
 
-    <!-- FOOTER -->
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⭐ Calificar Técnico</h3>
+                <span class="modal-close" onclick="closeRatingModal()">×</span>
+            </div>
+            <div id="ratingModalBody"></div>
+        </div>
+    </div>
+
+    <!-- Install Prompt -->
+    <div id="installPrompt" class="install-prompt">
+        <div class="install-content">
+            <span>📱 Instalá TecniYa en tu teléfono para acceder rápido</span>
+            <button onclick="closeInstallPrompt()" class="install-close">×</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
             <div>
@@ -477,10 +534,10 @@
                 <p>📍 Argentina</p>
             </div>
             <div>
-                <h3>¿Sos técnico?</h3>
-                <p>Unite a nuestra plataforma y conseguí más clientes</p>
-                <a href="profesional.html" class="btn btn-primary" style="margin-top: 10px; display: inline-block;">
-                    👨‍🔧 Panel Profesional
+                <h3>Promociones</h3>
+                <p>¿Tenés una promoción especial? Contactanos por WhatsApp</p>
+                <a href="https://wa.me/3417558966" target="_blank" class="btn btn-whatsapp" style="margin-top: 10px;">
+                    💬 Contactar por WhatsApp
                 </a>
             </div>
         </div>
@@ -489,11 +546,11 @@
         </div>
     </footer>
 
-    <!-- FIREBASE -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     
-    <!-- MAIN SCRIPT -->
+    <!-- Main Script -->
     <script>
         // ============================================
         // CONFIGURACIÓN FIREBASE
@@ -511,7 +568,9 @@
         // VARIABLES GLOBALES
         // ============================================
         let db;
+        let currentRatingProfessional = null;
         let allProfessionals = [];
+        let deferredPrompt;
 
         // ============================================
         // DATOS DE PROVINCIAS Y CIUDADES
@@ -521,7 +580,6 @@
             "CABA": ["Capital Federal"],
             "Catamarca": ["San Fernando del Valle de Catamarca", "Valle Viejo", "Andalgalá"],
             "Chaco": ["Resistencia", "Barranqueras", "Fontana", "Presidencia Roque Sáenz Peña"],
-            "Chubut": ["Rawson", "Comodoro Rivadavia", "Trelew", "Puerto Madryn"],
             "Córdoba": ["Córdoba", "Villa María", "Río Cuarto", "Alta Gracia", "Villa Carlos Paz", "Jesús María"],
             "Corrientes": ["Corrientes", "Goya", "Mercedes", "Curuzú Cuatiá"],
             "Entre Ríos": ["Paraná", "Concordia", "Gualeguaychú", "Concepción del Uruguay"],
@@ -552,9 +610,9 @@
                 initApp();
                 loadBanners();
                 loadAllProfessionals();
+                checkInstallPrompt();
             } catch (error) {
                 console.error('Error inicial:', error);
-                showMessage('Error al cargar la aplicación', 'error');
             }
         });
 
@@ -566,7 +624,6 @@
                 db = firebase.firestore();
             } catch (error) {
                 console.error('Error Firebase:', error);
-                throw error;
             }
         }
 
@@ -576,6 +633,13 @@
             document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
             document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
             document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
+            
+            // Evento para PWA
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                showInstallPrompt();
+            });
         }
 
         // ============================================
@@ -613,17 +677,18 @@
         }
 
         // ============================================
-        // BANNERS
+        // BANNERS - CORRECCIÓN DEL ERROR DE FIREBASE
         // ============================================
         async function loadBanners() {
             try {
-                const now = new Date();
+                const now = firebase.firestore.Timestamp.now();
                 const snapshot = await db.collection('banners')
                     .where('active', '==', true)
-                    .where('startDate', '<=', firebase.firestore.Timestamp.fromDate(now))
                     .where('position', '==', 'home')
-                    .orderBy('priority', 'desc')
-                    .limit(3)
+                    .where('startDate', '<=', now)
+                    .orderBy('startDate', 'desc')  // Primero ordenar por startDate
+                    .orderBy('priority', 'desc')   // Luego por prioridad
+                    .limit(10)
                     .get();
                 
                 const container = document.getElementById('bannersContainer');
@@ -634,13 +699,15 @@
                 }
                 
                 let bannersHTML = '';
+                const currentDate = new Date();
                 
+                // Filtrar client-side los banners cuya fecha de fin sea mayor o igual a ahora
                 snapshot.forEach(doc => {
                     const banner = doc.data();
                     const endDate = banner.endDate ? banner.endDate.toDate() : null;
                     
                     // Verificar si el banner aún está vigente
-                    if (!endDate || endDate >= now) {
+                    if (!endDate || endDate >= currentDate) {
                         bannersHTML += `
                             <div class="banner">
                                 <a href="${banner.link || '#'}" target="_blank" class="banner-link">
@@ -655,44 +722,135 @@
                 
                 container.innerHTML = bannersHTML;
                 
+                // Si no hay banners activos, mostrar uno por defecto
+                if (!bannersHTML) {
+                    container.innerHTML = `
+                        <div class="banner">
+                            <a href="#" class="banner-link">
+                                <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
+                                     alt="Banner Promocional">
+                            </a>
+                        </div>
+                    `;
+                }
+                
             } catch (error) {
                 console.error('Error cargando banners:', error);
+                // Mostrar banner por defecto si hay error
+                document.getElementById('bannersContainer').innerHTML = `
+                    <div class="banner">
+                        <a href="#" class="banner-link">
+                            <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
+                                 alt="Banner Promocional">
+                        </a>
+                    </div>
+                `;
             }
         }
 
         // ============================================
-        // SISTEMA DE RANKING
+        // INSTALL PROMPT
         // ============================================
-        function calculateProfessionalRanking(professional) {
-            // Calcular score simplificado para ordenamiento
-            let score = professional.rankingScore || 0;
+        function showInstallPrompt() {
+            const prompt = document.getElementById('installPrompt');
+            prompt.style.display = 'block';
             
-            // Prioridad 1: Profesionales verificados (con certificaciones)
-            if (professional.certifications && professional.certifications.length > 0) {
-                score += 1000;
+            // Guardar en localStorage que se mostró
+            localStorage.setItem('installPromptShown', 'true');
+        }
+
+        function closeInstallPrompt() {
+            const prompt = document.getElementById('installPrompt');
+            prompt.style.display = 'none';
+        }
+
+        function checkInstallPrompt() {
+            // Mostrar solo si no se ha mostrado antes y es móvil
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const alreadyShown = localStorage.getItem('installPromptShown');
+            
+            if (isMobile && !alreadyShown && deferredPrompt) {
+                setTimeout(() => showInstallPrompt(), 3000);
             }
-            
-            // Prioridad 2: Destacados activos
-            const now = new Date();
-            if (professional.isFeatured && professional.featuredUntil) {
-                const featuredUntil = professional.featuredUntil.toDate ? 
-                    professional.featuredUntil.toDate() : new Date(professional.featuredUntil);
-                if (featuredUntil > now) {
-                    score += 500;
+        }
+
+        // ============================================
+        // SISTEMA DE RANKING SIMPLIFICADO
+        // ============================================
+        async function calculateProfessionalRanking(professional) {
+            try {
+                const ratingsSnapshot = await db.collection('ratings')
+                    .where('professionalId', '==', professional.id)
+                    .where('status', '==', 'approved')
+                    .get();
+                
+                let totalRatings = 0;
+                let sumRatings = 0;
+                
+                ratingsSnapshot.forEach(doc => {
+                    totalRatings++;
+                    sumRatings += doc.data().rating;
+                });
+                
+                const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
+                
+                // Calcular score simplificado
+                let score = 0;
+                score += averageRating * 10;
+                
+                // Puntos por cantidad de trabajos
+                if (professional.completedJobs) {
+                    score += Math.min(professional.completedJobs, 20);
                 }
+                
+                // Puntos por experiencia
+                if (professional.experienceYears) {
+                    score += Math.min(professional.experienceYears, 10);
+                }
+                
+                // Puntos por certificaciones
+                if (professional.certifications) {
+                    score += professional.certifications.length * 3;
+                }
+                
+                // Puntos por actividad reciente
+                if (professional.lastActive) {
+                    const lastActiveDate = professional.lastActive.toDate();
+                    const daysSince = (new Date() - lastActiveDate) / (1000 * 60 * 60 * 24);
+                    if (daysSince < 7) score += 10;
+                }
+                
+                score = Math.min(Math.max(score, 0), 100);
+                const rankingScore = Math.round(score);
+                
+                // Determinar nivel
+                let rankingLevel = 'Principiante';
+                if (rankingScore >= 80) rankingLevel = 'Oro';
+                else if (rankingScore >= 65) rankingLevel = 'Plata';
+                else if (rankingScore >= 50) rankingLevel = 'Bronce';
+                
+                return {
+                    ...professional,
+                    averageRating,
+                    totalRatings,
+                    rankingScore,
+                    rankingLevel
+                };
+                
+            } catch (error) {
+                console.error('Error cálculo ranking:', error);
+                return {
+                    ...professional,
+                    averageRating: professional.averageRating || 0,
+                    totalRatings: professional.totalRatings || 0,
+                    rankingScore: professional.rankingScore || 0,
+                    rankingLevel: professional.rankingLevel || 'Principiante'
+                };
             }
-            
-            // Prioridad 3: Rating alto
-            if (professional.averageRating) {
-                score += professional.averageRating * 10;
-            }
-            
-            return score;
         }
 
         function getRankingBadge(rankingLevel) {
             const badges = {
-                'Platino': { class: 'ranking-platinum', emoji: '🏆' },
                 'Oro': { class: 'ranking-gold', emoji: '🥇' },
                 'Plata': { class: 'ranking-silver', emoji: '🥈' },
                 'Bronce': { class: 'ranking-bronze', emoji: '🥉' },
@@ -708,13 +866,10 @@
         // ============================================
         async function loadAllProfessionals() {
             showLoader();
-            hideMessage();
-            
             try {
                 const snapshot = await db.collection('professionals')
                     .where('active', '==', true)
-                    .where('profileCompleted', '==', true)
-                    .limit(50)
+                    .limit(30)
                     .get();
                 
                 if (snapshot.empty) {
@@ -722,20 +877,17 @@
                     return;
                 }
                 
-                const professionals = [];
+                const professionals = await Promise.all(
+                    snapshot.docs.map(async doc => {
+                        const prof = { id: doc.id, ...doc.data() };
+                        return await calculateProfessionalRanking(prof);
+                    })
+                );
                 
-                snapshot.forEach(doc => {
-                    professionals.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Ordenar por ranking (verificados y destacados primero)
-                professionals.sort((a, b) => {
-                    const scoreA = calculateProfessionalRanking(a);
-                    const scoreB = calculateProfessionalRanking(b);
-                    return scoreB - scoreA;
-                });
-                
+                // Ordenar por ranking
+                professionals.sort((a, b) => b.rankingScore - a.rankingScore);
                 allProfessionals = professionals;
+                
                 displayProfessionals(professionals);
                 
             } catch (error) {
@@ -748,63 +900,32 @@
 
         async function searchProfessionals() {
             showLoader();
-            hideMessage();
-            
             const provincia = document.getElementById('provinciaSelect').value;
             const ciudad = document.getElementById('ciudadSelect').value;
             const rubro = document.getElementById('rubroSelect').value;
-            const zona = document.getElementById('zonaInput').value.toLowerCase().trim();
             
             try {
-                let query = db.collection('professionals')
-                    .where('active', '==', true)
-                    .where('profileCompleted', '==', true);
+                let query = db.collection('professionals').where('active', '==', true);
                 
-                if (provincia) {
-                    query = query.where('provincia', '==', provincia);
-                }
+                if (provincia) query = query.where('provincia', '==', provincia);
+                if (ciudad && ciudad !== '') query = query.where('ciudad', '==', ciudad);
+                if (rubro) query = query.where('rubros', 'array-contains', rubro);
                 
-                if (ciudad && ciudad !== '') {
-                    query = query.where('ciudad', '==', ciudad);
-                }
-                
-                if (rubro) {
-                    query = query.where('rubros', 'array-contains', rubro);
-                }
-                
-                const snapshot = await query.limit(50).get();
+                const snapshot = await query.limit(30).get();
                 
                 if (snapshot.empty) {
                     displayNoResults();
                     return;
                 }
                 
-                let professionals = [];
+                const professionals = await Promise.all(
+                    snapshot.docs.map(async doc => {
+                        const prof = { id: doc.id, ...doc.data() };
+                        return await calculateProfessionalRanking(prof);
+                    })
+                );
                 
-                snapshot.forEach(doc => {
-                    professionals.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Filtrar por zona si se especificó
-                if (zona) {
-                    professionals = professionals.filter(prof => {
-                        if (!prof.zonas) return false;
-                        return prof.zonas.some(z => z.toLowerCase().includes(zona));
-                    });
-                }
-                
-                if (professionals.length === 0) {
-                    displayNoResults();
-                    return;
-                }
-                
-                // Ordenar por ranking
-                professionals.sort((a, b) => {
-                    const scoreA = calculateProfessionalRanking(a);
-                    const scoreB = calculateProfessionalRanking(b);
-                    return scoreB - scoreA;
-                });
-                
+                professionals.sort((a, b) => b.rankingScore - a.rankingScore);
                 displayProfessionals(professionals);
                 
             } catch (error) {
@@ -838,57 +959,50 @@
                 if (hasHalfStar) starsHTML += '½';
                 for (let i = 0; i < 5 - fullStars - (hasHalfStar ? 1 : 0); i++) starsHTML += '☆';
                 
-                // Verificar si está destacado
-                const now = new Date();
-                const featuredActive = prof.isFeatured && prof.featuredUntil && 
-                    prof.featuredUntil.toDate ? prof.featuredUntil.toDate() > now : 
-                    new Date(prof.featuredUntil) > now;
-                
-                // Verificar si es profesional verificado
-                const isVerified = prof.certifications && prof.certifications.length > 0;
-                
                 card.innerHTML = `
                     <div class="professional-header">
                         <img src="${prof.photoUrl || 'https://via.placeholder.com/70x70/0a4fd8/ffffff?text=T'}" 
                              alt="${prof.name}"
-                             class="professional-photo"
-                             onerror="this.src='https://via.placeholder.com/70x70/0a4fd8/ffffff?text=T'">
+                             class="professional-photo">
                         <div class="professional-info">
                             <h3 class="professional-name">${prof.name}</h3>
                             <div class="professional-rating">
                                 ${starsHTML} ${rating.toFixed(1)}
                                 <span>(${prof.totalRatings || 0})</span>
-                                ${getRankingBadge(prof.rankingLevel || 'Principiante')}
-                                ${featuredActive ? '<span class="badge badge-featured">DESTACADO</span>' : ''}
-                                ${isVerified ? '<span class="badge badge-verified">PROFESIONAL VERIFICADO</span>' : ''}
+                                ${getRankingBadge(prof.rankingLevel)}
+                                ${prof.isFeatured ? '<span class="badge badge-featured">DESTACADO</span>' : ''}
+                                ${prof.certifications && prof.certifications.length > 0 ? '<span class="badge badge-certified">CERTIFICADO</span>' : ''}
                             </div>
                             <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.3rem;">
                                 📍 ${prof.ciudad || ''}, ${prof.provincia || ''}
+                            </div>
+                            <div class="ranking-stats">
+                                <div class="stat-item">🏆 ${prof.rankingScore || 0}/100</div>
+                                ${prof.completedJobs ? `<div class="stat-item">✅ ${prof.completedJobs} trabajos</div>` : ''}
+                                ${prof.experienceYears ? `<div class="stat-item">📅 ${prof.experienceYears} años</div>` : ''}
                             </div>
                         </div>
                     </div>
                     <div class="professional-body">
                         <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.8rem;">
-                            ${prof.rubros ? prof.rubros.map(r => 
-                                `<span style="background: #f1f6ff; color: #0a4fd8; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem;">
-                                    ${getRubroName(r)}
-                                </span>`
-                            ).join('') : ''}
+                            ${prof.rubros ? prof.rubros.map(r => `<span style="background: #f1f6ff; color: #0a4fd8; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem;">${r}</span>`).join('') : ''}
                         </div>
                         <p style="font-size: 0.95rem;">${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
-                        ${prof.certifications && prof.certifications.length > 0 ? 
-                            `<div style="margin-top: 0.8rem;">
-                                <small style="color: #28a745;">✅ ${prof.certifications.join(', ')}</small>
-                            </div>` : ''
-                        }
                     </div>
                     <div class="professional-footer">
                         <span style="font-size: 0.9rem;">${prof.zonas ? prof.zonas.join(', ') : 'Toda la ciudad'}</span>
-                        <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
-                           target="_blank"
-                           class="btn btn-whatsapp">
-                            📱 Contactar
-                        </a>
+                        <div style="display: flex; gap: 8px;">
+                            <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
+                               target="_blank"
+                               class="btn btn-whatsapp">
+                                📱 Contactar
+                            </a>
+                            <button onclick="openRatingModal('${prof.id}', '${prof.name}')" 
+                                    class="btn" 
+                                    style="background: #6c757d; color: white; font-size: 0.9rem;">
+                                ⭐ Calificar
+                            </button>
+                        </div>
                     </div>
                 `;
                 
@@ -899,52 +1013,145 @@
             document.getElementById('resultsCount').textContent = `${professionals.length} técnicos`;
         }
 
-        function getRubroName(rubroKey) {
-            const rubros = {
-                'plomeria': 'Plomería',
-                'gas': 'Gas',
-                'electricidad': 'Electricidad',
-                'aire': 'Aire Acondicionado',
-                'albanileria': 'Albañilería',
-                'pintura': 'Pintura',
-                'cerrajeria': 'Cerrajería',
-                'jardineria': 'Jardinería',
-                'herreria': 'Herrería',
-                'carpinteria': 'Carpintería',
-                'limpieza': 'Limpieza',
-                'mudanzas': 'Mudanzas',
-                'otros': 'Otros servicios'
-            };
-            return rubros[rubroKey] || rubroKey;
-        }
-
         function displayNoResults() {
             const container = document.getElementById('resultsContainer');
             container.innerHTML = `
                 <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
                     <h3>😔 No se encontraron técnicos</h3>
                     <p>Intenta cambiar los filtros de búsqueda</p>
-                    <button onclick="loadAllProfessionals()" class="btn btn-primary" style="margin-top: 15px;">
-                        📋 Ver todos los técnicos
-                    </button>
                 </div>
             `;
             document.getElementById('resultsHeader').style.display = 'none';
-            hideLoader();
         }
 
         function displayError() {
             const container = document.getElementById('resultsContainer');
             container.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #dc3545; grid-column: 1 / -1;">
-                    <h3>⚠️ Error al cargar los técnicos</h3>
+                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
+                    <h3>⚠️ Error al cargar</h3>
                     <p>Por favor, intenta nuevamente</p>
-                    <button onclick="loadAllProfessionals()" class="btn btn-primary" style="margin-top: 15px;">
-                        🔄 Reintentar
-                    </button>
                 </div>
             `;
-            document.getElementById('resultsHeader').style.display = 'none';
+        }
+
+        // ============================================
+        // SISTEMA DE CALIFICACIONES
+        // ============================================
+        function openRatingModal(professionalId, professionalName) {
+            currentRatingProfessional = { id: professionalId, name: professionalName };
+            
+            document.getElementById('ratingModalBody').innerHTML = `
+                <p>Calificá a <strong>${professionalName}</strong></p>
+                <div class="star-rating" id="starContainer">
+                    <span class="star" data-value="5">★</span>
+                    <span class="star" data-value="4">★</span>
+                    <span class="star" data-value="3">★</span>
+                    <span class="star" data-value="2">★</span>
+                    <span class="star" data-value="1">★</span>
+                </div>
+                <p id="ratingText" style="text-align: center; margin: 10px 0; color: #666;">Seleccioná una calificación</p>
+                <textarea id="ratingComment" placeholder="Contanos tu experiencia (opcional)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin: 10px 0; min-height: 80px; font-size: 0.95rem;"></textarea>
+                <input type="tel" id="clientPhone" placeholder="Tu número de WhatsApp (ej: 3415555555)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 15px; font-size: 0.95rem;">
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="submitRating()" class="btn btn-primary" style="flex: 1;">Enviar Calificación</button>
+                    <button onclick="closeRatingModal()" class="btn" style="background: #6c757d; color: white; flex: 1;">Cancelar</button>
+                </div>
+            `;
+            
+            // Configurar estrellas
+            const stars = document.querySelectorAll('#starContainer .star');
+            let selectedRating = 0;
+            
+            stars.forEach(star => {
+                star.addEventListener('mouseover', function() {
+                    const value = parseInt(this.dataset.value);
+                    highlightStars(value);
+                    updateRatingText(value);
+                });
+                
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.dataset.value);
+                    highlightStars(selectedRating);
+                    updateRatingText(selectedRating);
+                });
+            });
+            
+            document.getElementById('starContainer').addEventListener('mouseleave', function() {
+                highlightStars(selectedRating);
+                updateRatingText(selectedRating);
+            });
+            
+            document.getElementById('ratingModal').style.display = 'flex';
+        }
+
+        function closeRatingModal() {
+            document.getElementById('ratingModal').style.display = 'none';
+            currentRatingProfessional = null;
+        }
+
+        function highlightStars(rating) {
+            const stars = document.querySelectorAll('#starContainer .star');
+            stars.forEach(star => {
+                const value = parseInt(star.dataset.value);
+                star.style.color = value <= rating ? '#ffc107' : '#ddd';
+            });
+        }
+
+        function updateRatingText(rating) {
+            const texts = {
+                1: '😞 Muy Malo',
+                2: '😕 Regular',
+                3: '😐 Aceptable',
+                4: '😊 Muy Bueno',
+                5: '😍 Excelente'
+            };
+            const textEl = document.getElementById('ratingText');
+            if (textEl) {
+                textEl.textContent = texts[rating] || 'Seleccioná una calificación';
+            }
+        }
+
+        async function submitRating() {
+            const stars = document.querySelectorAll('#starContainer .star');
+            let selectedRating = 0;
+            
+            stars.forEach(star => {
+                if (star.style.color === 'rgb(255, 193, 7)') {
+                    const value = parseInt(star.dataset.value);
+                    if (value > selectedRating) selectedRating = value;
+                }
+            });
+            
+            const comment = document.getElementById('ratingComment').value.trim();
+            const clientPhone = document.getElementById('clientPhone').value.trim();
+            
+            if (!selectedRating) {
+                alert('Por favor seleccioná una calificación');
+                return;
+            }
+            
+            if (!clientPhone || clientPhone.length < 10) {
+                alert('Por favor ingresá un número de WhatsApp válido');
+                return;
+            }
+            
+            try {
+                await db.collection('ratings').add({
+                    professionalId: currentRatingProfessional.id,
+                    rating: selectedRating,
+                    comment: comment,
+                    clientPhone: clientPhone,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'pending'
+                });
+                
+                alert('¡Gracias por tu calificación! Será revisada antes de publicarse.');
+                closeRatingModal();
+                
+            } catch (error) {
+                console.error('Error enviando calificación:', error);
+                alert('Error al enviar. Por favor intentá nuevamente.');
+            }
         }
 
         // ============================================
@@ -958,16 +1165,21 @@
             document.getElementById('loader').style.display = 'none';
         }
 
-        function showMessage(text, type) {
-            const container = document.getElementById('messageContainer');
-            container.textContent = text;
-            container.className = `message message-${type}`;
-            container.style.display = 'block';
+        // Manejar clic fuera del modal para cerrar
+        window.onclick = function(event) {
+            const modal = document.getElementById('ratingModal');
+            if (event.target == modal) {
+                closeRatingModal();
+            }
         }
-
-        function hideMessage() {
-            document.getElementById('messageContainer').style.display = 'none';
-        }
+        
+        // Manejar clic fuera del install prompt
+        window.addEventListener('click', function(event) {
+            const prompt = document.getElementById('installPrompt');
+            if (event.target === prompt) {
+                closeInstallPrompt();
+            }
+        });
     </script>
 </body>
 </html>
