@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es-AR">
 <head>
@@ -65,7 +64,7 @@
             margin: 0 auto; 
         }
         
-        /* Banners Container */
+        /* Banners Container - CORREGIDO PARA RESPETAR CONFIGURACIÓN */
         .banners-container {
             margin: 1.5rem auto;
         }
@@ -82,6 +81,8 @@
             width: 100%;
             height: auto;
             display: block;
+            max-height: 300px;
+            object-fit: cover;
         }
         
         .banner-link {
@@ -153,6 +154,8 @@
             font-size: 1rem;
             background: white;
         }
+        
+        /* REMOVIDO FILTRO DE ZONA - SE ELIMINÓ EL INPUT DE ZONA/BARRIO */
         
         /* Buttons */
         .btn {
@@ -237,7 +240,41 @@
             align-items: center;
         }
         
-        /* Ranking Badges */
+        /* AGREGADO: Sección de certificaciones */
+        .certifications-section {
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px dashed #eee;
+        }
+        
+        .certifications-title {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .certifications-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .certification-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* Ranking Badges - MODIFICADO PARA ORDEN JERÁRQUICO */
         .ranking-badge {
             display: inline-flex;
             align-items: center;
@@ -262,9 +299,26 @@
             margin-left: 5px;
         }
         
-        .badge-featured { background: #ffc107; color: #333; }
-        .badge-certified { background: #28a745; color: white; }
-        .badge-top { background: #dc3545; color: white; }
+        /* MODIFICADO: Jerarquía de badges - Profesionales verificados arriba de destacados comunes */
+        .badge-professional { 
+            background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); 
+            color: white;
+            order: 1;
+        }
+        
+        .badge-featured { 
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); 
+            color: #333;
+            order: 2;
+        }
+        
+        .badge-certified { 
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+            color: white;
+            order: 3;
+        }
+        
+        .badge-top { background: #dc3545; color: white; order: 4; }
         
         /* Stats */
         .ranking-stats {
@@ -426,6 +480,14 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        /* Nuevo estilo para orden de badges */
+        .professional-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -438,12 +500,12 @@
         </div>
     </header>
 
-    <!-- Banners desde Panel Admin -->
+    <!-- Banners desde Panel Admin - CORREGIDO -->
     <div class="container banners-container" id="bannersContainer">
         <!-- Los banners se cargan dinámicamente -->
     </div>
 
-    <!-- Search -->
+    <!-- Search - MODIFICADO: Quitado filtro por zona -->
     <section class="container search-section">
         <h2 class="search-title">¿Qué servicio necesitás?</h2>
         <div class="search-grid">
@@ -480,10 +542,7 @@
                     <option value="otros">Otros servicios</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label class="form-label">Zona/Barrio</label>
-                <input type="text" id="zonaInput" class="form-select" placeholder="Ej: Centro, Norte...">
-            </div>
+            <!-- REMOVIDO: Filtro por zona/barrio según especificación -->
         </div>
         <div style="display: flex; gap: 12px; margin-top: 20px;">
             <button id="searchBtn" class="btn btn-primary">🔍 Buscar técnico</button>
@@ -554,7 +613,7 @@
     <!-- Main Script -->
     <script>
         // ============================================
-        // CONFIGURACIÓN FIREBASE
+        // CONFIGURACIÓN FIREBASE - CERTIFICADO NUEVO DEL PLAN DE 12 MESES
         // ============================================
         const firebaseConfig = {
             apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
@@ -678,7 +737,7 @@
         }
 
         // ============================================
-        // BANNERS - CORRECCIÓN DEL ERROR DE FIREBASE
+        // BANNERS - CORREGIDO PARA RESPETAR CONFIGURACIÓN DEL PANEL ADMIN
         // ============================================
         async function loadBanners() {
             try {
@@ -686,10 +745,9 @@
                 const snapshot = await db.collection('banners')
                     .where('active', '==', true)
                     .where('position', '==', 'home')
-                    .where('startDate', '<=', now)
-                    .orderBy('startDate', 'desc')  // Primero ordenar por startDate
-                    .orderBy('priority', 'desc')   // Luego por prioridad
-                    .limit(10)
+                    .orderBy('priority', 'desc')  // Primero ordenar por prioridad (config admin)
+                    .orderBy('startDate', 'desc')  // Luego por fecha de inicio
+                    .limit(3)
                     .get();
                 
                 const container = document.getElementById('bannersContainer');
@@ -702,7 +760,6 @@
                 let bannersHTML = '';
                 const currentDate = new Date();
                 
-                // Filtrar client-side los banners cuya fecha de fin sea mayor o igual a ahora
                 snapshot.forEach(doc => {
                     const banner = doc.data();
                     const endDate = banner.endDate ? banner.endDate.toDate() : null;
@@ -776,7 +833,7 @@
         }
 
         // ============================================
-        // SISTEMA DE RANKING SIMPLIFICADO
+        // SISTEMA DE RANKING MEJORADO - CON JERARQUÍA ESPECIFICADA
         // ============================================
         async function calculateProfessionalRanking(professional) {
             try {
@@ -795,7 +852,7 @@
                 
                 const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
                 
-                // Calcular score simplificado
+                // Calcular score con nueva jerarquía
                 let score = 0;
                 score += averageRating * 10;
                 
@@ -809,14 +866,32 @@
                     score += Math.min(professional.experienceYears, 10);
                 }
                 
-                // Puntos por certificaciones
-                if (professional.certifications) {
-                    score += professional.certifications.length * 3;
+                // Puntos por certificaciones (AGREGADO)
+                if (professional.certifications && professional.certifications.length > 0) {
+                    score += professional.certifications.length * 5;
+                }
+                
+                // Puntos por Plan Profesional (VERIFICADO) - PRIORIDAD MÁXIMA
+                if (professional.hasProfessionalPlan) {
+                    score += 20; // Máxima prioridad
+                }
+                
+                // Puntos por destacado - SEGUNDA PRIORIDAD
+                if (professional.isFeatured) {
+                    const now = new Date();
+                    if (professional.featuredUntil) {
+                        const featuredUntil = professional.featuredUntil.toDate ? 
+                            professional.featuredUntil.toDate() : new Date(professional.featuredUntil);
+                        if (featuredUntil > now) {
+                            score += 15; // Segunda prioridad
+                        }
+                    }
                 }
                 
                 // Puntos por actividad reciente
                 if (professional.lastActive) {
-                    const lastActiveDate = professional.lastActive.toDate();
+                    const lastActiveDate = professional.lastActive.toDate ? 
+                        professional.lastActive.toDate() : new Date(professional.lastActive);
                     const daysSince = (new Date() - lastActiveDate) / (1000 * 60 * 60 * 24);
                     if (daysSince < 7) score += 10;
                 }
@@ -863,14 +938,14 @@
         }
 
         // ============================================
-        // CARGA Y MUESTRA DE PROFESIONALES
+        // CARGA Y MUESTRA DE PROFESIONALES CON NUEVA JERARQUÍA
         // ============================================
         async function loadAllProfessionals() {
             showLoader();
             try {
                 const snapshot = await db.collection('professionals')
                     .where('active', '==', true)
-                    .limit(30)
+                    .limit(50)
                     .get();
                 
                 if (snapshot.empty) {
@@ -885,8 +960,23 @@
                     })
                 );
                 
-                // Ordenar por ranking
-                professionals.sort((a, b) => b.rankingScore - a.rankingScore);
+                // ORDENAR SEGÚN JERARQUÍA ESPECIFICADA:
+                // 1. Profesionales verificados (hasProfessionalPlan) primero
+                // 2. Destacados (isFeatured) después
+                // 3. Luego por ranking score
+                professionals.sort((a, b) => {
+                    // Prioridad 1: Plan Profesional (verificado)
+                    if (a.hasProfessionalPlan && !b.hasProfessionalPlan) return -1;
+                    if (!a.hasProfessionalPlan && b.hasProfessionalPlan) return 1;
+                    
+                    // Prioridad 2: Destacados
+                    if (a.isFeatured && !b.isFeatured) return -1;
+                    if (!a.isFeatured && b.isFeatured) return 1;
+                    
+                    // Prioridad 3: Puntaje de ranking
+                    return b.rankingScore - a.rankingScore;
+                });
+                
                 allProfessionals = professionals;
                 
                 displayProfessionals(professionals);
@@ -912,7 +1002,7 @@
                 if (ciudad && ciudad !== '') query = query.where('ciudad', '==', ciudad);
                 if (rubro) query = query.where('rubros', 'array-contains', rubro);
                 
-                const snapshot = await query.limit(30).get();
+                const snapshot = await query.limit(50).get();
                 
                 if (snapshot.empty) {
                     displayNoResults();
@@ -926,7 +1016,20 @@
                     })
                 );
                 
-                professionals.sort((a, b) => b.rankingScore - a.rankingScore);
+                // ORDENAR SEGÚN JERARQUÍA ESPECIFICADA:
+                professionals.sort((a, b) => {
+                    // Prioridad 1: Plan Profesional (verificado)
+                    if (a.hasProfessionalPlan && !b.hasProfessionalPlan) return -1;
+                    if (!a.hasProfessionalPlan && b.hasProfessionalPlan) return 1;
+                    
+                    // Prioridad 2: Destacados
+                    if (a.isFeatured && !b.isFeatured) return -1;
+                    if (!a.isFeatured && b.isFeatured) return 1;
+                    
+                    // Prioridad 3: Puntaje de ranking
+                    return b.rankingScore - a.rankingScore;
+                });
+                
                 displayProfessionals(professionals);
                 
             } catch (error) {
@@ -960,6 +1063,49 @@
                 if (hasHalfStar) starsHTML += '½';
                 for (let i = 0; i < 5 - fullStars - (hasHalfStar ? 1 : 0); i++) starsHTML += '☆';
                 
+                // AGREGADO: Mostrar certificaciones si existen
+                let certificationsHTML = '';
+                if (prof.certifications && prof.certifications.length > 0) {
+                    certificationsHTML = `
+                        <div class="certifications-section">
+                            <div class="certifications-title">
+                                <span>📜 Certificaciones:</span>
+                            </div>
+                            <div class="certifications-list">
+                                ${prof.certifications.map(cert => 
+                                    `<span class="certification-badge">✓ ${cert.title || 'Certificado'}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Crear badges según jerarquía: Profesionales verificados primero, luego destacados
+                const badges = [];
+                
+                // Badge de Profesional Verificado (PLAN PROFESIONAL) - PRIORIDAD 1
+                if (prof.hasProfessionalPlan) {
+                    badges.push('<span class="badge badge-professional">PROFESIONAL VERIFICADO</span>');
+                }
+                
+                // Badge de Destacado - PRIORIDAD 2
+                const now = new Date();
+                const isFeaturedActive = prof.isFeatured && prof.featuredUntil && 
+                    (prof.featuredUntil.toDate ? prof.featuredUntil.toDate() : new Date(prof.featuredUntil)) > now;
+                if (isFeaturedActive) {
+                    badges.push('<span class="badge badge-featured">DESTACADO</span>');
+                }
+                
+                // Badge de Certificado - PRIORIDAD 3
+                if (prof.certifications && prof.certifications.length > 0) {
+                    badges.push('<span class="badge badge-certified">CERTIFICADO</span>');
+                }
+                
+                // Badge de TOP si tiene buen ranking
+                if (prof.rankingScore >= 85) {
+                    badges.push('<span class="badge badge-top">TOP</span>');
+                }
+                
                 card.innerHTML = `
                     <div class="professional-header">
                         <img src="${prof.photoUrl || 'https://via.placeholder.com/70x70/0a4fd8/ffffff?text=T'}" 
@@ -971,11 +1117,12 @@
                                 ${starsHTML} ${rating.toFixed(1)}
                                 <span>(${prof.totalRatings || 0})</span>
                                 ${getRankingBadge(prof.rankingLevel)}
-                                ${prof.isFeatured ? '<span class="badge badge-featured">DESTACADO</span>' : ''}
-                                ${prof.certifications && prof.certifications.length > 0 ? '<span class="badge badge-certified">CERTIFICADO</span>' : ''}
                             </div>
                             <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.3rem;">
                                 📍 ${prof.ciudad || ''}, ${prof.provincia || ''}
+                            </div>
+                            <div class="professional-badges">
+                                ${badges.join('')}
                             </div>
                             <div class="ranking-stats">
                                 <div class="stat-item">🏆 ${prof.rankingScore || 0}/100</div>
@@ -989,6 +1136,9 @@
                             ${prof.rubros ? prof.rubros.map(r => `<span style="background: #f1f6ff; color: #0a4fd8; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem;">${r}</span>`).join('') : ''}
                         </div>
                         <p style="font-size: 0.95rem;">${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
+                        
+                        <!-- AGREGADO: Sección de certificaciones -->
+                        ${certificationsHTML}
                     </div>
                     <div class="professional-footer">
                         <span style="font-size: 0.9rem;">${prof.zonas ? prof.zonas.join(', ') : 'Toda la ciudad'}</span>
