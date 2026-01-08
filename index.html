@@ -64,24 +64,31 @@
             margin: 0 auto; 
         }
         
-        /* Banners Container - CORREGIDO PARA RESPETAR CONFIGURACIÓN */
+        /* Banners Container - SISTEMA MEJORADO CON TIPOS */
         .banners-container {
             margin: 1.5rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
         
         .banner {
             width: 100%;
-            margin-bottom: 1rem;
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .banner:hover {
+            transform: translateY(-2px);
         }
         
         .banner img {
             width: 100%;
             height: auto;
             display: block;
-            max-height: 300px;
+            max-height: 200px;
             object-fit: cover;
         }
         
@@ -155,7 +162,7 @@
             background: white;
         }
         
-        /* REMOVIDO FILTRO DE ZONA - SE ELIMINÓ EL INPUT DE ZONA/BARRIO */
+        /* REMOVIDO FILTRO DE ZONA COMPLETAMENTE */
         
         /* Buttons */
         .btn {
@@ -240,7 +247,7 @@
             align-items: center;
         }
         
-        /* AGREGADO: Sección de certificaciones */
+        /* Sección de certificaciones */
         .certifications-section {
             margin-top: 0.8rem;
             padding-top: 0.8rem;
@@ -274,7 +281,7 @@
             gap: 4px;
         }
         
-        /* Ranking Badges - MODIFICADO PARA ORDEN JERÁRQUICO */
+        /* Ranking Badges - MODIFICADO: Quitados niveles plata/bronce */
         .ranking-badge {
             display: inline-flex;
             align-items: center;
@@ -285,11 +292,7 @@
             margin-left: 8px;
         }
         
-        .ranking-platinum { background: #e5e4e2; color: #333; }
-        .ranking-gold { background: #ffd700; color: #333; }
-        .ranking-silver { background: #c0c0c0; color: #333; }
-        .ranking-bronze { background: #cd7f32; color: white; }
-        
+        /* MODIFICADO: Solo badges jerárquicos */
         .badge {
             display: inline-block;
             padding: 3px 8px;
@@ -299,26 +302,26 @@
             margin-left: 5px;
         }
         
-        /* MODIFICADO: Jerarquía de badges - Profesionales verificados arriba de destacados comunes */
+        /* JERARQUÍA DE BADGES: Profesionales verificados arriba de destacados comunes */
         .badge-professional { 
             background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); 
             color: white;
-            order: 1;
         }
         
         .badge-featured { 
             background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); 
             color: #333;
-            order: 2;
         }
         
         .badge-certified { 
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
             color: white;
-            order: 3;
         }
         
-        .badge-top { background: #dc3545; color: white; order: 4; }
+        .badge-top { 
+            background: #dc3545; 
+            color: white; 
+        }
         
         /* Stats */
         .ranking-stats {
@@ -500,12 +503,12 @@
         </div>
     </header>
 
-    <!-- Banners desde Panel Admin - CORREGIDO -->
+    <!-- Banners desde Panel Admin - SISTEMA MEJORADO CON TIPOS -->
     <div class="container banners-container" id="bannersContainer">
-        <!-- Los banners se cargan dinámicamente -->
+        <!-- Los banners se cargan dinámicamente según tipo y ubicación -->
     </div>
 
-    <!-- Search - MODIFICADO: Quitado filtro por zona -->
+    <!-- Search - MODIFICADO: Quitado filtro por zona completamente -->
     <section class="container search-section">
         <h2 class="search-title">¿Qué servicio necesitás?</h2>
         <div class="search-grid">
@@ -542,7 +545,7 @@
                     <option value="otros">Otros servicios</option>
                 </select>
             </div>
-            <!-- REMOVIDO: Filtro por zona/barrio según especificación -->
+            <!-- ELIMINADO COMPLETAMENTE: Filtro por zona/barrio -->
         </div>
         <div style="display: flex; gap: 12px; margin-top: 20px;">
             <button id="searchBtn" class="btn btn-primary">🔍 Buscar técnico</button>
@@ -631,6 +634,8 @@
         let currentRatingProfessional = null;
         let allProfessionals = [];
         let deferredPrompt;
+        let currentProvincia = '';
+        let currentCiudad = '';
 
         // ============================================
         // DATOS DE PROVINCIAS Y CIUDADES
@@ -737,73 +742,126 @@
         }
 
         // ============================================
-        // BANNERS - CORREGIDO PARA RESPETAR CONFIGURACIÓN DEL PANEL ADMIN
+        // SISTEMA DE BANNERS MEJORADO - CON TIPOS Y UBICACIÓN
         // ============================================
         async function loadBanners() {
             try {
                 const now = firebase.firestore.Timestamp.now();
-                const snapshot = await db.collection('banners')
-                    .where('active', '==', true)
-                    .where('position', '==', 'home')
-                    .orderBy('priority', 'desc')  // Primero ordenar por prioridad (config admin)
-                    .orderBy('startDate', 'desc')  // Luego por fecha de inicio
-                    .limit(3)
-                    .get();
                 
-                const container = document.getElementById('bannersContainer');
+                // Obtener provincia y ciudad seleccionadas
+                const provincia = document.getElementById('provinciaSelect').value;
+                const ciudad = document.getElementById('ciudadSelect').value;
                 
-                if (snapshot.empty) {
-                    container.innerHTML = '';
+                // Array para almacenar todas las queries
+                const bannerQueries = [];
+                
+                // Siempre cargar banners nacionales
+                bannerQueries.push(
+                    db.collection('banners')
+                        .where('active', '==', true)
+                        .where('type', '==', 'nacional')
+                        .where('startDate', '<=', now)
+                        .where('endDate', '>=', now)
+                        .limit(5)
+                        .get()
+                );
+                
+                // Si hay provincia seleccionada, cargar banners provinciales
+                if (provincia) {
+                    bannerQueries.push(
+                        db.collection('banners')
+                            .where('active', '==', true)
+                            .where('type', '==', 'provincial')
+                            .where('provincia', '==', provincia)
+                            .where('startDate', '<=', now)
+                            .where('endDate', '>=', now)
+                            .limit(5)
+                            .get()
+                    );
+                }
+                
+                // Si hay ciudad seleccionada, cargar banners de ciudad
+                if (ciudad) {
+                    bannerQueries.push(
+                        db.collection('banners')
+                            .where('active', '==', true)
+                            .where('type', '==', 'ciudad')
+                            .where('ciudad', '==', ciudad)
+                            .where('startDate', '<=', now)
+                            .where('endDate', '>=', now)
+                            .limit(5)
+                            .get()
+                    );
+                }
+                
+                // Ejecutar todas las queries
+                const results = await Promise.all(bannerQueries);
+                let allBanners = [];
+                
+                // Combinar todos los banners
+                results.forEach(snapshot => {
+                    snapshot.forEach(doc => {
+                        allBanners.push({ id: doc.id, ...doc.data() });
+                    });
+                });
+                
+                // Si no hay banners, mostrar uno por defecto
+                if (allBanners.length === 0) {
+                    displayDefaultBanner();
                     return;
                 }
                 
-                let bannersHTML = '';
-                const currentDate = new Date();
+                // Mezclar banners aleatoriamente
+                allBanners = shuffleArray(allBanners);
                 
-                snapshot.forEach(doc => {
-                    const banner = doc.data();
-                    const endDate = banner.endDate ? banner.endDate.toDate() : null;
-                    
-                    // Verificar si el banner aún está vigente
-                    if (!endDate || endDate >= currentDate) {
-                        bannersHTML += `
-                            <div class="banner">
-                                <a href="${banner.link || '#'}" target="_blank" class="banner-link">
-                                    <img src="${banner.imageUrl}" 
-                                         alt="${banner.title || 'Banner'}"
-                                         onerror="this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa'">
-                                </a>
-                            </div>
-                        `;
-                    }
-                });
+                // Tomar máximo 3 banners
+                const bannersToShow = allBanners.slice(0, 3);
                 
-                container.innerHTML = bannersHTML;
-                
-                // Si no hay banners activos, mostrar uno por defecto
-                if (!bannersHTML) {
-                    container.innerHTML = `
-                        <div class="banner">
-                            <a href="#" class="banner-link">
-                                <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
-                                     alt="Banner Promocional">
-                            </a>
-                        </div>
-                    `;
-                }
+                displayBanners(bannersToShow);
                 
             } catch (error) {
                 console.error('Error cargando banners:', error);
-                // Mostrar banner por defecto si hay error
-                document.getElementById('bannersContainer').innerHTML = `
+                displayDefaultBanner();
+            }
+        }
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function displayBanners(banners) {
+            const container = document.getElementById('bannersContainer');
+            container.innerHTML = '';
+            
+            banners.forEach(banner => {
+                const bannerHTML = `
                     <div class="banner">
-                        <a href="#" class="banner-link">
-                            <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
-                                 alt="Banner Promocional">
+                        <a href="${banner.link || '#'}" target="_blank" class="banner-link">
+                            <img src="${banner.imageUrl}" 
+                                 alt="${banner.title || 'Banner'}"
+                                 onerror="this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa'">
                         </a>
                     </div>
                 `;
-            }
+                container.innerHTML += bannerHTML;
+            });
+        }
+
+        function displayDefaultBanner() {
+            const container = document.getElementById('bannersContainer');
+            container.innerHTML = `
+                <div class="banner">
+                    <a href="#" class="banner-link">
+                        <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
+                             alt="Banner Promocional">
+                    </a>
+                </div>
+            `;
         }
 
         // ============================================
@@ -833,7 +891,7 @@
         }
 
         // ============================================
-        // SISTEMA DE RANKING MEJORADO - CON JERARQUÍA ESPECIFICADA
+        // SISTEMA DE RANKING MEJORADO - JERARQUÍA ESPECIFICADA
         // ============================================
         async function calculateProfessionalRanking(professional) {
             try {
@@ -866,7 +924,7 @@
                     score += Math.min(professional.experienceYears, 10);
                 }
                 
-                // Puntos por certificaciones (AGREGADO)
+                // Puntos por certificaciones
                 if (professional.certifications && professional.certifications.length > 0) {
                     score += professional.certifications.length * 5;
                 }
@@ -899,18 +957,11 @@
                 score = Math.min(Math.max(score, 0), 100);
                 const rankingScore = Math.round(score);
                 
-                // Determinar nivel
-                let rankingLevel = 'Principiante';
-                if (rankingScore >= 80) rankingLevel = 'Oro';
-                else if (rankingScore >= 65) rankingLevel = 'Plata';
-                else if (rankingScore >= 50) rankingLevel = 'Bronce';
-                
                 return {
                     ...professional,
                     averageRating,
                     totalRatings,
-                    rankingScore,
-                    rankingLevel
+                    rankingScore
                 };
                 
             } catch (error) {
@@ -919,22 +970,9 @@
                     ...professional,
                     averageRating: professional.averageRating || 0,
                     totalRatings: professional.totalRatings || 0,
-                    rankingScore: professional.rankingScore || 0,
-                    rankingLevel: professional.rankingLevel || 'Principiante'
+                    rankingScore: professional.rankingScore || 0
                 };
             }
-        }
-
-        function getRankingBadge(rankingLevel) {
-            const badges = {
-                'Oro': { class: 'ranking-gold', emoji: '🥇' },
-                'Plata': { class: 'ranking-silver', emoji: '🥈' },
-                'Bronce': { class: 'ranking-bronze', emoji: '🥉' },
-                'Principiante': { class: 'ranking-bronze', emoji: '⭐' }
-            };
-            
-            const badge = badges[rankingLevel] || badges['Principiante'];
-            return `<span class="ranking-badge ${badge.class}">${badge.emoji} ${rankingLevel}</span>`;
         }
 
         // ============================================
@@ -994,6 +1032,11 @@
             const provincia = document.getElementById('provinciaSelect').value;
             const ciudad = document.getElementById('ciudadSelect').value;
             const rubro = document.getElementById('rubroSelect').value;
+            
+            // Actualizar banners según ubicación seleccionada
+            if (provincia || ciudad) {
+                loadBanners();
+            }
             
             try {
                 let query = db.collection('professionals').where('active', '==', true);
@@ -1063,7 +1106,7 @@
                 if (hasHalfStar) starsHTML += '½';
                 for (let i = 0; i < 5 - fullStars - (hasHalfStar ? 1 : 0); i++) starsHTML += '☆';
                 
-                // AGREGADO: Mostrar certificaciones si existen
+                // Mostrar certificaciones si existen
                 let certificationsHTML = '';
                 if (prof.certifications && prof.certifications.length > 0) {
                     certificationsHTML = `
@@ -1096,7 +1139,7 @@
                     badges.push('<span class="badge badge-featured">DESTACADO</span>');
                 }
                 
-                // Badge de Certificado - PRIORIDAD 3
+                // Badge de Certificado - si tiene certificaciones
                 if (prof.certifications && prof.certifications.length > 0) {
                     badges.push('<span class="badge badge-certified">CERTIFICADO</span>');
                 }
@@ -1116,7 +1159,6 @@
                             <div class="professional-rating">
                                 ${starsHTML} ${rating.toFixed(1)}
                                 <span>(${prof.totalRatings || 0})</span>
-                                ${getRankingBadge(prof.rankingLevel)}
                             </div>
                             <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.3rem;">
                                 📍 ${prof.ciudad || ''}, ${prof.provincia || ''}
@@ -1137,7 +1179,7 @@
                         </div>
                         <p style="font-size: 0.95rem;">${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
                         
-                        <!-- AGREGADO: Sección de certificaciones -->
+                        <!-- Sección de certificaciones -->
                         ${certificationsHTML}
                     </div>
                     <div class="professional-footer">
