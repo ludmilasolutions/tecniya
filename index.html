@@ -873,11 +873,11 @@
         }
 
         // ============================================
-        // SISTEMA DE RANKING - CON CERTIFICACIONES SEPARADAS
+        // SISTEMA DE RANKING - CON CERTIFICACIONES SEPARADAS Y RATINGS APROBADOS
         // ============================================
         async function calculateProfessionalRanking(professional) {
             try {
-                // Obtener calificaciones aprobadas
+                // Obtener todas las calificaciones aprobadas para este profesional
                 const ratingsSnapshot = await db.collection('ratings')
                     .where('professionalId', '==', professional.id)
                     .where('status', '==', 'approved')
@@ -916,9 +916,9 @@
                 let score = 0;
                 score += averageRating * 10;
                 
-                // Puntos por cantidad de trabajos
-                if (professional.completedJobs) {
-                    score += Math.min(professional.completedJobs, 20);
+                // Puntos por cantidad de trabajos (calificaciones aprobadas)
+                if (totalRatings > 0) {
+                    score += Math.min(totalRatings, 20);
                 }
                 
                 // Puntos por experiencia
@@ -957,7 +957,7 @@
                 return {
                     ...professional,
                     averageRating,
-                    totalRatings,
+                    totalRatings, // Este es el número de trabajos realizados (ratings aprobados)
                     rankingScore,
                     approvedCertifications
                 };
@@ -966,16 +966,16 @@
                 console.error('Error cálculo ranking:', error);
                 return {
                     ...professional,
-                    averageRating: professional.averageRating || 0,
-                    totalRatings: professional.totalRatings || 0,
-                    rankingScore: professional.rankingScore || 0,
+                    averageRating: 0,
+                    totalRatings: 0,
+                    rankingScore: 0,
                     approvedCertifications: []
                 };
             }
         }
 
         // ============================================
-        // CARGA Y MUESTRA DE PROFESIONALES CON CERTIFICACIONES SEPARADAS
+        // CARGA Y MUESTRA DE PROFESIONALES
         // ============================================
         async function loadAllProfessionals() {
             showLoader();
@@ -1175,7 +1175,7 @@
                             </div>
                             <div class="ranking-stats">
                                 <div class="stat-item">🏆 ${prof.rankingScore || 0}/100</div>
-                                ${prof.completedJobs ? `<div class="stat-item">✅ ${prof.completedJobs} trabajos</div>` : ''}
+                                ${prof.totalRatings ? `<div class="stat-item">✅ ${prof.totalRatings} trabajos</div>` : ''}
                                 ${prof.experienceYears ? `<div class="stat-item">📅 ${prof.experienceYears} años</div>` : ''}
                             </div>
                         </div>
