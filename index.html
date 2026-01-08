@@ -873,10 +873,11 @@
         }
 
         // ============================================
-        // SISTEMA DE RANKING
+        // SISTEMA DE RANKING - CON CERTIFICACIONES SEPARADAS
         // ============================================
         async function calculateProfessionalRanking(professional) {
             try {
+                // Obtener calificaciones aprobadas
                 const ratingsSnapshot = await db.collection('ratings')
                     .where('professionalId', '==', professional.id)
                     .where('status', '==', 'approved')
@@ -892,23 +893,45 @@
                 
                 const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
                 
+                // Obtener certificaciones aprobadas desde colección separada
+                const certificationsSnapshot = await db.collection('certifications')
+                    .where('professionalId', '==', professional.id)
+                    .where('status', '==', 'aprobada')
+                    .get();
+                
+                const approvedCertifications = [];
+                certificationsSnapshot.forEach(doc => {
+                    const certData = doc.data();
+                    approvedCertifications.push({
+                        id: doc.id,
+                        title: certData.title || 'Certificado',
+                        institution: certData.institution || '',
+                        issueDate: certData.issueDate || '',
+                        expiryDate: certData.expiryDate || '',
+                        certificationNumber: certData.certificationNumber || ''
+                    });
+                });
+                
+                // Calcular score
                 let score = 0;
                 score += averageRating * 10;
                 
+                // Puntos por cantidad de trabajos
                 if (professional.completedJobs) {
                     score += Math.min(professional.completedJobs, 20);
                 }
                 
+                // Puntos por experiencia
                 if (professional.experienceYears) {
                     score += Math.min(professional.experienceYears, 10);
                 }
                 
-                // CAMBIO: Puntos por certificaciones técnicas (antes Plan Profesional)
-                if (professional.hasProfessionalPlan || 
-                   (professional.certifications && professional.certifications.length > 0)) {
+                // Puntos por certificaciones aprobadas
+                if (approvedCertifications.length > 0) {
                     score += 20;
                 }
                 
+                // Puntos por destacado
                 if (professional.isFeatured) {
                     const now = new Date();
                     if (professional.featuredUntil) {
@@ -920,6 +943,7 @@
                     }
                 }
                 
+                // Puntos por actividad reciente
                 if (professional.lastActive) {
                     const lastActiveDate = professional.lastActive.toDate ? 
                         professional.lastActive.toDate() : new Date(professional.lastActive);
@@ -934,7 +958,8 @@
                     ...professional,
                     averageRating,
                     totalRatings,
-                    rankingScore
+                    rankingScore,
+                    approvedCertifications
                 };
                 
             } catch (error) {
@@ -943,13 +968,14 @@
                     ...professional,
                     averageRating: professional.averageRating || 0,
                     totalRatings: professional.totalRatings || 0,
-                    rankingScore: professional.rankingScore || 0
+                    rankingScore: professional.rankingScore || 0,
+                    approvedCertifications: []
                 };
             }
         }
 
         // ============================================
-        // CARGA Y MUESTRA DE PROFESIONALES
+        // CARGA Y MUESTRA DE PROFESIONALES CON CERTIFICACIONES SEPARADAS
         // ============================================
         async function loadAllProfessionals() {
             showLoader();
@@ -971,18 +997,20 @@
                     })
                 );
                 
+                // ORDENAR SEGÚN JERARQUÍA:
                 professionals.sort((a, b) => {
-                    const aIsVerified = a.hasProfessionalPlan || 
-                                       (a.certifications && a.certifications.length > 0);
-                    const bIsVerified = b.hasProfessionalPlan || 
-                                       (b.certifications && b.certifications.length > 0);
+                    // Prioridad 1: Con certificaciones aprobadas
+                    const aHasCertifications = a.approvedCertifications && a.approvedCertifications.length > 0;
+                    const bHasCertifications = b.approvedCertifications && b.approvedCertifications.length > 0;
                     
-                    if (aIsVerified && !bIsVerified) return -1;
-                    if (!aIsVerified && bIsVerified) return 1;
+                    if (aHasCertifications && !bHasCertifications) return -1;
+                    if (!aHasCertifications && bHasCertifications) return 1;
                     
+                    // Prioridad 2: Destacados
                     if (a.isFeatured && !b.isFeatured) return -1;
                     if (!a.isFeatured && b.isFeatured) return 1;
                     
+                    // Prioridad 3: Puntaje de ranking
                     return b.rankingScore - a.rankingScore;
                 });
                 
@@ -1003,6 +1031,7 @@
             const ciudad = document.getElementById('ciudadSelect').value;
             const rubro = document.getElementById('rubroSelect').value;
             
+            // Actualizar banners según ubicación seleccionada
             if (provincia || ciudad) {
                 loadBanners();
             }
@@ -1028,18 +1057,20 @@
                     })
                 );
                 
+                // ORDENAR SEGÚN JERARQUÍA:
                 professionals.sort((a, b) => {
-                    const aIsVerified = a.hasProfessionalPlan || 
-                                       (a.certifications && a.certifications.length > 0);
-                    const bIsVerified = b.hasProfessionalPlan || 
-                                       (b.certifications && b.certifications.length > 0);
+                    // Prioridad 1: Con certificaciones aprobadas
+                    const aHasCertifications = a.approvedCertifications && a.approvedCertifications.length > 0;
+                    const bHasCertifications = b.approvedCertifications && b.approvedCertifications.length > 0;
                     
-                    if (aIsVerified && !bIsVerified) return -1;
-                    if (!aIsVerified && bIsVerified) return 1;
+                    if (aHasCertifications && !bHasCertifications) return -1;
+                    if (!aHasCertifications && bHasCertifications) return 1;
                     
+                    // Prioridad 2: Destacados
                     if (a.isFeatured && !b.isFeatured) return -1;
                     if (!a.isFeatured && b.isFeatured) return 1;
                     
+                    // Prioridad 3: Puntaje de ranking
                     return b.rankingScore - a.rankingScore;
                 });
                 
@@ -1076,24 +1107,23 @@
                 if (hasHalfStar) starsHTML += '½';
                 for (let i = 0; i < 5 - fullStars - (hasHalfStar ? 1 : 0); i++) starsHTML += '☆';
                 
-                // CAMBIO: Texto de estado de verificación
+                // Texto de estado de verificación
                 let verificationStatus = '';
-                if (prof.hasProfessionalPlan || (prof.certifications && prof.certifications.length > 0)) {
+                if (prof.approvedCertifications && prof.approvedCertifications.length > 0) {
                     verificationStatus = '<span class="verification-status">✓ Certificaciones técnicas</span>';
                 }
                 
-                // Sección de certificaciones
+                // Sección de certificaciones desde colección separada
                 let certificationsHTML = '';
-                if (prof.certifications && prof.certifications.length > 0) {
-                    const certsArray = Array.isArray(prof.certifications) ? prof.certifications : [];
+                if (prof.approvedCertifications && prof.approvedCertifications.length > 0) {
                     certificationsHTML = `
                         <div class="certifications-section">
                             <div class="certifications-title">
                                 <span>📜 Certificaciones:</span>
                             </div>
                             <div class="certifications-list">
-                                ${certsArray.map(cert => {
-                                    const certTitle = typeof cert === 'string' ? cert : (cert.title || 'Certificado');
+                                ${prof.approvedCertifications.map(cert => {
+                                    const certTitle = cert.title || 'Certificado';
                                     return `<span class="certification-badge">✓ ${certTitle}</span>`;
                                 }).join('')}
                             </div>
@@ -1101,14 +1131,16 @@
                     `;
                 }
                 
-                // Badges
+                // Crear badges
                 const badges = [];
-                const isVerified = prof.hasProfessionalPlan || 
-                                 (prof.certifications && prof.certifications.length > 0);
-                if (isVerified) {
+                
+                // Badge de VERIFICADO si tiene certificaciones aprobadas
+                const hasApprovedCertifications = prof.approvedCertifications && prof.approvedCertifications.length > 0;
+                if (hasApprovedCertifications) {
                     badges.push('<span class="badge badge-verified">VERIFICADO</span>');
                 }
                 
+                // Badge de Destacado
                 const now = new Date();
                 const isFeaturedActive = prof.isFeatured && prof.featuredUntil && 
                     (prof.featuredUntil.toDate ? prof.featuredUntil.toDate() : new Date(prof.featuredUntil)) > now;
@@ -1116,6 +1148,7 @@
                     badges.push('<span class="badge badge-featured">DESTACADO</span>');
                 }
                 
+                // Badge de TOP si tiene buen ranking
                 if (prof.rankingScore >= 85) {
                     badges.push('<span class="badge badge-top">TOP</span>');
                 }
