@@ -683,7 +683,7 @@
         @keyframes ripple {
             0% {
                 transform: scale(0, 0);
-                opacity: 1;
+                opacity: 0.5;
             }
             100% {
                 transform: scale(100, 100);
@@ -1085,11 +1085,11 @@
         </div>
     </footer>
 
-    <!-- Firebase (sin cambios) -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     
-    <!-- Main Script (sin cambios en la lógica) -->
+    <!-- Main Script (CON LA CORRECCIÓN DE BANNERS) -->
     <script>
         // ============================================
         // CONFIGURACIÓN FIREBASE
@@ -1235,73 +1235,93 @@
                 ciudadSelect.appendChild(option);
             });
             ciudadSelect.disabled = false;
+            
+            // Recargar banners cuando cambia la provincia
+            loadBanners();
         }
 
         // ============================================
-        // SISTEMA DE BANNERS
+        // SISTEMA DE BANNERS - CORREGIDO
         // ============================================
         async function loadBanners() {
             try {
                 const now = firebase.firestore.Timestamp.now();
-                
                 const provincia = document.getElementById('provinciaSelect').value;
                 const ciudad = document.getElementById('ciudadSelect').value;
                 
-                let allBanners = [];
+                // Crear un array para todas las consultas
+                const queries = [];
                 
-                const nacionalQuery = db.collection('banners')
-                    .where('active', '==', true)
-                    .where('type', '==', 'nacional')
-                    .where('startDate', '<=', now)
-                    .limit(10)
-                    .get();
+                // Consulta para banners nacionales
+                queries.push(
+                    db.collection('banners')
+                        .where('active', '==', true)
+                        .where('type', '==', 'nacional')
+                        .where('startDate', '<=', now)
+                        .get()
+                );
                 
-                let provincialQuery = null;
+                // Consulta para banners provinciales si hay provincia seleccionada
                 if (provincia) {
-                    provincialQuery = db.collection('banners')
-                        .where('active', '==', true)
-                        .where('type', '==', 'provincial')
-                        .where('provincia', '==', provincia)
-                        .where('startDate', '<=', now)
-                        .limit(10)
-                        .get();
+                    queries.push(
+                        db.collection('banners')
+                            .where('active', '==', true)
+                            .where('type', '==', 'provincial')
+                            .where('provincia', '==', provincia)
+                            .where('startDate', '<=', now)
+                            .get()
+                    );
                 }
                 
-                let ciudadQuery = null;
+                // Consulta para banners de ciudad si hay ciudad seleccionada
                 if (ciudad && provincia) {
-                    ciudadQuery = db.collection('banners')
-                        .where('active', '==', true)
-                        .where('type', '==', 'ciudad')
-                        .where('provincia', '==', provincia)
-                        .where('ciudad', '==', ciudad)
-                        .where('startDate', '<=', now)
-                        .limit(10)
-                        .get();
+                    queries.push(
+                        db.collection('banners')
+                            .where('active', '==', true)
+                            .where('type', '==', 'ciudad')
+                            .where('provincia', '==', provincia)
+                            .where('ciudad', '==', ciudad)
+                            .where('startDate', '<=', now)
+                            .get()
+                    );
                 }
                 
-                const queries = [nacionalQuery];
-                if (provincialQuery) queries.push(provincialQuery);
-                if (ciudadQuery) queries.push(ciudadQuery);
-                
+                // Ejecutar todas las consultas en paralelo
                 const results = await Promise.all(queries);
                 
+                let allBanners = [];
+                
+                // Procesar resultados
                 results.forEach(snapshot => {
                     snapshot.forEach(doc => {
                         const banner = { id: doc.id, ...doc.data() };
-                        const endDate = banner.endDate ? 
-                            (banner.endDate.toDate ? banner.endDate.toDate() : new Date(banner.endDate)) : 
-                            new Date();
-                        if (endDate >= now.toDate()) {
+                        
+                        // Verificar fecha de finalización
+                        let endDate = null;
+                        if (banner.endDate) {
+                            if (banner.endDate.toDate) {
+                                endDate = banner.endDate.toDate();
+                            } else {
+                                endDate = new Date(banner.endDate);
+                            }
+                        }
+                        
+                        const nowDate = new Date();
+                        
+                        // Si no hay fecha de fin o la fecha de fin es posterior a ahora, incluir banner
+                        if (!endDate || endDate >= nowDate) {
                             allBanners.push(banner);
                         }
                     });
                 });
                 
+                // Si no hay banners, mostrar banner por defecto
                 if (allBanners.length === 0) {
                     displayDefaultBanner();
                     return;
                 }
                 
+                // Mezclar banners y mostrar máximo 3
                 allBanners = shuffleArray(allBanners);
                 const bannersToShow = allBanners.slice(0, 3);
                 
@@ -1330,7 +1350,7 @@
                 const bannerHTML = `
                     <div class="banner" style="animation-delay: ${index * 0.1}s">
                         <a href="${banner.link || '#'}" target="_blank" class="banner-link">
-                            <img src="${banner.imageUrl}" 
+                            <img src="${banner.imageUrl || 'https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa'}" 
                                  alt="${banner.title || 'Banner'}"
                                  onerror="this.onerror=null; this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa';">
                         </a>
@@ -1345,8 +1365,9 @@
             container.innerHTML = `
                 <div class="banner" style="animation-delay: 0.1s">
                     <a href="#" class="banner-link">
-                        <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
-                             alt="Banner Promocional">
+                        <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=TecniYa+-+Técnicos+Verificados" 
+                             alt="Banner Promocional TecniYa"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=TecniYa';">
                     </a>
                 </div>
             `;
