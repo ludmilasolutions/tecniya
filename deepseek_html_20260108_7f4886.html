@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Banners Promocionales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 2rem 0;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .date-info {
+            background-color: #f0f8ff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4b6cb7;
+            font-weight: 600;
+        }
+
+        .reload-btn {
+            background-color: #4b6cb7;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .reload-btn:hover {
+            background-color: #3a5795;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(74, 108, 183, 0.3);
+        }
+
+        .banners-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .banner {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            background: white;
+            position: relative;
+        }
+
+        .banner:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .banner a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .banner img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .banner:hover img {
+            transform: scale(1.03);
+        }
+
+        .banner-info {
+            padding: 20px;
+            background: white;
+        }
+
+        .banner-info h3 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .banner-info p {
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .banner-info small {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+            display: block;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .banner-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(46, 204, 113, 0.9);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .no-banners, .error-message {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .error-message {
+            color: #e74c3c;
+        }
+
+        .retry-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: #4b6cb7;
+            margin-bottom: 10px;
+        }
+
+        .stat-card h3 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .banner img {
+                height: 200px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            font-size: 1.2rem;
+            color: #4b6cb7;
+        }
+
+        .loading i {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-images"></i> Sistema de Banners Promocionales</h1>
+            <p>Visualización de banners activos con Firestore. Filtrado por fechas de inicio y fin.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="controls">
+            <div class="date-info">
+                <i class="fas fa-calendar-alt"></i> Fecha actual: <span id="current-date"></span>
+            </div>
+            <button class="reload-btn" onclick="loadBanners()">
+                <i class="fas fa-sync-alt"></i> Actualizar Banners
+            </button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <i class="fas fa-clock"></i>
+                <h3 id="total-banners">0</h3>
+                <p>Total de banners</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-check-circle"></i>
+                <h3 id="active-banners">0</h3>
+                <p>Banners activos</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-calendar-check"></i>
+                <h3 id="expiring-banners">0</h3>
+                <p>Por expirar (7 días)</p>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin"></i> Cargando banners...
+        </div>
+
+        <div id="banners-container" class="banners-container">
+            <!-- Los banners se cargarán aquí -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Sistema de Banners &copy; 2023 | Solución implementada: Filtro en cliente para desigualdades múltiples</p>
+        </div>
+    </footer>
+
+    <script>
+        // Configuración de Firebase - REEMPLAZA CON TUS PROPIOS DATOS
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_AUTH_DOMAIN",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_STORAGE_BUCKET",
+            messagingSenderId: "TU_MESSAGING_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Configuración de fechas
+        function getToday() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        // Formatear fecha para mostrar
+        function formatDate(dateString) {
+            if (!dateString) return 'Fecha no definida';
+            
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            } catch (error) {
+                return dateString;
+            }
+        }
+
+        // Función para validar URLs de imagen
+        function getValidImageUrl(banner) {
+            const defaultBaseUrl = 'https://via.placeholder.com/1200x250';
+            
+            // Si no hay imagen o es inválida
+            if (!banner.imageUrl || 
+                banner.imageUrl.includes('undefined') || 
+                banner.imageUrl.includes('null') ||
+                banner.imageUrl.includes('ffffff?text') ||
+                banner.imageUrl.trim() === '' ||
+                banner.imageUrl.startsWith('http://undefined') ||
+                banner.imageUrl.startsWith('http://null')) {
+                
+                // Crear un placeholder con el título del banner
+                const colors = ['007bff', '28a745', 'dc3545', 'fd7e14', '6f42c1', '17a2b8'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                const text = banner.title ? encodeURIComponent(banner.title) : 'Banner+Promocional';
+                return `https://via.placeholder.com/1200x250/${randomColor}/ffffff?text=${text}`;
+            }
+            
+            return banner.imageUrl;
+        }
+
+        // Función para manejar errores de carga de imagen
+        function handleImageError(imgElement, bannerTitle) {
+            const text = bannerTitle || 'Banner';
+            const colors = ['007bff', 'dc3545', 'fd7e14'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            imgElement.src = `https://via.placeholder.com/1200x250/${randomColor}/ffffff?text=Error+Cargando+${text}`;
+            imgElement.style.border = '2px dashed #' + randomColor;
+            console.warn(`Error cargando imagen para banner: ${bannerTitle}`);
+        }
+
+        // Función principal para cargar banners
+        function loadBanners() {
+            const bannersContainer = document.getElementById('banners-container');
+            const loadingElement = document.getElementById('loading');
+            const today = getToday();
+            
+            // Mostrar fecha actual
+            document.getElementById('current-date').textContent = formatDate(today);
+            
+            // Mostrar loading
+            loadingElement.style.display = 'block';
+            bannersContainer.innerHTML = '';
+            
+            // SOLUCIÓN 1: Solo usar desigualdad en un campo (endDate)
+            // y filtrar startDate en el cliente
+            db.collection("banners")
+                .where("active", "==", true)
+                .where("endDate", ">=", today) // Solo una desigualdad aquí
+                .orderBy("endDate", "asc") // Ordenar por fecha de expiración
+                .get()
+                .then((querySnapshot) => {
+                    loadingElement.style.display = 'none';
+                    
+                    if (querySnapshot.empty) {
+                        bannersContainer.innerHTML = `
+                            <div class="no-banners">
+                                <i class="fas fa-info-circle" style="font-size: 3rem; margin-bottom: 15px; color: #4b6cb7;"></i>
+                                <h3>No hay banners activos en este momento</h3>
+                                <p>No se encontraron banners que estén vigentes actualmente.</p>
+                            </div>
+                        `;
+                        updateStats(0, 0, 0);
+                        return;
+                    }
+                    
+                    const banners = [];
+                    querySnapshot.forEach((doc) => {
+                        const banner = doc.data();
+                        banner.id = doc.id;
+                        banners.push(banner);
+                    });
+                    
+                    // FILTRO EN CLIENTE: Verificar startDate aquí
+                    const activeBanners = banners.filter(banner => {
+                        return banner.startDate && banner.startDate <= today;
+                    });
+                    
+                    // Contar banners que expiran en los próximos 7 días
+                    const sevenDaysFromNow = new Date();
+                    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+                    const expiringBanners = activeBanners.filter(banner => {
+                        if (!banner.endDate) return false;
+                        const endDate = new Date(banner.endDate);
+                        return endDate <= sevenDaysFromNow;
+                    });
+                    
+                    // Actualizar estadísticas
+                    updateStats(banners.length, activeBanners.length, expiringBanners.length);
+                    
+                    if (activeBanners.length === 0) {
+                        bannersContainer.innerHTML = `
+                            <div class="no-banners">
+                                <i class="fas fa-calendar-times" style="font-size: 3rem; margin-bottom: 15px; color: #dc3545;"></i>
+                                <h3>No hay banners activos en este momento</h3>
+                                <p>Hay ${banners.length} banners en la base de datos, pero ninguno está dentro de su período de actividad.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    // Mostrar los banners activos
+                    activeBanners.forEach((banner) => {
+                        const bannerElement = document.createElement('div');
+                        bannerElement.className = 'banner';
+                        bannerElement.dataset.bannerId = banner.id;
+                        
+                        // Validar y preparar la URL de la imagen
+                        const imgUrl = getValidImageUrl(banner);
+                        
+                        // Determinar si está por expirar (en los próximos 3 días)
+                        const endDate = new Date(banner.endDate);
+                        const threeDaysFromNow = new Date();
+                        threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+                        const isExpiringSoon = endDate <= threeDaysFromNow;
+                        
+                        bannerElement.innerHTML = `
+                            <a href="${banner.link || '#'}" ${banner.link ? 'target="_blank"' : ''}>
+                                ${isExpiringSoon ? '<div class="banner-status"><i class="fas fa-clock"></i> Por expirar</div>' : ''}
+                                <img src="${imgUrl}" 
+                                     alt="${banner.title || 'Banner promocional'}" 
+                                     loading="lazy"
+                                     onerror="handleImageError(this, '${encodeURIComponent(banner.title || 'Banner')}')">
+                                <div class="banner-info">
+                                    <h3>${banner.title || 'Promoción'}</h3>
+                                    <p>${banner.description || ''}</p>
+                                    <small><i class="far fa-calendar-alt"></i> Vigente desde ${formatDate(banner.startDate)} hasta ${formatDate(banner.endDate)}</small>
+                                </div>
+                            </a>
+                        `;
+                        bannersContainer.appendChild(bannerElement);
+                    });
+                })
+                .catch((error) => {
+                    loadingElement.style.display = 'none';
+                    console.error("Error cargando banners: ", error);
+                    bannersContainer.innerHTML = `
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                            <h3>Error al cargar los banners</h3>
+                            <p>${error.message || 'Ocurrió un problema al conectar con la base de datos.'}</p>
+                            <p><strong>Solución implementada:</strong> Filtro en cliente para desigualdades múltiples</p>
+                            <button onclick="loadBanners()" class="retry-btn">
+                                <i class="fas fa-redo"></i> Reintentar
+                            </button>
+                        </div>
+                    `;
+                });
+        }
+
+        // Función para actualizar estadísticas
+        function updateStats(total, active, expiring) {
+            document.getElementById('total-banners').textContent = total;
+            document.getElementById('active-banners').textContent = active;
+            document.getElementById('expiring-banners').textContent = expiring;
+        }
+
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBanners();
+            
+            // Actualizar automáticamente cada 60 segundos
+            setInterval(loadBanners, 60000);
+        });
+    </script>
+</body>
+</html>
