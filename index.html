@@ -6,118 +6,74 @@
     <title>TecniYa - Encontrá técnicos certificados en Argentina</title>
     <meta name="description" content="Plomería, electricidad, gas, aire acondicionado. Técnicos verificados con contacto directo por WhatsApp.">
     
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0a4fd8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    <!-- CSS Optimizado -->
+    <!-- Favicon profesional -->
+    <link rel="icon" type="image/png" href="https://via.placeholder.com/64/0a4fd8/ffffff?text=TY">
+    <link rel="apple-touch-icon" href="https://via.placeholder.com/180/0a4fd8/ffffff?text=TY">
+    
+    <!-- CSS Optimizado para producción -->
     <style>
+        /* ===== VARIABLES & RESET ===== */
         :root {
             --primary: #0a4fd8;
             --primary-dark: #083bb5;
+            --primary-light: #4a7cf7;
             --secondary: #1db954;
+            --secondary-dark: #1a9e46;
             --accent: #ff9800;
+            --accent-dark: #e68900;
             --light: #f8f9fa;
-            --dark: #333;
+            --dark: #1a1a1a;
             --gray: #666;
-            --light-gray: #e1e5e9;
-            --radius: 8px;
+            --light-gray: #f0f2f5;
+            --border: #e1e5e9;
+            --radius: 12px;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
         }
         
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--light);
             color: var(--dark);
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
-        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .container { 
+            width: 100%; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
         
-        /* Header con logo */
+        /* ===== HEADER MEJORADO ===== */
         .header {
             background: white;
-            color: var(--dark);
-            padding: 1rem 1rem;
-            text-align: center;
-            border-bottom: 3px solid var(--primary);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
         .header-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .logo-img {
-            height: 70px;
-            width: auto;
-            object-fit: contain;
-        }
-        
-        .tagline { 
-            font-size: 1rem; 
-            color: var(--gray);
-            max-width: 600px; 
-            margin: 0 auto; 
-        }
-        
-        /* Banners Container - SISTEMA MEJORADO CON TIPOS */
-        .banners-container {
-            margin: 1.5rem auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .banner {
-            width: 100%;
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .banner:hover {
-            transform: translateY(-2px);
-        }
-        
-        .banner img {
-            width: 100%;
-            height: auto;
-            display: block;
-            max-height: 200px;
-            object-fit: cover;
-        }
-        
-        .banner-link {
-            display: block;
-            text-decoration: none;
-        }
-        
-        /* Install Prompt */
-        .install-prompt {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            z-index: 1000;
-            display: none;
-            animation: slideUp 0.3s ease;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-        
-        .install-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -126,170 +82,339 @@
             gap: 1rem;
         }
         
-        .install-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0 0.5rem;
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
         
-        /* Search */
+        .logo-img {
+            height: 65px;
+            width: auto;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+        
+        .tagline { 
+            font-size: 1.1rem; 
+            color: var(--gray);
+            font-weight: 500;
+            max-width: 500px; 
+        }
+        
+        /* ===== HERO SECTION ===== */
+        .hero {
+            background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+        }
+        
+        /* ===== BANNERS ===== */
+        .banners-container {
+            margin: 2rem auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .banner {
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            height: 180px;
+        }
+        
+        .banner:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .banner-link {
+            display: block;
+            height: 100%;
+            text-decoration: none;
+        }
+        
+        .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .banner:hover img {
+            transform: scale(1.03);
+        }
+        
+        /* ===== SEARCH SECTION ===== */
         .search-section {
             background: white;
             border-radius: var(--radius);
-            padding: 2rem;
-            margin: 1.5rem auto;
-            max-width: 800px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            margin: 2rem auto;
+            max-width: 900px;
+            box-shadow: var(--shadow);
         }
         
-        .search-title { font-size: 1.6rem; color: var(--primary); margin-bottom: 1.5rem; text-align: center; }
-        .search-grid { display: grid; gap: 1.2rem; margin-bottom: 1.5rem; }
+        .search-title { 
+            font-size: 1.8rem; 
+            color: var(--primary); 
+            margin-bottom: 1.5rem; 
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .search-grid { 
+            display: grid; 
+            gap: 1.5rem; 
+            margin-bottom: 2rem; 
+        }
         
         @media (min-width: 768px) {
-            .search-grid { grid-template-columns: 1fr 1fr; }
+            .search-grid { grid-template-columns: repeat(2, 1fr); }
         }
         
-        .form-label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+        .form-group {
+            position: relative;
+        }
+        
+        .form-label { 
+            display: block; 
+            font-weight: 600; 
+            margin-bottom: 0.5rem; 
+            color: var(--dark);
+            font-size: 1rem;
+        }
+        
         .form-select {
             width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            padding: 1rem 1.2rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
             font-size: 1rem;
             background: white;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 16px;
         }
         
-        /* Buttons */
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 79, 216, 0.1);
+        }
+        
+        /* ===== BUTTONS ===== */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 0.9rem 1.5rem;
-            border-radius: 6px;
+            gap: 10px;
+            padding: 1rem 2rem;
+            border-radius: 8px;
             font-weight: 600;
             font-size: 1rem;
             border: none;
             cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
         }
         
         .btn-primary {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
             width: 100%;
         }
         
-        .btn-primary:hover { background: var(--primary-dark); }
-        
-        .btn-whatsapp {
-            background: var(--secondary);
-            color: white;
-            padding: 0.7rem 1.2rem;
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #07309c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(10, 79, 216, 0.3);
         }
         
-        /* Professional Cards */
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .btn-whatsapp {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+        }
+        
+        .btn-whatsapp:hover {
+            background: linear-gradient(135deg, var(--secondary-dark) 0%, #16863c 100%);
+            transform: translateY(-2px);
+        }
+        
+        .search-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .search-actions {
+                flex-direction: column;
+            }
+        }
+        
+        /* ===== RESULTS SECTION ===== */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .results-count {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        /* ===== PROFESSIONAL CARDS ===== */
         .professional-grid {
             display: grid;
-            gap: 1.2rem;
+            gap: 1.5rem;
             margin: 2rem 0;
         }
         
         @media (min-width: 768px) {
-            .professional-grid { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); }
+            .professional-grid { 
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+            }
         }
         
         .professional-card {
             background: white;
             border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+        
+        .professional-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
         }
         
         .professional-header {
-            padding: 1.2rem;
-            border-bottom: 1px solid #eee;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
             display: flex;
-            gap: 1rem;
+            gap: 1.2rem;
             align-items: center;
         }
         
         .professional-photo {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--primary);
+            border: 3px solid var(--primary);
+            flex-shrink: 0;
         }
         
-        .professional-name { font-size: 1.2rem; color: var(--dark); margin-bottom: 0.3rem; font-weight: 700; }
+        .professional-info {
+            flex: 1;
+        }
+        
+        .professional-name { 
+            font-size: 1.3rem; 
+            color: var(--dark); 
+            margin-bottom: 0.5rem; 
+            font-weight: 700;
+        }
+        
+        .professional-location {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
         
         .professional-rating {
             display: flex;
             align-items: center;
             gap: 5px;
-            color: var(--accent);
-            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+        
+        .stars {
+            color: #ffc107;
+            font-size: 1.1rem;
+        }
+        
+        .rating-score {
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .rating-count {
+            color: var(--gray);
             font-size: 0.9rem;
         }
         
-        .professional-body { padding: 1.2rem; }
-        .professional-footer {
-            padding: 1rem 1.2rem;
-            background: #f8f9fa;
-            border-top: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        /* Sección de certificaciones - CORREGIDO */
-        .certifications-section {
-            margin-top: 0.8rem;
-            padding-top: 0.8rem;
-            border-top: 1px dashed #eee;
-        }
-        
-        .certifications-title {
-            font-size: 0.85rem;
-            color: var(--gray);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .certifications-list {
+        /* ===== BADGES SYSTEM ===== */
+        .badge-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
+            margin-top: 0.8rem;
         }
         
-        .certification-badge {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
+        .badge {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-        }
-        
-        /* Ranking Badges - MODIFICADO: Sistema unificado */
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 15px;
-            font-size: 0.7rem;
+            gap: 5px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
             font-weight: 700;
-            margin-left: 5px;
+            white-space: nowrap;
         }
         
-        /* JERARQUÍA UNIFICADA DE BADGES */
         .badge-verified { 
             background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); 
             color: white;
@@ -301,85 +426,178 @@
         }
         
         .badge-top { 
-            background: #dc3545; 
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); 
             color: white; 
         }
         
-        /* Stats */
-        .ranking-stats {
+        .badge-new { 
+            background: linear-gradient(135deg, #20c997 0%, #17a589 100%); 
+            color: white; 
+        }
+        
+        /* ===== CERTIFICATIONS ===== */
+        .certifications-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border);
+        }
+        
+        .certifications-title {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
             display: flex;
-            gap: 10px;
-            margin-top: 8px;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+        
+        .certifications-list {
+            display: flex;
             flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .certification-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--light-gray);
+            border-radius: 8px;
         }
         
         .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
             font-size: 0.8rem;
             color: var(--gray);
+            margin-top: 2px;
         }
         
-        /* Rating Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+        /* ===== PROFESSIONAL BODY ===== */
+        .professional-body {
+            padding: 1.5rem;
         }
         
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: var(--radius);
-            max-width: 500px;
-            width: 90%;
+        .professional-services {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
         
-        .modal-header {
+        .service-tag {
+            background: #f0f7ff;
+            color: var(--primary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid #d0e2ff;
+        }
+        
+        .professional-description {
+            font-size: 0.95rem;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        /* ===== FOOTER ===== */
+        .professional-footer {
+            padding: 1.5rem;
+            background: var(--light-gray);
+            border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
         }
         
-        .modal-close {
-            font-size: 1.8rem;
-            cursor: pointer;
+        .professional-zones {
+            font-size: 0.9rem;
             color: var(--gray);
+            max-width: 200px;
         }
         
-        .star-rating {
+        .professional-actions {
             display: flex;
-            gap: 5px;
-            margin: 10px 0;
-            direction: rtl;
+            gap: 0.8rem;
         }
         
-        .star {
-            font-size: 2rem;
-            color: #ddd;
-            cursor: pointer;
+        /* ===== MAIN FOOTER ===== */
+        .main-footer {
+            background: var(--dark);
+            color: #aaa;
+            padding: 3rem 1rem;
+            margin-top: 4rem;
         }
         
-        /* Loading */
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 2rem;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-content { 
+                grid-template-columns: repeat(3, 1fr); 
+            }
+        }
+        
+        .footer-section h3 {
+            color: white;
+            margin-bottom: 1.2rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-section p {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #444;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        /* ===== LOADER ===== */
         .loader {
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 2rem;
+            padding: 4rem;
         }
         
         .spinner {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border: 4px solid #f3f3f3;
             border-top: 4px solid var(--primary);
             border-radius: 50%;
@@ -391,72 +609,158 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Results Header */
-        .results-header {
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: modalSlide 0.3s ease;
+        }
+        
+        @keyframes modalSlide {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 1.5rem 0;
-            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-close {
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--gray);
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            color: var(--dark);
+        }
+        
+        /* ===== INSTALL PROMPT ===== */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
             background: white;
+            color: var(--dark);
+            padding: 1.2rem;
             border-radius: var(--radius);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .results-count {
-            background: var(--primary);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        /* Footer */
-        .footer {
-            background: var(--dark);
-            color: #aaa;
-            padding: 2rem 1rem;
-            margin-top: 3rem;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 999;
+            display: none;
+            animation: slideUp 0.3s ease;
+            border: 1px solid var(--border);
+            max-width: 400px;
             margin: 0 auto;
-            display: grid;
-            gap: 1.5rem;
         }
         
-        @media (min-width: 768px) {
-            .footer-content { grid-template-columns: repeat(3, 1fr); }
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         
-        .copyright {
-            text-align: center;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #444;
-            color: #777;
-            font-size: 0.85rem;
+        .install-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
         }
         
-        /* Responsive */
+        .install-text {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .install-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 0.5rem;
+            line-height: 1;
+        }
+        
+        /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
+                text-align: center;
+                gap: 1rem;
             }
             
-            .logo-img {
-                height: 50px;
+            .hero h1 {
+                font-size: 2rem;
             }
             
-            .search-section { padding: 1.5rem; }
-            .professional-header { flex-direction: column; text-align: center; }
-            .professional-footer { flex-direction: column; gap: 10px; }
+            .hero p {
+                font-size: 1.1rem;
+            }
             
-            .install-content {
+            .search-section {
+                padding: 1.5rem;
+            }
+            
+            .professional-header {
                 flex-direction: column;
                 text-align: center;
+            }
+            
+            .professional-photo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .professional-footer {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .professional-zones {
+                max-width: 100%;
+            }
+            
+            .professional-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .professional-actions .btn {
+                width: 100%;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -464,54 +768,134 @@
             .professional-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .banners-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero {
+                padding: 2rem 1rem;
+            }
         }
         
-        /* Nuevo estilo para orden de badges */
-        .professional-badges {
+        /* ===== UTILITY CLASSES ===== */
+        .text-center { text-align: center; }
+        .mb-1 { margin-bottom: 1rem; }
+        .mb-2 { margin-bottom: 2rem; }
+        .mt-1 { margin-top: 1rem; }
+        .mt-2 { margin-top: 2rem; }
+        .hidden { display: none; }
+        
+        /* ===== NO RESULTS ===== */
+        .no-results {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--gray);
+            grid-column: 1 / -1;
+        }
+        
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* ===== RATING STARS ===== */
+        .star-rating {
             display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 5px;
+            gap: 10px;
+            margin: 1.5rem 0;
+            direction: rtl;
+            justify-content: center;
         }
         
-        /* Estado de verificación unificado */
-        .verification-status {
-            font-size: 0.75rem;
-            padding: 2px 8px;
-            border-radius: 10px;
-            background: #e8f5e9;
-            color: #2e7d32;
-            font-weight: 600;
+        .star {
+            font-size: 2.5rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        
+        .star:hover,
+        .star:hover ~ .star {
+            color: #ffc107;
+            transform: scale(1.1);
+        }
+        
+        .star.selected {
+            color: #ffc107;
+        }
+        
+        /* ===== FORM ELEMENTS ===== */
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 79, 216, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
         }
     </style>
 </head>
 <body>
-    <!-- Header con Logo -->
+    <!-- Header con Logo Grande -->
     <header class="header">
         <div class="container header-content">
-            <img src="logo.png" alt="TecniYa" class="logo-img" 
-                 onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"%230a4fd8\"/><text x=\"50\" y=\"70\" text-anchor=\"middle\" font-size=\"60\" fill=\"white\">🔧</text></svg>';">
-            <p class="tagline">Encontrá técnicos verificados en toda Argentina. Contacto directo por WhatsApp.</p>
+            <div class="logo-container">
+                <img src="logo.png" alt="TecniYa" class="logo-img" 
+                     onerror="this.onerror=null; this.src='https://via.placeholder.com/200x65/0a4fd8/ffffff?text=TecniYa&font=segoe-ui';">
+                <div>
+                    <h1 style="font-size: 1.8rem; color: var(--primary); margin-bottom: 0.5rem;">TecniYa</h1>
+                    <p class="tagline">Encontrá técnicos verificados en toda Argentina</p>
+                </div>
+            </div>
+            <a href="https://wa.me/3417558966" target="_blank" class="btn btn-whatsapp">
+                💬 Ayuda
+            </a>
         </div>
     </header>
 
-    <!-- Banners desde Panel Admin - SISTEMA MEJORADO CON TIPOS -->
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Encontrá el técnico perfecto para tu hogar</h1>
+            <p>Plomería, electricidad, gas, aire acondicionado y más. Técnicos certificados con contacto directo por WhatsApp.</p>
+        </div>
+    </section>
+
+    <!-- Banners Dinámicos -->
     <div class="container banners-container" id="bannersContainer">
-        <!-- Los banners se cargan dinámicamente según tipo y ubicación -->
+        <!-- Banners se cargan dinámicamente -->
     </div>
 
-    <!-- Search - MODIFICADO: Quitado filtro por zona completamente -->
+    <!-- Search Section -->
     <section class="container search-section">
         <h2 class="search-title">¿Qué servicio necesitás?</h2>
         <div class="search-grid">
             <div class="form-group">
-                <label class="form-label">Provincia</label>
+                <label class="form-label">📍 Provincia</label>
                 <select id="provinciaSelect" class="form-select">
                     <option value="">Todas las provincias</option>
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">Ciudad</label>
+                <label class="form-label">🏙️ Ciudad</label>
                 <select id="ciudadSelect" class="form-select" disabled>
                     <option value="">Todas las ciudades</option>
                 </select>
@@ -519,49 +903,67 @@
         </div>
         <div class="search-grid">
             <div class="form-group">
-                <label class="form-label">Rubro</label>
+                <label class="form-label">🔧 Rubro</label>
                 <select id="rubroSelect" class="form-select">
                     <option value="">Todos los rubros</option>
-                    <option value="plomeria">Plomería</option>
-                    <option value="gas">Gas</option>
-                    <option value="electricidad">Electricidad</option>
-                    <option value="aire">Aire Acondicionado</option>
-                    <option value="albanileria">Albañilería</option>
-                    <option value="pintura">Pintura</option>
-                    <option value="cerrajeria">Cerrajería</option>
-                    <option value="jardineria">Jardinería</option>
-                    <option value="herreria">Herrería</option>
-                    <option value="carpinteria">Carpintería</option>
-                    <option value="limpieza">Limpieza</option>
-                    <option value="mudanzas">Mudanzas</option>
-                    <option value="otros">Otros servicios</option>
+                    <option value="plomeria">💧 Plomería</option>
+                    <option value="gas">🔥 Gas</option>
+                    <option value="electricidad">⚡ Electricidad</option>
+                    <option value="aire">❄️ Aire Acondicionado</option>
+                    <option value="albanileria">🧱 Albañilería</option>
+                    <option value="pintura">🎨 Pintura</option>
+                    <option value="cerrajeria">🔐 Cerrajería</option>
+                    <option value="jardineria">🌿 Jardinería</option>
+                    <option value="herreria">⚒️ Herrería</option>
+                    <option value="carpinteria">🪚 Carpintería</option>
+                    <option value="limpieza">🧹 Limpieza</option>
+                    <option value="mudanzas">🚚 Mudanzas</option>
+                    <option value="otros">🔧 Otros servicios</option>
                 </select>
             </div>
-            <!-- ELIMINADO COMPLETAMENTE: Filtro por zona/barrio -->
+            <div class="form-group">
+                <label class="form-label">💼 Tipo de servicio</label>
+                <select id="tipoSelect" class="form-select">
+                    <option value="">Cualquier tipo</option>
+                    <option value="emergencia">🚨 Emergencia</option>
+                    <option value="reparacion">🔧 Reparación</option>
+                    <option value="instalacion">⚙️ Instalación</option>
+                    <option value="mantenimiento">🛠️ Mantenimiento</option>
+                </select>
+            </div>
         </div>
-        <div style="display: flex; gap: 12px; margin-top: 20px;">
-            <button id="searchBtn" class="btn btn-primary">🔍 Buscar técnico</button>
-            <button id="showAllBtn" class="btn" style="background: #6c757d; color: white;">📋 Ver todos</button>
+        
+        <div class="search-actions">
+            <button id="searchBtn" class="btn btn-primary">
+                🔍 Buscar técnico
+            </button>
+            <button id="showAllBtn" class="btn btn-secondary">
+                📋 Ver todos los técnicos
+            </button>
         </div>
     </section>
 
-    <!-- Results -->
+    <!-- Results Section -->
     <section class="container">
         <div class="results-header" id="resultsHeader" style="display: none;">
-            <h2>Técnicos Disponibles</h2>
-            <span class="results-count" id="resultsCount"></span>
+            <h2 style="font-size: 1.5rem;">Técnicos Disponibles</h2>
+            <span class="results-count" id="resultsCount">0 técnicos</span>
         </div>
+        
         <div class="loader" id="loader" style="display: none;">
             <div class="spinner"></div>
         </div>
-        <div class="professional-grid" id="resultsContainer"></div>
+        
+        <div class="professional-grid" id="resultsContainer">
+            <!-- Los técnicos se cargan aquí -->
+        </div>
     </section>
 
     <!-- Rating Modal -->
     <div id="ratingModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>⭐ Calificar Técnico</h3>
+                <h3 style="font-size: 1.3rem;">⭐ Calificar Técnico</h3>
                 <span class="modal-close" onclick="closeRatingModal()">×</span>
             </div>
             <div id="ratingModalBody"></div>
@@ -571,33 +973,38 @@
     <!-- Install Prompt -->
     <div id="installPrompt" class="install-prompt">
         <div class="install-content">
-            <span>📱 Instalá TecniYa en tu teléfono para acceder rápido</span>
+            <div class="install-text">
+                📱 Instalá TecniYa para acceso rápido
+            </div>
             <button onclick="closeInstallPrompt()" class="install-close">×</button>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
+    <!-- Main Footer -->
+    <footer class="main-footer">
         <div class="footer-content">
-            <div>
+            <div class="footer-section">
                 <h3>TecniYa</h3>
-                <p>Conectamos a los argentinos con técnicos verificados.</p>
+                <p>Conectamos a los argentinos con los mejores técnicos verificados del país.</p>
+                <p>Rápido, seguro y confiable.</p>
             </div>
-            <div>
+            <div class="footer-section">
                 <h3>Contacto</h3>
                 <p>📱 WhatsApp: 341 755-8966</p>
+                <p>📧 Email: info@tecniya.com</p>
                 <p>📍 Argentina</p>
             </div>
-            <div>
-                <h3>Promociones</h3>
-                <p>¿Tenés una promoción especial? Contactanos por WhatsApp</p>
-                <a href="https://wa.me/3417558966" target="_blank" class="btn btn-whatsapp" style="margin-top: 10px;">
-                    💬 Contactar por WhatsApp
+            <div class="footer-section">
+                <h3>¿Sos técnico?</h3>
+                <p>Sumate a nuestra red de profesionales verificados.</p>
+                <a href="https://wa.me/3417558966" target="_blank" class="btn btn-whatsapp" style="margin-top: 1rem;">
+                    💬 Contactanos
                 </a>
             </div>
         </div>
         <div class="copyright">
             <p>© 2024 TecniYa - Todos los derechos reservados</p>
+            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Conectando hogares con profesionales desde 2024</p>
         </div>
     </footer>
 
@@ -605,10 +1012,10 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     
-    <!-- Main Script -->
+    <!-- Main Script Optimizado -->
     <script>
         // ============================================
-        // CONFIGURACIÓN FIREBASE - CERTIFICADO NUEVO DEL PLAN DE 12 MESES
+        // CONFIGURACIÓN FIREBASE
         // ============================================
         const firebaseConfig = {
             apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
@@ -670,6 +1077,7 @@
                 checkInstallPrompt();
             } catch (error) {
                 console.error('Error inicial:', error);
+                showError('Error al cargar la aplicación. Por favor, recarga la página.');
             }
         });
 
@@ -679,24 +1087,40 @@
                     firebase.initializeApp(firebaseConfig);
                 }
                 db = firebase.firestore();
+                console.log('Firebase inicializado correctamente');
             } catch (error) {
                 console.error('Error Firebase:', error);
+                throw error;
             }
         }
 
         function initApp() {
+            // Cargar provincias
             loadProvincias();
             
+            // Event listeners
             document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
             document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
             document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
             
-            // Evento para PWA
+            // PWA Install Prompt
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
-                showInstallPrompt();
+                console.log('PWA install disponible');
             });
+            
+            // Mostrar install prompt después de 30 segundos si es móvil
+            setTimeout(() => {
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                    if (!localStorage.getItem('installPromptShown')) {
+                        showInstallPrompt();
+                        localStorage.setItem('installPromptShown', 'true');
+                    }
+                }
+            }, 30000);
+            
+            console.log('Aplicación inicializada');
         }
 
         // ============================================
@@ -734,100 +1158,49 @@
         }
 
         // ============================================
-        // SISTEMA DE BANNERS MEJORADO - CON TIPOS Y UBICACIÓN
+        // SISTEMA DE BANNERS
         // ============================================
         async function loadBanners() {
             try {
                 const now = firebase.firestore.Timestamp.now();
+                const bannersContainer = document.getElementById('bannersContainer');
                 
-                // Obtener provincia y ciudad seleccionadas
-                const provincia = document.getElementById('provinciaSelect').value;
-                const ciudad = document.getElementById('ciudadSelect').value;
+                // Limpiar contenedor
+                bannersContainer.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
                 
-                // Array para almacenar todos los banners
-                let allBanners = [];
-                
-                // Cargar banners nacionales
-                const nacionalQuery = db.collection('banners')
+                // Cargar banners activos
+                const bannersQuery = await db.collection('banners')
                     .where('active', '==', true)
-                    .where('type', '==', 'nacional')
                     .where('startDate', '<=', now)
-                    .limit(10)
+                    .limit(5)
                     .get();
                 
-                // Cargar banners provinciales si hay provincia seleccionada
-                let provincialQuery = null;
-                if (provincia) {
-                    provincialQuery = db.collection('banners')
-                        .where('active', '==', true)
-                        .where('type', '==', 'provincial')
-                        .where('provincia', '==', provincia)
-                        .where('startDate', '<=', now)
-                        .limit(10)
-                        .get();
-                }
-                
-                // Cargar banners de ciudad si hay ciudad seleccionada
-                let ciudadQuery = null;
-                if (ciudad && provincia) {
-                    ciudadQuery = db.collection('banners')
-                        .where('active', '==', true)
-                        .where('type', '==', 'ciudad')
-                        .where('provincia', '==', provincia)
-                        .where('ciudad', '==', ciudad)
-                        .where('startDate', '<=', now)
-                        .limit(10)
-                        .get();
-                }
-                
-                // Ejecutar queries
-                const queries = [nacionalQuery];
-                if (provincialQuery) queries.push(provincialQuery);
-                if (ciudadQuery) queries.push(ciudadQuery);
-                
-                const results = await Promise.all(queries);
-                
-                // Procesar resultados y filtrar por endDate en cliente
-                results.forEach(snapshot => {
-                    snapshot.forEach(doc => {
-                        const banner = { id: doc.id, ...doc.data() };
-                        // Filtrar por endDate >= now en el cliente
-                        const endDate = banner.endDate ? 
-                            (banner.endDate.toDate ? banner.endDate.toDate() : new Date(banner.endDate)) : 
-                            new Date();
-                        if (endDate >= now.toDate()) {
-                            allBanners.push(banner);
-                        }
-                    });
-                });
-                
-                // Si no hay banners, mostrar uno por defecto
-                if (allBanners.length === 0) {
+                if (bannersQuery.empty) {
                     displayDefaultBanner();
                     return;
                 }
                 
-                // Mezclar banners aleatoriamente
-                allBanners = shuffleArray(allBanners);
+                const banners = [];
+                bannersQuery.forEach(doc => {
+                    const banner = { id: doc.id, ...doc.data() };
+                    // Filtrar por fecha de expiración
+                    if (!banner.endDate || banner.endDate.toDate() >= now.toDate()) {
+                        banners.push(banner);
+                    }
+                });
                 
-                // Tomar máximo 3 banners
-                const bannersToShow = allBanners.slice(0, 3);
+                if (banners.length === 0) {
+                    displayDefaultBanner();
+                    return;
+                }
                 
-                displayBanners(bannersToShow);
+                // Mostrar banners
+                displayBanners(banners);
                 
             } catch (error) {
                 console.error('Error cargando banners:', error);
                 displayDefaultBanner();
             }
-        }
-
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
         }
 
         function displayBanners(banners) {
@@ -839,7 +1212,7 @@
                     <div class="banner">
                         <a href="${banner.link || '#'}" target="_blank" class="banner-link">
                             <img src="${banner.imageUrl}" 
-                                 alt="${banner.title || 'Banner'}"
+                                 alt="${banner.title || 'Banner TecniYa'}"
                                  onerror="this.onerror=null; this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa';">
                         </a>
                     </div>
@@ -852,10 +1225,12 @@
             const container = document.getElementById('bannersContainer');
             container.innerHTML = `
                 <div class="banner">
-                    <a href="#" class="banner-link">
-                        <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
-                             alt="Banner Promocional">
-                    </a>
+                    <div style="background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); height: 100%; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+                        <div style="text-align: center; color: white;">
+                            <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">TecniYa</h3>
+                            <p>Encontrá los mejores técnicos verificados</p>
+                        </div>
+                    </div>
                 </div>
             `;
         }
@@ -867,8 +1242,10 @@
             const prompt = document.getElementById('installPrompt');
             prompt.style.display = 'block';
             
-            // Guardar en localStorage que se mostró
-            localStorage.setItem('installPromptShown', 'true');
+            // Auto cerrar después de 15 segundos
+            setTimeout(() => {
+                closeInstallPrompt();
+            }, 15000);
         }
 
         function closeInstallPrompt() {
@@ -877,20 +1254,20 @@
         }
 
         function checkInstallPrompt() {
-            // Mostrar solo si no se ha mostrado antes y es móvil
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const alreadyShown = localStorage.getItem('installPromptShown');
             
             if (isMobile && !alreadyShown && deferredPrompt) {
-                setTimeout(() => showInstallPrompt(), 3000);
+                setTimeout(() => showInstallPrompt(), 5000);
             }
         }
 
         // ============================================
-        // SISTEMA DE RANKING MEJORADO - CON VERIFICACIÓN UNIFICADA
+        // SISTEMA DE RANKING
         // ============================================
         async function calculateProfessionalRanking(professional) {
             try {
+                // Calificar ratings
                 const ratingsSnapshot = await db.collection('ratings')
                     .where('professionalId', '==', professional.id)
                     .where('status', '==', 'approved')
@@ -906,34 +1283,35 @@
                 
                 const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
                 
-                // Calcular score con sistema unificado
+                // Calcular score
                 let score = 0;
-                score += averageRating * 10;
+                score += averageRating * 15;
                 
-                // Puntos por cantidad de trabajos
+                // Puntos por trabajos completados
                 if (professional.completedJobs) {
-                    score += Math.min(professional.completedJobs, 20);
+                    score += Math.min(professional.completedJobs, 30);
                 }
                 
                 // Puntos por experiencia
                 if (professional.experienceYears) {
-                    score += Math.min(professional.experienceYears, 10);
+                    score += Math.min(professional.experienceYears * 2, 20);
                 }
                 
-                // Puntos por verificación unificada (Plan Profesional O Certificaciones)
-                if (professional.hasProfessionalPlan || 
-                   (professional.certifications && professional.certifications.length > 0)) {
-                    score += 20; // Máxima prioridad para profesionales verificados
+                // Puntos por verificación (máxima prioridad)
+                if (professional.hasProfessionalPlan) {
+                    score += 30;
+                } else if (professional.certifications && professional.certifications.length > 0) {
+                    score += 25;
                 }
                 
-                // Puntos por destacado - SEGUNDA PRIORIDAD
+                // Puntos por destacado
                 if (professional.isFeatured) {
                     const now = new Date();
                     if (professional.featuredUntil) {
                         const featuredUntil = professional.featuredUntil.toDate ? 
                             professional.featuredUntil.toDate() : new Date(professional.featuredUntil);
                         if (featuredUntil > now) {
-                            score += 15; // Segunda prioridad
+                            score += 20;
                         }
                     }
                 }
@@ -943,9 +1321,10 @@
                     const lastActiveDate = professional.lastActive.toDate ? 
                         professional.lastActive.toDate() : new Date(professional.lastActive);
                     const daysSince = (new Date() - lastActiveDate) / (1000 * 60 * 60 * 24);
-                    if (daysSince < 7) score += 10;
+                    if (daysSince < 7) score += 15;
                 }
                 
+                // Normalizar score
                 score = Math.min(Math.max(score, 0), 100);
                 const rankingScore = Math.round(score);
                 
@@ -958,24 +1337,19 @@
                 
             } catch (error) {
                 console.error('Error cálculo ranking:', error);
-                return {
-                    ...professional,
-                    averageRating: professional.averageRating || 0,
-                    totalRatings: professional.totalRatings || 0,
-                    rankingScore: professional.rankingScore || 0
-                };
+                return professional;
             }
         }
 
         // ============================================
-        // CARGA Y MUESTRA DE PROFESIONALES CON SISTEMA UNIFICADO
+        // CARGA DE PROFESIONALES
         // ============================================
         async function loadAllProfessionals() {
             showLoader();
             try {
                 const snapshot = await db.collection('professionals')
                     .where('active', '==', true)
-                    .limit(50)
+                    .limit(100)
                     .get();
                 
                 if (snapshot.empty) {
@@ -990,30 +1364,27 @@
                     })
                 );
                 
-                // ORDENAR SEGÚN JERARQUÍA UNIFICADA:
-                // 1. Profesionales verificados (tiene Plan Profesional O certificaciones) primero
-                // 2. Destacados (isFeatured) después
-                // 3. Luego por ranking score
+                // Ordenar por jerarquía
                 professionals.sort((a, b) => {
-                    // Prioridad 1: Verificación unificada
-                    const aIsVerified = a.hasProfessionalPlan || 
-                                       (a.certifications && a.certifications.length > 0);
-                    const bIsVerified = b.hasProfessionalPlan || 
-                                       (b.certifications && b.certifications.length > 0);
+                    // Prioridad 1: Plan Profesional
+                    if (a.hasProfessionalPlan && !b.hasProfessionalPlan) return -1;
+                    if (!a.hasProfessionalPlan && b.hasProfessionalPlan) return 1;
                     
-                    if (aIsVerified && !bIsVerified) return -1;
-                    if (!aIsVerified && bIsVerified) return 1;
+                    // Prioridad 2: Certificaciones
+                    const aCerts = a.certifications?.length || 0;
+                    const bCerts = b.certifications?.length || 0;
+                    if (aCerts > bCerts) return -1;
+                    if (aCerts < bCerts) return 1;
                     
-                    // Prioridad 2: Destacados
+                    // Prioridad 3: Destacados
                     if (a.isFeatured && !b.isFeatured) return -1;
                     if (!a.isFeatured && b.isFeatured) return 1;
                     
-                    // Prioridad 3: Puntaje de ranking
-                    return b.rankingScore - a.rankingScore;
+                    // Prioridad 4: Puntaje
+                    return (b.rankingScore || 0) - (a.rankingScore || 0);
                 });
                 
                 allProfessionals = professionals;
-                
                 displayProfessionals(professionals);
                 
             } catch (error) {
@@ -1026,14 +1397,11 @@
 
         async function searchProfessionals() {
             showLoader();
+            
             const provincia = document.getElementById('provinciaSelect').value;
             const ciudad = document.getElementById('ciudadSelect').value;
             const rubro = document.getElementById('rubroSelect').value;
-            
-            // Actualizar banners según ubicación seleccionada
-            if (provincia || ciudad) {
-                loadBanners();
-            }
+            const tipo = document.getElementById('tipoSelect').value;
             
             try {
                 let query = db.collection('professionals').where('active', '==', true);
@@ -1042,7 +1410,7 @@
                 if (ciudad && ciudad !== '') query = query.where('ciudad', '==', ciudad);
                 if (rubro) query = query.where('rubros', 'array-contains', rubro);
                 
-                const snapshot = await query.limit(50).get();
+                const snapshot = await query.limit(100).get();
                 
                 if (snapshot.empty) {
                     displayNoResults();
@@ -1056,26 +1424,22 @@
                     })
                 );
                 
-                // ORDENAR SEGÚN JERARQUÍA UNIFICADA:
-                professionals.sort((a, b) => {
-                    // Prioridad 1: Verificación unificada
-                    const aIsVerified = a.hasProfessionalPlan || 
-                                       (a.certifications && a.certifications.length > 0);
-                    const bIsVerified = b.hasProfessionalPlan || 
-                                       (b.certifications && b.certifications.length > 0);
-                    
-                    if (aIsVerified && !bIsVerified) return -1;
-                    if (!aIsVerified && bIsVerified) return 1;
-                    
-                    // Prioridad 2: Destacados
-                    if (a.isFeatured && !b.isFeatured) return -1;
-                    if (!a.isFeatured && b.isFeatured) return 1;
-                    
-                    // Prioridad 3: Puntaje de ranking
-                    return b.rankingScore - a.rankingScore;
+                // Filtrar por tipo si está seleccionado
+                let filteredProfessionals = professionals;
+                if (tipo) {
+                    filteredProfessionals = professionals.filter(prof => 
+                        prof.serviceTypes && prof.serviceTypes.includes(tipo)
+                    );
+                }
+                
+                // Ordenar
+                filteredProfessionals.sort((a, b) => {
+                    if (a.hasProfessionalPlan && !b.hasProfessionalPlan) return -1;
+                    if (!a.hasProfessionalPlan && b.hasProfessionalPlan) return 1;
+                    return (b.rankingScore || 0) - (a.rankingScore || 0);
                 });
                 
-                displayProfessionals(professionals);
+                displayProfessionals(filteredProfessionals);
                 
             } catch (error) {
                 console.error('Error buscando:', error);
@@ -1087,127 +1451,132 @@
 
         function displayProfessionals(professionals) {
             const container = document.getElementById('resultsContainer');
-            container.innerHTML = '';
+            const resultsHeader = document.getElementById('resultsHeader');
+            const resultsCount = document.getElementById('resultsCount');
             
             if (professionals.length === 0) {
                 displayNoResults();
                 return;
             }
             
-            professionals.forEach(prof => {
-                const card = document.createElement('div');
-                card.className = 'professional-card';
-                
-                // Calcular estrellas
+            container.innerHTML = '';
+            
+            professionals.forEach((prof, index) => {
                 const rating = prof.averageRating || 0;
+                const totalRatings = prof.totalRatings || 0;
+                
+                // Generar estrellas
                 const fullStars = Math.floor(rating);
                 const hasHalfStar = rating % 1 >= 0.5;
-                
                 let starsHTML = '';
                 for (let i = 0; i < fullStars; i++) starsHTML += '⭐';
                 if (hasHalfStar) starsHTML += '½';
                 for (let i = 0; i < 5 - fullStars - (hasHalfStar ? 1 : 0); i++) starsHTML += '☆';
                 
-                // CORRECCIÓN: Manejar certificaciones correctamente
+                // Badges
+                const badges = [];
+                if (prof.hasProfessionalPlan) {
+                    badges.push('<span class="badge badge-verified">✓ PLAN PROFESIONAL</span>');
+                } else if (prof.certifications?.length > 0) {
+                    badges.push('<span class="badge badge-verified">✓ CERTIFICADO</span>');
+                }
+                
+                if (prof.isFeatured) {
+                    badges.push('<span class="badge badge-featured">★ DESTACADO</span>');
+                }
+                
+                if (prof.rankingScore >= 90) {
+                    badges.push('<span class="badge badge-top">🏆 TOP RATED</span>');
+                }
+                
+                if (index < 3) {
+                    badges.push('<span class="badge badge-new">🆕 RECOMENDADO</span>');
+                }
+                
+                // Certificaciones
                 let certificationsHTML = '';
                 if (prof.certifications && prof.certifications.length > 0) {
-                    const certsArray = Array.isArray(prof.certifications) ? prof.certifications : [];
+                    const certs = Array.isArray(prof.certifications) ? prof.certifications : [];
                     certificationsHTML = `
                         <div class="certifications-section">
                             <div class="certifications-title">
-                                <span>📜 Certificaciones:</span>
+                                <span>📜 Certificaciones verificadas</span>
                             </div>
                             <div class="certifications-list">
-                                ${certsArray.map(cert => {
-                                    // Manejar tanto strings como objetos
-                                    const certTitle = typeof cert === 'string' ? cert : (cert.title || 'Certificado');
-                                    return `<span class="certification-badge">✓ ${certTitle}</span>`;
+                                ${certs.slice(0, 3).map(cert => {
+                                    const certText = typeof cert === 'string' ? cert : (cert.title || 'Certificado');
+                                    return `<span class="certification-badge">✓ ${certText}</span>`;
                                 }).join('')}
+                                ${certs.length > 3 ? `<span class="certification-badge">+${certs.length - 3} más</span>` : ''}
                             </div>
                         </div>
                     `;
                 }
                 
-                // Crear badges según jerarquía UNIFICADA
-                const badges = [];
+                // Servicios
+                const servicesHTML = prof.rubros ? 
+                    prof.rubros.map(r => `<span class="service-tag">${getServiceIcon(r)} ${r}</span>`).join('') : 
+                    '';
                 
-                // Badge de VERIFICADO (Plan Profesional O Certificaciones) - PRIORIDAD 1
-                const isVerified = prof.hasProfessionalPlan || 
-                                 (prof.certifications && prof.certifications.length > 0);
-                if (isVerified) {
-                    badges.push('<span class="badge badge-verified">VERIFICADO</span>');
-                }
-                
-                // Badge de Destacado - PRIORIDAD 2
-                const now = new Date();
-                const isFeaturedActive = prof.isFeatured && prof.featuredUntil && 
-                    (prof.featuredUntil.toDate ? prof.featuredUntil.toDate() : new Date(prof.featuredUntil)) > now;
-                if (isFeaturedActive) {
-                    badges.push('<span class="badge badge-featured">DESTACADO</span>');
-                }
-                
-                // Badge de TOP si tiene buen ranking
-                if (prof.rankingScore >= 85) {
-                    badges.push('<span class="badge badge-top">TOP</span>');
-                }
-                
-                // Estado de verificación (texto descriptivo)
-                let verificationStatus = '';
-                if (prof.hasProfessionalPlan && prof.certifications && prof.certifications.length > 0) {
-                    verificationStatus = '<span class="verification-status">✓ Plan Profesional + Certificaciones</span>';
-                } else if (prof.hasProfessionalPlan) {
-                    verificationStatus = '<span class="verification-status">✓ Plan Profesional</span>';
-                } else if (prof.certifications && prof.certifications.length > 0) {
-                    verificationStatus = '<span class="verification-status">✓ Certificaciones técnicas</span>';
-                }
-                
+                const card = document.createElement('div');
+                card.className = 'professional-card';
                 card.innerHTML = `
                     <div class="professional-header">
-                        <img src="${prof.photoUrl || 'https://via.placeholder.com/70x70/0a4fd8/ffffff?text=T'}" 
+                        <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80/0a4fd8/ffffff?text=T'}" 
                              alt="${prof.name}"
-                             class="professional-photo">
+                             class="professional-photo"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/80x80/0a4fd8/ffffff?text=T';">
                         <div class="professional-info">
                             <h3 class="professional-name">${prof.name}</h3>
+                            <div class="professional-location">
+                                <span>📍 ${prof.ciudad || ''}, ${prof.provincia || ''}</span>
+                            </div>
                             <div class="professional-rating">
-                                ${starsHTML} ${rating.toFixed(1)}
-                                <span>(${prof.totalRatings || 0})</span>
+                                <span class="stars">${starsHTML}</span>
+                                <span class="rating-score">${rating.toFixed(1)}</span>
+                                <span class="rating-count">(${totalRatings} calificaciones)</span>
                             </div>
-                            <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.3rem;">
-                                📍 ${prof.ciudad || ''}, ${prof.provincia || ''}
-                            </div>
-                            <div class="professional-badges">
+                            <div class="badge-container">
                                 ${badges.join('')}
-                            </div>
-                            <div style="margin-top: 5px;">
-                                ${verificationStatus}
-                            </div>
-                            <div class="ranking-stats">
-                                <div class="stat-item">🏆 ${prof.rankingScore || 0}/100</div>
-                                ${prof.completedJobs ? `<div class="stat-item">✅ ${prof.completedJobs} trabajos</div>` : ''}
-                                ${prof.experienceYears ? `<div class="stat-item">📅 ${prof.experienceYears} años</div>` : ''}
                             </div>
                         </div>
                     </div>
                     <div class="professional-body">
-                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.8rem;">
-                            ${prof.rubros ? prof.rubros.map(r => `<span style="background: #f1f6ff; color: #0a4fd8; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem;">${r}</span>`).join('') : ''}
+                        <div class="professional-services">
+                            ${servicesHTML}
                         </div>
-                        <p style="font-size: 0.95rem;">${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
-                        
-                        <!-- Sección de certificaciones CORREGIDA -->
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">${prof.completedJobs || 0}</div>
+                                <div class="stat-label">Trabajos</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${prof.experienceYears || 0}+</div>
+                                <div class="stat-label">Años exp.</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${prof.rankingScore || 0}</div>
+                                <div class="stat-label">Puntuación</div>
+                            </div>
+                        </div>
+                        <p class="professional-description">
+                            ${prof.bio || 'Técnico especializado con amplia experiencia y compromiso con la calidad del servicio.'}
+                        </p>
                         ${certificationsHTML}
                     </div>
                     <div class="professional-footer">
-                        <span style="font-size: 0.9rem;">${prof.zonas ? prof.zonas.join(', ') : 'Toda la ciudad'}</span>
-                        <div style="display: flex; gap: 8px;">
-                            <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
+                        <div class="professional-zones">
+                            <strong>Zonas:</strong> ${prof.zonas ? prof.zonas.slice(0, 3).join(', ') : 'Toda la ciudad'}
+                            ${prof.zonas && prof.zonas.length > 3 ? '...' : ''}
+                        </div>
+                        <div class="professional-actions">
+                            <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa. Necesito un técnico." 
                                target="_blank"
                                class="btn btn-whatsapp">
-                                📱 Contactar
+                                💬 Contactar
                             </a>
                             <button onclick="openRatingModal('${prof.id}', '${prof.name}')" 
-                                    class="btn" 
-                                    style="background: #6c757d; color: white; font-size: 0.9rem;">
+                                    class="btn btn-secondary">
                                 ⭐ Calificar
                             </button>
                         </div>
@@ -1217,27 +1586,57 @@
                 container.appendChild(card);
             });
             
-            document.getElementById('resultsHeader').style.display = 'flex';
-            document.getElementById('resultsCount').textContent = `${professionals.length} técnicos`;
+            // Mostrar resultados
+            resultsHeader.style.display = 'flex';
+            resultsCount.textContent = `${professionals.length} ${professionals.length === 1 ? 'técnico' : 'técnicos'}`;
+        }
+
+        function getServiceIcon(service) {
+            const icons = {
+                'plomeria': '💧',
+                'gas': '🔥',
+                'electricidad': '⚡',
+                'aire': '❄️',
+                'albanileria': '🧱',
+                'pintura': '🎨',
+                'cerrajeria': '🔐',
+                'jardineria': '🌿',
+                'herreria': '⚒️',
+                'carpinteria': '🪚',
+                'limpieza': '🧹',
+                'mudanzas': '🚚'
+            };
+            return icons[service] || '🔧';
         }
 
         function displayNoResults() {
             const container = document.getElementById('resultsContainer');
+            const resultsHeader = document.getElementById('resultsHeader');
+            
             container.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
-                    <h3>😔 No se encontraron técnicos</h3>
-                    <p>Intenta cambiar los filtros de búsqueda</p>
+                <div class="no-results">
+                    <div class="no-results-icon">🔍</div>
+                    <h3>No encontramos técnicos</h3>
+                    <p>Intenta con otros filtros de búsqueda o contactanos directamente.</p>
+                    <a href="https://wa.me/3417558966" target="_blank" class="btn btn-primary" style="margin-top: 1rem;">
+                        💬 Pedir recomendación
+                    </a>
                 </div>
             `;
-            document.getElementById('resultsHeader').style.display = 'none';
+            
+            resultsHeader.style.display = 'none';
         }
 
         function displayError() {
             const container = document.getElementById('resultsContainer');
             container.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
-                    <h3>⚠️ Error al cargar</h3>
-                    <p>Por favor, intenta nuevamente</p>
+                <div class="no-results">
+                    <div class="no-results-icon">⚠️</div>
+                    <h3>Error al cargar</h3>
+                    <p>Por favor, intenta nuevamente en unos momentos.</p>
+                    <button onclick="loadAllProfessionals()" class="btn btn-primary" style="margin-top: 1rem;">
+                        🔄 Reintentar
+                    </button>
                 </div>
             `;
         }
@@ -1250,6 +1649,8 @@
             
             document.getElementById('ratingModalBody').innerHTML = `
                 <p>Calificá a <strong>${professionalName}</strong></p>
+                <p style="color: var(--gray); font-size: 0.9rem;">Tu calificación ayuda a otros usuarios</p>
+                
                 <div class="star-rating" id="starContainer">
                     <span class="star" data-value="5">★</span>
                     <span class="star" data-value="4">★</span>
@@ -1257,16 +1658,29 @@
                     <span class="star" data-value="2">★</span>
                     <span class="star" data-value="1">★</span>
                 </div>
-                <p id="ratingText" style="text-align: center; margin: 10px 0; color: #666;">Seleccioná una calificación</p>
-                <textarea id="ratingComment" placeholder="Contanos tu experiencia (opcional)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin: 10px 0; min-height: 80px; font-size: 0.95rem;"></textarea>
-                <input type="tel" id="clientPhone" placeholder="Tu número de WhatsApp (ej: 3415555555)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 15px; font-size: 0.95rem;">
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="submitRating()" class="btn btn-primary" style="flex: 1;">Enviar Calificación</button>
-                    <button onclick="closeRatingModal()" class="btn" style="background: #6c757d; color: white; flex: 1;">Cancelar</button>
+                
+                <p id="ratingText" style="text-align: center; margin: 1rem 0; color: var(--primary); font-weight: 600;">Seleccioná una calificación</p>
+                
+                <textarea id="ratingComment" 
+                          class="form-input form-textarea" 
+                          placeholder="Contanos tu experiencia (opcional)"></textarea>
+                
+                <input type="tel" 
+                       id="clientPhone" 
+                       class="form-input" 
+                       placeholder="Tu número de WhatsApp (ej: 3415555555)">
+                
+                <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+                    <button onclick="submitRating()" class="btn btn-primary" style="flex: 1;">
+                        Enviar Calificación
+                    </button>
+                    <button onclick="closeRatingModal()" class="btn btn-secondary" style="flex: 1;">
+                        Cancelar
+                    </button>
                 </div>
             `;
             
-            // Configurar estrellas
+            // Configurar estrellas interactivas
             const stars = document.querySelectorAll('#starContainer .star');
             let selectedRating = 0;
             
@@ -1301,7 +1715,7 @@
             const stars = document.querySelectorAll('#starContainer .star');
             stars.forEach(star => {
                 const value = parseInt(star.dataset.value);
-                star.style.color = value <= rating ? '#ffc107' : '#ddd';
+                star.classList.toggle('selected', value <= rating);
             });
         }
 
@@ -1323,8 +1737,9 @@
             const stars = document.querySelectorAll('#starContainer .star');
             let selectedRating = 0;
             
+            // Encontrar rating seleccionado
             stars.forEach(star => {
-                if (star.style.color === 'rgb(255, 193, 7)') {
+                if (star.classList.contains('selected')) {
                     const value = parseInt(star.dataset.value);
                     if (value > selectedRating) selectedRating = value;
                 }
@@ -1334,12 +1749,12 @@
             const clientPhone = document.getElementById('clientPhone').value.trim();
             
             if (!selectedRating) {
-                alert('Por favor seleccioná una calificación');
+                alert('Por favor seleccioná una calificación con las estrellas');
                 return;
             }
             
             if (!clientPhone || clientPhone.length < 10) {
-                alert('Por favor ingresá un número de WhatsApp válido');
+                alert('Por favor ingresá un número de WhatsApp válido (ej: 3415555555)');
                 return;
             }
             
@@ -1350,15 +1765,21 @@
                     comment: comment,
                     clientPhone: clientPhone,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    status: 'pending'
+                    status: 'pending',
+                    professionalName: currentRatingProfessional.name
                 });
                 
-                alert('¡Gracias por tu calificación! Será revisada antes de publicarse.');
+                alert('¡Gracias por tu calificación! Será revisada antes de publicarse para mantener la calidad de la comunidad.');
                 closeRatingModal();
+                
+                // Recargar profesionales para actualizar ratings
+                if (currentRatingProfessional) {
+                    searchProfessionals();
+                }
                 
             } catch (error) {
                 console.error('Error enviando calificación:', error);
-                alert('Error al enviar. Por favor intentá nuevamente.');
+                alert('Error al enviar la calificación. Por favor intentá nuevamente.');
             }
         }
 
@@ -1367,10 +1788,15 @@
         // ============================================
         function showLoader() {
             document.getElementById('loader').style.display = 'flex';
+            document.getElementById('resultsHeader').style.display = 'none';
         }
 
         function hideLoader() {
             document.getElementById('loader').style.display = 'none';
+        }
+
+        function showError(message) {
+            alert(message);
         }
 
         // Manejar clic fuera del modal para cerrar
@@ -1381,13 +1807,37 @@
             }
         }
         
-        // Manejar clic fuera del install prompt
-        window.addEventListener('click', function(event) {
-            const prompt = document.getElementById('installPrompt');
-            if (event.target === prompt) {
+        // Manejar tecla ESC para cerrar modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeRatingModal();
                 closeInstallPrompt();
             }
         });
+        
+        // Service Worker para PWA (opcional)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(error => {
+                    console.log('Service Worker registration failed:', error);
+                });
+            });
+        }
+        
+        // Analytics básico
+        function trackEvent(eventName, data = {}) {
+            console.log(`Event: ${eventName}`, data);
+            // Aquí podrías integrar Google Analytics o similares
+        }
+        
+        // Trackear búsquedas
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            const provincia = document.getElementById('provinciaSelect').value;
+            const rubro = document.getElementById('rubroSelect').value;
+            trackEvent('search', { provincia, rubro });
+        });
+        
+        console.log('TecniYa - Listo para producción');
     </script>
 </body>
 </html>
