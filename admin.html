@@ -1538,8 +1538,14 @@
             
             const data = doc.data();
             const now = new Date();
-            const featuredActive = data.isFeatured && data.featuredUntil && 
-                (data.featuredUntil.toDate ? data.featuredUntil.toDate() : new Date(data.featuredUntil)) > now;
+            
+            // CORRECCIÓN: Verificar correctamente si está destacado
+            let featuredActive = false;
+            if (data.isFeatured && data.featuredUntil) {
+                const featuredUntil = data.featuredUntil.toDate ? 
+                    data.featuredUntil.toDate() : new Date(data.featuredUntil);
+                featuredActive = featuredUntil > now;
+            }
             
             let html = `
                 <div style="display: flex; gap: 30px; margin-bottom: 30px;">
@@ -1565,7 +1571,7 @@
                     <p><strong>Zonas:</strong> ${data.zonas ? data.zonas.join(', ') : ''}</p>
                     <p><strong>Descripción:</strong> ${data.bio || 'Sin descripción'}</p>
                     <p><strong>Experiencia:</strong> ${data.experienceYears || 0} años</p>
-                    <p><strong>Certificaciones:</strong> ${data.certifications && data.certifications.length > 0 ? data.certifications.map(c => c.title).join(', ') : 'Sin certificaciones'}</p>
+                    <p><strong>Certificaciones:</strong> ${data.certifications && data.certifications.length > 0 ? data.certifications.map(c => typeof c === 'string' ? c : (c.title || 'Certificado')).join(', ') : 'Sin certificaciones'}</p>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
