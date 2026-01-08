@@ -247,7 +247,7 @@
             align-items: center;
         }
         
-        /* Sección de certificaciones */
+        /* Sección de certificaciones - CORREGIDO */
         .certifications-section {
             margin-top: 0.8rem;
             padding-top: 0.8rem;
@@ -1106,18 +1106,21 @@
                 if (hasHalfStar) starsHTML += '½';
                 for (let i = 0; i < 5 - fullStars - (hasHalfStar ? 1 : 0); i++) starsHTML += '☆';
                 
-                // Mostrar certificaciones si existen
+                // CORRECCIÓN: Manejar certificaciones correctamente
                 let certificationsHTML = '';
                 if (prof.certifications && prof.certifications.length > 0) {
+                    const certsArray = Array.isArray(prof.certifications) ? prof.certifications : [];
                     certificationsHTML = `
                         <div class="certifications-section">
                             <div class="certifications-title">
                                 <span>📜 Certificaciones:</span>
                             </div>
                             <div class="certifications-list">
-                                ${prof.certifications.map(cert => 
-                                    `<span class="certification-badge">✓ ${cert.title || 'Certificado'}</span>`
-                                ).join('')}
+                                ${certsArray.map(cert => {
+                                    // Manejar tanto strings como objetos
+                                    const certTitle = typeof cert === 'string' ? cert : (cert.title || 'Certificado');
+                                    return `<span class="certification-badge">✓ ${certTitle}</span>`;
+                                }).join('')}
                             </div>
                         </div>
                     `;
@@ -1179,7 +1182,7 @@
                         </div>
                         <p style="font-size: 0.95rem;">${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
                         
-                        <!-- Sección de certificaciones -->
+                        <!-- Sección de certificaciones CORREGIDA -->
                         ${certificationsHTML}
                     </div>
                     <div class="professional-footer">
