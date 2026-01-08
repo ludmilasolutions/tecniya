@@ -7,88 +7,115 @@
     <meta name="description" content="Plomería, electricidad, gas, aire acondicionado. Técnicos verificados con contacto directo por WhatsApp.">
     
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%232563eb'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
     
     <!-- CSS Optimizado -->
     <style>
         :root {
-            --primary: #0a4fd8;
-            --primary-dark: #083bb5;
-            --secondary: #1db954;
-            --accent: #ff9800;
-            --light: #f8f9fa;
-            --dark: #333;
-            --gray: #666;
-            --light-gray: #e1e5e9;
-            --radius: 8px;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --accent-light: #fef3c7;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+            --radius: 12px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         }
         
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             color: var(--dark);
             line-height: 1.6;
+            min-height: 100vh;
         }
         
-        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .container { 
+            width: 100%; 
+            max-width: 1280px; 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
         
-        /* Header con logo */
+        /* Header moderno */
         .header {
             background: white;
-            color: var(--dark);
-            padding: 1rem 1rem;
-            text-align: center;
-            border-bottom: 3px solid var(--primary);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--light-gray);
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
         }
         
         .header-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            text-align: center;
         }
         
         .logo-img {
             height: 70px;
             width: auto;
             object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.2));
         }
         
         .tagline { 
-            font-size: 1rem; 
+            font-size: 1.05rem; 
             color: var(--gray);
             max-width: 600px; 
-            margin: 0 auto; 
+            margin: 0 auto;
+            font-weight: 500;
+            letter-spacing: -0.01em;
         }
         
-        /* Banners Container - SISTEMA MEJORADO CON TIPOS */
+        /* Banners Container - Sin cambios en funcionalidad */
         .banners-container {
-            margin: 1.5rem auto;
+            margin: 2rem auto;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.5rem;
         }
         
         .banner {
             width: 100%;
             border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .banner:hover {
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
         }
         
         .banner img {
             width: 100%;
             height: auto;
             display: block;
-            max-height: 200px;
+            max-height: 220px;
             object-fit: cover;
         }
         
@@ -97,24 +124,635 @@
             text-decoration: none;
         }
         
+        /* Search Section - Rediseñada */
+        .search-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            margin: 2rem auto;
+            max-width: 900px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .search-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+        
+        .search-title { 
+            font-size: 1.8rem; 
+            color: var(--dark);
+            margin-bottom: 2rem; 
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .search-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+        
+        .search-grid { 
+            display: grid; 
+            gap: 1.5rem; 
+            margin-bottom: 2rem; 
+        }
+        
+        @media (min-width: 768px) {
+            .search-grid { grid-template-columns: 1fr 1fr; }
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        .form-label { 
+            display: block; 
+            font-weight: 600; 
+            margin-bottom: 0.75rem; 
+            color: var(--dark);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 1rem 1rem 1rem 2.5rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            color: var(--dark);
+            transition: all 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 1rem center;
+            padding-left: 2.5rem;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .form-select:disabled {
+            background-color: #f8fafc;
+            color: #94a3b8;
+        }
+        
+        /* Botones mejorados */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+        
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
+        }
+        
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid var(--light-gray);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.875rem 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25);
+        }
+        
+        .btn-whatsapp:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
+        }
+        
+        .search-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* Professional Cards - Rediseñadas */
+        .professional-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+        }
+        
+        @media (min-width: 768px) {
+            .professional-grid { 
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 2rem;
+            }
+        }
+        
+        .professional-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--light-gray);
+            position: relative;
+        }
+        
+        .professional-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .professional-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .professional-card:hover::before {
+            opacity: 1;
+        }
+        
+        .professional-header {
+            padding: 1.5rem;
+            display: flex;
+            gap: 1.25rem;
+            align-items: center;
+            position: relative;
+        }
+        
+        .professional-photo-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .professional-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .professional-photo-container::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            z-index: 0;
+        }
+        
+        .professional-name { 
+            font-size: 1.3rem; 
+            color: var(--dark); 
+            margin-bottom: 0.4rem; 
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+        
+        .professional-rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .professional-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            gap: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .badge-verified { 
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); 
+            color: white;
+        }
+        
+        .badge-featured { 
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+            color: white;
+        }
+        
+        .badge-top { 
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); 
+            color: white; 
+        }
+        
+        .professional-body { 
+            padding: 0 1.5rem 1.5rem; 
+        }
+        
+        .professional-footer {
+            padding: 1.25rem 1.5rem;
+            background: #f8fafc;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .professional-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 1.25rem;
+        }
+        
+        .skill-tag {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .skill-tag:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .professional-bio {
+            font-size: 0.95rem;
+            color: var(--gray);
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
+        }
+        
+        .certifications-section {
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 2px dashed var(--light-gray);
+        }
+        
+        .certifications-title {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+        
+        .certifications-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .certification-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+        }
+        
+        .ranking-stats {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--gray);
+            background: var(--light);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+        }
+        
+        .verification-status {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+        }
+        
+        /* Results Header */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .results-count {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
+        }
+        
+        /* Footer mejorado */
+        .footer {
+            background: linear-gradient(135deg, var(--dark) 0%, #0f172a 100%);
+            color: #cbd5e1;
+            padding: 3rem 1rem;
+            margin-top: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 2.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-content { grid-template-columns: repeat(3, 1fr); }
+        }
+        
+        .footer h3 {
+            color: white;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+        
+        .footer p {
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4);
+        }
+        
+        /* Loader animado */
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Modal mejorado */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 90%;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .modal-close {
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: color 0.2s ease;
+            line-height: 1;
+        }
+        
+        .modal-close:hover {
+            color: var(--dark);
+        }
+        
         /* Install Prompt */
         .install-prompt {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: var(--gradient-primary);
             color: white;
-            padding: 1rem;
+            padding: 1.2rem;
             text-align: center;
             z-index: 1000;
             display: none;
             animation: slideUp 0.3s ease;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
         }
         
         .install-content {
@@ -127,329 +765,18 @@
         }
         
         .install-close {
-            background: none;
+            background: rgba(255,255,255,0.2);
             border: none;
             color: white;
             font-size: 1.5rem;
             cursor: pointer;
-            padding: 0 0.5rem;
-        }
-        
-        /* Search */
-        .search-section {
-            background: white;
-            border-radius: var(--radius);
-            padding: 2rem;
-            margin: 1.5rem auto;
-            max-width: 800px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .search-title { font-size: 1.6rem; color: var(--primary); margin-bottom: 1.5rem; text-align: center; }
-        .search-grid { display: grid; gap: 1.2rem; margin-bottom: 1.5rem; }
-        
-        @media (min-width: 768px) {
-            .search-grid { grid-template-columns: 1fr 1fr; }
-        }
-        
-        .form-label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
-        .form-select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-            background: white;
-        }
-        
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 0.9rem 1.5rem;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 1rem;
-            border: none;
-            cursor: pointer;
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            width: 100%;
-        }
-        
-        .btn-primary:hover { background: var(--primary-dark); }
-        
-        .btn-whatsapp {
-            background: var(--secondary);
-            color: white;
-            padding: 0.7rem 1.2rem;
-        }
-        
-        /* Professional Cards */
-        .professional-grid {
-            display: grid;
-            gap: 1.2rem;
-            margin: 2rem 0;
-        }
-        
-        @media (min-width: 768px) {
-            .professional-grid { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); }
-        }
-        
-        .professional-card {
-            background: white;
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-        }
-        
-        .professional-header {
-            padding: 1.2rem;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        
-        .professional-photo {
-            width: 70px;
-            height: 70px;
+            padding: 0.25rem 0.75rem;
             border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--primary);
+            transition: background 0.2s ease;
         }
         
-        .professional-name { font-size: 1.2rem; color: var(--dark); margin-bottom: 0.3rem; font-weight: 700; }
-        
-        .professional-rating {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--accent);
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .professional-body { padding: 1.2rem; }
-        .professional-footer {
-            padding: 1rem 1.2rem;
-            background: #f8f9fa;
-            border-top: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        /* Sección de certificaciones */
-        .certifications-section {
-            margin-top: 0.8rem;
-            padding-top: 0.8rem;
-            border-top: 1px dashed #eee;
-        }
-        
-        .certifications-title {
-            font-size: 0.85rem;
-            color: var(--gray);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .certifications-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        
-        .certification-badge {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        /* Ranking Badges */
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 15px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            margin-left: 5px;
-        }
-        
-        /* JERARQUÍA DE BADGES */
-        .badge-verified { 
-            background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); 
-            color: white;
-        }
-        
-        .badge-featured { 
-            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); 
-            color: #333;
-        }
-        
-        .badge-top { 
-            background: #dc3545; 
-            color: white; 
-        }
-        
-        /* Stats */
-        .ranking-stats {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-        }
-        
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.8rem;
-            color: var(--gray);
-        }
-        
-        /* Estado de verificación */
-        .verification-status {
-            font-size: 0.75rem;
-            padding: 2px 8px;
-            border-radius: 10px;
-            background: #e8f5e9;
-            color: #2e7d32;
-            font-weight: 600;
-            margin-top: 5px;
-            display: inline-block;
-        }
-        
-        /* Rating Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: var(--radius);
-            max-width: 500px;
-            width: 90%;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .modal-close {
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: var(--gray);
-        }
-        
-        .star-rating {
-            display: flex;
-            gap: 5px;
-            margin: 10px 0;
-            direction: rtl;
-        }
-        
-        .star {
-            font-size: 2rem;
-            color: #ddd;
-            cursor: pointer;
-        }
-        
-        /* Loading */
-        .loader {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Results Header */
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .results-count {
-            background: var(--primary);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        /* Footer */
-        .footer {
-            background: var(--dark);
-            color: #aaa;
-            padding: 2rem 1rem;
-            margin-top: 3rem;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            gap: 1.5rem;
-        }
-        
-        @media (min-width: 768px) {
-            .footer-content { grid-template-columns: repeat(3, 1fr); }
-        }
-        
-        .copyright {
-            text-align: center;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #444;
-            color: #777;
-            font-size: 0.85rem;
+        .install-close:hover {
+            background: rgba(255,255,255,0.3);
         }
         
         /* Responsive */
@@ -459,16 +786,40 @@
             }
             
             .logo-img {
-                height: 50px;
+                height: 60px;
             }
             
-            .search-section { padding: 1.5rem; }
-            .professional-header { flex-direction: column; text-align: center; }
-            .professional-footer { flex-direction: column; gap: 10px; }
+            .search-section { 
+                padding: 1.5rem; 
+                margin: 1rem auto;
+            }
+            
+            .search-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .professional-header { 
+                flex-direction: column; 
+                text-align: center; 
+            }
+            
+            .professional-footer { 
+                flex-direction: column; 
+                gap: 1rem; 
+            }
+            
+            .fab {
+                bottom: 1rem;
+                right: 1rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
             
             .install-content {
                 flex-direction: column;
                 text-align: center;
+                gap: 0.5rem;
             }
         }
         
@@ -478,12 +829,38 @@
             }
         }
         
-        /* Nuevo estilo para orden de badges */
-        .professional-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 5px;
+        /* Scroll personalizado */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Animación de entrada para tarjetas */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.6s ease forwards;
         }
     </style>
 </head>
@@ -492,28 +869,28 @@
     <header class="header">
         <div class="container header-content">
             <img src="logo.png" alt="TecniYa" class="logo-img" 
-                 onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"%230a4fd8\"/><text x=\"50\" y=\"70\" text-anchor=\"middle\" font-size=\"60\" fill=\"white\">🔧</text></svg>';">
+                 onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"%232563eb\"/><text x=\"50\" y=\"70\" text-anchor=\"middle\" font-size=\"60\" fill=\"white\">🔧</text></svg>';">
             <p class="tagline">Encontrá técnicos verificados en toda Argentina. Contacto directo por WhatsApp.</p>
         </div>
     </header>
 
-    <!-- Banners desde Panel Admin - SISTEMA MEJORADO CON TIPOS -->
+    <!-- Banners desde Panel Admin -->
     <div class="container banners-container" id="bannersContainer">
         <!-- Los banners se cargan dinámicamente según tipo y ubicación -->
     </div>
 
-    <!-- Search - MODIFICADO: Quitado filtro por zona completamente -->
+    <!-- Search Section -->
     <section class="container search-section">
         <h2 class="search-title">¿Qué servicio necesitás?</h2>
         <div class="search-grid">
             <div class="form-group">
-                <label class="form-label">Provincia</label>
+                <label class="form-label">📍 Provincia</label>
                 <select id="provinciaSelect" class="form-select">
                     <option value="">Todas las provincias</option>
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">Ciudad</label>
+                <label class="form-label">🏙️ Ciudad</label>
                 <select id="ciudadSelect" class="form-select" disabled>
                     <option value="">Todas las ciudades</option>
                 </select>
@@ -521,7 +898,7 @@
         </div>
         <div class="search-grid">
             <div class="form-group">
-                <label class="form-label">Rubro</label>
+                <label class="form-label">🔧 Rubro</label>
                 <select id="rubroSelect" class="form-select">
                     <option value="">Todos los rubros</option>
                     <option value="plomeria">Plomería</option>
@@ -540,13 +917,17 @@
                 </select>
             </div>
         </div>
-        <div style="display: flex; gap: 12px; margin-top: 20px;">
-            <button id="searchBtn" class="btn btn-primary">🔍 Buscar técnico</button>
-            <button id="showAllBtn" class="btn" style="background: #6c757d; color: white;">📋 Ver todos</button>
+        <div class="search-buttons">
+            <button id="searchBtn" class="btn btn-primary">
+                <span>🔍</span> Buscar técnico
+            </button>
+            <button id="showAllBtn" class="btn btn-secondary">
+                <span>📋</span> Ver todos
+            </button>
         </div>
     </section>
 
-    <!-- Results -->
+    <!-- Results Section -->
     <section class="container">
         <div class="results-header" id="resultsHeader" style="display: none;">
             <h2>Técnicos Disponibles</h2>
@@ -577,16 +958,22 @@
         </div>
     </div>
 
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="scrollToTop()" title="Volver arriba" style="display: none;">
+        ↑
+    </button>
+
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-content">
+        <div class="container footer-content">
             <div>
                 <h3>TecniYa</h3>
-                <p>Conectamos a los argentinos con técnicos verificados.</p>
+                <p>Conectamos a los argentinos con técnicos verificados y certificados en todo el país.</p>
             </div>
             <div>
                 <h3>Contacto</h3>
                 <p>📱 WhatsApp: 341 755-8966</p>
+                <p>📧 contacto@tecniya.com</p>
                 <p>📍 Argentina</p>
             </div>
             <div>
@@ -669,6 +1056,7 @@
                 loadBanners();
                 loadAllProfessionals();
                 checkInstallPrompt();
+                initScrollAnimations();
             } catch (error) {
                 console.error('Error inicial:', error);
             }
@@ -698,6 +1086,38 @@
                 deferredPrompt = e;
                 showInstallPrompt();
             });
+            
+            // Configurar FAB
+            window.addEventListener('scroll', () => {
+                const fab = document.querySelector('.fab');
+                if (window.scrollY > 300) {
+                    fab.style.display = 'flex';
+                } else {
+                    fab.style.display = 'none';
+                }
+            });
+        }
+
+        function initScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, observerOptions);
+            
+            // Observar tarjetas de profesionales cuando se carguen
+            setTimeout(() => {
+                document.querySelectorAll('.professional-card').forEach(card => {
+                    observer.observe(card);
+                });
+            }, 100);
         }
 
         // ============================================
@@ -735,7 +1155,7 @@
         }
 
         // ============================================
-        // SISTEMA DE BANNERS
+        // SISTEMA DE BANNERS (SIN CAMBIOS)
         // ============================================
         async function loadBanners() {
             try {
@@ -829,7 +1249,7 @@
                         <a href="${banner.link || '#'}" target="_blank" class="banner-link">
                             <img src="${banner.imageUrl}" 
                                  alt="${banner.title || 'Banner'}"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa';">
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/1200x300/2563eb/ffffff?text=Banner+TecniYa';">
                         </a>
                     </div>
                 `;
@@ -842,7 +1262,7 @@
             container.innerHTML = `
                 <div class="banner">
                     <a href="#" class="banner-link">
-                        <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
+                        <img src="https://via.placeholder.com/1200x300/2563eb/ffffff?text=Banner+Promocional+TecniYa" 
                              alt="Banner Promocional">
                     </a>
                 </div>
@@ -873,7 +1293,7 @@
         }
 
         // ============================================
-        // SISTEMA DE RANKING - CON CERTIFICACIONES SEPARADAS Y RATINGS APROBADOS
+        // SISTEMA DE RANKING (SIN CAMBIOS)
         // ============================================
         async function calculateProfessionalRanking(professional) {
             try {
@@ -957,7 +1377,7 @@
                 return {
                     ...professional,
                     averageRating,
-                    totalRatings, // Este es el número de trabajos realizados (ratings aprobados)
+                    totalRatings,
                     rankingScore,
                     approvedCertifications
                 };
@@ -999,18 +1419,15 @@
                 
                 // ORDENAR SEGÚN JERARQUÍA:
                 professionals.sort((a, b) => {
-                    // Prioridad 1: Con certificaciones aprobadas
                     const aHasCertifications = a.approvedCertifications && a.approvedCertifications.length > 0;
                     const bHasCertifications = b.approvedCertifications && b.approvedCertifications.length > 0;
                     
                     if (aHasCertifications && !bHasCertifications) return -1;
                     if (!aHasCertifications && bHasCertifications) return 1;
                     
-                    // Prioridad 2: Destacados
                     if (a.isFeatured && !b.isFeatured) return -1;
                     if (!a.isFeatured && b.isFeatured) return 1;
                     
-                    // Prioridad 3: Puntaje de ranking
                     return b.rankingScore - a.rankingScore;
                 });
                 
@@ -1031,7 +1448,6 @@
             const ciudad = document.getElementById('ciudadSelect').value;
             const rubro = document.getElementById('rubroSelect').value;
             
-            // Actualizar banners según ubicación seleccionada
             if (provincia || ciudad) {
                 loadBanners();
             }
@@ -1059,18 +1475,15 @@
                 
                 // ORDENAR SEGÚN JERARQUÍA:
                 professionals.sort((a, b) => {
-                    // Prioridad 1: Con certificaciones aprobadas
                     const aHasCertifications = a.approvedCertifications && a.approvedCertifications.length > 0;
                     const bHasCertifications = b.approvedCertifications && b.approvedCertifications.length > 0;
                     
                     if (aHasCertifications && !bHasCertifications) return -1;
                     if (!aHasCertifications && bHasCertifications) return 1;
                     
-                    // Prioridad 2: Destacados
                     if (a.isFeatured && !b.isFeatured) return -1;
                     if (!a.isFeatured && b.isFeatured) return 1;
                     
-                    // Prioridad 3: Puntaje de ranking
                     return b.rankingScore - a.rankingScore;
                 });
                 
@@ -1113,7 +1526,7 @@
                     verificationStatus = '<span class="verification-status">✓ Certificaciones técnicas</span>';
                 }
                 
-                // Sección de certificaciones desde colección separada
+                // Sección de certificaciones
                 let certificationsHTML = '';
                 if (prof.approvedCertifications && prof.approvedCertifications.length > 0) {
                     certificationsHTML = `
@@ -1134,13 +1547,11 @@
                 // Crear badges
                 const badges = [];
                 
-                // Badge de VERIFICADO si tiene certificaciones aprobadas
                 const hasApprovedCertifications = prof.approvedCertifications && prof.approvedCertifications.length > 0;
                 if (hasApprovedCertifications) {
                     badges.push('<span class="badge badge-verified">VERIFICADO</span>');
                 }
                 
-                // Badge de Destacado
                 const now = new Date();
                 const isFeaturedActive = prof.isFeatured && prof.featuredUntil && 
                     (prof.featuredUntil.toDate ? prof.featuredUntil.toDate() : new Date(prof.featuredUntil)) > now;
@@ -1148,16 +1559,17 @@
                     badges.push('<span class="badge badge-featured">DESTACADO</span>');
                 }
                 
-                // Badge de TOP si tiene buen ranking
                 if (prof.rankingScore >= 85) {
                     badges.push('<span class="badge badge-top">TOP</span>');
                 }
                 
                 card.innerHTML = `
                     <div class="professional-header">
-                        <img src="${prof.photoUrl || 'https://via.placeholder.com/70x70/0a4fd8/ffffff?text=T'}" 
-                             alt="${prof.name}"
-                             class="professional-photo">
+                        <div class="professional-photo-container">
+                            <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80/2563eb/ffffff?text=T'}" 
+                                 alt="${prof.name}"
+                                 class="professional-photo">
+                        </div>
                         <div class="professional-info">
                             <h3 class="professional-name">${prof.name}</h3>
                             <div class="professional-rating">
@@ -1181,12 +1593,11 @@
                         </div>
                     </div>
                     <div class="professional-body">
-                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.8rem;">
-                            ${prof.rubros ? prof.rubros.map(r => `<span style="background: #f1f6ff; color: #0a4fd8; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem;">${r}</span>`).join('') : ''}
+                        <div class="professional-skills">
+                            ${prof.rubros ? prof.rubros.map(r => `<span class="skill-tag">${r}</span>`).join('') : ''}
                         </div>
-                        <p style="font-size: 0.95rem;">${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
+                        <p class="professional-bio">${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
                         
-                        <!-- Sección de certificaciones -->
                         ${certificationsHTML}
                     </div>
                     <div class="professional-footer">
@@ -1199,7 +1610,7 @@
                             </a>
                             <button onclick="openRatingModal('${prof.id}', '${prof.name}')" 
                                     class="btn" 
-                                    style="background: #6c757d; color: white; font-size: 0.9rem;">
+                                    style="background: #64748b; color: white; font-size: 0.9rem;">
                                 ⭐ Calificar
                             </button>
                         </div>
@@ -1211,14 +1622,18 @@
             
             document.getElementById('resultsHeader').style.display = 'flex';
             document.getElementById('resultsCount').textContent = `${professionals.length} técnicos`;
+            
+            // Reiniciar animaciones
+            initScrollAnimations();
         }
 
         function displayNoResults() {
             const container = document.getElementById('resultsContainer');
             container.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
-                    <h3>😔 No se encontraron técnicos</h3>
-                    <p>Intenta cambiar los filtros de búsqueda</p>
+                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1; background: white; border-radius: var(--radius); box-shadow: var(--shadow);">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">😔</div>
+                    <h3 style="margin-bottom: 1rem; color: var(--dark);">No se encontraron técnicos</h3>
+                    <p style="color: var(--gray);">Intenta cambiar los filtros de búsqueda</p>
                 </div>
             `;
             document.getElementById('resultsHeader').style.display = 'none';
@@ -1227,15 +1642,16 @@
         function displayError() {
             const container = document.getElementById('resultsContainer');
             container.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
-                    <h3>⚠️ Error al cargar</h3>
-                    <p>Por favor, intenta nuevamente</p>
+                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1; background: white; border-radius: var(--radius); box-shadow: var(--shadow);">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
+                    <h3 style="margin-bottom: 1rem; color: var(--dark);">Error al cargar</h3>
+                    <p style="color: var(--gray);">Por favor, intenta nuevamente</p>
                 </div>
             `;
         }
 
         // ============================================
-        // SISTEMA DE CALIFICACIONES
+        // SISTEMA DE CALIFICACIONES (SIN CAMBIOS)
         // ============================================
         function openRatingModal(professionalId, professionalName) {
             currentRatingProfessional = { id: professionalId, name: professionalName };
@@ -1254,7 +1670,7 @@
                 <input type="tel" id="clientPhone" placeholder="Tu número de WhatsApp (ej: 3415555555)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 15px; font-size: 0.95rem;">
                 <div style="display: flex; gap: 10px;">
                     <button onclick="submitRating()" class="btn btn-primary" style="flex: 1;">Enviar Calificación</button>
-                    <button onclick="closeRatingModal()" class="btn" style="background: #6c757d; color: white; flex: 1;">Cancelar</button>
+                    <button onclick="closeRatingModal()" class="btn" style="background: #64748b; color: white; flex: 1;">Cancelar</button>
                 </div>
             `;
             
@@ -1292,7 +1708,7 @@
             const stars = document.querySelectorAll('#starContainer .star');
             stars.forEach(star => {
                 const value = parseInt(star.dataset.value);
-                star.style.color = value <= rating ? '#ffc107' : '#ddd';
+                star.style.color = value <= rating ? '#f59e0b' : '#ddd';
             });
         }
 
@@ -1315,7 +1731,7 @@
             let selectedRating = 0;
             
             stars.forEach(star => {
-                if (star.style.color === 'rgb(255, 193, 7)') {
+                if (star.style.color === 'rgb(245, 158, 11)') {
                     const value = parseInt(star.dataset.value);
                     if (value > selectedRating) selectedRating = value;
                 }
@@ -1362,6 +1778,10 @@
 
         function hideLoader() {
             document.getElementById('loader').style.display = 'none';
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         window.onclick = function(event) {
