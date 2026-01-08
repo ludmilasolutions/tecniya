@@ -752,57 +752,60 @@
                 const provincia = document.getElementById('provinciaSelect').value;
                 const ciudad = document.getElementById('ciudadSelect').value;
                 
-                // Array para almacenar todas las queries
-                const bannerQueries = [];
-                
-                // Siempre cargar banners nacionales
-                bannerQueries.push(
-                    db.collection('banners')
-                        .where('active', '==', true)
-                        .where('type', '==', 'nacional')
-                        .where('startDate', '<=', now)
-                        .where('endDate', '>=', now)
-                        .limit(5)
-                        .get()
-                );
-                
-                // Si hay provincia seleccionada, cargar banners provinciales
-                if (provincia) {
-                    bannerQueries.push(
-                        db.collection('banners')
-                            .where('active', '==', true)
-                            .where('type', '==', 'provincial')
-                            .where('provincia', '==', provincia)
-                            .where('startDate', '<=', now)
-                            .where('endDate', '>=', now)
-                            .limit(5)
-                            .get()
-                    );
-                }
-                
-                // Si hay ciudad seleccionada (y provincia), cargar banners de ciudad
-                if (ciudad && provincia) {
-                    bannerQueries.push(
-                        db.collection('banners')
-                            .where('active', '==', true)
-                            .where('type', '==', 'ciudad')
-                            .where('provincia', '==', provincia)
-                            .where('ciudad', '==', ciudad)
-                            .where('startDate', '<=', now)
-                            .where('endDate', '>=', now)
-                            .limit(5)
-                            .get()
-                    );
-                }
-                
-                // Ejecutar todas las queries
-                const results = await Promise.all(bannerQueries);
+                // Array para almacenar todos los banners
                 let allBanners = [];
                 
-                // Combinar todos los banners
+                // Cargar banners nacionales
+                const nacionalQuery = db.collection('banners')
+                    .where('active', '==', true)
+                    .where('type', '==', 'nacional')
+                    .where('startDate', '<=', now)
+                    .limit(10)
+                    .get();
+                
+                // Cargar banners provinciales si hay provincia seleccionada
+                let provincialQuery = null;
+                if (provincia) {
+                    provincialQuery = db.collection('banners')
+                        .where('active', '==', true)
+                        .where('type', '==', 'provincial')
+                        .where('provincia', '==', provincia)
+                        .where('startDate', '<=', now)
+                        .limit(10)
+                        .get();
+                }
+                
+                // Cargar banners de ciudad si hay ciudad seleccionada
+                let ciudadQuery = null;
+                if (ciudad && provincia) {
+                    ciudadQuery = db.collection('banners')
+                        .where('active', '==', true)
+                        .where('type', '==', 'ciudad')
+                        .where('provincia', '==', provincia)
+                        .where('ciudad', '==', ciudad)
+                        .where('startDate', '<=', now)
+                        .limit(10)
+                        .get();
+                }
+                
+                // Ejecutar queries
+                const queries = [nacionalQuery];
+                if (provincialQuery) queries.push(provincialQuery);
+                if (ciudadQuery) queries.push(ciudadQuery);
+                
+                const results = await Promise.all(queries);
+                
+                // Procesar resultados y filtrar por endDate en cliente
                 results.forEach(snapshot => {
                     snapshot.forEach(doc => {
-                        allBanners.push({ id: doc.id, ...doc.data() });
+                        const banner = { id: doc.id, ...doc.data() };
+                        // Filtrar por endDate >= now en el cliente
+                        const endDate = banner.endDate ? 
+                            (banner.endDate.toDate ? banner.endDate.toDate() : new Date(banner.endDate)) : 
+                            new Date();
+                        if (endDate >= now.toDate()) {
+                            allBanners.push(banner);
+                        }
                     });
                 });
                 
