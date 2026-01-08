@@ -780,12 +780,13 @@
                     );
                 }
                 
-                // Si hay ciudad seleccionada, cargar banners de ciudad
-                if (ciudad) {
+                // Si hay ciudad seleccionada (y provincia), cargar banners de ciudad
+                if (ciudad && provincia) {
                     bannerQueries.push(
                         db.collection('banners')
                             .where('active', '==', true)
                             .where('type', '==', 'ciudad')
+                            .where('provincia', '==', provincia)
                             .where('ciudad', '==', ciudad)
                             .where('startDate', '<=', now)
                             .where('endDate', '>=', now)
@@ -844,7 +845,7 @@
                         <a href="${banner.link || '#'}" target="_blank" class="banner-link">
                             <img src="${banner.imageUrl}" 
                                  alt="${banner.title || 'Banner'}"
-                                 onerror="this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa'">
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa';">
                         </a>
                     </div>
                 `;
