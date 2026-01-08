@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecniYa - Encontrá técnicos certificados en Argentina</title>
+    <meta name="description" content="Plomería, electricidad, gas, aire acondicionado. Técnicos verificados con contacto directo por WhatsApp.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
+    
+    <!-- CSS Optimizado con mejoras visuales -->
+    <style>
+        :root {
+            --primary: #0a4fd8;
+            --primary-dark: #083bb5;
+            --primary-light: #e8f0ff;
+            --secondary: #1db954;
+            --accent: #ff9800;
+            --accent-light: #fff3e0;
+            --light: #f8f9fa;
+            --dark: #1a1a2e;
+            --gray: #666;
+            --light-gray: #eef2f7;
+            --radius: 12px;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #eef2f7 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container { 
+            width: 100%; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
+        
+        /* Header mejorado con logo más grande */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(10, 79, 216, 0.2);
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        .logo-img {
+            height: 85px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .logo-text h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: white;
+            margin: 0;
+            line-height: 1.1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .logo-text span {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.9);
+            font-weight: 500;
+            margin-top: 0.3rem;
+        }
+        
+        .tagline { 
+            font-size: 1.1rem; 
+            color: rgba(255,255,255,0.85);
+            max-width: 700px; 
+            margin: 0 auto;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+        
+        /* Banners Container */
+        .banners-container {
+            margin: 2.5rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .banner {
+            width: 100%;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            position: relative;
+            opacity: 0;
+            animation: slideUp 0.6s ease forwards;
+        }
+        
+        .banner:nth-child(1) { animation-delay: 0.1s; }
+        .banner:nth-child(2) { animation-delay: 0.2s; }
+        .banner:nth-child(3) { animation-delay: 0.3s; }
+        
+        .banner:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .banner img {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .banner:hover img {
+            transform: scale(1.03);
+        }
+        
+        .banner-link {
+            display: block;
+            text-decoration: none;
+            position: relative;
+        }
+        
+        .banner-link::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(10,79,216,0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .banner-link:hover::after {
+            opacity: 1;
+        }
+        
+        /* Install Prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .install-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 1.5rem;
+        }
+        
+        .install-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            line-height: 1;
+        }
+        
+        .install-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+        
+        /* Search Section - Mejorada */
+        .search-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            margin: 2rem auto;
+            max-width: 900px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.05);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.1) 0.4s forwards;
+        }
+        
+        .search-title { 
+            font-size: 1.8rem; 
+            color: var(--primary); 
+            margin-bottom: 2rem; 
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .search-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 25%;
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            border-radius: 2px;
+        }
+        
+        .search-grid { 
+            display: grid; 
+            gap: 1.5rem; 
+            margin-bottom: 2rem; 
+        }
+        
+        @media (min-width: 768px) {
+            .search-grid { grid-template-columns: 1fr 1fr; }
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        .form-label { 
+            display: block; 
+            font-weight: 600; 
+            margin-bottom: 0.7rem;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e1e5e9;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            background: white;
+            color: var(--dark);
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230a4fd8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 79, 216, 0.1);
+        }
+        
+        .form-select:hover {
+            border-color: #b0b9c6;
+        }
+        
+        /* Buttons - Mejorados */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 1rem 2rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(10, 79, 216, 0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(10, 79, 216, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+        }
+        
+        .btn-whatsapp {
+            background: linear-gradient(135deg, var(--secondary) 0%, #1aa34a 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            box-shadow: 0 4px 15px rgba(29, 185, 84, 0.2);
+        }
+        
+        .btn-whatsapp:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(29, 185, 84, 0.3);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* Professional Cards - Mejoradas */
+        .professional-grid {
+            display: grid;
+            gap: 1.8rem;
+            margin: 3rem 0;
+        }
+        
+        @media (min-width: 768px) {
+            .professional-grid { 
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+                gap: 2rem;
+            }
+        }
+        
+        .professional-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .professional-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .professional-header {
+            padding: 1.8rem 1.8rem 1.2rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+            background: var(--primary-light);
+        }
+        
+        .professional-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .professional-card:hover .professional-photo {
+            transform: scale(1.05);
+        }
+        
+        .professional-name { 
+            font-size: 1.3rem; 
+            color: var(--dark); 
+            margin-bottom: 0.5rem; 
+            font-weight: 700; 
+        }
+        
+        .professional-rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .professional-body { 
+            padding: 1.5rem 1.8rem; 
+            position: relative;
+        }
+        
+        .professional-footer {
+            padding: 1.2rem 1.8rem;
+            background: #f8f9fa;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Sección de certificaciones */
+        .certifications-section {
+            margin-top: 1.2rem;
+            padding-top: 1.2rem;
+            border-top: 1px dashed rgba(0,0,0,0.1);
+        }
+        
+        .certifications-title {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+        
+        .certifications-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .certification-badge {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(46, 125, 50, 0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .certification-badge:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Ranking Badges - Mejorados */
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 5px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .badge-verified { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            color: white;
+        }
+        
+        .badge-featured { 
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); 
+            color: var(--dark);
+            text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+        }
+        
+        .badge-top { 
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); 
+            color: white; 
+        }
+        
+        /* Stats */
+        .ranking-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--gray);
+            padding: 4px 10px;
+            background: rgba(0,0,0,0.02);
+            border-radius: 12px;
+        }
+        
+        /* Estado de verificación */
+        .verification-status {
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+            font-weight: 600;
+            margin-top: 8px;
+            display: inline-block;
+            border: 1px solid rgba(46, 125, 50, 0.2);
+        }
+        
+        /* Rating Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            transform: scale(0.9);
+            animation: modalAppear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+        }
+        
+        @keyframes modalAppear {
+            to {
+                transform: scale(1);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-close {
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: all 0.2s ease;
+            line-height: 1;
+        }
+        
+        .modal-close:hover {
+            color: var(--dark);
+            transform: rotate(90deg);
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            margin: 15px 0;
+            direction: rtl;
+            justify-content: center;
+        }
+        
+        .star {
+            font-size: 2.5rem;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .star:hover,
+        .star:hover ~ .star {
+            color: #ffc107;
+            transform: scale(1.1);
+        }
+        
+        /* Loading */
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(10, 79, 216, 0.1);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(100, 100);
+                opacity: 0;
+            }
+        }
+        
+        /* Results Header */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transform: translateY(10px);
+            opacity: 0;
+            animation: fadeInUp 0.6s ease 0.2s forwards;
+        }
+        
+        .results-count {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(10, 79, 216, 0.2);
+        }
+        
+        /* Footer - Mejorado */
+        .footer {
+            background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%);
+            color: #aaa;
+            padding: 3rem 1rem 2rem;
+            margin-top: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-content { 
+                grid-template-columns: repeat(3, 1fr); 
+                gap: 3rem;
+            }
+        }
+        
+        .footer h3 {
+            color: white;
+            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .footer h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #777;
+            font-size: 0.85rem;
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+        
+        /* Efectos de hover para elementos interactivos */
+        .professional-card,
+        .banner,
+        .btn {
+            animation-fill-mode: both;
+        }
+        
+        /* Scroll behavior suave */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-text {
+                align-items: center;
+            }
+            
+            .logo-img {
+                height: 70px;
+            }
+            
+            .logo-text h1 {
+                font-size: 1.8rem;
+            }
+            
+            .search-section { 
+                padding: 1.8rem; 
+                margin: 1.5rem auto;
+            }
+            
+            .search-title {
+                font-size: 1.5rem;
+            }
+            
+            .professional-header { 
+                flex-direction: column; 
+                text-align: center; 
+                padding: 1.5rem;
+            }
+            
+            .professional-footer { 
+                flex-direction: column; 
+                gap: 15px; 
+                text-align: center;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .install-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .results-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .professional-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Nuevo estilo para orden de badges */
+        .professional-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        /* Mejora para los chips de rubros */
+        .professional-body div[style*="flex-wrap"] span {
+            transition: all 0.2s ease;
+            border: 1px solid rgba(10, 79, 216, 0.1);
+        }
+        
+        .professional-body div[style*="flex-wrap"] span:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Efecto de onda en botones */
+        .wave {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        .wave.active {
+            animation: wave 0.5s ease-out;
+        }
+        
+        @keyframes wave {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.5;
+            }
+            100% {
+                width: 200px;
+                height: 200px;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header con Logo Mejorado -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo-container">
+                <img src="logo.png" alt="TecniYa" class="logo-img" 
+                     onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"%23ffffff\"/><text x=\"50\" y=\"70\" text-anchor=\"middle\" font-size=\"60\" fill=\"%230a4fd8\">🔧</text></svg>';">
+                <div class="logo-text">
+                    <h1>TecniYa</h1>
+                    <span>Técnicos Certificados Argentina</span>
+                </div>
+            </div>
+            <p class="tagline">Conectamos a los argentinos con técnicos verificados. Contacto directo por WhatsApp.</p>
+        </div>
+    </header>
+
+    <!-- Banners desde Panel Admin -->
+    <div class="container banners-container" id="bannersContainer">
+        <!-- Los banners se cargan dinámicamente según tipo y ubicación -->
+    </div>
+
+    <!-- Search Section Mejorada -->
+    <section class="container search-section">
+        <h2 class="search-title">¿Qué servicio necesitás?</h2>
+        <div class="search-grid">
+            <div class="form-group">
+                <label class="form-label">Provincia</label>
+                <select id="provinciaSelect" class="form-select">
+                    <option value="">Todas las provincias</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ciudad</label>
+                <select id="ciudadSelect" class="form-select" disabled>
+                    <option value="">Todas las ciudades</option>
+                </select>
+            </div>
+        </div>
+        <div class="search-grid">
+            <div class="form-group">
+                <label class="form-label">Rubro</label>
+                <select id="rubroSelect" class="form-select">
+                    <option value="">Todos los rubros</option>
+                    <option value="plomeria">Plomería</option>
+                    <option value="gas">Gas</option>
+                    <option value="electricidad">Electricidad</option>
+                    <option value="aire">Aire Acondicionado</option>
+                    <option value="albanileria">Albañilería</option>
+                    <option value="pintura">Pintura</option>
+                    <option value="cerrajeria">Cerrajería</option>
+                    <option value="jardineria">Jardinería</option>
+                    <option value="herreria">Herrería</option>
+                    <option value="carpinteria">Carpintería</option>
+                    <option value="limpieza">Limpieza</option>
+                    <option value="mudanzas">Mudanzas</option>
+                    <option value="otros">Otros servicios</option>
+                </select>
+            </div>
+        </div>
+        <div class="button-group">
+            <button id="searchBtn" class="btn btn-primary">🔍 Buscar técnico</button>
+            <button id="showAllBtn" class="btn btn-secondary">📋 Ver todos los técnicos</button>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="container">
+        <div class="results-header" id="resultsHeader" style="display: none;">
+            <h2>Técnicos Disponibles</h2>
+            <span class="results-count" id="resultsCount"></span>
+        </div>
+        <div class="loader" id="loader" style="display: none;">
+            <div class="spinner"></div>
+        </div>
+        <div class="professional-grid" id="resultsContainer"></div>
+    </section>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⭐ Calificar Técnico</h3>
+                <span class="modal-close" onclick="closeRatingModal()">×</span>
+            </div>
+            <div id="ratingModalBody"></div>
+        </div>
+    </div>
+
+    <!-- Install Prompt -->
+    <div id="installPrompt" class="install-prompt">
+        <div class="install-content">
+            <span>📱 Instalá TecniYa en tu teléfono para acceder rápido</span>
+            <button onclick="closeInstallPrompt()" class="install-close">×</button>
+        </div>
+    </div>
+
+    <!-- Footer Mejorado -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h3>TecniYa</h3>
+                <p>Conectamos a los argentinos con técnicos verificados en todo el país.</p>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: #bbb;">
+                    ✅ Certificaciones verificadas<br>
+                    🔒 Datos protegidos<br>
+                    ⭐ Calificaciones reales
+                </p>
+            </div>
+            <div>
+                <h3>Contacto</h3>
+                <p>📱 WhatsApp: 341 755-8966</p>
+                <p>📧 consultas@tecniya.com</p>
+                <p>📍 Argentina</p>
+                <a href="https://wa.me/3417558966" target="_blank" class="btn btn-whatsapp" style="margin-top: 15px; width: 100%;">
+                    💬 Contactar por WhatsApp
+                </a>
+            </div>
+            <div>
+                <h3>Promociones</h3>
+                <p>¿Tenés una promoción especial? Contactanos por WhatsApp</p>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: #bbb;">
+                    Publicitá tu servicio<br>
+                    Destacá tu perfil<br>
+                    Llegá a más clientes
+                </p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2024 TecniYa - Todos los derechos reservados</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">Conectando técnicos con clientes en toda Argentina</p>
+        </div>
+    </footer>
+
+    <!-- Firebase (sin cambios) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    
+    <!-- Main Script (sin cambios en la lógica) -->
+    <script>
+        // ============================================
+        // CONFIGURACIÓN FIREBASE
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
+            authDomain: "tecniya-b4206.firebaseapp.com",
+            projectId: "tecniya-b4206",
+            storageBucket: "tecniya-b4206.firebasestorage.app",
+            messagingSenderId: "166424133304",
+            appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
+        };
+
+        // ============================================
+        // VARIABLES GLOBALES
+        // ============================================
+        let db;
+        let currentRatingProfessional = null;
+        let allProfessionals = [];
+        let deferredPrompt;
+        let currentProvincia = '';
+        let currentCiudad = '';
+
+        // ============================================
+        // DATOS DE PROVINCIAS Y CIUDADES
+        // ============================================
+        const provinciasCiudades = {
+            "Buenos Aires": ["La Plata", "Mar del Plata", "Bahía Blanca", "Quilmes", "Lomas de Zamora", "San Isidro", "Tigre", "Pilar", "Merlo", "Moreno"],
+            "CABA": ["Capital Federal"],
+            "Catamarca": ["San Fernando del Valle de Catamarca", "Valle Viejo", "Andalgalá"],
+            "Chaco": ["Resistencia", "Barranqueras", "Fontana", "Presidencia Roque Sáenz Peña"],
+            "Córdoba": ["Córdoba", "Villa María", "Río Cuarto", "Alta Gracia", "Villa Carlos Paz", "Jesús María"],
+            "Corrientes": ["Corrientes", "Goya", "Mercedes", "Curuzú Cuatiá"],
+            "Entre Ríos": ["Paraná", "Concordia", "Gualeguaychú", "Concepción del Uruguay"],
+            "Formosa": ["Formosa", "Clorinda", "Pirané"],
+            "Jujuy": ["San Salvador de Jujuy", "Palpalá", "San Pedro de Jujuy", "Libertador General San Martín"],
+            "La Pampa": ["Santa Rosa", "General Pico", "Toay", "Realicó"],
+            "La Rioja": ["La Rioja", "Chilecito", "Aimogasta", "Chamical"],
+            "Mendoza": ["Mendoza", "San Rafael", "Godoy Cruz", "Guaymallén", "Las Heras", "Maipú"],
+            "Misiones": ["Posadas", "Oberá", "Eldorado", "Apóstoles"],
+            "Neuquén": ["Neuquén", "Cutral-Có", "Plottier", "Centenario"],
+            "Río Negro": ["Viedma", "Bariloche", "General Roca", "Cipolletti"],
+            "Salta": ["Salta", "San Ramón de la Nueva Orán", "Tartagal", "Metán"],
+            "San Juan": ["San Juan", "Rivadavia", "Chimbas", "Rawson"],
+            "San Luis": ["San Luis", "Villa Mercedes", "Juana Koslay", "La Punta"],
+            "Santa Cruz": ["Río Gallegos", "Caleta Olivia", "Puerto Deseado", "Río Turbio"],
+            "Santa Fe": ["Rosario", "Santa Fe", "Rafaela", "Venado Tuerto", "Reconquista", "Sunchales"],
+            "Santiago del Estero": ["Santiago del Estero", "La Banda", "Frías", "Añatuya"],
+            "Tierra del Fuego": ["Ushuaia", "Río Grande"],
+            "Tucumán": ["San Miguel de Tucumán", "Yerba Buena", "Tafí Viejo", "Concepción"]
+        };
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await initFirebase();
+                initApp();
+                loadBanners();
+                loadAllProfessionals();
+                checkInstallPrompt();
+            } catch (error) {
+                console.error('Error inicial:', error);
+            }
+        });
+
+        async function initFirebase() {
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                db = firebase.firestore();
+            } catch (error) {
+                console.error('Error Firebase:', error);
+            }
+        }
+
+        function initApp() {
+            loadProvincias();
+            
+            document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
+            document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
+            document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
+            
+            // Evento para PWA
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                showInstallPrompt();
+            });
+            
+            // Añadir efecto de onda a botones
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const wave = document.createElement('span');
+                    wave.className = 'wave active';
+                    wave.style.left = x + 'px';
+                    wave.style.top = y + 'px';
+                    
+                    this.appendChild(wave);
+                    
+                    setTimeout(() => {
+                        wave.remove();
+                    }, 500);
+                });
+            });
+        }
+
+        // ============================================
+        // FUNCIONES DE UI
+        // ============================================
+        function loadProvincias() {
+            const select = document.getElementById('provinciaSelect');
+            Object.keys(provinciasCiudades).sort().forEach(provincia => {
+                const option = document.createElement('option');
+                option.value = provincia;
+                option.textContent = provincia;
+                select.appendChild(option);
+            });
+        }
+
+        function handleProvinciaChange() {
+            const provincia = this.value;
+            const ciudadSelect = document.getElementById('ciudadSelect');
+            
+            if (!provincia) {
+                ciudadSelect.innerHTML = '<option value="">Todas las ciudades</option>';
+                ciudadSelect.disabled = true;
+                return;
+            }
+            
+            const ciudades = provinciasCiudades[provincia] || [];
+            ciudadSelect.innerHTML = '<option value="">Todas las ciudades</option>';
+            ciudades.forEach(ciudad => {
+                const option = document.createElement('option');
+                option.value = ciudad;
+                option.textContent = ciudad;
+                ciudadSelect.appendChild(option);
+            });
+            ciudadSelect.disabled = false;
+        }
+
+        // ============================================
+        // SISTEMA DE BANNERS
+        // ============================================
+        async function loadBanners() {
+            try {
+                const now = firebase.firestore.Timestamp.now();
+                
+                const provincia = document.getElementById('provinciaSelect').value;
+                const ciudad = document.getElementById('ciudadSelect').value;
+                
+                let allBanners = [];
+                
+                const nacionalQuery = db.collection('banners')
+                    .where('active', '==', true)
+                    .where('type', '==', 'nacional')
+                    .where('startDate', '<=', now)
+                    .limit(10)
+                    .get();
+                
+                let provincialQuery = null;
+                if (provincia) {
+                    provincialQuery = db.collection('banners')
+                        .where('active', '==', true)
+                        .where('type', '==', 'provincial')
+                        .where('provincia', '==', provincia)
+                        .where('startDate', '<=', now)
+                        .limit(10)
+                        .get();
+                }
+                
+                let ciudadQuery = null;
+                if (ciudad && provincia) {
+                    ciudadQuery = db.collection('banners')
+                        .where('active', '==', true)
+                        .where('type', '==', 'ciudad')
+                        .where('provincia', '==', provincia)
+                        .where('ciudad', '==', ciudad)
+                        .where('startDate', '<=', now)
+                        .limit(10)
+                        .get();
+                }
+                
+                const queries = [nacionalQuery];
+                if (provincialQuery) queries.push(provincialQuery);
+                if (ciudadQuery) queries.push(ciudadQuery);
+                
+                const results = await Promise.all(queries);
+                
+                results.forEach(snapshot => {
+                    snapshot.forEach(doc => {
+                        const banner = { id: doc.id, ...doc.data() };
+                        const endDate = banner.endDate ? 
+                            (banner.endDate.toDate ? banner.endDate.toDate() : new Date(banner.endDate)) : 
+                            new Date();
+                        if (endDate >= now.toDate()) {
+                            allBanners.push(banner);
+                        }
+                    });
+                });
+                
+                if (allBanners.length === 0) {
+                    displayDefaultBanner();
+                    return;
+                }
+                
+                allBanners = shuffleArray(allBanners);
+                const bannersToShow = allBanners.slice(0, 3);
+                
+                displayBanners(bannersToShow);
+                
+            } catch (error) {
+                console.error('Error cargando banners:', error);
+                displayDefaultBanner();
+            }
+        }
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function displayBanners(banners) {
+            const container = document.getElementById('bannersContainer');
+            container.innerHTML = '';
+            
+            banners.forEach((banner, index) => {
+                const bannerHTML = `
+                    <div class="banner" style="animation-delay: ${index * 0.1}s">
+                        <a href="${banner.link || '#'}" target="_blank" class="banner-link">
+                            <img src="${banner.imageUrl}" 
+                                 alt="${banner.title || 'Banner'}"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+TecniYa';">
+                        </a>
+                    </div>
+                `;
+                container.innerHTML += bannerHTML;
+            });
+        }
+
+        function displayDefaultBanner() {
+            const container = document.getElementById('bannersContainer');
+            container.innerHTML = `
+                <div class="banner" style="animation-delay: 0.1s">
+                    <a href="#" class="banner-link">
+                        <img src="https://via.placeholder.com/1200x300/0a4fd8/ffffff?text=Banner+Promocional+TecniYa" 
+                             alt="Banner Promocional">
+                    </a>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // INSTALL PROMPT
+        // ============================================
+        function showInstallPrompt() {
+            const prompt = document.getElementById('installPrompt');
+            prompt.style.display = 'block';
+            localStorage.setItem('installPromptShown', 'true');
+        }
+
+        function closeInstallPrompt() {
+            const prompt = document.getElementById('installPrompt');
+            prompt.style.display = 'none';
+        }
+
+        function checkInstallPrompt() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const alreadyShown = localStorage.getItem('installPromptShown');
+            
+            if (isMobile && !alreadyShown && deferredPrompt) {
+                setTimeout(() => showInstallPrompt(), 3000);
+            }
+        }
+
+        // ============================================
+        // SISTEMA DE RANKING - CON CERTIFICACIONES SEPARADAS Y RATINGS APROBADOS
+        // ============================================
+        async function calculateProfessionalRanking(professional) {
+            try {
+                // Obtener todas las calificaciones aprobadas para este profesional
+                const ratingsSnapshot = await db.collection('ratings')
+                    .where('professionalId', '==', professional.id)
+                    .where('status', '==', 'approved')
+                    .get();
+                
+                let totalRatings = 0;
+                let sumRatings = 0;
+                
+                ratingsSnapshot.forEach(doc => {
+                    totalRatings++;
+                    sumRatings += doc.data().rating;
+                });
+                
+                const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
+                
+                // Obtener certificaciones aprobadas desde colección separada
+                const certificationsSnapshot = await db.collection('certifications')
+                    .where('professionalId', '==', professional.id)
+                    .where('status', '==', 'aprobada')
+                    .get();
+                
+                const approvedCertifications = [];
+                certificationsSnapshot.forEach(doc => {
+                    const certData = doc.data();
+                    approvedCertifications.push({
+                        id: doc.id,
+                        title: certData.title || 'Certificado',
+                        institution: certData.institution || '',
+                        issueDate: certData.issueDate || '',
+                        expiryDate: certData.expiryDate || '',
+                        certificationNumber: certData.certificationNumber || ''
+                    });
+                });
+                
+                // Calcular score
+                let score = 0;
+                score += averageRating * 10;
+                
+                // Puntos por cantidad de trabajos (calificaciones aprobadas)
+                if (totalRatings > 0) {
+                    score += Math.min(totalRatings, 20);
+                }
+                
+                // Puntos por experiencia
+                if (professional.experienceYears) {
+                    score += Math.min(professional.experienceYears, 10);
+                }
+                
+                // Puntos por certificaciones aprobadas
+                if (approvedCertifications.length > 0) {
+                    score += 20;
+                }
+                
+                // Puntos por destacado
+                if (professional.isFeatured) {
+                    const now = new Date();
+                    if (professional.featuredUntil) {
+                        const featuredUntil = professional.featuredUntil.toDate ? 
+                            professional.featuredUntil.toDate() : new Date(professional.featuredUntil);
+                        if (featuredUntil > now) {
+                            score += 15;
+                        }
+                    }
+                }
+                
+                // Puntos por actividad reciente
+                if (professional.lastActive) {
+                    const lastActiveDate = professional.lastActive.toDate ? 
+                        professional.lastActive.toDate() : new Date(professional.lastActive);
+                    const daysSince = (new Date() - lastActiveDate) / (1000 * 60 * 60 * 24);
+                    if (daysSince < 7) score += 10;
+                }
+                
+                score = Math.min(Math.max(score, 0), 100);
+                const rankingScore = Math.round(score);
+                
+                return {
+                    ...professional,
+                    averageRating,
+                    totalRatings, // Este es el número de trabajos realizados (ratings aprobados)
+                    rankingScore,
+                    approvedCertifications
+                };
+                
+            } catch (error) {
+                console.error('Error cálculo ranking:', error);
+                return {
+                    ...professional,
+                    averageRating: 0,
+                    totalRatings: 0,
+                    rankingScore: 0,
+                    approvedCertifications: []
+                };
+            }
+        }
+
+        // ============================================
+        // CARGA Y MUESTRA DE PROFESIONALES
+        // ============================================
+        async function loadAllProfessionals() {
+            showLoader();
+            try {
+                const snapshot = await db.collection('professionals')
+                    .where('active', '==', true)
+                    .limit(50)
+                    .get();
+                
+                if (snapshot.empty) {
+                    displayNoResults();
+                    return;
+                }
+                
+                const professionals = await Promise.all(
+                    snapshot.docs.map(async doc => {
+                        const prof = { id: doc.id, ...doc.data() };
+                        return await calculateProfessionalRanking(prof);
+                    })
+                );
+                
+                // ORDENAR SEGÚN JERARQUÍA:
+                professionals.sort((a, b) => {
+                    // Prioridad 1: Con certificaciones aprobadas
+                    const aHasCertifications = a.approvedCertifications && a.approvedCertifications.length > 0;
+                    const bHasCertifications = b.approvedCertifications && b.approvedCertifications.length > 0;
+                    
+                    if (aHasCertifications && !bHasCertifications) return -1;
+                    if (!aHasCertifications && bHasCertifications) return 1;
+                    
+                    // Prioridad 2: Destacados
+                    if (a.isFeatured && !b.isFeatured) return -1;
+                    if (!a.isFeatured && b.isFeatured) return 1;
+                    
+                    // Prioridad 3: Puntaje de ranking
+                    return b.rankingScore - a.rankingScore;
+                });
+                
+                allProfessionals = professionals;
+                displayProfessionals(professionals);
+                
+            } catch (error) {
+                console.error('Error cargando profesionales:', error);
+                displayError();
+            } finally {
+                hideLoader();
+            }
+        }
+
+        async function searchProfessionals() {
+            showLoader();
+            const provincia = document.getElementById('provinciaSelect').value;
+            const ciudad = document.getElementById('ciudadSelect').value;
+            const rubro = document.getElementById('rubroSelect').value;
+            
+            // Actualizar banners según ubicación seleccionada
+            if (provincia || ciudad) {
+                loadBanners();
+            }
+            
+            try {
+                let query = db.collection('professionals').where('active', '==', true);
+                
+                if (provincia) query = query.where('provincia', '==', provincia);
+                if (ciudad && ciudad !== '') query = query.where('ciudad', '==', ciudad);
+                if (rubro) query = query.where('rubros', 'array-contains', rubro);
+                
+                const snapshot = await query.limit(50).get();
+                
+                if (snapshot.empty) {
+                    displayNoResults();
+                    return;
+                }
+                
+                const professionals = await Promise.all(
+                    snapshot.docs.map(async doc => {
+                        const prof = { id: doc.id, ...doc.data() };
+                        return await calculateProfessionalRanking(prof);
+                    })
+                );
+                
+                // ORDENAR SEGÚN JERARQUÍA:
+                professionals.sort((a, b) => {
+                    // Prioridad 1: Con certificaciones aprobadas
+                    const aHasCertifications = a.approvedCertifications && a.approvedCertifications.length > 0;
+                    const bHasCertifications = b.approvedCertifications && b.approvedCertifications.length > 0;
+                    
+                    if (aHasCertifications && !bHasCertifications) return -1;
+                    if (!aHasCertifications && bHasCertifications) return 1;
+                    
+                    // Prioridad 2: Destacados
+                    if (a.isFeatured && !b.isFeatured) return -1;
+                    if (!a.isFeatured && b.isFeatured) return 1;
+                    
+                    // Prioridad 3: Puntaje de ranking
+                    return b.rankingScore - a.rankingScore;
+                });
+                
+                displayProfessionals(professionals);
+                
+            } catch (error) {
+                console.error('Error buscando:', error);
+                displayError();
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function displayProfessionals(professionals) {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '';
+            
+            if (professionals.length === 0) {
+                displayNoResults();
+                return;
+            }
+            
+            professionals.forEach((prof, index) => {
+                const card = document.createElement('div');
+                card.className = 'professional-card';
+                card.style.animationDelay = `${index * 0.05}s`;
+                
+                // Calcular estrellas
+                const rating = prof.averageRating || 0;
+                const fullStars = Math.floor(rating);
+                const hasHalfStar = rating % 1 >= 0.5;
+                
+                let starsHTML = '';
+                for (let i = 0; i < fullStars; i++) starsHTML += '⭐';
+                if (hasHalfStar) starsHTML += '½';
+                for (let i = 0; i < 5 - fullStars - (hasHalfStar ? 1 : 0); i++) starsHTML += '☆';
+                
+                // Texto de estado de verificación
+                let verificationStatus = '';
+                if (prof.approvedCertifications && prof.approvedCertifications.length > 0) {
+                    verificationStatus = '<span class="verification-status">✓ Certificaciones técnicas verificadas</span>';
+                }
+                
+                // Sección de certificaciones desde colección separada
+                let certificationsHTML = '';
+                if (prof.approvedCertifications && prof.approvedCertifications.length > 0) {
+                    certificationsHTML = `
+                        <div class="certifications-section">
+                            <div class="certifications-title">
+                                <span>📜 Certificaciones verificadas:</span>
+                            </div>
+                            <div class="certifications-list">
+                                ${prof.approvedCertifications.map(cert => {
+                                    const certTitle = cert.title || 'Certificado';
+                                    return `<span class="certification-badge">✓ ${certTitle}</span>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Crear badges
+                const badges = [];
+                
+                // Badge de VERIFICADO si tiene certificaciones aprobadas
+                const hasApprovedCertifications = prof.approvedCertifications && prof.approvedCertifications.length > 0;
+                if (hasApprovedCertifications) {
+                    badges.push('<span class="badge badge-verified">VERIFICADO</span>');
+                }
+                
+                // Badge de Destacado
+                const now = new Date();
+                const isFeaturedActive = prof.isFeatured && prof.featuredUntil && 
+                    (prof.featuredUntil.toDate ? prof.featuredUntil.toDate() : new Date(prof.featuredUntil)) > now;
+                if (isFeaturedActive) {
+                    badges.push('<span class="badge badge-featured">DESTACADO</span>');
+                }
+                
+                // Badge de TOP si tiene buen ranking
+                if (prof.rankingScore >= 85) {
+                    badges.push('<span class="badge badge-top">TOP</span>');
+                }
+                
+                card.innerHTML = `
+                    <div class="professional-header">
+                        <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80/0a4fd8/ffffff?text=T'}" 
+                             alt="${prof.name}"
+                             class="professional-photo">
+                        <div class="professional-info">
+                            <h3 class="professional-name">${prof.name}</h3>
+                            <div class="professional-rating">
+                                ${starsHTML} ${rating.toFixed(1)}
+                                <span>(${prof.totalRatings || 0} calificaciones)</span>
+                            </div>
+                            <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.5rem;">
+                                📍 ${prof.ciudad || ''}, ${prof.provincia || ''}
+                            </div>
+                            <div class="professional-badges">
+                                ${badges.join('')}
+                            </div>
+                            <div style="margin-top: 8px;">
+                                ${verificationStatus}
+                            </div>
+                            <div class="ranking-stats">
+                                <div class="stat-item">🏆 Puntaje: ${prof.rankingScore || 0}/100</div>
+                                ${prof.totalRatings ? `<div class="stat-item">✅ ${prof.totalRatings} trabajos</div>` : ''}
+                                ${prof.experienceYears ? `<div class="stat-item">📅 ${prof.experienceYears} años exp.</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="professional-body">
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem;">
+                            ${prof.rubros ? prof.rubros.map(r => `<span style="background: #f1f6ff; color: #0a4fd8; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">${r}</span>`).join('') : ''}
+                        </div>
+                        <p style="font-size: 0.95rem; color: var(--gray); line-height: 1.7;">${prof.bio || 'Técnico especializado con experiencia comprobada y certificaciones verificadas.'}</p>
+                        
+                        <!-- Sección de certificaciones -->
+                        ${certificationsHTML}
+                    </div>
+                    <div class="professional-footer">
+                        <span style="font-size: 0.9rem; color: var(--gray);">${prof.zonas ? prof.zonas.join(', ') : 'Toda la ciudad'}</span>
+                        <div style="display: flex; gap: 12px;">
+                            <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
+                               target="_blank"
+                               class="btn btn-whatsapp">
+                                📱 Contactar
+                            </a>
+                            <button onclick="openRatingModal('${prof.id}', '${prof.name}')" 
+                                    class="btn" 
+                                    style="background: #6c757d; color: white; font-size: 0.9rem; padding: 0.8rem 1.2rem;">
+                                ⭐ Calificar
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            document.getElementById('resultsHeader').style.display = 'flex';
+            document.getElementById('resultsCount').textContent = `${professionals.length} técnicos`;
+        }
+
+        function displayNoResults() {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; color: #666; grid-column: 1 / -1; opacity: 0; animation: fadeInUp 0.6s ease forwards;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🔍</div>
+                    <h3 style="margin-bottom: 1rem;">No se encontraron técnicos</h3>
+                    <p>Intenta cambiar los filtros de búsqueda o ver todos los técnicos disponibles</p>
+                </div>
+            `;
+            document.getElementById('resultsHeader').style.display = 'none';
+        }
+
+        function displayError() {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; color: #666; grid-column: 1 / -1; opacity: 0; animation: fadeInUp 0.6s ease forwards;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
+                    <h3 style="margin-bottom: 1rem;">Error al cargar los técnicos</h3>
+                    <p>Por favor, intenta nuevamente en unos momentos</p>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // SISTEMA DE CALIFICACIONES
+        // ============================================
+        function openRatingModal(professionalId, professionalName) {
+            currentRatingProfessional = { id: professionalId, name: professionalName };
+            
+            document.getElementById('ratingModalBody').innerHTML = `
+                <p>Calificá a <strong>${professionalName}</strong></p>
+                <div class="star-rating" id="starContainer">
+                    <span class="star" data-value="5">★</span>
+                    <span class="star" data-value="4">★</span>
+                    <span class="star" data-value="3">★</span>
+                    <span class="star" data-value="2">★</span>
+                    <span class="star" data-value="1">★</span>
+                </div>
+                <p id="ratingText" style="text-align: center; margin: 15px 0; color: var(--primary); font-weight: 500; min-height: 24px;">Seleccioná una calificación</p>
+                <textarea id="ratingComment" placeholder="Contanos tu experiencia (opcional)" style="width: 100%; padding: 12px; border-radius: var(--radius); border: 2px solid #e1e5e9; margin: 15px 0; min-height: 100px; font-size: 0.95rem; transition: all 0.3s ease;"></textarea>
+                <input type="tel" id="clientPhone" placeholder="Tu número de WhatsApp (ej: 3415555555)" style="width: 100%; padding: 12px; border-radius: var(--radius); border: 2px solid #e1e5e9; margin-bottom: 20px; font-size: 0.95rem; transition: all 0.3s ease;">
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="submitRating()" class="btn btn-primary" style="flex: 1;">Enviar Calificación</button>
+                    <button onclick="closeRatingModal()" class="btn btn-secondary" style="flex: 1;">Cancelar</button>
+                </div>
+            `;
+            
+            const stars = document.querySelectorAll('#starContainer .star');
+            let selectedRating = 0;
+            
+            stars.forEach(star => {
+                star.addEventListener('mouseover', function() {
+                    const value = parseInt(this.dataset.value);
+                    highlightStars(value);
+                    updateRatingText(value);
+                });
+                
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.dataset.value);
+                    highlightStars(selectedRating);
+                    updateRatingText(selectedRating);
+                });
+            });
+            
+            document.getElementById('starContainer').addEventListener('mouseleave', function() {
+                highlightStars(selectedRating);
+                updateRatingText(selectedRating);
+            });
+            
+            // Añadir efectos a inputs
+            document.getElementById('ratingComment').addEventListener('focus', function() {
+                this.style.borderColor = 'var(--primary)';
+                this.style.boxShadow = '0 0 0 3px rgba(10, 79, 216, 0.1)';
+            });
+            
+            document.getElementById('ratingComment').addEventListener('blur', function() {
+                this.style.borderColor = '#e1e5e9';
+                this.style.boxShadow = 'none';
+            });
+            
+            document.getElementById('clientPhone').addEventListener('focus', function() {
+                this.style.borderColor = 'var(--primary)';
+                this.style.boxShadow = '0 0 0 3px rgba(10, 79, 216, 0.1)';
+            });
+            
+            document.getElementById('clientPhone').addEventListener('blur', function() {
+                this.style.borderColor = '#e1e5e9';
+                this.style.boxShadow = 'none';
+            });
+            
+            document.getElementById('ratingModal').style.display = 'flex';
+        }
+
+        function closeRatingModal() {
+            document.getElementById('ratingModal').style.display = 'none';
+            currentRatingProfessional = null;
+        }
+
+        function highlightStars(rating) {
+            const stars = document.querySelectorAll('#starContainer .star');
+            stars.forEach(star => {
+                const value = parseInt(star.dataset.value);
+                star.style.color = value <= rating ? '#ffc107' : '#e0e0e0';
+                star.style.transform = value <= rating ? 'scale(1.1)' : 'scale(1)';
+            });
+        }
+
+        function updateRatingText(rating) {
+            const texts = {
+                1: '😞 Muy Malo',
+                2: '😕 Regular',
+                3: '😐 Aceptable',
+                4: '😊 Muy Bueno',
+                5: '😍 Excelente'
+            };
+            const textEl = document.getElementById('ratingText');
+            if (textEl) {
+                textEl.textContent = texts[rating] || 'Seleccioná una calificación';
+            }
+        }
+
+        async function submitRating() {
+            const stars = document.querySelectorAll('#starContainer .star');
+            let selectedRating = 0;
+            
+            stars.forEach(star => {
+                if (star.style.color === 'rgb(255, 193, 7)') {
+                    const value = parseInt(star.dataset.value);
+                    if (value > selectedRating) selectedRating = value;
+                }
+            });
+            
+            const comment = document.getElementById('ratingComment').value.trim();
+            const clientPhone = document.getElementById('clientPhone').value.trim();
+            
+            if (!selectedRating) {
+                alert('Por favor seleccioná una calificación');
+                return;
+            }
+            
+            if (!clientPhone || clientPhone.length < 10) {
+                alert('Por favor ingresá un número de WhatsApp válido');
+                return;
+            }
+            
+            try {
+                await db.collection('ratings').add({
+                    professionalId: currentRatingProfessional.id,
+                    rating: selectedRating,
+                    comment: comment,
+                    clientPhone: clientPhone,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'pending'
+                });
+                
+                alert('¡Gracias por tu calificación! Será revisada antes de publicarse.');
+                closeRatingModal();
+                
+            } catch (error) {
+                console.error('Error enviando calificación:', error);
+                alert('Error al enviar. Por favor intentá nuevamente.');
+            }
+        }
+
+        // ============================================
+        // UTILIDADES
+        // ============================================
+        function showLoader() {
+            document.getElementById('loader').style.display = 'flex';
+        }
+
+        function hideLoader() {
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('ratingModal');
+            if (event.target == modal) {
+                closeRatingModal();
+            }
+        }
+        
+        window.addEventListener('click', function(event) {
+            const prompt = document.getElementById('installPrompt');
+            if (event.target === prompt) {
+                closeInstallPrompt();
+            }
+        });
+    </script>
+</body>
+</html>
