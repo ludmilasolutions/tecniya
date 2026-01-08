@@ -162,8 +162,6 @@
             background: white;
         }
         
-        /* REMOVIDO FILTRO DE ZONA COMPLETAMENTE */
-        
         /* Buttons */
         .btn {
             display: inline-flex;
@@ -281,18 +279,7 @@
             gap: 4px;
         }
         
-        /* Ranking Badges - MODIFICADO: Quitados niveles plata/bronce */
-        .ranking-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin-left: 8px;
-        }
-        
-        /* MODIFICADO: Solo badges jerárquicos */
+        /* Ranking Badges - MODIFICADO: Sistema unificado */
         .badge {
             display: inline-block;
             padding: 3px 8px;
@@ -302,8 +289,8 @@
             margin-left: 5px;
         }
         
-        /* JERARQUÍA DE BADGES: Profesionales verificados arriba de destacados comunes */
-        .badge-professional { 
+        /* JERARQUÍA UNIFICADA DE BADGES */
+        .badge-verified { 
             background: linear-gradient(135deg, #0a4fd8 0%, #1a60f0 100%); 
             color: white;
         }
@@ -311,11 +298,6 @@
         .badge-featured { 
             background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); 
             color: #333;
-        }
-        
-        .badge-certified { 
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
-            color: white;
         }
         
         .badge-top { 
@@ -491,6 +473,16 @@
             gap: 5px;
             margin-top: 5px;
         }
+        
+        /* Estado de verificación unificado */
+        .verification-status {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -499,7 +491,7 @@
         <div class="container header-content">
             <img src="logo.png" alt="TecniYa" class="logo-img" 
                  onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"%230a4fd8\"/><text x=\"50\" y=\"70\" text-anchor=\"middle\" font-size=\"60\" fill=\"white\">🔧</text></svg>';">
-            <p class="tagline">Encontrá técnicos certificados en toda Argentina. Contacto directo por WhatsApp.</p>
+            <p class="tagline">Encontrá técnicos verificados en toda Argentina. Contacto directo por WhatsApp.</p>
         </div>
     </header>
 
@@ -589,7 +581,7 @@
         <div class="footer-content">
             <div>
                 <h3>TecniYa</h3>
-                <p>Conectamos a los argentinos con técnicos certificados.</p>
+                <p>Conectamos a los argentinos con técnicos verificados.</p>
             </div>
             <div>
                 <h3>Contacto</h3>
@@ -895,7 +887,7 @@
         }
 
         // ============================================
-        // SISTEMA DE RANKING MEJORADO - JERARQUÍA ESPECIFICADA
+        // SISTEMA DE RANKING MEJORADO - CON VERIFICACIÓN UNIFICADA
         // ============================================
         async function calculateProfessionalRanking(professional) {
             try {
@@ -914,7 +906,7 @@
                 
                 const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
                 
-                // Calcular score con nueva jerarquía
+                // Calcular score con sistema unificado
                 let score = 0;
                 score += averageRating * 10;
                 
@@ -928,14 +920,10 @@
                     score += Math.min(professional.experienceYears, 10);
                 }
                 
-                // Puntos por certificaciones
-                if (professional.certifications && professional.certifications.length > 0) {
-                    score += professional.certifications.length * 5;
-                }
-                
-                // Puntos por Plan Profesional (VERIFICADO) - PRIORIDAD MÁXIMA
-                if (professional.hasProfessionalPlan) {
-                    score += 20; // Máxima prioridad
+                // Puntos por verificación unificada (Plan Profesional O Certificaciones)
+                if (professional.hasProfessionalPlan || 
+                   (professional.certifications && professional.certifications.length > 0)) {
+                    score += 20; // Máxima prioridad para profesionales verificados
                 }
                 
                 // Puntos por destacado - SEGUNDA PRIORIDAD
@@ -980,7 +968,7 @@
         }
 
         // ============================================
-        // CARGA Y MUESTRA DE PROFESIONALES CON NUEVA JERARQUÍA
+        // CARGA Y MUESTRA DE PROFESIONALES CON SISTEMA UNIFICADO
         // ============================================
         async function loadAllProfessionals() {
             showLoader();
@@ -1002,14 +990,19 @@
                     })
                 );
                 
-                // ORDENAR SEGÚN JERARQUÍA ESPECIFICADA:
-                // 1. Profesionales verificados (hasProfessionalPlan) primero
+                // ORDENAR SEGÚN JERARQUÍA UNIFICADA:
+                // 1. Profesionales verificados (tiene Plan Profesional O certificaciones) primero
                 // 2. Destacados (isFeatured) después
                 // 3. Luego por ranking score
                 professionals.sort((a, b) => {
-                    // Prioridad 1: Plan Profesional (verificado)
-                    if (a.hasProfessionalPlan && !b.hasProfessionalPlan) return -1;
-                    if (!a.hasProfessionalPlan && b.hasProfessionalPlan) return 1;
+                    // Prioridad 1: Verificación unificada
+                    const aIsVerified = a.hasProfessionalPlan || 
+                                       (a.certifications && a.certifications.length > 0);
+                    const bIsVerified = b.hasProfessionalPlan || 
+                                       (b.certifications && b.certifications.length > 0);
+                    
+                    if (aIsVerified && !bIsVerified) return -1;
+                    if (!aIsVerified && bIsVerified) return 1;
                     
                     // Prioridad 2: Destacados
                     if (a.isFeatured && !b.isFeatured) return -1;
@@ -1063,11 +1056,16 @@
                     })
                 );
                 
-                // ORDENAR SEGÚN JERARQUÍA ESPECIFICADA:
+                // ORDENAR SEGÚN JERARQUÍA UNIFICADA:
                 professionals.sort((a, b) => {
-                    // Prioridad 1: Plan Profesional (verificado)
-                    if (a.hasProfessionalPlan && !b.hasProfessionalPlan) return -1;
-                    if (!a.hasProfessionalPlan && b.hasProfessionalPlan) return 1;
+                    // Prioridad 1: Verificación unificada
+                    const aIsVerified = a.hasProfessionalPlan || 
+                                       (a.certifications && a.certifications.length > 0);
+                    const bIsVerified = b.hasProfessionalPlan || 
+                                       (b.certifications && b.certifications.length > 0);
+                    
+                    if (aIsVerified && !bIsVerified) return -1;
+                    if (!aIsVerified && bIsVerified) return 1;
                     
                     // Prioridad 2: Destacados
                     if (a.isFeatured && !b.isFeatured) return -1;
@@ -1130,12 +1128,14 @@
                     `;
                 }
                 
-                // Crear badges según jerarquía: Profesionales verificados primero, luego destacados
+                // Crear badges según jerarquía UNIFICADA
                 const badges = [];
                 
-                // Badge de Profesional Verificado (PLAN PROFESIONAL) - PRIORIDAD 1
-                if (prof.hasProfessionalPlan) {
-                    badges.push('<span class="badge badge-professional">PROFESIONAL VERIFICADO</span>');
+                // Badge de VERIFICADO (Plan Profesional O Certificaciones) - PRIORIDAD 1
+                const isVerified = prof.hasProfessionalPlan || 
+                                 (prof.certifications && prof.certifications.length > 0);
+                if (isVerified) {
+                    badges.push('<span class="badge badge-verified">VERIFICADO</span>');
                 }
                 
                 // Badge de Destacado - PRIORIDAD 2
@@ -1146,14 +1146,19 @@
                     badges.push('<span class="badge badge-featured">DESTACADO</span>');
                 }
                 
-                // Badge de Certificado - si tiene certificaciones
-                if (prof.certifications && prof.certifications.length > 0) {
-                    badges.push('<span class="badge badge-certified">CERTIFICADO</span>');
-                }
-                
                 // Badge de TOP si tiene buen ranking
                 if (prof.rankingScore >= 85) {
                     badges.push('<span class="badge badge-top">TOP</span>');
+                }
+                
+                // Estado de verificación (texto descriptivo)
+                let verificationStatus = '';
+                if (prof.hasProfessionalPlan && prof.certifications && prof.certifications.length > 0) {
+                    verificationStatus = '<span class="verification-status">✓ Plan Profesional + Certificaciones</span>';
+                } else if (prof.hasProfessionalPlan) {
+                    verificationStatus = '<span class="verification-status">✓ Plan Profesional</span>';
+                } else if (prof.certifications && prof.certifications.length > 0) {
+                    verificationStatus = '<span class="verification-status">✓ Certificaciones técnicas</span>';
                 }
                 
                 card.innerHTML = `
@@ -1172,6 +1177,9 @@
                             </div>
                             <div class="professional-badges">
                                 ${badges.join('')}
+                            </div>
+                            <div style="margin-top: 5px;">
+                                ${verificationStatus}
                             </div>
                             <div class="ranking-stats">
                                 <div class="stat-item">🏆 ${prof.rankingScore || 0}/100</div>
