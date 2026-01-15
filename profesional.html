@@ -185,6 +185,54 @@
             font-size: 1.1rem;
         }
         
+        /* ===== SOCIAL LOGIN ===== */
+        .social-login {
+            margin: 1.5rem 0;
+        }
+        
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 0.8rem;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .google-btn:hover {
+            background: #f8f9fa;
+            border-color: #ccc;
+        }
+        
+        .google-btn img {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--gray);
+        }
+        
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--light-gray);
+        }
+        
+        .divider span {
+            padding: 0 1rem;
+        }
+        
         /* ===== FORMS ===== */
         .form-group {
             margin-bottom: 1.5rem;
@@ -638,12 +686,75 @@
             color: #721c24;
         }
         
+        .status-completed {
+            background: #007bff;
+            color: white;
+        }
+        
         .budget-actions {
             display: flex;
             gap: 0.5rem;
             margin-top: 1rem;
+            flex-wrap: wrap;
         }
         
+        /* ===== JOBS SECTION ===== */
+        .job-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .job-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .job-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .job-in-progress {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .job-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .job-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .job-client-info {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .job-client-info div {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* ===== MODALS ===== */
         .modal {
             display: none;
             position: fixed;
@@ -906,6 +1017,19 @@
         <h2 class="login-title">Panel del Profesional</h2>
         <p class="login-subtitle">Accedé a tu cuenta para gestionar tu perfil y servicios</p>
         
+        <!-- SOCIAL LOGIN -->
+        <div class="social-login">
+            <button id="googleLoginBtn" class="google-btn">
+                <img src="https://www.google.com/favicon.ico" alt="Google">
+                Ingresar con Google
+            </button>
+        </div>
+        
+        <div class="divider">
+            <span>o</span>
+        </div>
+        
+        <!-- EMAIL LOGIN -->
         <form id="loginForm">
             <div class="form-group">
                 <label class="form-label">Email</label>
@@ -1008,6 +1132,9 @@
                 </div>
                 <div class="tab" data-tab="budgets">
                     💰 Presupuestos
+                </div>
+                <div class="tab" data-tab="jobs">
+                    🛠️ Mis Trabajos
                 </div>
                 <div class="tab" data-tab="ratings">
                     ⭐ Calificaciones
@@ -1451,6 +1578,7 @@
                                     <option value="enviado">Enviado</option>
                                     <option value="aceptado">Aceptado</option>
                                     <option value="rechazado">Rechazado</option>
+                                    <option value="completado">Completado</option>
                                 </select>
                             </div>
                             <div class="filter-group">
@@ -1481,6 +1609,73 @@
                     </div>
                 </div>
                 
+                <!-- JOBS PANEL (NUEVO) -->
+                <div id="jobsPanel" class="panel">
+                    <div class="status-card">
+                        <div class="status-header">
+                            <h3>🛠️ Mis Trabajos Activos</h3>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="activeJobsCount">0</div>
+                                <div class="stat-label">Trabajos Activos</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="completedJobsCount">0</div>
+                                <div class="stat-label">Completados</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="pendingJobsCount">0</div>
+                                <div class="stat-label">Pendientes</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="cancelledJobsCount">0</div>
+                                <div class="stat-label">Cancelados</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-form-section">
+                        <h3>📋 Filtros de Trabajos</h3>
+                        <div class="filters">
+                            <div class="filter-group">
+                                <label class="form-label">Estado</label>
+                                <select id="jobFilterStatus" class="form-select">
+                                    <option value="">Todos</option>
+                                    <option value="pendiente">Pendiente</option>
+                                    <option value="en_progreso">En Progreso</option>
+                                    <option value="completado">Completado</option>
+                                    <option value="cancelado">Cancelado</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="form-label">Cliente</label>
+                                <input type="text" id="jobFilterClient" class="form-input" placeholder="Buscar por cliente">
+                            </div>
+                            <div class="filter-group">
+                                <label class="form-label">Desde</label>
+                                <input type="date" id="jobFilterFrom" class="form-input">
+                            </div>
+                            <div class="filter-group">
+                                <label class="form-label">Hasta</label>
+                                <input type="date" id="jobFilterTo" class="form-input">
+                            </div>
+                            <div class="filter-group">
+                                <button id="applyJobFilters" class="btn btn-secondary" style="margin-top: 1.5rem;">
+                                    🔍 Filtrar
+                                </button>
+                                <button id="resetJobFilters" class="btn btn-danger" style="margin-top: 1.5rem;">
+                                    🔄 Limpiar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="jobsList">
+                            <!-- Lista de trabajos se cargará aquí -->
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- RATINGS PANEL -->
                 <div id="ratingsPanel" class="panel">
                     <div class="ratings-container">
@@ -1495,7 +1690,7 @@
                                 <div style="color: var(--gray);">Total de calificaciones</div>
                             </div>
                             <div>
-                                <div style="font-size: 2rem; font-weight: 700; color: var(--accent);" id="completedJobsCount">0</div>
+                                <div style="font-size: 2rem; font-weight: 700; color: var(--accent);" id="completedJobsStats">0</div>
                                 <div style="color: var(--gray);">Trabajos completados</div>
                             </div>
                         </div>
@@ -1634,6 +1829,7 @@
                         <option value="enviado">Enviado</option>
                         <option value="aceptado">Aceptado</option>
                         <option value="rechazado">Rechazado</option>
+                        <option value="completado">Completado</option>
                     </select>
                 </div>
                 
@@ -1652,6 +1848,24 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+    
+    <!-- MODAL PARA TRABAJOS -->
+    <div id="jobModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="jobModalTitle">Detalle del Trabajo</h3>
+                <button class="modal-close" onclick="closeJobModal()">&times;</button>
+            </div>
+            
+            <div id="jobModalContent">
+                <!-- Contenido dinámico del trabajo -->
+            </div>
+            
+            <div class="btn-group" id="jobModalActions">
+                <!-- Acciones dinámicas -->
+            </div>
         </div>
     </div>
     
@@ -1707,11 +1921,13 @@
         // ============================================
         let auth, db, currentUser, professionalId = null, professionalData = null;
         let budgets = [];
+        let jobs = [];
         let featuredHistory = [];
         let certifications = [];
         let deferredPrompt;
+        let googleProvider;
         
-        // Precios configurados para destacados - CORREGIDOS
+        // Precios configurados para destacados
         const FEATURED_PRICES = {
             1: { price: 5000, label: "1 mes", pricePerMonth: 5000 },
             3: { price: 13500, label: "3 meses", pricePerMonth: 4500 },
@@ -1732,6 +1948,11 @@
                 }
                 auth = firebase.auth();
                 db = firebase.firestore();
+                
+                // Configurar proveedor de Google
+                googleProvider = new firebase.auth.GoogleAuthProvider();
+                googleProvider.addScope('email');
+                googleProvider.addScope('profile');
                 
                 // Configurar event listeners
                 setupEventListeners();
@@ -1762,7 +1983,6 @@
                 e.preventDefault();
                 deferredPrompt = e;
                 
-                // Mostrar el botón de instalación después de 5 segundos
                 setTimeout(() => {
                     if (deferredPrompt) {
                         document.getElementById('installPrompt').style.display = 'block';
@@ -1798,6 +2018,7 @@
             document.getElementById('toggleRegisterBtn').addEventListener('click', toggleRegister);
             document.getElementById('cancelRegisterBtn').addEventListener('click', toggleRegister);
             document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('googleLoginBtn').addEventListener('click', handleGoogleLogin);
             
             // Logout
             document.getElementById('mainLogoutBtn')?.addEventListener('click', handleLogout);
@@ -1831,12 +2052,16 @@
             document.getElementById('downloadPdfBtn')?.addEventListener('click', downloadBudgetPdf);
             document.getElementById('printPdfBtn')?.addEventListener('click', printBudgetPdf);
             
+            // Jobs system
+            document.getElementById('applyJobFilters')?.addEventListener('click', loadJobs);
+            document.getElementById('resetJobFilters')?.addEventListener('click', resetJobFilters);
+            
             // Certifications
             document.getElementById('addCertificationBtn')?.addEventListener('click', addCertification);
         }
 
         // ============================================
-        // AUTENTICACIÓN - CORREGIDA
+        // AUTENTICACIÓN
         // ============================================
         function checkAuthState() {
             auth.onAuthStateChanged(async (user) => {
@@ -1848,6 +2073,69 @@
                     showLoginPanel();
                 }
             });
+        }
+
+        async function handleGoogleLogin() {
+            showGlobalLoader(true);
+            
+            try {
+                const result = await auth.signInWithPopup(googleProvider);
+                const user = result.user;
+                
+                // Buscar profesional por email o crear uno nuevo
+                const snapshot = await db.collection('professionals')
+                    .where('email', '==', user.email)
+                    .limit(1)
+                    .get();
+                
+                if (snapshot.empty) {
+                    // Crear nuevo profesional con datos de Google
+                    const professionalRef = await db.collection('professionals').add({
+                        userId: user.uid,
+                        email: user.email,
+                        name: user.displayName || '',
+                        phone: '',
+                        photoUrl: user.photoURL || '',
+                        bio: '',
+                        provincia: '',
+                        ciudad: '',
+                        zonas: [],
+                        rubros: [],
+                        certifications: [],
+                        experienceYears: 0,
+                        completedJobs: 0,
+                        avgResponseTime: null,
+                        active: true,
+                        profileCompleted: false,
+                        isFeatured: false,
+                        featuredUntil: null,
+                        hasProfessionalPlan: false,
+                        rankingScore: 0,
+                        rankingLevel: 'Principiante',
+                        averageRating: 0,
+                        totalRatings: 0,
+                        lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    professionalId = professionalRef.id;
+                } else {
+                    const doc = snapshot.docs[0];
+                    professionalId = doc.id;
+                    professionalData = { id: doc.id, ...doc.data() };
+                }
+                
+                showMessage('loginMessage', '✅ Ingreso exitoso con Google', 'success');
+                
+            } catch (error) {
+                console.error('Error en login con Google:', error);
+                let message = 'Error al iniciar sesión con Google';
+                if (error.code === 'auth/popup-closed-by-user') message = 'El popup fue cerrado';
+                else if (error.code === 'auth/cancelled-popup-request') message = 'Solicitud cancelada';
+                showMessage('loginMessage', '❌ ' + message, 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
         }
 
         async function handleLogin(e) {
@@ -1886,7 +2174,6 @@
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             
-            // Validaciones
             if (!name || !phone || !email || !password) {
                 showMessage('loginMessage', 'Completá todos los campos', 'error');
                 return;
@@ -1905,13 +2192,10 @@
             showGlobalLoader(true);
             
             try {
-                // Crear usuario
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 
-                // Actualizar perfil
                 await userCredential.user.updateProfile({ displayName: name });
                 
-                // Crear documento profesional
                 const professionalRef = await db.collection('professionals').add({
                     userId: userCredential.user.uid,
                     email,
@@ -1946,7 +2230,6 @@
                 toggleRegister();
                 document.getElementById('registerForm').reset();
                 
-                // Auto login después de registro
                 await auth.signInWithEmailAndPassword(email, password);
                 
             } catch (error) {
@@ -1988,24 +2271,20 @@
         }
 
         function switchTab(tabId) {
-            // Remover clase active de todas las pestañas
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             
-            // Remover clase active de todos los paneles
             document.querySelectorAll('.panel').forEach(panel => {
                 panel.classList.remove('active');
             });
             
-            // Activar pestaña seleccionada
             const tabElement = document.querySelector(`.tab[data-tab="${tabId}"]`);
             const panelElement = document.getElementById(`${tabId}Panel`);
             
             if (tabElement) tabElement.classList.add('active');
             if (panelElement) panelElement.classList.add('active');
             
-            // Cargar datos específicos de la pestaña
             if (tabId === 'ranking') {
                 loadRankingData();
             } else if (tabId === 'featured') {
@@ -2013,6 +2292,8 @@
                 loadFeaturedHistory();
             } else if (tabId === 'budgets') {
                 loadBudgets();
+            } else if (tabId === 'jobs') {
+                loadJobs();
             } else if (tabId === 'ratings') {
                 loadRatings();
             } else if (tabId === 'certifications') {
@@ -2027,14 +2308,12 @@
             showGlobalLoader(true);
             
             try {
-                // Buscar profesional por userId
                 const snapshot = await db.collection('professionals')
                     .where('userId', '==', currentUser.uid)
                     .limit(1)
                     .get();
                 
                 if (snapshot.empty) {
-                    // Intentar buscar por email como fallback
                     const emailSnapshot = await db.collection('professionals')
                         .where('email', '==', currentUser.email)
                         .limit(1)
@@ -2055,14 +2334,9 @@
                     professionalData = { id: doc.id, ...doc.data() };
                 }
                 
-                // Actualizar UI
                 updateProfileUI();
                 updateUserInfo();
-                
-                // Verificar acceso a funciones
                 checkFeatureAccess();
-                
-                // Cargar datos de ranking
                 await loadRankingData();
                 
             } catch (error) {
@@ -2091,7 +2365,6 @@
         function updateProfileUI() {
             if (!professionalData) return;
             
-            // Datos básicos
             document.getElementById('profileName').value = professionalData.name || '';
             document.getElementById('profilePhone').value = professionalData.phone || '';
             document.getElementById('profileBio').value = professionalData.bio || '';
@@ -2099,11 +2372,9 @@
             document.getElementById('profileExperience').value = professionalData.experienceYears || 0;
             document.getElementById('profileZonas').value = professionalData.zonas ? professionalData.zonas.join(', ') : '';
             
-            // Ubicación
             if (professionalData.provincia) {
                 document.getElementById('profileProvincia').value = professionalData.provincia;
                 
-                // Cargar ciudades de la provincia
                 const ciudades = getCiudadesByProvincia(professionalData.provincia);
                 const ciudadSelect = document.getElementById('profileCiudad');
                 ciudadSelect.innerHTML = '<option value="">Seleccioná una ciudad</option>';
@@ -2117,16 +2388,12 @@
                 ciudadSelect.disabled = false;
             }
             
-            // Rubros seleccionados
             document.querySelectorAll('#rubrosCheckbox input').forEach(checkbox => {
                 checkbox.checked = professionalData.rubros && 
                     professionalData.rubros.includes(checkbox.value);
             });
             
-            // Actualizar preview de foto
             updatePhotoPreview();
-            
-            // Estado del perfil
             updateProfileStatus();
         }
 
@@ -2149,11 +2416,9 @@
             const totalCount = requiredFields.length;
             const percentage = Math.round((completedCount / totalCount) * 100);
             
-            // Actualizar progreso
             document.getElementById('profileCompleteProgress').style.width = `${percentage}%`;
             document.getElementById('completeProgressText').textContent = `${percentage}% completado`;
             
-            // Actualizar badge
             const statusEl = document.getElementById('profileStatus');
             const statusText = document.getElementById('statusText');
             
@@ -2180,7 +2445,6 @@
                 professionalData.featuredUntil && 
                 professionalData.featuredUntil.toDate() > now;
             
-            // Presupuestos - SOLO si tiene plan Destacado activo
             const newBudgetBtn = document.getElementById('newBudgetBtn');
             const budgetSection = document.getElementById('budgetSection');
             const budgetPlanWarning = document.getElementById('budgetPlanWarning');
@@ -2195,7 +2459,6 @@
                 budgetPlanWarning.style.display = 'block';
             }
             
-            // Certificaciones - SOLO si tiene Plan Profesional activo
             const certificationStatusBadge = document.getElementById('certificationStatusBadge');
             const certificationUploadSection = document.getElementById('certificationUploadSection');
             
@@ -2224,11 +2487,9 @@
                 
                 professionalData = { id: doc.id, ...doc.data() };
                 
-                // Calcular ranking actual
                 await calculateRanking();
                 updateRankingUI();
                 
-                // Actualizar estadísticas
                 updateUserInfo();
                 updateProfileStatus();
                 checkFeatureAccess();
@@ -2245,7 +2506,6 @@
             if (!professionalData) return;
             
             try {
-                // Obtener calificaciones aprobadas (últimos 3 meses)
                 const threeMonthsAgo = new Date();
                 threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
                 
@@ -2263,7 +2523,6 @@
                     ratingsSnapshot.forEach(doc => {
                         totalRatings++;
                         sumRatings += doc.data().rating || 0;
-                        // Contar trabajos completados desde calificaciones
                         if (doc.data().jobCompleted) {
                             completedJobs++;
                         }
@@ -2272,7 +2531,6 @@
                     console.log('No se encontraron calificaciones:', error);
                 }
                 
-                // Actualizar trabajos completados automáticamente
                 if (completedJobs > professionalData.completedJobs) {
                     await db.collection('professionals').doc(professionalId).update({
                         completedJobs: completedJobs
@@ -2280,22 +2538,14 @@
                     professionalData.completedJobs = completedJobs;
                 }
                 
-                // Calcular rating promedio
                 const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
                 
-                // ============================================
-                // CÁLCULO DE PUNTAJE DE RANKING (0-100)
-                // ============================================
                 let score = 0;
-                
-                // 1. CALIDAD DE CALIFICACIONES (25 puntos)
                 score += averageRating * 5;
                 
-                // 2. CANTIDAD DE CALIFICACIONES (20 puntos)
                 const ratingQuantity = Math.min(totalRatings, 100);
                 score += ratingQuantity * 0.2;
                 
-                // 3. TIEMPO DE RESPUESTA (15 puntos)
                 if (professionalData.avgResponseTime) {
                     if (professionalData.avgResponseTime < 4) score += 15;
                     else if (professionalData.avgResponseTime < 8) score += 12;
@@ -2303,15 +2553,12 @@
                     else if (professionalData.avgResponseTime < 48) score += 4;
                 }
                 
-                // 4. TRABAJOS COMPLETADOS (10 puntos)
                 score += Math.min(professionalData.completedJobs * 0.1, 10);
                 
-                // 5. CERTIFICACIONES (10 puntos)
                 if (professionalData.hasProfessionalPlan) {
                     score += 10;
                 }
                 
-                // 6. COMPLETITUD DEL PERFIL (20 puntos)
                 let profileScore = 0;
                 if (professionalData.photoUrl) profileScore += 5;
                 if (professionalData.bio && professionalData.bio.length > 50) profileScore += 5;
@@ -2319,12 +2566,10 @@
                 if (professionalData.rubros && professionalData.rubros.length > 0) profileScore += 5;
                 score += profileScore;
                 
-                // 7. EXPERIENCIA (10 puntos)
                 if (professionalData.experienceYears) {
                     score += Math.min(professionalData.experienceYears, 10);
                 }
                 
-                // 8. ACTIVIDAD RECIENTE (10 puntos)
                 if (professionalData.lastActive) {
                     try {
                         const lastActiveDate = professionalData.lastActive.toDate
@@ -2339,7 +2584,6 @@
                     }
                 }
                 
-                // 9. PERFIL DESTACADO (5 puntos)
                 const now = new Date();
                 if (professionalData.isFeatured && professionalData.featuredUntil) {
                     try {
@@ -2354,29 +2598,24 @@
                     }
                 }
                 
-                // 10. PLAN PROFESIONAL (5 puntos)
                 if (professionalData.hasProfessionalPlan) {
                     score += 5;
                 }
                 
-                // Asegurar que el score esté entre 0 y 100
                 score = Math.min(Math.max(score, 0), 100);
                 const rankingScore = Math.round(score);
                 
-                // Determinar nivel de ranking
                 let rankingLevel = 'Principiante';
                 if (rankingScore >= 90) rankingLevel = 'Platino';
                 else if (rankingScore >= 80) rankingLevel = 'Oro';
                 else if (rankingScore >= 70) rankingLevel = 'Plata';
                 else if (rankingScore >= 60) rankingLevel = 'Bronce';
                 
-                // Actualizar professionalData con los nuevos cálculos
                 professionalData.averageRating = averageRating;
                 professionalData.totalRatings = totalRatings;
                 professionalData.rankingScore = rankingScore;
                 professionalData.rankingLevel = rankingLevel;
                 
-                // Actualizar en la base de datos
                 await db.collection('professionals').doc(professionalId).update({
                     averageRating: averageRating,
                     totalRatings: totalRatings,
@@ -2401,33 +2640,25 @@
         function updateRankingUI() {
             if (!professionalData) return;
             
-            // Actualizar el puntaje total
             document.getElementById('rankingScore').textContent = professionalData.rankingScore || 0;
             document.getElementById('rankingProgress').style.width = `${professionalData.rankingScore || 0}%`;
             document.getElementById('rankingProgressText').textContent = `${professionalData.rankingScore || 0}% completado`;
             
-            // Actualizar el nivel
             const levelBadge = document.getElementById('rankingLevelBadge');
             if (levelBadge) {
                 levelBadge.textContent = professionalData.rankingLevel ? professionalData.rankingLevel.toUpperCase() : 'PRINCIPIANTE';
                 levelBadge.className = 'ranking-badge ranking-' + (professionalData.rankingLevel ? professionalData.rankingLevel.toLowerCase() : 'beginner');
             }
             
-            // Actualizar nivel en texto
             document.getElementById('rankingLevel').textContent = `Nivel: ${professionalData.rankingLevel || 'Principiante'}`;
+            document.getElementById('completedJobsStats').textContent = professionalData.completedJobs || 0;
             
-            // Actualizar trabajos completados
-            document.getElementById('completedJobsCount').textContent = professionalData.completedJobs || 0;
-            
-            // Actualizar factores individuales
-            // Factor de calificaciones (max 25)
             let ratingFactor = (professionalData.averageRating || 0) * 5;
             if (document.getElementById('ratingScore')) {
                 document.getElementById('ratingScore').textContent = `${Math.round(ratingFactor)}/25`;
                 document.getElementById('ratingProgress').style.width = `${(ratingFactor / 25) * 100}%`;
             }
             
-            // Factor de respuesta (max 15)
             let responseFactor = 0;
             if (professionalData.avgResponseTime) {
                 if (professionalData.avgResponseTime < 4) responseFactor = 15;
@@ -2440,7 +2671,6 @@
                 document.getElementById('responseProgress').style.width = `${(responseFactor / 15) * 100}%`;
             }
             
-            // Factor de perfil (max 20)
             let profileFactor = 0;
             if (professionalData.photoUrl) profileFactor += 5;
             if (professionalData.bio && professionalData.bio.length > 50) profileFactor += 5;
@@ -2451,14 +2681,12 @@
                 document.getElementById('profileProgress').style.width = `${(profileFactor / 20) * 100}%`;
             }
             
-            // Factor de experiencia (max 15)
             let experienceFactor = Math.min(professionalData.experienceYears || 0, 15);
             if (document.getElementById('experienceScore')) {
                 document.getElementById('experienceScore').textContent = `${experienceFactor}/15`;
                 document.getElementById('experienceProgress').style.width = `${(experienceFactor / 15) * 100}%`;
             }
             
-            // Factor de actividad (max 10)
             let activityFactor = 0;
             if (professionalData.lastActive) {
                 try {
@@ -2478,7 +2706,6 @@
                 document.getElementById('activityProgress').style.width = `${(activityFactor / 10) * 100}%`;
             }
             
-            // Factor de destacado (max 5)
             let featuredFactor = 0;
             const now = new Date();
             if (professionalData.isFeatured && professionalData.featuredUntil) {
@@ -2515,7 +2742,7 @@
         }
 
         // ============================================
-        // SISTEMA DE DESTACADOS - CORREGIDO
+        // SISTEMA DE DESTACADOS
         // ============================================
         function loadFeaturedPlans() {
             const container = document.getElementById('featuredPlansContainer');
@@ -2551,12 +2778,10 @@
         }
 
         function selectFeaturedPlan(months) {
-            // Remover selección anterior
             document.querySelectorAll('.featured-plan').forEach(plan => {
                 plan.classList.remove('selected');
             });
             
-            // Agregar selección actual
             const selectedPlan = document.querySelector(`.featured-plan[data-months="${months}"]`);
             if (selectedPlan) {
                 selectedPlan.classList.add('selected');
@@ -2586,7 +2811,6 @@
                     const daysRemaining = Math.ceil((featuredUntil - now) / (1000 * 60 * 60 * 24));
                     
                     if (daysRemaining > 0) {
-                        // Destacado activo
                         statusBadge.textContent = 'DESTACADO';
                         statusBadge.className = 'status-badge status-featured';
                         
@@ -2606,19 +2830,16 @@
                             </div>
                         `;
                         
-                        // Mostrar progreso
                         progressContainer.style.display = 'block';
-                        const totalDays = 30; // Asumiendo 30 días por mes
+                        const totalDays = 30;
                         const percentage = Math.round((daysRemaining / totalDays) * 100);
                         document.getElementById('featuredDaysProgress').style.width = `${percentage}%`;
                         document.getElementById('featuredDaysText').textContent = `${daysRemaining} días restantes`;
                         
-                        // Mostrar botón de extender
                         activateBtn.style.display = 'none';
                         extendBtn.style.display = 'inline-flex';
                         
                     } else {
-                        // Destacado expirado
                         statusBadge.textContent = 'EXPIRADO';
                         statusBadge.className = 'status-badge status-expired';
                         featuredInfo.innerHTML = `
@@ -2631,7 +2852,6 @@
                         extendBtn.style.display = 'none';
                     }
                 } else {
-                    // No destacado
                     statusBadge.textContent = 'NO DESTACADO';
                     statusBadge.className = 'status-badge status-incomplete';
                     featuredInfo.innerHTML = `
@@ -2645,7 +2865,6 @@
                     extendBtn.style.display = 'none';
                 }
                 
-                // Verificar si califica para Plan Profesional
                 checkProfessionalPlanEligibility();
                 
             } catch (error) {
@@ -2656,9 +2875,6 @@
         function checkProfessionalPlanEligibility() {
             if (!professionalData) return;
             
-            // Verificar si tiene 12 meses de destacado acumulado
-            // En una implementación real, habría que verificar el historial
-            // Por ahora, solo verificamos si tiene plan destacado de 12 meses activo
             if (professionalData.isFeatured && professionalData.featuredUntil) {
                 const featuredUntil = professionalData.featuredUntil.toDate
                     ? professionalData.featuredUntil.toDate()
@@ -2668,7 +2884,6 @@
                                   (featuredUntil.getMonth() - now.getMonth());
                 
                 if (monthsDiff >= 12 && !professionalData.hasProfessionalPlan) {
-                    // Habilitar Plan Profesional automáticamente
                     enableProfessionalPlan();
                 }
             }
@@ -2700,7 +2915,6 @@
                     .where('professionalId', '==', professionalId)
                     .orderBy('createdAt', 'desc');
                 
-                // Aplicar filtros
                 const statusFilter = document.getElementById('featuredFilterStatus').value;
                 const fromFilter = document.getElementById('featuredFilterFrom').value;
                 const toFilter = document.getElementById('featuredFilterTo').value;
@@ -2800,12 +3014,10 @@
             showGlobalLoader(true);
             
             try {
-                // Calcular fechas
                 const now = new Date();
                 const expiresAt = new Date();
                 expiresAt.setMonth(expiresAt.getMonth() + parseInt(selectedFeaturedPlan));
                 
-                // Crear transacción
                 await db.collection('featuredTransactions').add({
                     professionalId,
                     professionalName: professionalData.name,
@@ -2819,14 +3031,12 @@
                 
                 showMessage('profileMessage', '✅ Solicitud de destacado enviada. Realizá la transferencia y envianos el comprobante.', 'success');
                 
-                // Resetear selección
                 selectedFeaturedPlan = null;
                 document.getElementById('activateFeaturedBtn').disabled = true;
                 document.querySelectorAll('.featured-plan').forEach(plan => {
                     plan.classList.remove('selected');
                 });
                 
-                // Recargar historial
                 await loadFeaturedHistory();
                 
             } catch (error) {
@@ -2845,6 +3055,383 @@
         }
 
         // ============================================
+        // SISTEMA DE TRABAJOS (NUEVO)
+        // ============================================
+        async function loadJobs() {
+            if (!professionalId) return;
+            
+            showGlobalLoader(true);
+            
+            try {
+                let query = db.collection('jobs')
+                    .where('professionalId', '==', professionalId)
+                    .orderBy('createdAt', 'desc');
+                
+                const statusFilter = document.getElementById('jobFilterStatus').value;
+                const clientFilter = document.getElementById('jobFilterClient').value;
+                const fromFilter = document.getElementById('jobFilterFrom').value;
+                const toFilter = document.getElementById('jobFilterTo').value;
+                
+                if (statusFilter) {
+                    query = query.where('status', '==', statusFilter);
+                }
+                
+                if (clientFilter) {
+                    query = query.where('clientName', '>=', clientFilter)
+                               .where('clientName', '<=', clientFilter + '\uf8ff');
+                }
+                
+                if (fromFilter) {
+                    const fromDate = new Date(fromFilter);
+                    query = query.where('createdAt', '>=', fromDate);
+                }
+                
+                if (toFilter) {
+                    const toDate = new Date(toFilter);
+                    toDate.setHours(23, 59, 59, 999);
+                    query = query.where('createdAt', '<=', toDate);
+                }
+                
+                const snapshot = await query.get();
+                jobs = [];
+                const container = document.getElementById('jobsList');
+                
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--gray);">
+                            📝 No hay trabajos registrados.
+                        </div>
+                    `;
+                    updateJobStats();
+                    return;
+                }
+                
+                let html = '';
+                let activeCount = 0;
+                let completedCount = 0;
+                let pendingCount = 0;
+                let cancelledCount = 0;
+                
+                snapshot.forEach(doc => {
+                    const job = { id: doc.id, ...doc.data() };
+                    jobs.push(job);
+                    
+                    const date = job.createdAt ? 
+                        job.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                    
+                    let statusBadge = '';
+                    switch(job.status) {
+                        case 'pendiente':
+                            statusBadge = '<span class="job-status job-pending">PENDIENTE</span>';
+                            pendingCount++;
+                            break;
+                        case 'en_progreso':
+                            statusBadge = '<span class="job-status job-in-progress">EN PROGRESO</span>';
+                            activeCount++;
+                            break;
+                        case 'completado':
+                            statusBadge = '<span class="job-status job-completed">COMPLETADO</span>';
+                            completedCount++;
+                            break;
+                        case 'cancelado':
+                            statusBadge = '<span class="job-status job-cancelled">CANCELADO</span>';
+                            cancelledCount++;
+                            break;
+                    }
+                    
+                    html += `
+                        <div class="job-card">
+                            <div class="job-header">
+                                <div>
+                                    <h4 style="margin: 0;">${job.title || 'Trabajo sin título'}</h4>
+                                    <p style="color: var(--gray); margin: 0.5rem 0;">${date}</p>
+                                </div>
+                                <div>
+                                    ${statusBadge}
+                                    ${job.price ? `
+                                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-top: 0.5rem;">
+                                            $${job.price.toLocaleString('es-AR')}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            
+                            <div class="job-client-info">
+                                <div>
+                                    👤 <strong>Cliente:</strong> ${job.clientName || 'Sin nombre'}
+                                </div>
+                                <div>
+                                    📞 <strong>Teléfono:</strong> ${job.clientPhone || 'Sin teléfono'}
+                                </div>
+                                <div>
+                                    📍 <strong>Dirección:</strong> ${job.address || 'Sin dirección'}
+                                </div>
+                            </div>
+                            
+                            <p style="color: var(--dark); margin-bottom: 1rem;">${job.description || ''}</p>
+                            
+                            <div class="budget-actions">
+                                <button onclick="viewJob('${doc.id}')" class="btn btn-primary btn-sm">
+                                    👁️ Ver Detalles
+                                </button>
+                                ${job.status === 'pendiente' ? `
+                                    <button onclick="updateJobStatus('${doc.id}', 'en_progreso')" class="btn btn-success btn-sm">
+                                        🚀 Iniciar Trabajo
+                                    </button>
+                                    <button onclick="updateJobStatus('${doc.id}', 'cancelado')" class="btn btn-danger btn-sm">
+                                        ❌ Cancelar
+                                    </button>
+                                ` : ''}
+                                ${job.status === 'en_progreso' ? `
+                                    <button onclick="updateJobStatus('${doc.id}', 'completado')" class="btn btn-success btn-sm">
+                                        ✅ Completar
+                                    </button>
+                                    <button onclick="updateJobStatus('${doc.id}', 'cancelado')" class="btn btn-danger btn-sm">
+                                        ❌ Cancelar
+                                    </button>
+                                ` : ''}
+                                <button onclick="contactClient('${job.clientPhone}', '${job.clientName}')" class="btn btn-secondary btn-sm">
+                                    💬 Contactar
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                // Actualizar estadísticas
+                document.getElementById('activeJobsCount').textContent = activeCount;
+                document.getElementById('completedJobsCount').textContent = completedCount;
+                document.getElementById('pendingJobsCount').textContent = pendingCount;
+                document.getElementById('cancelledJobsCount').textContent = cancelledCount;
+                
+            } catch (error) {
+                console.error('Error cargando trabajos:', error);
+                document.getElementById('jobsList').innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--danger);">
+                        ❌ Error cargando trabajos
+                    </div>
+                `;
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        function resetJobFilters() {
+            document.getElementById('jobFilterStatus').value = '';
+            document.getElementById('jobFilterClient').value = '';
+            document.getElementById('jobFilterFrom').value = '';
+            document.getElementById('jobFilterTo').value = '';
+            loadJobs();
+        }
+
+        function updateJobStats() {
+            if (!professionalData) return;
+            
+            document.getElementById('activeJobsCount').textContent = '0';
+            document.getElementById('completedJobsCount').textContent = professionalData.completedJobs || '0';
+            document.getElementById('pendingJobsCount').textContent = '0';
+            document.getElementById('cancelledJobsCount').textContent = '0';
+        }
+
+        async function viewJob(jobId) {
+            const job = jobs.find(j => j.id === jobId);
+            if (!job) return;
+            
+            const modal = document.getElementById('jobModal');
+            const content = document.getElementById('jobModalContent');
+            const actions = document.getElementById('jobModalActions');
+            
+            const date = job.createdAt ? 
+                job.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+            const updated = job.updatedAt ? 
+                job.updatedAt.toDate().toLocaleDateString('es-AR') : '-';
+            
+            content.innerHTML = `
+                <div style="margin-bottom: 2rem;">
+                    <h4>${job.title || 'Trabajo sin título'}</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0;">
+                        <div>
+                            <strong>Estado:</strong>
+                            <span class="job-status ${getJobStatusClass(job.status)}">
+                                ${getJobStatusText(job.status)}
+                            </span>
+                        </div>
+                        <div>
+                            <strong>Fecha creación:</strong> ${date}
+                        </div>
+                        <div>
+                            <strong>Última actualización:</strong> ${updated}
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h5>📋 Información del Cliente</h5>
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                        <p><strong>Nombre:</strong> ${job.clientName || 'No especificado'}</p>
+                        <p><strong>Teléfono:</strong> ${job.clientPhone || 'No especificado'}</p>
+                        <p><strong>Email:</strong> ${job.clientEmail || 'No especificado'}</p>
+                        <p><strong>Dirección:</strong> ${job.address || 'No especificado'}</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h5>📝 Descripción del Trabajo</h5>
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                        ${job.description || 'Sin descripción'}
+                    </div>
+                </div>
+                
+                ${job.price ? `
+                <div style="margin-bottom: 1.5rem;">
+                    <h5>💰 Presupuesto</h5>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">
+                        $${job.price.toLocaleString('es-AR')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${job.notes ? `
+                <div style="margin-bottom: 1.5rem;">
+                    <h5>📌 Notas Adicionales</h5>
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                        ${job.notes}
+                    </div>
+                </div>
+                ` : ''}
+            `;
+            
+            let actionsHtml = '';
+            if (job.status === 'pendiente') {
+                actionsHtml = `
+                    <button onclick="updateJobStatus('${jobId}', 'en_progreso')" class="btn btn-success">
+                        🚀 Iniciar Trabajo
+                    </button>
+                    <button onclick="updateJobStatus('${jobId}', 'cancelado')" class="btn btn-danger">
+                        ❌ Cancelar Trabajo
+                    </button>
+                `;
+            } else if (job.status === 'en_progreso') {
+                actionsHtml = `
+                    <button onclick="updateJobStatus('${jobId}', 'completado')" class="btn btn-success">
+                        ✅ Marcar como Completado
+                    </button>
+                    <button onclick="updateJobStatus('${jobId}', 'cancelado')" class="btn btn-danger">
+                        ❌ Cancelar Trabajo
+                    </button>
+                `;
+            }
+            
+            actionsHtml += `
+                <button onclick="contactClient('${job.clientPhone}', '${job.clientName}')" class="btn btn-secondary">
+                    💬 Contactar Cliente
+                </button>
+                <button onclick="closeJobModal()" class="btn btn-primary">
+                    Cerrar
+                </button>
+            `;
+            
+            actions.innerHTML = actionsHtml;
+            modal.style.display = 'flex';
+        }
+
+        function closeJobModal() {
+            document.getElementById('jobModal').style.display = 'none';
+        }
+
+        function getJobStatusClass(status) {
+            switch(status) {
+                case 'pendiente': return 'job-pending';
+                case 'en_progreso': return 'job-in-progress';
+                case 'completado': return 'job-completed';
+                case 'cancelado': return 'job-cancelled';
+                default: return '';
+            }
+        }
+
+        function getJobStatusText(status) {
+            switch(status) {
+                case 'pendiente': return 'PENDIENTE';
+                case 'en_progreso': return 'EN PROGRESO';
+                case 'completado': return 'COMPLETADO';
+                case 'cancelado': return 'CANCELADO';
+                default: return status;
+            }
+        }
+
+        async function updateJobStatus(jobId, newStatus) {
+            if (!confirm(`¿Estás seguro de querer cambiar el estado del trabajo a "${getJobStatusText(newStatus)}"?`)) {
+                return;
+            }
+            
+            showGlobalLoader(true);
+            
+            try {
+                const updateData = {
+                    status: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                if (newStatus === 'completado') {
+                    updateData.completedAt = firebase.firestore.FieldValue.serverTimestamp();
+                    
+                    // Incrementar contador de trabajos completados
+                    await db.collection('professionals').doc(professionalId).update({
+                        completedJobs: firebase.firestore.FieldValue.increment(1),
+                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Crear registro de rating pendiente para el cliente
+                    const job = jobs.find(j => j.id === jobId);
+                    if (job) {
+                        await db.collection('ratings').add({
+                            professionalId: professionalId,
+                            professionalName: professionalData.name,
+                            jobId: jobId,
+                            clientName: job.clientName,
+                            clientPhone: job.clientPhone,
+                            clientEmail: job.clientEmail,
+                            rating: 0,
+                            comment: '',
+                            status: 'pending',
+                            jobCompleted: true,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                }
+                
+                await db.collection('jobs').doc(jobId).update(updateData);
+                
+                showMessage('profileMessage', `✅ Trabajo actualizado a "${getJobStatusText(newStatus)}"`, 'success');
+                
+                // Recargar trabajos y ranking
+                loadJobs();
+                await loadRankingData();
+                
+                closeJobModal();
+                
+            } catch (error) {
+                console.error('Error actualizando estado del trabajo:', error);
+                showMessage('profileMessage', 'Error actualizando estado del trabajo', 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        function contactClient(phone, clientName) {
+            if (!phone) {
+                showMessage('profileMessage', 'El cliente no tiene teléfono registrado', 'error');
+                return;
+            }
+            
+            const message = `Hola ${clientName}, soy ${professionalData.name} de TecniYa. Te contacto respecto al trabajo que realizamos.`;
+            const whatsappUrl = `https://wa.me/549${phone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // ============================================
         // SISTEMA DE PRESUPUESTOS
         // ============================================
         async function loadBudgets() {
@@ -2857,7 +3444,6 @@
                     .where('professionalId', '==', professionalId)
                     .orderBy('createdAt', 'desc');
                 
-                // Aplicar filtros
                 const statusFilter = document.getElementById('budgetFilterStatus').value;
                 const clientFilter = document.getElementById('budgetFilterClient').value;
                 const fromFilter = document.getElementById('budgetFilterFrom').value;
@@ -2918,6 +3504,9 @@
                             break;
                         case 'rechazado':
                             statusBadge = '<span class="budget-status status-rejected">RECHAZADO</span>';
+                            break;
+                        case 'completado':
+                            statusBadge = '<span class="budget-status status-completed">COMPLETADO</span>';
                             break;
                     }
                     
@@ -2992,7 +3581,6 @@
             const form = document.getElementById('budgetForm');
             
             if (budgetId) {
-                // Editar presupuesto existente
                 const budget = budgets.find(b => b.id === budgetId);
                 if (budget) {
                     title.textContent = 'Editar Presupuesto';
@@ -3002,7 +3590,6 @@
                     document.getElementById('budgetNotes').value = budget.notes || '';
                     document.getElementById('budgetStatus').value = budget.status || 'borrador';
                     
-                    // Cargar items
                     const itemsContainer = document.getElementById('budgetItems');
                     itemsContainer.innerHTML = '';
                     if (budget.items && budget.items.length > 0) {
@@ -3016,7 +3603,6 @@
                     updateBudgetTotal();
                 }
             } else {
-                // Nuevo presupuesto
                 title.textContent = 'Nuevo Presupuesto';
                 form.reset();
                 document.getElementById('budgetId').value = '';
@@ -3083,7 +3669,6 @@
         async function saveBudget(e) {
             e.preventDefault();
             
-            // Recolectar items
             const items = [];
             document.querySelectorAll('.item-row').forEach(row => {
                 const description = row.querySelector('.item-description').value;
@@ -3125,11 +3710,9 @@
                 const budgetId = document.getElementById('budgetId').value;
                 
                 if (budgetId) {
-                    // Actualizar presupuesto existente
                     await db.collection('budgets').doc(budgetId).update(budgetData);
                     showMessage('profileMessage', '✅ Presupuesto actualizado correctamente', 'success');
                 } else {
-                    // Crear nuevo presupuesto
                     await db.collection('budgets').add(budgetData);
                     showMessage('profileMessage', '✅ Presupuesto creado correctamente', 'success');
                 }
@@ -3170,17 +3753,14 @@
             let budget;
             
             if (budgetId) {
-                // Generar PDF de presupuesto específico
                 budget = budgets.find(b => b.id === budgetId);
                 if (!budget) return;
             } else {
-                // Generar PDF del presupuesto actual en el modal
                 const client = document.getElementById('budgetClient').value;
                 const description = document.getElementById('budgetDescription').value;
                 const notes = document.getElementById('budgetNotes').value;
                 const total = document.getElementById('budgetTotalAmount').textContent;
                 
-                // Recolectar items
                 const items = [];
                 document.querySelectorAll('.item-row').forEach(row => {
                     const description = row.querySelector('.item-description').value;
@@ -3204,7 +3784,6 @@
                 };
             }
             
-            // Crear contenido HTML para el PDF
             const pdfContent = document.createElement('div');
             pdfContent.style.padding = '20px';
             pdfContent.style.fontFamily = 'Arial, sans-serif';
@@ -3264,12 +3843,10 @@
                 </div>
             `;
             
-            // Mostrar vista previa
             document.getElementById('pdfPreviewContent').innerHTML = '';
             document.getElementById('pdfPreviewContent').appendChild(pdfContent);
             document.getElementById('pdfPreviewModal').style.display = 'flex';
             
-            // Guardar referencia al budget para la descarga
             window.currentPdfBudget = budget;
         }
 
@@ -3281,10 +3858,8 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Obtener contenido HTML
             const content = document.getElementById('pdfPreviewContent');
             
-            // Generar PDF
             doc.html(content, {
                 callback: function(doc) {
                     doc.save(`Presupuesto-${window.currentPdfBudget.client}-${new Date().getTime()}.pdf`);
@@ -3345,7 +3920,6 @@
                 return;
             }
             
-            // Extraer teléfono del cliente
             let phone = '';
             const clientText = budget.client || '';
             const phoneMatch = clientText.match(/\d{10,13}/);
@@ -3358,7 +3932,6 @@
                 return;
             }
             
-            // Crear mensaje
             const date = budget.createdAt?.toDate ? 
                 budget.createdAt.toDate().toLocaleDateString('es-AR') : 
                 new Date().toLocaleDateString('es-AR');
@@ -3382,10 +3955,7 @@
             message += `Presupuesto válido por 30 días.\n`;
             message += `Contacto: ${professionalData.phone}`;
             
-            // Codificar mensaje para URL
             const encodedMessage = encodeURIComponent(message);
-            
-            // Abrir WhatsApp
             window.open(`https://wa.me/549${phone}?text=${encodedMessage}`, '_blank');
         }
 
@@ -3430,10 +4000,9 @@
                         </div>
                     `;
                     
-                    // Actualizar promedio y total
                     document.getElementById('averageRating').textContent = '0.0';
                     document.getElementById('totalRatingsCount').textContent = '0';
-                    document.getElementById('completedJobsCount').textContent = professionalData.completedJobs || '0';
+                    document.getElementById('completedJobsStats').textContent = professionalData.completedJobs || '0';
                     return;
                 }
                 
@@ -3464,11 +4033,10 @@
                 
                 container.innerHTML = html;
                 
-                // Actualizar promedio y total
                 const average = totalRating / count;
                 document.getElementById('averageRating').textContent = average.toFixed(1);
                 document.getElementById('totalRatingsCount').textContent = count;
-                document.getElementById('completedJobsCount').textContent = professionalData.completedJobs || '0';
+                document.getElementById('completedJobsStats').textContent = professionalData.completedJobs || '0';
                 
             } catch (error) {
                 console.error('Error cargando calificaciones:', error);
@@ -3578,7 +4146,6 @@
             try {
                 await db.collection('certifications').add(certificationData);
                 
-                // Limpiar formulario
                 document.getElementById('certificationTitle').value = '';
                 document.getElementById('certificationInstitution').value = '';
                 document.getElementById('certificationNumber').value = '';
@@ -3619,7 +4186,6 @@
                 return;
             }
             
-            // Validar campos requeridos
             const name = document.getElementById('profileName').value.trim();
             const phone = document.getElementById('profilePhone').value.trim();
             const provincia = document.getElementById('profileProvincia').value;
@@ -3634,7 +4200,6 @@
                 return;
             }
             
-            // Obtener rubros seleccionados
             const rubros = [];
             document.querySelectorAll('#rubrosCheckbox input:checked').forEach(checkbox => {
                 rubros.push(checkbox.value);
@@ -3648,7 +4213,6 @@
             showGlobalLoader(true);
             
             try {
-                // Preparar datos para actualizar
                 const updateData = {
                     name,
                     phone,
@@ -3664,17 +4228,13 @@
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
-                // Actualizar en Firestore
                 await db.collection('professionals').doc(professionalId).update(updateData);
                 
-                // Actualizar professionalData local
                 professionalData = { ...professionalData, ...updateData };
                 
-                // Actualizar UI
                 updateProfileStatus();
                 updateUserInfo();
                 
-                // Recalcular ranking
                 await calculateRanking();
                 updateRankingUI();
                 
@@ -3697,8 +4257,6 @@
                 });
                 
                 showMessage('profileMessage', '✅ Actividad actualizada', 'success');
-                
-                // Recalcular ranking
                 await loadRankingData();
                 
             } catch (error) {
@@ -3821,8 +4379,14 @@
         window.deleteBudget = deleteBudget;
         window.closeBudgetModal = closeBudgetModal;
         window.closePdfPreview = closePdfPreview;
+        window.closeJobModal = closeJobModal;
         window.removeBudgetItem = removeBudgetItem;
         window.deleteCertification = deleteCertification;
+        window.viewJob = viewJob;
+        window.updateJobStatus = updateJobStatus;
+        window.contactClient = contactClient;
+        window.loadJobs = loadJobs;
+        window.resetJobFilters = resetJobFilters;
     </script>
 </body>
 </html>
