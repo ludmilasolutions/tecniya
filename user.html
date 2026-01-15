@@ -1,0 +1,2198 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecniYa - Clientes</title>
+    <meta name="description" content="Encontrá los mejores profesionales para tus necesidades. Contactá y calificá.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a4fd8'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🏠</text></svg>">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a4fd8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://www.gstatic.com">
+    
+    <!-- CSS -->
+    <style>
+        /* ===== VARIABLES & RESET ===== */
+        :root {
+            --primary: #0a4fd8;
+            --primary-dark: #083bb5;
+            --secondary: #1db954;
+            --secondary-dark: #17a344;
+            --accent: #ff9800;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #333;
+            --gray: #666;
+            --light-gray: #e1e5e9;
+            --shadow: 0 4px 12px rgba(10, 79, 216, 0.15);
+            --radius: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* ===== LAYOUT ===== */
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, #1a60f0 100%);
+            color: white;
+            padding: 1.5rem 1rem;
+            position: relative;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+            background: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-email {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* ===== TABS ===== */
+        .tabs-container {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin: 2rem auto;
+        }
+        
+        .tabs-header {
+            display: flex;
+            background: white;
+            border-bottom: 2px solid var(--light-gray);
+            overflow-x: auto;
+            padding: 0 20px;
+        }
+        
+        .tab {
+            padding: 1.2rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            background-color: #f1f6ff;
+        }
+        
+        .logout-btn {
+            margin-left: auto;
+            color: var(--danger);
+            border-bottom-color: var(--danger) !important;
+        }
+        
+        /* ===== PANELS ===== */
+        .panel {
+            display: none;
+            padding: 2.5rem;
+        }
+        
+        .panel.active {
+            display: block;
+        }
+        
+        /* ===== LOGIN ===== */
+        .login-container {
+            max-width: 500px;
+            margin: 4rem auto;
+            padding: 2.5rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .login-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .login-subtitle {
+            color: var(--gray);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        /* ===== SOCIAL LOGIN ===== */
+        .social-login {
+            margin: 1.5rem 0;
+        }
+        
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 0.8rem;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .google-btn:hover {
+            background: #f8f9fa;
+            border-color: #ccc;
+        }
+        
+        .google-btn img {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--gray);
+        }
+        
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--light-gray);
+        }
+        
+        .divider span {
+            padding: 0 1rem;
+        }
+        
+        /* ===== FORMS ===== */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 1rem;
+            background: white;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 79, 216, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* ===== SEARCH SECTION ===== */
+        .search-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* ===== PROFESSIONAL CARDS ===== */
+        .professional-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .professional-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .professional-header {
+            display: flex;
+            padding: 1.5rem;
+            gap: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .professional-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .professional-info {
+            flex: 1;
+        }
+        
+        .professional-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .professional-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--warning);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .professional-location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .professional-body {
+            padding: 1.5rem;
+        }
+        
+        .professional-bio {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .professional-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .skill-tag {
+            background: #e9f7fe;
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .professional-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: #333;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        /* ===== JOBS SECTION ===== */
+        .job-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .job-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .job-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .job-in-progress {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .job-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .job-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* ===== RATINGS SECTION ===== */
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+            margin: 1rem 0;
+        }
+        
+        .star {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .star.active {
+            color: var(--warning);
+        }
+        
+        .rating-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--light-gray);
+        }
+        
+        /* ===== MESSAGES ===== */
+        .message {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .message-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .message-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .message-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        /* ===== LOADER ===== */
+        .loader {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            border-radius: 16px;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .tabs-header {
+                flex-direction: column;
+            }
+            
+            .tab {
+                justify-content: center;
+                padding: 1rem;
+            }
+            
+            .logout-btn {
+                margin-left: 0;
+                margin-top: 1rem;
+            }
+            
+            .panel {
+                padding: 1.5rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .professional-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .professional-photo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .professional-footer {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .modal-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN CONTAINER -->
+    <div id="loginContainer" class="container login-container">
+        <div class="logo" style="justify-content: center; margin-bottom: 1.5rem;">
+            <div class="logo-icon">🏠</div>
+            <h1 class="logo-text">TecniYa</h1>
+        </div>
+        
+        <h2 class="login-title">Panel de Clientes</h2>
+        <p class="login-subtitle">Encontrá los mejores profesionales para tus necesidades</p>
+        
+        <!-- SOCIAL LOGIN -->
+        <div class="social-login">
+            <button id="googleLoginBtn" class="google-btn">
+                <img src="https://www.google.com/favicon.ico" alt="Google">
+                Ingresar con Google
+            </button>
+        </div>
+        
+        <div class="divider">
+            <span>o</span>
+        </div>
+        
+        <!-- EMAIL LOGIN -->
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="loginEmail" class="form-input" 
+                       placeholder="tu@email.com" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Contraseña</label>
+                <input type="password" id="loginPassword" class="form-input" 
+                       placeholder="••••••••" required minlength="6">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="width: 100%; margin-top: 1rem;">
+                🔐 Ingresar
+            </button>
+        </form>
+        
+        <div style="margin-top: 2rem; text-align: center;">
+            <p style="color: var(--gray); margin-bottom: 1rem;">¿No tenés cuenta?</p>
+            <button id="toggleRegisterBtn" class="btn btn-secondary">
+                📝 Registrarme
+            </button>
+        </div>
+        
+        <!-- REGISTRO -->
+        <div id="registerSection" style="display: none; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--light-gray);">
+            <h3 style="color: var(--primary); margin-bottom: 1.5rem; font-size: 1.3rem;">Registro de Cliente</h3>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label class="form-label">Nombre completo *</label>
+                    <input type="text" id="registerName" class="form-input" 
+                           placeholder="Juan Pérez" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Teléfono *</label>
+                    <input type="tel" id="registerPhone" class="form-input" 
+                           placeholder="3417558966" required pattern="[0-9]{10,13}">
+                    <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
+                        Ejemplo: 3417558966 (sin 0 ni 15)
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email *</label>
+                    <input type="email" id="registerEmail" class="form-input" 
+                           placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña *</label>
+                    <input type="password" id="registerPassword" class="form-input" 
+                       placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-success">
+                        ✅ Registrarme
+                    </button>
+                    <button type="button" id="cancelRegisterBtn" class="btn btn-secondary">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div id="loginMessage" class="message" style="display: none; margin-top: 1.5rem;"></div>
+    </div>
+    
+    <!-- MAIN PANEL -->
+    <div id="mainPanel" style="display: none;">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="container header-content">
+                <div class="logo">
+                    <div class="logo-icon">🏠</div>
+                    <div>
+                        <h1 class="logo-text">TecniYa</h1>
+                        <div class="user-info">
+                            <div class="user-email" id="userEmail"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button id="mainLogoutBtn" class="btn btn-danger">
+                        🚪 Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- TABS -->
+        <div class="container tabs-container">
+            <div class="tabs-header">
+                <div class="tab active" data-tab="search">
+                    🔍 Buscar Profesionales
+                </div>
+                <div class="tab" data-tab="myJobs">
+                    🛠️ Mis Trabajos
+                </div>
+                <div class="tab" data-tab="ratings">
+                    ⭐ Mis Calificaciones
+                </div>
+                <div class="tab logout-btn" id="logoutBtn">
+                    🚪 Cerrar Sesión
+                </div>
+            </div>
+            
+            <!-- PANELS -->
+            <div class="panels">
+                <!-- SEARCH PANEL -->
+                <div id="searchPanel" class="panel active">
+                    <div class="search-container">
+                        <h3>🔍 Buscar Profesionales</h3>
+                        
+                        <div class="search-grid">
+                            <div class="form-group">
+                                <label class="form-label">¿Qué necesitás?</label>
+                                <select id="searchRubro" class="form-select">
+                                    <option value="">Todos los rubros</option>
+                                    <option value="plomeria">Plomería</option>
+                                    <option value="gas">Gas</option>
+                                    <option value="electricidad">Electricidad</option>
+                                    <option value="aire">Aire Acondicionado</option>
+                                    <option value="albanileria">Albañilería</option>
+                                    <option value="pintura">Pintura</option>
+                                    <option value="cerrajeria">Cerrajería</option>
+                                    <option value="jardineria">Jardinería</option>
+                                    <option value="herreria">Herrería</option>
+                                    <option value="carpinteria">Carpintería</option>
+                                    <option value="limpieza">Limpieza</option>
+                                    <option value="mudanzas">Mudanzas</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Provincia</label>
+                                <select id="searchProvincia" class="form-select">
+                                    <option value="">Todas las provincias</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Ciudad</label>
+                                <select id="searchCiudad" class="form-select" disabled>
+                                    <option value="">Todas las ciudades</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Ordenar por</label>
+                                <select id="searchOrder" class="form-select">
+                                    <option value="ranking">Mejor ranking</option>
+                                    <option value="rating">Mejor calificación</option>
+                                    <option value="experience">Más experiencia</option>
+                                    <option value="featured">Destacados primero</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button id="searchBtn" class="btn btn-primary">
+                            🔍 Buscar Profesionales
+                        </button>
+                    </div>
+                    
+                    <div id="professionalsList">
+                        <!-- Lista de profesionales se cargará aquí -->
+                    </div>
+                    
+                    <div id="noResults" style="text-align: center; padding: 3rem; display: none;">
+                        <h4 style="color: var(--gray); margin-bottom: 1rem;">No se encontraron profesionales</h4>
+                        <p style="color: var(--gray);">Intentá con otros filtros de búsqueda.</p>
+                    </div>
+                </div>
+                
+                <!-- MY JOBS PANEL -->
+                <div id="myJobsPanel" class="panel">
+                    <div class="search-container">
+                        <h3>🛠️ Mis Trabajos</h3>
+                        <p style="color: var(--gray); margin-bottom: 1.5rem;">Aquí podés ver todos los trabajos que solicitaste.</p>
+                    </div>
+                    
+                    <div id="jobsList">
+                        <!-- Lista de trabajos se cargará aquí -->
+                    </div>
+                    
+                    <div id="noJobs" style="text-align: center; padding: 3rem;">
+                        <h4 style="color: var(--gray); margin-bottom: 1rem;">No tenés trabajos registrados</h4>
+                        <p style="color: var(--gray);">Busca profesionales y contactalos para empezar un trabajo.</p>
+                    </div>
+                </div>
+                
+                <!-- RATINGS PANEL -->
+                <div id="ratingsPanel" class="panel">
+                    <div class="search-container">
+                        <h3>⭐ Mis Calificaciones</h3>
+                        <p style="color: var(--gray); margin-bottom: 1.5rem;">Calificá a los profesionales que te ayudaron.</p>
+                    </div>
+                    
+                    <div id="pendingRatings">
+                        <!-- Calificaciones pendientes se cargarán aquí -->
+                    </div>
+                    
+                    <div id="myRatings">
+                        <!-- Mis calificaciones se cargarán aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL PARA CONTACTAR PROFESIONAL -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💬 Contactar Profesional</h3>
+                <button class="modal-close" onclick="closeContactModal()">&times;</button>
+            </div>
+            
+            <div id="contactModalContent">
+                <!-- Contenido dinámico -->
+            </div>
+            
+            <div class="btn-group" id="contactModalActions">
+                <!-- Acciones dinámicas -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL PARA CALIFICAR -->
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⭐ Calificar Profesional</h3>
+                <button class="modal-close" onclick="closeRatingModal()">&times;</button>
+            </div>
+            
+            <div id="ratingModalContent">
+                <!-- Contenido dinámico -->
+            </div>
+            
+            <div class="btn-group">
+                <button id="submitRatingBtn" class="btn btn-success">
+                    ✅ Enviar Calificación
+                </button>
+                <button onclick="closeRatingModal()" class="btn btn-danger">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- LOADER GLOBAL -->
+    <div id="globalLoader" class="loader">
+        <div class="spinner"></div>
+    </div>
+    
+    <!-- FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN FIREBASE
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
+            authDomain: "tecniya-b4206.firebaseapp.com",
+            projectId: "tecniya-b4206",
+            storageBucket: "tecniya-b4206.firebasestorage.app",
+            messagingSenderId: "166424133304",
+            appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
+        };
+
+        // ============================================
+        // VARIABLES GLOBALES
+        // ============================================
+        let auth, db, currentUser, userId = null, userData = null;
+        let professionals = [];
+        let jobs = [];
+        let pendingRatings = [];
+        let userRatings = [];
+        let googleProvider;
+        let currentProfessional = null;
+        let currentRatingJob = null;
+        let selectedRating = 0;
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                auth = firebase.auth();
+                db = firebase.firestore();
+                
+                // Configurar proveedor de Google
+                googleProvider = new firebase.auth.GoogleAuthProvider();
+                googleProvider.addScope('email');
+                googleProvider.addScope('profile');
+                
+                // Configurar event listeners
+                setupEventListeners();
+                
+                // Cargar provincias
+                loadProvincias();
+                
+                // Verificar estado de autenticación
+                checkAuthState();
+                
+            } catch (error) {
+                console.error('Error inicializando:', error);
+                showMessage('loginMessage', 'Error al inicializar la aplicación', 'error');
+            }
+        });
+
+        // ============================================
+        // SETUP DE EVENT LISTENERS
+        // ============================================
+        function setupEventListeners() {
+            // Login
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('toggleRegisterBtn').addEventListener('click', toggleRegister);
+            document.getElementById('cancelRegisterBtn').addEventListener('click', toggleRegister);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('googleLoginBtn').addEventListener('click', handleGoogleLogin);
+            
+            // Logout
+            document.getElementById('mainLogoutBtn')?.addEventListener('click', handleLogout);
+            document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
+            
+            // Tabs
+            document.querySelectorAll('.tab[data-tab]').forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+            
+            // Search
+            document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
+            document.getElementById('searchProvincia').addEventListener('change', handleSearchProvinciaChange);
+            
+            // Ratings
+            document.getElementById('submitRatingBtn').addEventListener('click', submitRating);
+        }
+
+        // ============================================
+        // AUTENTICACIÓN
+        // ============================================
+        function checkAuthState() {
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    currentUser = user;
+                    await loadUserProfile();
+                    showMainPanel();
+                } else {
+                    showLoginPanel();
+                }
+            });
+        }
+
+        async function handleGoogleLogin() {
+            showGlobalLoader(true);
+            
+            try {
+                const result = await auth.signInWithPopup(googleProvider);
+                const user = result.user;
+                
+                // Buscar usuario por email o crear uno nuevo
+                const snapshot = await db.collection('users')
+                    .where('email', '==', user.email)
+                    .limit(1)
+                    .get();
+                
+                if (snapshot.empty) {
+                    // Crear nuevo usuario con datos de Google
+                    const userRef = await db.collection('users').add({
+                        userId: user.uid,
+                        email: user.email,
+                        name: user.displayName || '',
+                        phone: '',
+                        profileCompleted: false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    userId = userRef.id;
+                } else {
+                    const doc = snapshot.docs[0];
+                    userId = doc.id;
+                    userData = { id: doc.id, ...doc.data() };
+                }
+                
+                showMessage('loginMessage', '✅ Ingreso exitoso con Google', 'success');
+                
+            } catch (error) {
+                console.error('Error en login con Google:', error);
+                let message = 'Error al iniciar sesión con Google';
+                if (error.code === 'auth/popup-closed-by-user') message = 'El popup fue cerrado';
+                else if (error.code === 'auth/cancelled-popup-request') message = 'Solicitud cancelada';
+                showMessage('loginMessage', '❌ ' + message, 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showMessage('loginMessage', 'Ingresá email y contraseña', 'error');
+                return;
+            }
+            
+            showGlobalLoader(true);
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                showMessage('loginMessage', '✅ Ingreso exitoso', 'success');
+            } catch (error) {
+                console.error('Error de login:', error);
+                let message = 'Error al iniciar sesión';
+                if (error.code === 'auth/user-not-found') message = 'Usuario no encontrado';
+                else if (error.code === 'auth/wrong-password') message = 'Contraseña incorrecta';
+                else if (error.code === 'auth/invalid-email') message = 'Email inválido';
+                else if (error.code === 'auth/too-many-requests') message = 'Demasiados intentos. Intentá más tarde';
+                showMessage('loginMessage', '❌ ' + message, 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const phone = document.getElementById('registerPhone').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            if (!name || !phone || !email || !password) {
+                showMessage('loginMessage', 'Completá todos los campos', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('loginMessage', 'La contraseña debe tener al menos 6 caracteres', 'error');
+                return;
+            }
+            
+            if (!/^\d{10,13}$/.test(phone)) {
+                showMessage('loginMessage', 'Teléfono inválido. Ejemplo: 3417558966', 'error');
+                return;
+            }
+            
+            showGlobalLoader(true);
+            
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                
+                await userCredential.user.updateProfile({ displayName: name });
+                
+                const userRef = await db.collection('users').add({
+                    userId: userCredential.user.uid,
+                    email,
+                    name,
+                    phone,
+                    profileCompleted: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                userId = userRef.id;
+                
+                showMessage('loginMessage', '✅ Registro exitoso. Ya podés iniciar sesión.', 'success');
+                toggleRegister();
+                document.getElementById('registerForm').reset();
+                
+                await auth.signInWithEmailAndPassword(email, password);
+                
+            } catch (error) {
+                console.error('Error en registro:', error);
+                let message = 'Error en el registro';
+                if (error.code === 'auth/email-already-in-use') message = 'El email ya está registrado';
+                else if (error.code === 'auth/invalid-email') message = 'Email inválido';
+                else if (error.code === 'auth/weak-password') message = 'Contraseña demasiado débil';
+                else if (error.code === 'auth/network-request-failed') message = 'Error de conexión. Verificá tu internet';
+                showMessage('loginMessage', '❌ ' + message, 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('¿Estás seguro de querer cerrar sesión?')) {
+                auth.signOut();
+            }
+        }
+
+        // ============================================
+        // INTERFAZ DE USUARIO
+        // ============================================
+        function showLoginPanel() {
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('mainPanel').style.display = 'none';
+        }
+
+        function showMainPanel() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('mainPanel').style.display = 'block';
+        }
+
+        function toggleRegister() {
+            const registerSection = document.getElementById('registerSection');
+            const isVisible = registerSection.style.display === 'block';
+            registerSection.style.display = isVisible ? 'none' : 'block';
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            
+            const tabElement = document.querySelector(`.tab[data-tab="${tabId}"]`);
+            const panelElement = document.getElementById(`${tabId}Panel`);
+            
+            if (tabElement) tabElement.classList.add('active');
+            if (panelElement) panelElement.classList.add('active');
+            
+            if (tabId === 'search') {
+                searchProfessionals();
+            } else if (tabId === 'myJobs') {
+                loadUserJobs();
+            } else if (tabId === 'ratings') {
+                loadUserRatings();
+            }
+        }
+
+        // ============================================
+        // CARGA DE DATOS DEL USUARIO
+        // ============================================
+        async function loadUserProfile() {
+            showGlobalLoader(true);
+            
+            try {
+                const snapshot = await db.collection('users')
+                    .where('userId', '==', currentUser.uid)
+                    .limit(1)
+                    .get();
+                
+                if (snapshot.empty) {
+                    const emailSnapshot = await db.collection('users')
+                        .where('email', '==', currentUser.email)
+                        .limit(1)
+                        .get();
+                    
+                    if (emailSnapshot.empty) {
+                        // Crear usuario si no existe
+                        const userRef = await db.collection('users').add({
+                            userId: currentUser.uid,
+                            email: currentUser.email,
+                            name: currentUser.displayName || '',
+                            phone: '',
+                            profileCompleted: false,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        userId = userRef.id;
+                        userData = {
+                            id: userRef.id,
+                            userId: currentUser.uid,
+                            email: currentUser.email,
+                            name: currentUser.displayName || '',
+                            phone: '',
+                            profileCompleted: false
+                        };
+                    } else {
+                        const doc = emailSnapshot.docs[0];
+                        userId = doc.id;
+                        userData = { id: doc.id, ...doc.data() };
+                    }
+                } else {
+                    const doc = snapshot.docs[0];
+                    userId = doc.id;
+                    userData = { id: doc.id, ...doc.data() };
+                }
+                
+                document.getElementById('userEmail').textContent = currentUser.email;
+                
+            } catch (error) {
+                console.error('Error cargando perfil:', error);
+                showMessage('loginMessage', 'Error cargando perfil', 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        // ============================================
+        // BÚSQUEDA DE PROFESIONALES
+        // ============================================
+        function loadProvincias() {
+            const provincias = [
+                "Buenos Aires", "CABA", "Catamarca", "Chaco", "Chubut",
+                "Córdoba", "Corrientes", "Entre Ríos", "Formosa", "Jujuy",
+                "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquén",
+                "Río Negro", "Salta", "San Juan", "San Luis", "Santa Cruz",
+                "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucumán"
+            ];
+            
+            const searchSelect = document.getElementById('searchProvincia');
+            provincias.sort().forEach(provincia => {
+                const option = document.createElement('option');
+                option.value = provincia;
+                option.textContent = provincia;
+                searchSelect.appendChild(option);
+            });
+        }
+
+        function handleSearchProvinciaChange() {
+            const provincia = this.value;
+            const ciudadSelect = document.getElementById('searchCiudad');
+            
+            if (!provincia) {
+                ciudadSelect.innerHTML = '<option value="">Todas las ciudades</option>';
+                ciudadSelect.disabled = true;
+                return;
+            }
+            
+            const ciudades = getCiudadesByProvincia(provincia);
+            ciudadSelect.innerHTML = '<option value="">Todas las ciudades</option>';
+            ciudades.forEach(ciudad => {
+                const option = document.createElement('option');
+                option.value = ciudad;
+                option.textContent = ciudad;
+                ciudadSelect.appendChild(option);
+            });
+            ciudadSelect.disabled = false;
+        }
+
+        function getCiudadesByProvincia(provincia) {
+            const ciudadesMap = {
+                "Buenos Aires": ["La Plata", "Mar del Plata", "Bahía Blanca", "Quilmes", "Lomas de Zamora", "San Isidro", "Tigre", "Pilar", "Merlo", "Moreno"],
+                "CABA": ["Capital Federal"],
+                "Córdoba": ["Córdoba", "Villa María", "Río Cuarto", "Alta Gracia", "Villa Carlos Paz", "Jesús María"],
+                "Santa Fe": ["Rosario", "Santa Fe", "Rafaela", "Venado Tuerto", "Reconquista", "Sunchales"],
+                "Mendoza": ["Mendoza", "San Rafael", "Godoy Cruz", "Guaymallén", "Las Heras", "Maipú"],
+                "Tucumán": ["San Miguel de Tucumán", "Yerba Buena", "Tafí Viejo", "Concepción"],
+                "Salta": ["Salta", "San Ramón de la Nueva Orán", "Tartagal", "Metán"],
+                "Entre Ríos": ["Paraná", "Concordia", "Gualeguaychú", "Concepción del Uruguay"],
+                "Corrientes": ["Corrientes", "Goya", "Mercedes", "Curuzú Cuatiá"],
+                "Chaco": ["Resistencia", "Barranqueras", "Fontana", "Presidencia Roque Sáenz Peña"],
+                "Misiones": ["Posadas", "Oberá", "Eldorado", "Apóstoles"],
+                "Santiago del Estero": ["Santiago del Estero", "La Banda", "Frías", "Añatuya"],
+                "San Juan": ["San Juan", "Rivadavia", "Chimbas", "Rawson"],
+                "San Luis": ["San Luis", "Villa Mercedes", "Juana Koslay", "La Punta"],
+                "Neuquén": ["Neuquén", "Cutral-Có", "Plottier", "Centenario"],
+                "Río Negro": ["Viedma", "Bariloche", "General Roca", "Cipolletti"],
+                "Chubut": ["Rawson", "Comodoro Rivadavia", "Trelew", "Puerto Madryn"],
+                "Santa Cruz": ["Río Gallegos", "Caleta Olivia", "Puerto Deseado", "Río Turbio"],
+                "Tierra del Fuego": ["Ushuaia", "Río Grande"],
+                "La Pampa": ["Santa Rosa", "General Pico", "Toay", "Realicó"],
+                "La Rioja": ["La Rioja", "Chilecito", "Aimogasta", "Chamical"],
+                "Catamarca": ["San Fernando del Valle de Catamarca", "Valle Viejo", "Andalgalá", "Belén"],
+                "Formosa": ["Formosa", "Clorinda", "Pirané"],
+                "Jujuy": ["San Salvador de Jujuy", "Palpalá", "San Pedro de Jujuy", "Libertador General San Martín"]
+            };
+            
+            return ciudadesMap[provincia] || ["Todas las ciudades"];
+        }
+
+        async function searchProfessionals() {
+            showGlobalLoader(true);
+            
+            try {
+                let query = db.collection('professionals')
+                    .where('profileCompleted', '==', true);
+                
+                const rubro = document.getElementById('searchRubro').value;
+                const provincia = document.getElementById('searchProvincia').value;
+                const ciudad = document.getElementById('searchCiudad').value;
+                const order = document.getElementById('searchOrder').value;
+                
+                if (rubro) {
+                    query = query.where('rubros', 'array-contains', rubro);
+                }
+                
+                if (provincia) {
+                    query = query.where('provincia', '==', provincia);
+                }
+                
+                if (ciudad) {
+                    query = query.where('ciudad', '==', ciudad);
+                }
+                
+                // Aplicar ordenamiento
+                if (order === 'ranking') {
+                    query = query.orderBy('rankingScore', 'desc');
+                } else if (order === 'rating') {
+                    query = query.orderBy('averageRating', 'desc');
+                } else if (order === 'experience') {
+                    query = query.orderBy('experienceYears', 'desc');
+                } else if (order === 'featured') {
+                    // Primero los destacados, luego por ranking
+                    query = query.orderBy('isFeatured', 'desc').orderBy('rankingScore', 'desc');
+                }
+                
+                const snapshot = await query.limit(50).get();
+                professionals = [];
+                const container = document.getElementById('professionalsList');
+                const noResults = document.getElementById('noResults');
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '';
+                    noResults.style.display = 'block';
+                    return;
+                }
+                
+                noResults.style.display = 'none';
+                let html = '';
+                
+                snapshot.forEach(doc => {
+                    const professional = { id: doc.id, ...doc.data() };
+                    professionals.push(professional);
+                    
+                    const now = new Date();
+                    const isFeaturedActive = professional.isFeatured && 
+                        professional.featuredUntil && 
+                        professional.featuredUntil.toDate() > now;
+                    
+                    const stars = '⭐'.repeat(Math.round(professional.averageRating || 0)) + 
+                                 '☆'.repeat(5 - Math.round(professional.averageRating || 0));
+                    
+                    const rubrosList = professional.rubros?.slice(0, 3).map(rubro => {
+                        const rubroNames = {
+                            'plomeria': 'Plomería',
+                            'gas': 'Gas',
+                            'electricidad': 'Electricidad',
+                            'aire': 'Aire Acondicionado',
+                            'albanileria': 'Albañilería',
+                            'pintura': 'Pintura',
+                            'cerrajeria': 'Cerrajería',
+                            'jardineria': 'Jardinería',
+                            'herreria': 'Herrería',
+                            'carpinteria': 'Carpintería',
+                            'limpieza': 'Limpieza',
+                            'mudanzas': 'Mudanzas',
+                            'otros': 'Otros'
+                        };
+                        return rubroNames[rubro] || rubro;
+                    }).join(', ');
+                    
+                    html += `
+                        <div class="professional-card">
+                            <div class="professional-header">
+                                <img src="${professional.photoUrl || 'https://via.placeholder.com/80x80/0a4fd8/ffffff?text=PRO'}" 
+                                     alt="${professional.name}" 
+                                     class="professional-photo"
+                                     onerror="this.src='https://via.placeholder.com/80x80/0a4fd8/ffffff?text=PRO'">
+                                <div class="professional-info">
+                                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                                        <h3 class="professional-name">${professional.name}</h3>
+                                        ${isFeaturedActive ? '<span style="background: #ffd700; color: #333; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">⭐ DESTACADO</span>' : ''}
+                                    </div>
+                                    <div class="professional-rating">
+                                        ${stars}
+                                        <span style="color: var(--gray);">(${professional.averageRating?.toFixed(1) || '0.0'})</span>
+                                        <span style="color: var(--gray);">• ${professional.totalRatings || 0} calificaciones</span>
+                                    </div>
+                                    <div class="professional-location">
+                                        📍 ${professional.ciudad || ''}, ${professional.provincia || ''}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="professional-body">
+                                <p class="professional-bio">${professional.bio || 'Sin descripción'}</p>
+                                
+                                <div class="professional-skills">
+                                    <span class="skill-tag">${professional.experienceYears || 0} años exp.</span>
+                                    <span class="skill-tag">${professional.completedJobs || 0} trabajos</span>
+                                    <span class="skill-tag">Ranking: ${professional.rankingLevel || 'Principiante'}</span>
+                                    ${rubrosList ? `<span class="skill-tag">${rubrosList}</span>` : ''}
+                                </div>
+                            </div>
+                            
+                            <div class="professional-footer">
+                                <div style="color: var(--dark); font-weight: 600;">
+                                    📞 ${professional.phone || 'Sin teléfono'}
+                                </div>
+                                <div>
+                                    <button onclick="contactProfessional('${doc.id}')" class="btn btn-primary btn-sm">
+                                        💬 Contactar por WhatsApp
+                                    </button>
+                                    <button onclick="viewProfessional('${doc.id}')" class="btn btn-secondary btn-sm">
+                                        👁️ Ver Detalles
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error buscando profesionales:', error);
+                document.getElementById('professionalsList').innerHTML = `
+                    <div class="message message-error">
+                        ❌ Error buscando profesionales. Intentá nuevamente.
+                    </div>
+                `;
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        function viewProfessional(professionalId) {
+            const professional = professionals.find(p => p.id === professionalId);
+            if (!professional) return;
+            
+            currentProfessional = professional;
+            
+            const modal = document.getElementById('contactModal');
+            const content = document.getElementById('contactModalContent');
+            const actions = document.getElementById('contactModalActions');
+            
+            const stars = '⭐'.repeat(Math.round(professional.averageRating || 0)) + 
+                         '☆'.repeat(5 - Math.round(professional.averageRating || 0));
+            
+            const rubrosList = professional.rubros?.map(rubro => {
+                const rubroNames = {
+                    'plomeria': 'Plomería',
+                    'gas': 'Gas',
+                    'electricidad': 'Electricidad',
+                    'aire': 'Aire Acondicionado',
+                    'albanileria': 'Albañilería',
+                    'pintura': 'Pintura',
+                    'cerrajeria': 'Cerrajería',
+                    'jardineria': 'Jardinería',
+                    'herreria': 'Herrería',
+                    'carpinteria': 'Carpintería',
+                    'limpieza': 'Limpieza',
+                    'mudanzas': 'Mudanzas',
+                    'otros': 'Otros'
+                };
+                return rubroNames[rubro] || rubro;
+            }).join(', ');
+            
+            content.innerHTML = `
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <img src="${professional.photoUrl || 'https://via.placeholder.com/150x150/0a4fd8/ffffff?text=PRO'}" 
+                         alt="${professional.name}" 
+                         style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 1rem;"
+                         onerror="this.src='https://via.placeholder.com/150x150/0a4fd8/ffffff?text=PRO'">
+                    <h3>${professional.name}</h3>
+                    <div style="color: var(--gray); margin-bottom: 0.5rem;">
+                        📍 ${professional.ciudad || ''}, ${professional.provincia || ''}
+                    </div>
+                    <div style="color: var(--warning); margin-bottom: 1rem;">
+                        ${stars}
+                        <span style="color: var(--gray);">(${professional.averageRating?.toFixed(1) || '0.0'}) - ${professional.totalRatings || 0} calificaciones</span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h4>📝 Descripción</h4>
+                    <p style="color: var(--dark);">${professional.bio || 'Sin descripción'}</p>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h4>🛠️ Especialidades</h4>
+                    <p style="color: var(--dark);">${rubrosList || 'Sin especialidades'}</p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">${professional.experienceYears || 0}</div>
+                        <div style="color: var(--gray); font-size: 0.9rem;">Años de experiencia</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">${professional.completedJobs || 0}</div>
+                        <div style="color: var(--gray); font-size: 0.9rem;">Trabajos completados</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">${professional.rankingLevel || 'Principiante'}</div>
+                        <div style="color: var(--gray); font-size: 0.9rem;">Nivel de ranking</div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h4>📍 Zonas de trabajo</h4>
+                    <p style="color: var(--dark);">${professional.zonas?.join(', ') || 'Sin zonas especificadas'}</p>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h4>📞 Contacto</h4>
+                    <p style="color: var(--dark); font-weight: 600;">${professional.phone || 'Sin teléfono'}</p>
+                </div>
+            `;
+            
+            actions.innerHTML = `
+                <button onclick="contactProfessional('${professionalId}')" class="btn btn-primary">
+                    💬 Contactar por WhatsApp
+                </button>
+                <button onclick="createJob('${professionalId}')" class="btn btn-success">
+                    🛠️ Solicitar Trabajo
+                </button>
+                <button onclick="closeContactModal()" class="btn btn-secondary">
+                    Cerrar
+                </button>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeContactModal() {
+            document.getElementById('contactModal').style.display = 'none';
+            currentProfessional = null;
+        }
+
+        function contactProfessional(professionalId) {
+            const professional = professionals.find(p => p.id === professionalId);
+            if (!professional || !professional.phone) {
+                showMessage('loginMessage', 'El profesional no tiene teléfono registrado', 'error');
+                return;
+            }
+            
+            const message = `Hola ${professional.name}, te contacto desde TecniYa. Me interesa tu servicio. Mi nombre es ${userData?.name || 'cliente'}.`;
+            const whatsappUrl = `https://wa.me/549${professional.phone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+            
+            closeContactModal();
+        }
+
+        async function createJob(professionalId) {
+            const professional = professionals.find(p => p.id === professionalId);
+            if (!professional) return;
+            
+            const jobDescription = prompt('Describí brevemente el trabajo que necesitás:');
+            if (!jobDescription) return;
+            
+            showGlobalLoader(true);
+            
+            try {
+                const jobData = {
+                    professionalId: professional.id,
+                    professionalName: professional.name,
+                    professionalPhone: professional.phone,
+                    clientId: userId,
+                    clientName: userData?.name || 'Cliente',
+                    clientPhone: userData?.phone || '',
+                    clientEmail: userData?.email || '',
+                    title: 'Trabajo solicitado',
+                    description: jobDescription,
+                    status: 'pendiente',
+                    address: '',
+                    price: null,
+                    notes: '',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('jobs').add(jobData);
+                
+                showMessage('loginMessage', '✅ Trabajo solicitado correctamente. El profesional te contactará pronto.', 'success');
+                closeContactModal();
+                
+            } catch (error) {
+                console.error('Error creando trabajo:', error);
+                showMessage('loginMessage', 'Error solicitando trabajo', 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        // ============================================
+        // TRABAJOS DEL USUARIO
+        // ============================================
+        async function loadUserJobs() {
+            if (!userId) return;
+            
+            showGlobalLoader(true);
+            
+            try {
+                const snapshot = await db.collection('jobs')
+                    .where('clientId', '==', userId)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                jobs = [];
+                const container = document.getElementById('jobsList');
+                const noJobs = document.getElementById('noJobs');
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '';
+                    noJobs.style.display = 'block';
+                    return;
+                }
+                
+                noJobs.style.display = 'none';
+                let html = '';
+                
+                snapshot.forEach(doc => {
+                    const job = { id: doc.id, ...doc.data() };
+                    jobs.push(job);
+                    
+                    const date = job.createdAt ? 
+                        job.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                    
+                    let statusBadge = '';
+                    switch(job.status) {
+                        case 'pendiente':
+                            statusBadge = '<span class="job-status job-pending">PENDIENTE</span>';
+                            break;
+                        case 'en_progreso':
+                            statusBadge = '<span class="job-status job-in-progress">EN PROGRESO</span>';
+                            break;
+                        case 'completado':
+                            statusBadge = '<span class="job-status job-completed">COMPLETADO</span>';
+                            break;
+                        case 'cancelado':
+                            statusBadge = '<span class="job-status job-cancelled">CANCELADO</span>';
+                            break;
+                    }
+                    
+                    html += `
+                        <div class="job-card">
+                            <div class="job-header">
+                                <div>
+                                    <h4 style="margin: 0;">${job.title || 'Trabajo'}</h4>
+                                    <p style="color: var(--gray); margin: 0.5rem 0;">${date}</p>
+                                </div>
+                                <div>
+                                    ${statusBadge}
+                                    ${job.price ? `
+                                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-top: 0.5rem;">
+                                            $${job.price.toLocaleString('es-AR')}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <p><strong>Profesional:</strong> ${job.professionalName || 'No especificado'}</p>
+                                <p><strong>Descripción:</strong> ${job.description || 'Sin descripción'}</p>
+                            </div>
+                            
+                            <div class="btn-group" style="margin: 0;">
+                                <button onclick="viewJobDetails('${doc.id}')" class="btn btn-primary btn-sm">
+                                    👁️ Ver Detalles
+                                </button>
+                                <button onclick="contactProfessionalById('${job.professionalId}')" class="btn btn-secondary btn-sm">
+                                    💬 Contactar
+                                </button>
+                                ${job.status === 'completado' ? `
+                                    <button onclick="rateJob('${doc.id}')" class="btn btn-success btn-sm">
+                                        ⭐ Calificar
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error cargando trabajos:', error);
+                document.getElementById('jobsList').innerHTML = `
+                    <div class="message message-error">
+                        ❌ Error cargando trabajos
+                    </div>
+                `;
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        function viewJobDetails(jobId) {
+            const job = jobs.find(j => j.id === jobId);
+            if (!job) return;
+            
+            const modal = document.getElementById('contactModal');
+            const content = document.getElementById('contactModalContent');
+            const actions = document.getElementById('contactModalActions');
+            
+            const date = job.createdAt ? 
+                job.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+            const updated = job.updatedAt ? 
+                job.updatedAt.toDate().toLocaleDateString('es-AR') : '-';
+            
+            content.innerHTML = `
+                <div style="margin-bottom: 2rem;">
+                    <h4>${job.title || 'Trabajo'}</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0;">
+                        <div>
+                            <strong>Estado:</strong>
+                            <span class="job-status ${getJobStatusClass(job.status)}">
+                                ${getJobStatusText(job.status)}
+                            </span>
+                        </div>
+                        <div>
+                            <strong>Fecha creación:</strong> ${date}
+                        </div>
+                        <div>
+                            <strong>Última actualización:</strong> ${updated}
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h5>👨‍🔧 Profesional</h5>
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                        <p><strong>Nombre:</strong> ${job.professionalName || 'No especificado'}</p>
+                        <p><strong>Teléfono:</strong> ${job.professionalPhone || 'No especificado'}</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h5>📝 Descripción del Trabajo</h5>
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                        ${job.description || 'Sin descripción'}
+                    </div>
+                </div>
+                
+                ${job.price ? `
+                <div style="margin-bottom: 1.5rem;">
+                    <h5>💰 Presupuesto</h5>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">
+                        $${job.price.toLocaleString('es-AR')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${job.notes ? `
+                <div style="margin-bottom: 1.5rem;">
+                    <h5>📌 Notas Adicionales</h5>
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                        ${job.notes}
+                    </div>
+                </div>
+                ` : ''}
+            `;
+            
+            let actionsHtml = `
+                <button onclick="contactProfessionalById('${job.professionalId}')" class="btn btn-secondary">
+                    💬 Contactar Profesional
+                </button>
+            `;
+            
+            if (job.status === 'completado') {
+                actionsHtml += `
+                    <button onclick="rateJob('${jobId}')" class="btn btn-success">
+                        ⭐ Calificar Trabajo
+                    </button>
+                `;
+            }
+            
+            actionsHtml += `
+                <button onclick="closeContactModal()" class="btn btn-primary">
+                    Cerrar
+                </button>
+            `;
+            
+            actions.innerHTML = actionsHtml;
+            modal.style.display = 'flex';
+        }
+
+        function getJobStatusClass(status) {
+            switch(status) {
+                case 'pendiente': return 'job-pending';
+                case 'en_progreso': return 'job-in-progress';
+                case 'completado': return 'job-completed';
+                case 'cancelado': return 'job-cancelled';
+                default: return '';
+            }
+        }
+
+        function getJobStatusText(status) {
+            switch(status) {
+                case 'pendiente': return 'PENDIENTE';
+                case 'en_progreso': return 'EN PROGRESO';
+                case 'completado': return 'COMPLETADO';
+                case 'cancelado': return 'CANCELADO';
+                default: return status;
+            }
+        }
+
+        function contactProfessionalById(professionalId) {
+            // Buscar el profesional en la lista de profesionales
+            let professional;
+            if (professionals.length > 0) {
+                professional = professionals.find(p => p.id === professionalId);
+            }
+            
+            if (!professional) {
+                // Si no está en la lista, buscar en la base de datos
+                db.collection('professionals').doc(professionalId).get()
+                    .then(doc => {
+                        if (doc.exists) {
+                            professional = { id: doc.id, ...doc.data() };
+                            contactProfessional(professionalId);
+                        } else {
+                            showMessage('loginMessage', 'No se encontró el profesional', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error buscando profesional:', error);
+                        showMessage('loginMessage', 'Error contactando profesional', 'error');
+                    });
+            } else {
+                contactProfessional(professionalId);
+            }
+        }
+
+        // ============================================
+        // CALIFICACIONES
+        // ============================================
+        async function loadUserRatings() {
+            if (!userId) return;
+            
+            showGlobalLoader(true);
+            
+            try {
+                // Cargar calificaciones pendientes
+                const pendingSnapshot = await db.collection('ratings')
+                    .where('clientEmail', '==', currentUser.email)
+                    .where('status', '==', 'pending')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                pendingRatings = [];
+                const pendingContainer = document.getElementById('pendingRatings');
+                
+                if (pendingSnapshot.empty) {
+                    pendingContainer.innerHTML = '';
+                } else {
+                    let pendingHtml = '<h4 style="margin-bottom: 1rem;">📝 Calificaciones Pendientes</h4>';
+                    
+                    pendingSnapshot.forEach(doc => {
+                        const rating = { id: doc.id, ...doc.data() };
+                        pendingRatings.push(rating);
+                        
+                        const date = rating.createdAt ? 
+                            rating.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                        
+                        pendingHtml += `
+                            <div class="rating-card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <div>
+                                        <h5 style="margin: 0;">${rating.professionalName || 'Profesional'}</h5>
+                                        <p style="color: var(--gray); margin: 0.5rem 0;">${date}</p>
+                                    </div>
+                                    <button onclick="openRatingModal('${doc.id}')" class="btn btn-success btn-sm">
+                                        ⭐ Calificar Ahora
+                                    </button>
+                                </div>
+                                <p><strong>Trabajo completado:</strong> ${rating.jobCompleted ? 'Sí' : 'No'}</p>
+                            </div>
+                        `;
+                    });
+                    
+                    pendingContainer.innerHTML = pendingHtml;
+                }
+                
+                // Cargar calificaciones realizadas
+                const ratingsSnapshot = await db.collection('ratings')
+                    .where('clientEmail', '==', currentUser.email)
+                    .where('status', '==', 'approved')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                userRatings = [];
+                const ratingsContainer = document.getElementById('myRatings');
+                
+                if (ratingsSnapshot.empty && pendingSnapshot.empty) {
+                    ratingsContainer.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--gray);">
+                            📝 No tenés calificaciones pendientes ni realizadas.
+                        </div>
+                    `;
+                } else if (ratingsSnapshot.empty) {
+                    ratingsContainer.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--gray);">
+                            📝 No tenés calificaciones realizadas aún.
+                        </div>
+                    `;
+                } else {
+                    let ratingsHtml = '<h4 style="margin-top: 2rem; margin-bottom: 1rem;">⭐ Mis Calificaciones</h4>';
+                    
+                    ratingsSnapshot.forEach(doc => {
+                        const rating = { id: doc.id, ...doc.data() };
+                        userRatings.push(rating);
+                        
+                        const date = rating.createdAt ? 
+                            rating.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                        const stars = '⭐'.repeat(rating.rating) + '☆'.repeat(5 - rating.rating);
+                        
+                        ratingsHtml += `
+                            <div class="rating-card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <h5 style="margin: 0;">${rating.professionalName || 'Profesional'}</h5>
+                                    <div style="color: var(--warning);">${stars}</div>
+                                </div>
+                                <p style="color: var(--gray); margin-bottom: 0.5rem;">${date}</p>
+                                ${rating.comment ? `<p style="color: var(--dark);">"${rating.comment}"</p>` : ''}
+                            </div>
+                        `;
+                    });
+                    
+                    ratingsContainer.innerHTML = ratingsHtml;
+                }
+                
+            } catch (error) {
+                console.error('Error cargando calificaciones:', error);
+                document.getElementById('pendingRatings').innerHTML = `
+                    <div class="message message-error">
+                        ❌ Error cargando calificaciones
+                    </div>
+                `;
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        function rateJob(jobId) {
+            const job = jobs.find(j => j.id === jobId);
+            if (!job) return;
+            
+            // Buscar rating pendiente para este trabajo
+            const pendingRating = pendingRatings.find(r => r.jobId === jobId);
+            if (pendingRating) {
+                openRatingModal(pendingRating.id);
+            } else {
+                // Crear nuevo rating
+                currentRatingJob = job;
+                openRatingModal(null, job);
+            }
+        }
+
+        function openRatingModal(ratingId = null, job = null) {
+            if (ratingId) {
+                const rating = pendingRatings.find(r => r.id === ratingId);
+                if (!rating) return;
+                
+                currentRatingJob = { 
+                    id: rating.jobId,
+                    professionalId: rating.professionalId,
+                    professionalName: rating.professionalName
+                };
+            }
+            
+            if (!currentRatingJob && !job) return;
+            
+            if (job) {
+                currentRatingJob = job;
+            }
+            
+            const modal = document.getElementById('ratingModal');
+            const content = document.getElementById('ratingModalContent');
+            
+            selectedRating = 0;
+            
+            content.innerHTML = `
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h4>⭐ Calificar a ${currentRatingJob.professionalName || 'el profesional'}</h4>
+                    <p style="color: var(--gray);">¿Cómo calificarías el servicio recibido?</p>
+                </div>
+                
+                <div class="rating-stars" style="justify-content: center;">
+                    ${[1,2,3,4,5].map(star => `
+                        <span class="star" data-rating="${star}" onclick="selectRating(${star})">★</span>
+                    `).join('')}
+                </div>
+                
+                <div id="ratingText" style="text-align: center; margin: 1rem 0; color: var(--gray);">
+                    Seleccioná una calificación
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Comentario (opcional)</label>
+                    <textarea id="ratingComment" class="form-textarea" 
+                              placeholder="Contanos tu experiencia con este profesional..."
+                              maxlength="500"></textarea>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            // Configurar estrellas interactivas
+            setTimeout(() => {
+                document.querySelectorAll('.star').forEach(star => {
+                    star.addEventListener('mouseover', (e) => {
+                        const rating = parseInt(e.target.dataset.rating);
+                        highlightStars(rating);
+                    });
+                    
+                    star.addEventListener('mouseout', () => {
+                        highlightStars(selectedRating);
+                    });
+                });
+            }, 100);
+        }
+
+        function closeRatingModal() {
+            document.getElementById('ratingModal').style.display = 'none';
+            currentRatingJob = null;
+            selectedRating = 0;
+        }
+
+        function selectRating(rating) {
+            selectedRating = rating;
+            highlightStars(rating);
+            
+            const ratingTexts = [
+                "Muy malo",
+                "Malo",
+                "Regular",
+                "Bueno",
+                "Excelente"
+            ];
+            
+            document.getElementById('ratingText').textContent = ratingTexts[rating - 1] || '';
+        }
+
+        function highlightStars(rating) {
+            document.querySelectorAll('.star').forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        async function submitRating() {
+            if (!selectedRating || !currentRatingJob) {
+                showMessage('loginMessage', 'Seleccioná una calificación', 'error');
+                return;
+            }
+            
+            if (selectedRating < 1 || selectedRating > 5) {
+                showMessage('loginMessage', 'La calificación debe ser entre 1 y 5 estrellas', 'error');
+                return;
+            }
+            
+            showGlobalLoader(true);
+            
+            try {
+                const ratingData = {
+                    professionalId: currentRatingJob.professionalId,
+                    professionalName: currentRatingJob.professionalName,
+                    jobId: currentRatingJob.id,
+                    clientName: userData?.name || 'Cliente',
+                    clientEmail: currentUser.email,
+                    clientPhone: userData?.phone || '',
+                    rating: selectedRating,
+                    comment: document.getElementById('ratingComment').value.trim(),
+                    status: 'approved',
+                    jobCompleted: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                // Buscar rating pendiente para actualizarlo
+                const pendingRating = pendingRatings.find(r => 
+                    r.jobId === currentRatingJob.id && 
+                    r.clientEmail === currentUser.email
+                );
+                
+                if (pendingRating) {
+                    // Actualizar rating existente
+                    await db.collection('ratings').doc(pendingRating.id).update({
+                        rating: selectedRating,
+                        comment: ratingData.comment,
+                        status: 'approved',
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } else {
+                    // Crear nuevo rating
+                    await db.collection('ratings').add(ratingData);
+                }
+                
+                showMessage('loginMessage', '✅ Calificación enviada correctamente. ¡Gracias!', 'success');
+                closeRatingModal();
+                loadUserRatings();
+                
+            } catch (error) {
+                console.error('Error enviando calificación:', error);
+                showMessage('loginMessage', 'Error enviando calificación', 'error');
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        // ============================================
+        // UTILIDADES
+        // ============================================
+        function showMessage(containerId, text, type) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.textContent = text;
+            container.className = `message message-${type}`;
+            container.style.display = 'block';
+            
+            setTimeout(() => {
+                container.style.display = 'none';
+            }, 5000);
+        }
+
+        function showGlobalLoader(show) {
+            const loader = document.getElementById('globalLoader');
+            if (loader) {
+                loader.style.display = show ? 'flex' : 'none';
+            }
+        }
+
+        // ============================================
+        // FUNCIONES GLOBALES
+        // ============================================
+        window.switchTab = switchTab;
+        window.searchProfessionals = searchProfessionals;
+        window.viewProfessional = viewProfessional;
+        window.contactProfessional = contactProfessional;
+        window.closeContactModal = closeContactModal;
+        window.viewJobDetails = viewJobDetails;
+        window.contactProfessionalById = contactProfessionalById;
+        window.rateJob = rateJob;
+        window.selectRating = selectRating;
+        window.closeRatingModal = closeRatingModal;
+        window.loadUserJobs = loadUserJobs;
+        window.loadUserRatings = loadUserRatings;
+    </script>
+</body>
+</html>
