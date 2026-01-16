@@ -9,7 +9,13 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%232563eb'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
     
-    <!-- CSS Optimizado -->
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    
+    <!-- CSS -->
     <style>
         :root {
             --primary: #2563eb;
@@ -51,150 +57,55 @@
             padding: 0 20px; 
         }
         
-        /* Header mejorado con autenticación */
+        /* Header */
         .header {
             background: white;
             padding: 1rem 0;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
             border-bottom: 1px solid var(--light-gray);
             box-shadow: var(--shadow-sm);
             backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.95);
         }
         
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 1.5rem;
-        }
-        
-        .logo-section {
-            display: flex;
-            align-items: center;
             gap: 1rem;
         }
         
         .logo-img {
-            height: 50px;
+            height: 60px;
             width: auto;
             object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.2));
         }
         
-        .tagline { 
-            font-size: 0.95rem; 
-            color: var(--gray);
-            max-width: 400px;
-            font-weight: 500;
-            letter-spacing: -0.01em;
-        }
-        
-        /* Auth Section en Header */
-        .auth-section {
+        .auth-buttons {
             display: flex;
+            gap: 10px;
             align-items: center;
-            gap: 1rem;
         }
         
         .user-info {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 1rem;
+            gap: 10px;
+            padding: 8px 16px;
             background: var(--primary-light);
-            border-radius: 8px;
-            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: var(--radius);
         }
         
         .user-avatar {
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .user-name {
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 0.9rem;
-        }
-        
-        /* Botones de Auth */
-        .auth-btn {
-            padding: 0.625rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .auth-btn-primary {
-            background: var(--gradient-primary);
-            color: white;
-        }
-        
-        .auth-btn-secondary {
-            background: white;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
-        
-        .auth-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-        }
-        
-        /* Banners Container - Sin cambios */
-        .banners-container {
-            margin: 2rem auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        .banner {
-            width: 100%;
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .banner:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-        }
-        
-        .banner img {
-            width: 100%;
-            height: auto;
-            display: block;
-            max-height: 220px;
             object-fit: cover;
         }
         
-        .banner-link {
-            display: block;
-            text-decoration: none;
-        }
-        
-        /* Search Section - Rediseñada */
+        /* Search Section */
         .search-section {
             background: white;
             border-radius: var(--radius);
@@ -224,20 +135,6 @@
             text-align: center;
             font-weight: 700;
             letter-spacing: -0.025em;
-            position: relative;
-            display: inline-block;
-        }
-        
-        .search-title::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background: var(--gradient-primary);
-            border-radius: 2px;
         }
         
         .search-grid { 
@@ -287,12 +184,7 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
         
-        .form-select:disabled {
-            background-color: #f8fafc;
-            color: #94a3b8;
-        }
-        
-        /* Botones mejorados */
+        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -309,40 +201,10 @@
             overflow: hidden;
         }
         
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
-        }
-        
-        .btn:focus:not(:active)::after {
-            animation: ripple 1s ease-out;
-        }
-        
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(20, 20);
-                opacity: 0;
-            }
-        }
-        
         .btn-primary {
             background: var(--gradient-primary);
             color: white;
             width: 100%;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
         }
         
         .btn-primary:hover { 
@@ -358,24 +220,16 @@
             box-shadow: var(--shadow-sm);
         }
         
-        .btn-secondary:hover {
-            border-color: var(--primary);
-            background: var(--primary-light);
-            transform: translateY(-2px);
-        }
-        
         .btn-whatsapp {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             padding: 0.875rem 1.5rem;
             font-weight: 600;
-            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25);
         }
         
         .btn-whatsapp:hover {
             background: linear-gradient(135deg, #059669 0%, #047857 100%);
             transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
         }
         
         .search-buttons {
@@ -385,7 +239,66 @@
             margin-top: 2rem;
         }
         
-        /* Professional Cards - Mejoradas */
+        /* User Panel */
+        .user-panel {
+            display: none;
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 900px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .user-panel.active {
+            display: block;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--light-gray);
+            padding-bottom: 1rem;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .job-card {
+            background: #f8f9fa;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .rating-card {
+            background: #f8f9fa;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Results Section */
         .professional-grid {
             display: grid;
             gap: 1.5rem;
@@ -406,7 +319,6 @@
             box-shadow: var(--shadow);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid var(--light-gray);
-            position: relative;
         }
         
         .professional-card:hover {
@@ -414,33 +326,11 @@
             box-shadow: var(--shadow-lg);
         }
         
-        .professional-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-primary);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .professional-card:hover::before {
-            opacity: 1;
-        }
-        
         .professional-header {
             padding: 1.5rem;
             display: flex;
             gap: 1.25rem;
             align-items: center;
-            position: relative;
-        }
-        
-        .professional-photo-container {
-            position: relative;
-            flex-shrink: 0;
         }
         
         .professional-photo {
@@ -448,251 +338,42 @@
             height: 80px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 1;
+            border: 3px solid var(--primary-light);
         }
         
-        .professional-photo-container::after {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            z-index: 0;
-        }
-        
-        .professional-name { 
-            font-size: 1.3rem; 
-            color: var(--dark); 
-            margin-bottom: 0.4rem; 
-            font-weight: 700;
-            letter-spacing: -0.025em;
-        }
-        
-        .professional-rating {
-            display: flex;
+        /* Auth Modal */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
             align-items: center;
-            gap: 6px;
-            color: var(--accent);
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
+            justify-content: center;
         }
         
-        .professional-badges {
+        .auth-modal.active {
             display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 8px;
         }
         
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            gap: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .badge-verified { 
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); 
-            color: white;
-        }
-        
-        .badge-featured { 
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
-            color: white;
-        }
-        
-        .badge-top { 
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); 
-            color: white; 
-        }
-        
-        .professional-body { 
-            padding: 0 1.5rem 1.5rem; 
-        }
-        
-        .professional-footer {
-            padding: 1.25rem 1.5rem;
-            background: #f8fafc;
-            border-top: 1px solid var(--light-gray);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .professional-skills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 1.25rem;
-        }
-        
-        .skill-tag {
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-        
-        .skill-tag:hover {
-            background: var(--primary);
-            color: white;
-            transform: scale(1.05);
-        }
-        
-        .professional-bio {
-            font-size: 0.95rem;
-            color: var(--gray);
-            line-height: 1.7;
-            margin-bottom: 1.25rem;
-        }
-        
-        .certifications-section {
-            margin-top: 1.25rem;
-            padding-top: 1.25rem;
-            border-top: 2px dashed var(--light-gray);
-        }
-        
-        .certifications-title {
-            font-size: 0.9rem;
-            color: var(--gray);
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 600;
-        }
-        
-        .certifications-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        
-        .certification-badge {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
-        }
-        
-        .ranking-stats {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.85rem;
-            color: var(--gray);
-            background: var(--light);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-        }
-        
-        .verification-status {
-            font-size: 0.8rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
-        }
-        
-        /* Results Header */
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 2rem 0;
-            padding: 1.5rem;
+        .auth-content {
             background: white;
+            padding: 2.5rem;
             border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border-left: 4px solid var(--primary);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
         }
         
-        .results-count {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 0.5rem 1.25rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
-        }
-        
-        /* Footer mejorado */
+        /* Footer */
         .footer {
             background: linear-gradient(135deg, var(--dark) 0%, #0f172a 100%);
             color: #cbd5e1;
             padding: 3rem 1rem;
             margin-top: 4rem;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-primary);
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            gap: 2.5rem;
-        }
-        
-        @media (min-width: 768px) {
-            .footer-content { grid-template-columns: repeat(3, 1fr); }
-        }
-        
-        .footer h3 {
-            color: white;
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-        }
-        
-        .footer p {
-            line-height: 1.8;
-            font-size: 0.95rem;
         }
         
         .copyright {
@@ -704,266 +385,16 @@
             font-size: 0.9rem;
         }
         
-        /* Modal de Auth */
-        .auth-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(4px);
-            z-index: 1001;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .auth-modal-content {
-            background: white;
-            padding: 2.5rem;
-            border-radius: var(--radius);
-            max-width: 450px;
-            width: 90%;
-            box-shadow: var(--shadow-lg);
-            animation: slideUp 0.3s ease;
-        }
-        
-        .auth-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light-gray);
-        }
-        
-        .auth-modal-title {
-            font-size: 1.5rem;
-            color: var(--dark);
-            font-weight: 700;
-        }
-        
-        .auth-modal-close {
-            font-size: 2rem;
-            cursor: pointer;
-            color: var(--gray);
-            transition: color 0.2s ease;
-            line-height: 1;
-            background: none;
-            border: none;
-        }
-        
-        .auth-modal-close:hover {
-            color: var(--dark);
-        }
-        
-        .auth-form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .auth-form-label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-            font-size: 0.95rem;
-        }
-        
-        .auth-form-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid var(--light-gray);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-        
-        .auth-form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        
-        .auth-btn-container {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        
-        .auth-btn-full {
-            width: 100%;
-        }
-        
-        .auth-toggle {
-            text-align: center;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--light-gray);
-            color: var(--gray);
-        }
-        
-        .auth-toggle-link {
-            color: var(--primary);
-            cursor: pointer;
-            font-weight: 600;
-        }
-        
-        .auth-toggle-link:hover {
-            text-decoration: underline;
-        }
-        
-        .auth-message {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: none;
-        }
-        
-        .auth-message-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-        
-        .auth-message-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-        
-        /* Rating Modal Mejorado */
-        .rating-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .rating-modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: var(--radius);
-            max-width: 500px;
-            width: 90%;
-            box-shadow: var(--shadow-lg);
-            animation: slideUp 0.3s ease;
-        }
-        
-        .rating-stars {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 1.5rem 0;
-        }
-        
-        .rating-star {
-            font-size: 2.5rem;
-            color: #ddd;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .rating-star:hover,
-        .rating-star.active {
-            color: #f59e0b;
-            transform: scale(1.2);
-        }
-        
-        .rating-text {
-            text-align: center;
-            margin: 1rem 0;
-            font-size: 1.1rem;
-            color: var(--gray);
-        }
-        
-        /* Floating Action Button */
-        .fab {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
-            cursor: pointer;
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .fab:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.4);
-        }
-        
-        /* Loader animado */
-        .loader {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 3rem;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid #e2e8f0;
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
         /* Responsive */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .logo-section {
-                flex-direction: column;
                 text-align: center;
-                gap: 0.5rem;
             }
             
-            .tagline {
-                max-width: 100%;
-            }
-            
-            .auth-section {
+            .auth-buttons {
+                flex-direction: column;
                 width: 100%;
-                justify-content: center;
             }
             
             .search-section { 
@@ -974,114 +405,57 @@
             .search-buttons {
                 grid-template-columns: 1fr;
             }
-            
-            .professional-header { 
-                flex-direction: column; 
-                text-align: center; 
-            }
-            
-            .professional-footer { 
-                flex-direction: column; 
-                gap: 1rem; 
-            }
-            
-            .fab {
-                bottom: 1rem;
-                right: 1rem;
-                width: 50px;
-                height: 50px;
-                font-size: 1.25rem;
-            }
-            
-            .auth-modal-content {
-                padding: 1.5rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .professional-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .auth-btn-container {
-                flex-direction: column;
-            }
-        }
-        
-        /* Scroll personalizado */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 5px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
-        }
-        
-        /* Animación de entrada para tarjetas */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .fade-in {
-            animation: fadeInUp 0.6s ease forwards;
         }
     </style>
 </head>
 <body>
-    <!-- Header con Logo y Auth -->
+    <!-- Header -->
     <header class="header">
         <div class="container header-content">
-            <div class="logo-section">
+            <div>
                 <img src="logo.png" alt="TecniYa" class="logo-img" 
                      onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"%232563eb\"/><text x=\"50\" y=\"70\" text-anchor=\"middle\" font-size=\"60\" fill=\"white\">🔧</text></svg>';">
-                <p class="tagline">Encontrá técnicos verificados en toda Argentina. Contacto directo por WhatsApp.</p>
             </div>
             
-            <div class="auth-section">
-                <div id="userContainer" style="display: none;">
-                    <div class="user-info">
-                        <div class="user-avatar" id="userAvatar"></div>
-                        <span class="user-name" id="userName"></span>
-                        <button onclick="handleLogout()" class="auth-btn auth-btn-secondary">
-                            Cerrar sesión
-                        </button>
-                    </div>
-                </div>
-                
-                <div id="guestContainer">
-                    <button onclick="openAuthModal('login')" class="auth-btn auth-btn-primary">
-                        Iniciar sesión
-                    </button>
-                    <button onclick="openAuthModal('register')" class="auth-btn auth-btn-secondary">
-                        Registrarse
-                    </button>
-                </div>
+            <div class="auth-buttons" id="authButtons">
+                <button id="loginBtn" class="btn btn-primary">👤 Iniciar Sesión</button>
             </div>
         </div>
     </header>
 
-    <!-- Banners desde Panel Admin -->
-    <div class="container banners-container" id="bannersContainer">
-        <!-- Los banners se cargan dinámicamente según tipo y ubicación -->
+    <!-- User Panel (hidden by default) -->
+    <div class="container user-panel" id="userPanel">
+        <div class="user-header">
+            <div class="user-info">
+                <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+                <div>
+                    <h3 id="userName"></h3>
+                    <p id="userEmail"></p>
+                </div>
+                <button id="logoutBtn" class="btn btn-secondary">🚪 Cerrar Sesión</button>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="jobs">🛠️ Mis Trabajos</div>
+            <div class="tab" data-tab="ratings">⭐ Mis Calificaciones</div>
+        </div>
+        
+        <div class="tab-content active" id="jobsTab">
+            <h3>Trabajos Pendientes de Calificación</h3>
+            <div id="pendingJobsList"></div>
+            
+            <h3 style="margin-top: 2rem;">Historial de Trabajos</h3>
+            <div id="jobsHistoryList"></div>
+        </div>
+        
+        <div class="tab-content" id="ratingsTab">
+            <h3>Mis Calificaciones</h3>
+            <div id="userRatingsList"></div>
+        </div>
     </div>
 
-    <!-- Search Section -->
+    <!-- Main Search -->
     <section class="container search-section">
         <h2 class="search-title">¿Qué servicio necesitás?</h2>
         <div class="search-grid">
@@ -1135,140 +509,42 @@
             <h2>Técnicos Disponibles</h2>
             <span class="results-count" id="resultsCount"></span>
         </div>
-        <div class="loader" id="loader" style="display: none;">
-            <div class="spinner"></div>
-        </div>
         <div class="professional-grid" id="resultsContainer"></div>
     </section>
 
     <!-- Auth Modal -->
     <div id="authModal" class="auth-modal">
-        <div class="auth-modal-content">
-            <div class="auth-modal-header">
-                <h2 class="auth-modal-title" id="authModalTitle">Iniciar Sesión</h2>
-                <button class="auth-modal-close" onclick="closeAuthModal()">×</button>
-            </div>
-            
-            <div id="authMessage" class="auth-message"></div>
-            
-            <div id="loginForm">
-                <div class="auth-form-group">
-                    <label class="auth-form-label">Email</label>
-                    <input type="email" id="loginEmail" class="auth-form-input" 
-                           placeholder="tu@email.com" required>
-                </div>
-                <div class="auth-form-group">
-                    <label class="auth-form-label">Contraseña</label>
-                    <input type="password" id="loginPassword" class="auth-form-input" 
-                           placeholder="••••••••" required minlength="6">
-                </div>
-                <div class="auth-btn-container">
-                    <button onclick="handleLogin()" class="btn btn-primary auth-btn-full">
-                        🔐 Iniciar Sesión
-                    </button>
-                </div>
-                <div class="auth-toggle">
-                    ¿No tenés cuenta? 
-                    <span class="auth-toggle-link" onclick="switchAuthForm('register')">
-                        Registrate aquí
-                    </span>
-                </div>
-            </div>
-            
-            <div id="registerForm" style="display: none;">
-                <div class="auth-form-group">
-                    <label class="auth-form-label">Nombre completo</label>
-                    <input type="text" id="registerName" class="auth-form-input" 
-                           placeholder="Juan Pérez" required>
-                </div>
-                <div class="auth-form-group">
-                    <label class="auth-form-label">Teléfono WhatsApp</label>
-                    <input type="tel" id="registerPhone" class="auth-form-input" 
-                           placeholder="3417558966" required pattern="[0-9]{10,13}">
-                    <small style="color: var(--gray); font-size: 0.85rem; display: block; margin-top: 0.25rem;">
-                        Ej: 3417558966 (sin 0 ni 15)
-                    </small>
-                </div>
-                <div class="auth-form-group">
-                    <label class="auth-form-label">Email</label>
-                    <input type="email" id="registerEmail" class="auth-form-input" 
-                           placeholder="tu@email.com" required>
-                </div>
-                <div class="auth-form-group">
-                    <label class="auth-form-label">Contraseña</label>
-                    <input type="password" id="registerPassword" class="auth-form-input" 
-                           placeholder="Mínimo 6 caracteres" required minlength="6">
-                </div>
-                <div class="auth-btn-container">
-                    <button onclick="handleRegister()" class="btn btn-primary auth-btn-full">
-                        📝 Registrarme
-                    </button>
-                </div>
-                <div class="auth-toggle">
-                    ¿Ya tenés cuenta? 
-                    <span class="auth-toggle-link" onclick="switchAuthForm('login')">
-                        Iniciá sesión aquí
-                    </span>
-                </div>
-            </div>
+        <div class="auth-content">
+            <h3>Iniciar Sesión</h3>
+            <p style="margin: 1rem 0; color: var(--gray);">Usá tu cuenta de Google para acceder</p>
+            <button id="googleLoginBtn" class="btn btn-primary" style="margin: 1rem 0;">
+                <img src="https://www.google.com/favicon.ico" alt="Google" style="width: 20px; height: 20px; margin-right: 10px;">
+                Continuar con Google
+            </button>
+            <button id="closeAuthModal" class="btn btn-secondary">Cancelar</button>
         </div>
     </div>
 
     <!-- Rating Modal -->
-    <div id="ratingModal" class="rating-modal">
-        <div class="rating-modal-content">
-            <div class="auth-modal-header">
-                <h2 class="auth-modal-title">⭐ Calificar Técnico</h2>
-                <button class="auth-modal-close" onclick="closeRatingModal()">×</button>
-            </div>
-            
-            <div id="ratingModalBody">
-                <!-- Contenido dinámico -->
-            </div>
+    <div id="ratingModal" class="auth-modal">
+        <div class="auth-content">
+            <h3 id="ratingModalTitle">Calificar Trabajo</h3>
+            <div id="ratingModalBody"></div>
         </div>
     </div>
 
-    <!-- Floating Action Button -->
-    <button class="fab" onclick="scrollToTop()" title="Volver arriba" style="display: none;">
-        ↑
-    </button>
-
     <!-- Footer -->
     <footer class="footer">
-        <div class="container footer-content">
-            <div>
-                <h3>TecniYa</h3>
-                <p>Conectamos a los argentinos con técnicos verificados y certificados en todo el país.</p>
+        <div class="container">
+            <div class="copyright">
+                <p>© 2024 TecniYa - Todos los derechos reservados</p>
+                <p>📱 WhatsApp: 341 755-8966 | 📧 contacto@tecniya.com</p>
             </div>
-            <div>
-                <h3>Contacto</h3>
-                <p>📱 WhatsApp: 341 755-8966</p>
-                <p>📧 contacto@tecniya.com</p>
-                <p>📍 Argentina</p>
-            </div>
-            <div>
-                <h3>Promociones</h3>
-                <p>¿Tenés una promoción especial? Contactanos por WhatsApp</p>
-                <a href="https://wa.me/3417558966" target="_blank" class="btn btn-whatsapp" style="margin-top: 10px;">
-                    💬 Contactar por WhatsApp
-                </a>
-            </div>
-        </div>
-        <div class="copyright">
-            <p>© 2024 TecniYa - Todos los derechos reservados</p>
         </div>
     </footer>
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    
-    <!-- Main Script -->
     <script>
-        // ============================================
-        // CONFIGURACIÓN FIREBASE
-        // ============================================
+        // Configuración Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
             authDomain: "tecniya-b4206.firebaseapp.com",
@@ -1278,320 +554,79 @@
             appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
         };
 
-        // ============================================
-        // VARIABLES GLOBALES
-        // ============================================
-        let auth, db;
-        let currentUser = null;
-        let currentRatingProfessional = null;
-        let allProfessionals = [];
-        let currentProvincia = '';
-        let currentCiudad = '';
-        let selectedRating = 0;
-        let googleProvider;
+        // Variables globales
+        let db, auth, currentUser = null;
+        let provinciasCiudades = {};
+        let currentRatingJob = null;
 
-        // ============================================
-        // DATOS DE PROVINCIAS Y CIUDADES
-        // ============================================
-        const provinciasCiudades = {
-            "Buenos Aires": ["La Plata", "Mar del Plata", "Bahía Blanca", "Quilmes", "Lomas de Zamora", "San Isidro", "Tigre", "Pilar", "Merlo", "Moreno"],
-            "CABA": ["Capital Federal"],
-            "Catamarca": ["San Fernando del Valle de Catamarca", "Valle Viejo", "Andalgalá"],
-            "Chaco": ["Resistencia", "Barranqueras", "Fontana", "Presidencia Roque Sáenz Peña"],
-            "Córdoba": ["Córdoba", "Villa María", "Río Cuarto", "Alta Gracia", "Villa Carlos Paz", "Jesús María"],
-            "Corrientes": ["Corrientes", "Goya", "Mercedes", "Curuzú Cuatiá"],
-            "Entre Ríos": ["Paraná", "Concordia", "Gualeguaychú", "Concepción del Uruguay"],
-            "Formosa": ["Formosa", "Clorinda", "Pirané"],
-            "Jujuy": ["San Salvador de Jujuy", "Palpalá", "San Pedro de Jujuy", "Libertador General San Martín"],
-            "La Pampa": ["Santa Rosa", "General Pico", "Toay", "Realicó"],
-            "La Rioja": ["La Rioja", "Chilecito", "Aimogasta", "Chamical"],
-            "Mendoza": ["Mendoza", "San Rafael", "Godoy Cruz", "Guaymallén", "Las Heras", "Maipú"],
-            "Misiones": ["Posadas", "Oberá", "Eldorado", "Apóstoles"],
-            "Neuquén": ["Neuquén", "Cutral-Có", "Plottier", "Centenario"],
-            "Río Negro": ["Viedma", "Bariloche", "General Roca", "Cipolletti"],
-            "Salta": ["Salta", "San Ramón de la Nueva Orán", "Tartagal", "Metán"],
-            "San Juan": ["San Juan", "Rivadavia", "Chimbas", "Rawson"],
-            "San Luis": ["San Luis", "Villa Mercedes", "Juana Koslay", "La Punta"],
-            "Santa Cruz": ["Río Gallegos", "Caleta Olivia", "Puerto Deseado", "Río Turbio"],
-            "Santa Fe": ["Rosario", "Santa Fe", "Rafaela", "Venado Tuerto", "Reconquista", "Sunchales"],
-            "Santiago del Estero": ["Santiago del Estero", "La Banda", "Frías", "Añatuya"],
-            "Tierra del Fuego": ["Ushuaia", "Río Grande"],
-            "Tucumán": ["San Miguel de Tucumán", "Yerba Buena", "Tafí Viejo", "Concepción"]
-        };
-
-        // ============================================
-        // INICIALIZACIÓN
-        // ============================================
+        // Inicialización
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                await initFirebase();
-                initApp();
-                loadBanners();
-                loadAllProfessionals();
-                initScrollAnimations();
-            } catch (error) {
-                console.error('Error inicial:', error);
-                showAuthMessage('Error inicializando la aplicación', 'error');
-            }
-        });
-
-        async function initFirebase() {
-            try {
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                }
+                firebase.initializeApp(firebaseConfig);
                 auth = firebase.auth();
                 db = firebase.firestore();
                 
-                // Configurar proveedor de Google
-                googleProvider = new firebase.auth.GoogleAuthProvider();
-                googleProvider.addScope('email');
-                googleProvider.addScope('profile');
+                // Configurar Google Provider
+                const provider = new firebase.auth.GoogleAuthProvider();
                 
-            } catch (error) {
-                console.error('Error Firebase:', error);
-                throw error;
-            }
-        }
-
-        function initApp() {
-            loadProvincias();
-            
-            // Event listeners para búsqueda
-            document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
-            document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
-            document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
-            
-            // Configurar FAB
-            window.addEventListener('scroll', () => {
-                const fab = document.querySelector('.fab');
-                if (window.scrollY > 300) {
-                    fab.style.display = 'flex';
-                } else {
-                    fab.style.display = 'none';
-                }
-            });
-            
-            // Verificar estado de autenticación
-            auth.onAuthStateChanged(handleAuthStateChanged);
-        }
-
-        function initScrollAnimations() {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('fade-in');
-                    }
+                // Event listeners
+                document.getElementById('loginBtn').addEventListener('click', () => {
+                    document.getElementById('authModal').classList.add('active');
                 });
-            }, observerOptions);
-            
-            setTimeout(() => {
-                document.querySelectorAll('.professional-card').forEach(card => {
-                    observer.observe(card);
-                });
-            }, 100);
-        }
-
-        // ============================================
-        // AUTENTICACIÓN
-        // ============================================
-        function handleAuthStateChanged(user) {
-            currentUser = user;
-            updateAuthUI();
-            
-            if (user) {
-                // Verificar si el usuario existe en la colección users
-                checkUserInDatabase(user);
-            }
-        }
-
-        async function checkUserInDatabase(user) {
-            try {
-                const snapshot = await db.collection('users')
-                    .where('email', '==', user.email)
-                    .limit(1)
-                    .get();
                 
-                if (snapshot.empty) {
-                    // Crear usuario si no existe
-                    await db.collection('users').add({
-                        userId: user.uid,
-                        email: user.email,
-                        name: user.displayName || user.email.split('@')[0],
-                        phone: '',
-                        profileCompleted: false,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                document.getElementById('closeAuthModal').addEventListener('click', () => {
+                    document.getElementById('authModal').classList.remove('active');
+                });
+                
+                document.getElementById('googleLoginBtn').addEventListener('click', () => {
+                    auth.signInWithPopup(provider);
+                });
+                
+                document.getElementById('logoutBtn')?.addEventListener('click', () => {
+                    auth.signOut();
+                });
+                
+                // Tabs del panel de usuario
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabId = tab.dataset.tab;
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                        tab.classList.add('active');
+                        document.getElementById(`${tabId}Tab`).classList.add('active');
                     });
-                }
-            } catch (error) {
-                console.error('Error verificando usuario:', error);
-            }
-        }
-
-        function updateAuthUI() {
-            const userContainer = document.getElementById('userContainer');
-            const guestContainer = document.getElementById('guestContainer');
-            const userAvatar = document.getElementById('userAvatar');
-            const userName = document.getElementById('userName');
-            
-            if (currentUser) {
-                userContainer.style.display = 'block';
-                guestContainer.style.display = 'none';
-                
-                // Mostrar iniciales del usuario
-                const name = currentUser.displayName || currentUser.email;
-                const initials = name.charAt(0).toUpperCase();
-                userAvatar.textContent = initials;
-                userName.textContent = name;
-            } else {
-                userContainer.style.display = 'none';
-                guestContainer.style.display = 'flex';
-            }
-        }
-
-        function openAuthModal(type = 'login') {
-            const modal = document.getElementById('authModal');
-            const title = document.getElementById('authModalTitle');
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            
-            if (type === 'login') {
-                title.textContent = 'Iniciar Sesión';
-                loginForm.style.display = 'block';
-                registerForm.style.display = 'none';
-            } else {
-                title.textContent = 'Registrarse';
-                loginForm.style.display = 'none';
-                registerForm.style.display = 'block';
-            }
-            
-            modal.style.display = 'flex';
-            document.getElementById('authMessage').style.display = 'none';
-        }
-
-        function closeAuthModal() {
-            document.getElementById('authModal').style.display = 'none';
-            clearAuthForm();
-        }
-
-        function switchAuthForm(type) {
-            openAuthModal(type);
-        }
-
-        function clearAuthForm() {
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('registerName').value = '';
-            document.getElementById('registerPhone').value = '';
-            document.getElementById('registerEmail').value = '';
-            document.getElementById('registerPassword').value = '';
-        }
-
-        function showAuthMessage(message, type = 'error') {
-            const messageEl = document.getElementById('authMessage');
-            messageEl.textContent = message;
-            messageEl.className = `auth-message auth-message-${type}`;
-            messageEl.style.display = 'block';
-        }
-
-        async function handleLogin() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            
-            if (!email || !password) {
-                showAuthMessage('Ingresá email y contraseña', 'error');
-                return;
-            }
-            
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-                showAuthMessage('✅ Inicio de sesión exitoso', 'success');
-                setTimeout(() => closeAuthModal(), 1500);
-            } catch (error) {
-                console.error('Error login:', error);
-                let message = 'Error al iniciar sesión';
-                if (error.code === 'auth/user-not-found') message = 'Usuario no encontrado';
-                else if (error.code === 'auth/wrong-password') message = 'Contraseña incorrecta';
-                else if (error.code === 'auth/invalid-email') message = 'Email inválido';
-                showAuthMessage('❌ ' + message, 'error');
-            }
-        }
-
-        async function handleRegister() {
-            const name = document.getElementById('registerName').value.trim();
-            const phone = document.getElementById('registerPhone').value.trim();
-            const email = document.getElementById('registerEmail').value.trim();
-            const password = document.getElementById('registerPassword').value;
-            
-            if (!name || !phone || !email || !password) {
-                showAuthMessage('Completá todos los campos', 'error');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showAuthMessage('La contraseña debe tener al menos 6 caracteres', 'error');
-                return;
-            }
-            
-            if (!/^\d{10,13}$/.test(phone)) {
-                showAuthMessage('Teléfono inválido. Ejemplo: 3417558966', 'error');
-                return;
-            }
-            
-            try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                
-                // Actualizar perfil del usuario
-                await userCredential.user.updateProfile({ displayName: name });
-                
-                // Crear registro en users
-                await db.collection('users').add({
-                    userId: userCredential.user.uid,
-                    email,
-                    name,
-                    phone,
-                    profileCompleted: true,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                showAuthMessage('✅ Registro exitoso. Ya podés iniciar sesión.', 'success');
-                setTimeout(() => closeAuthModal(), 1500);
+                // Cargar datos de provincias
+                await loadProvinciasData();
+                loadProvinciasSelect();
+                
+                // Event listeners de búsqueda
+                document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
+                document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
+                document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
+                
+                // Verificar estado de autenticación
+                auth.onAuthStateChanged(handleAuthStateChange);
                 
             } catch (error) {
-                console.error('Error registro:', error);
-                let message = 'Error en el registro';
-                if (error.code === 'auth/email-already-in-use') message = 'El email ya está registrado';
-                else if (error.code === 'auth/invalid-email') message = 'Email inválido';
-                else if (error.code === 'auth/weak-password') message = 'Contraseña demasiado débil';
-                showAuthMessage('❌ ' + message, 'error');
+                console.error('Error inicializando:', error);
             }
-        }
+        });
 
-        async function handleGoogleLogin() {
+        // Cargar datos de provincias desde Firestore
+        async function loadProvinciasData() {
             try {
-                await auth.signInWithPopup(googleProvider);
-                closeAuthModal();
+                const doc = await db.collection('config').doc('provincias').get();
+                if (doc.exists) {
+                    provinciasCiudades = doc.data();
+                }
             } catch (error) {
-                console.error('Error Google login:', error);
-                showAuthMessage('Error al iniciar sesión con Google', 'error');
+                console.error('Error cargando provincias:', error);
             }
         }
 
-        function handleLogout() {
-            if (confirm('¿Estás seguro de querer cerrar sesión?')) {
-                auth.signOut();
-            }
-        }
-
-        // ============================================
-        // FUNCIONES DE UI
-        // ============================================
-        function loadProvincias() {
+        function loadProvinciasSelect() {
             const select = document.getElementById('provinciaSelect');
             Object.keys(provinciasCiudades).sort().forEach(provincia => {
                 const option = document.createElement('option');
@@ -1622,567 +657,225 @@
             ciudadSelect.disabled = false;
         }
 
-        // ============================================
-        // SISTEMA DE BANNERS (SIN CAMBIOS)
-        // ============================================
-        async function loadBanners() {
-            try {
-                const now = firebase.firestore.Timestamp.now();
-                
-                const provincia = document.getElementById('provinciaSelect').value;
-                const ciudad = document.getElementById('ciudadSelect').value;
-                
-                let allBanners = [];
-                
-                const nacionalQuery = db.collection('banners')
-                    .where('active', '==', true)
-                    .where('type', '==', 'nacional')
-                    .where('startDate', '<=', now)
-                    .limit(10)
-                    .get();
-                
-                let provincialQuery = null;
-                if (provincia) {
-                    provincialQuery = db.collection('banners')
-                        .where('active', '==', true)
-                        .where('type', '==', 'provincial')
-                        .where('provincia', '==', provincia)
-                        .where('startDate', '<=', now)
-                        .limit(10)
-                        .get();
-                }
-                
-                let ciudadQuery = null;
-                if (ciudad && provincia) {
-                    ciudadQuery = db.collection('banners')
-                        .where('active', '==', true)
-                        .where('type', '==', 'ciudad')
-                        .where('provincia', '==', provincia)
-                        .where('ciudad', '==', ciudad)
-                        .where('startDate', '<=', now)
-                        .limit(10)
-                        .get();
-                }
-                
-                const queries = [nacionalQuery];
-                if (provincialQuery) queries.push(provincialQuery);
-                if (ciudadQuery) queries.push(ciudadQuery);
-                
-                const results = await Promise.all(queries);
-                
-                results.forEach(snapshot => {
-                    snapshot.forEach(doc => {
-                        const banner = { id: doc.id, ...doc.data() };
-                        const endDate = banner.endDate ? 
-                            (banner.endDate.toDate ? banner.endDate.toDate() : new Date(banner.endDate)) : 
-                            new Date();
-                        if (endDate >= now.toDate()) {
-                            allBanners.push(banner);
-                        }
-                    });
-                });
-                
-                if (allBanners.length === 0) {
-                    displayDefaultBanner();
-                    return;
-                }
-                
-                allBanners = shuffleArray(allBanners);
-                const bannersToShow = allBanners.slice(0, 3);
-                
-                displayBanners(bannersToShow);
-                
-            } catch (error) {
-                console.error('Error cargando banners:', error);
-                displayDefaultBanner();
-            }
-        }
-
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
-        }
-
-        function displayBanners(banners) {
-            const container = document.getElementById('bannersContainer');
-            container.innerHTML = '';
+        // Manejo de autenticación
+        function handleAuthStateChange(user) {
+            currentUser = user;
             
-            banners.forEach(banner => {
-                const bannerHTML = `
-                    <div class="banner">
-                        <a href="${banner.link || '#'}" target="_blank" class="banner-link">
-                            <img src="${banner.imageUrl}" 
-                                 alt="${banner.title || 'Banner'}"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/1200x300/2563eb/ffffff?text=Banner+TecniYa';">
-                        </a>
+            if (user) {
+                document.getElementById('authButtons').innerHTML = `
+                    <div class="user-info">
+                        <img src="${user.photoURL || 'https://via.placeholder.com/32'}" 
+                             class="user-avatar" 
+                             alt="Avatar"
+                             onerror="this.src='https://via.placeholder.com/32'">
+                        <span>${user.displayName || 'Usuario'}</span>
                     </div>
+                    <button id="viewPanelBtn" class="btn btn-secondary">👤 Mi Panel</button>
                 `;
-                container.innerHTML += bannerHTML;
-            });
-        }
-
-        function displayDefaultBanner() {
-            const container = document.getElementById('bannersContainer');
-            container.innerHTML = `
-                <div class="banner">
-                    <a href="#" class="banner-link">
-                        <img src="https://via.placeholder.com/1200x300/2563eb/ffffff?text=Banner+Promocional+TecniYa" 
-                             alt="Banner Promocional">
-                    </a>
-                </div>
-            `;
-        }
-
-        // ============================================
-        // SISTEMA DE RANKING (SIN CAMBIOS)
-        // ============================================
-        async function calculateProfessionalRanking(professional) {
-            try {
-                // Obtener todas las calificaciones aprobadas para este profesional
-                const ratingsSnapshot = await db.collection('ratings')
-                    .where('professionalId', '==', professional.id)
-                    .where('status', '==', 'approved')
-                    .get();
                 
-                let totalRatings = 0;
-                let sumRatings = 0;
-                
-                ratingsSnapshot.forEach(doc => {
-                    totalRatings++;
-                    sumRatings += doc.data().rating;
+                document.getElementById('viewPanelBtn').addEventListener('click', () => {
+                    document.getElementById('userPanel').classList.toggle('active');
+                    loadUserPanelData();
                 });
                 
-                const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
-                
-                // Obtener certificaciones aprobadas desde colección separada
-                const certificationsSnapshot = await db.collection('certifications')
-                    .where('professionalId', '==', professional.id)
-                    .where('status', '==', 'aprobada')
-                    .get();
-                
-                const approvedCertifications = [];
-                certificationsSnapshot.forEach(doc => {
-                    const certData = doc.data();
-                    approvedCertifications.push({
-                        id: doc.id,
-                        title: certData.title || 'Certificado',
-                        institution: certData.institution || '',
-                        issueDate: certData.issueDate || '',
-                        expiryDate: certData.expiryDate || '',
-                        certificationNumber: certData.certificationNumber || ''
-                    });
+                document.getElementById('authModal').classList.remove('active');
+                loadUserPanelData();
+            } else {
+                document.getElementById('authButtons').innerHTML = `
+                    <button id="loginBtn" class="btn btn-primary">👤 Iniciar Sesión</button>
+                `;
+                document.getElementById('loginBtn').addEventListener('click', () => {
+                    document.getElementById('authModal').classList.add('active');
                 });
-                
-                // Calcular score
-                let score = 0;
-                score += averageRating * 10;
-                
-                // Puntos por cantidad de trabajos (calificaciones aprobadas)
-                if (totalRatings > 0) {
-                    score += Math.min(totalRatings, 20);
-                }
-                
-                // Puntos por experiencia
-                if (professional.experienceYears) {
-                    score += Math.min(professional.experienceYears, 10);
-                }
-                
-                // Puntos por certificaciones aprobadas
-                if (approvedCertifications.length > 0) {
-                    score += 20;
-                }
-                
-                // Puntos por destacado
-                if (professional.isFeatured) {
-                    const now = new Date();
-                    if (professional.featuredUntil) {
-                        const featuredUntil = professional.featuredUntil.toDate ? 
-                            professional.featuredUntil.toDate() : new Date(professional.featuredUntil);
-                        if (featuredUntil > now) {
-                            score += 15;
-                        }
-                    }
-                }
-                
-                // Puntos por actividad reciente
-                if (professional.lastActive) {
-                    const lastActiveDate = professional.lastActive.toDate ? 
-                        professional.lastActive.toDate() : new Date(professional.lastActive);
-                    const daysSince = (new Date() - lastActiveDate) / (1000 * 60 * 60 * 24);
-                    if (daysSince < 7) score += 10;
-                }
-                
-                score = Math.min(Math.max(score, 0), 100);
-                const rankingScore = Math.round(score);
-                
-                return {
-                    ...professional,
-                    averageRating,
-                    totalRatings,
-                    rankingScore,
-                    approvedCertifications
-                };
-                
-            } catch (error) {
-                console.error('Error cálculo ranking:', error);
-                return {
-                    ...professional,
-                    averageRating: 0,
-                    totalRatings: 0,
-                    rankingScore: 0,
-                    approvedCertifications: []
-                };
+                document.getElementById('userPanel').classList.remove('active');
             }
         }
 
-        // ============================================
-        // CARGA Y MUESTRA DE PROFESIONALES
-        // ============================================
-        async function loadAllProfessionals() {
-            showLoader();
+        // Cargar datos del panel de usuario
+        async function loadUserPanelData() {
+            if (!currentUser) return;
+            
+            document.getElementById('userName').textContent = currentUser.displayName || 'Usuario';
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userAvatar').src = currentUser.photoURL || 'https://via.placeholder.com/32';
+            
+            await loadPendingJobs();
+            await loadUserRatings();
+        }
+
+        // Cargar trabajos pendientes de calificación
+        async function loadPendingJobs() {
+            const jobsList = document.getElementById('pendingJobsList');
+            const historyList = document.getElementById('jobsHistoryList');
+            
             try {
-                const snapshot = await db.collection('professionals')
-                    .where('active', '==', true)
-                    .limit(50)
+                const snapshot = await db.collection('jobs')
+                    .where('userId', '==', currentUser.uid)
+                    .orderBy('createdAt', 'desc')
                     .get();
+                
+                jobsList.innerHTML = '';
+                historyList.innerHTML = '';
                 
                 if (snapshot.empty) {
-                    displayNoResults();
+                    jobsList.innerHTML = '<p style="color: var(--gray);">No tenés trabajos pendientes de calificación.</p>';
+                    historyList.innerHTML = '<p style="color: var(--gray);">No tenés historial de trabajos.</p>';
                     return;
-                }
-                
-                const professionals = await Promise.all(
-                    snapshot.docs.map(async doc => {
-                        const prof = { id: doc.id, ...doc.data() };
-                        return await calculateProfessionalRanking(prof);
-                    })
-                );
-                
-                // ORDENAR SEGÚN JERARQUÍA:
-                professionals.sort((a, b) => {
-                    const aHasCertifications = a.approvedCertifications && a.approvedCertifications.length > 0;
-                    const bHasCertifications = b.approvedCertifications && b.approvedCertifications.length > 0;
-                    
-                    if (aHasCertifications && !bHasCertifications) return -1;
-                    if (!aHasCertifications && bHasCertifications) return 1;
-                    
-                    if (a.isFeatured && !b.isFeatured) return -1;
-                    if (!a.isFeatured && b.isFeatured) return 1;
-                    
-                    return b.rankingScore - a.rankingScore;
-                });
-                
-                allProfessionals = professionals;
-                displayProfessionals(professionals);
-                
-            } catch (error) {
-                console.error('Error cargando profesionales:', error);
-                displayError();
-            } finally {
-                hideLoader();
-            }
-        }
-
-        async function searchProfessionals() {
-            showLoader();
-            const provincia = document.getElementById('provinciaSelect').value;
-            const ciudad = document.getElementById('ciudadSelect').value;
-            const rubro = document.getElementById('rubroSelect').value;
-            
-            if (provincia || ciudad) {
-                loadBanners();
-            }
-            
-            try {
-                let query = db.collection('professionals').where('active', '==', true);
-                
-                if (provincia) query = query.where('provincia', '==', provincia);
-                if (ciudad && ciudad !== '') query = query.where('ciudad', '==', ciudad);
-                if (rubro) query = query.where('rubros', 'array-contains', rubro);
-                
-                const snapshot = await query.limit(50).get();
-                
-                if (snapshot.empty) {
-                    displayNoResults();
-                    return;
-                }
-                
-                const professionals = await Promise.all(
-                    snapshot.docs.map(async doc => {
-                        const prof = { id: doc.id, ...doc.data() };
-                        return await calculateProfessionalRanking(prof);
-                    })
-                );
-                
-                // ORDENAR SEGÚN JERARQUÍA:
-                professionals.sort((a, b) => {
-                    const aHasCertifications = a.approvedCertifications && a.approvedCertifications.length > 0;
-                    const bHasCertifications = b.approvedCertifications && b.approvedCertifications.length > 0;
-                    
-                    if (aHasCertifications && !bHasCertifications) return -1;
-                    if (!aHasCertifications && bHasCertifications) return 1;
-                    
-                    if (a.isFeatured && !b.isFeatured) return -1;
-                    if (!a.isFeatured && b.isFeatured) return 1;
-                    
-                    return b.rankingScore - a.rankingScore;
-                });
-                
-                displayProfessionals(professionals);
-                
-            } catch (error) {
-                console.error('Error buscando:', error);
-                displayError();
-            } finally {
-                hideLoader();
-            }
-        }
-
-        function displayProfessionals(professionals) {
-            const container = document.getElementById('resultsContainer');
-            container.innerHTML = '';
-            
-            if (professionals.length === 0) {
-                displayNoResults();
-                return;
-            }
-            
-            professionals.forEach(prof => {
-                const card = document.createElement('div');
-                card.className = 'professional-card';
-                
-                // Calcular estrellas
-                const rating = prof.averageRating || 0;
-                const fullStars = Math.floor(rating);
-                const hasHalfStar = rating % 1 >= 0.5;
-                
-                let starsHTML = '';
-                for (let i = 0; i < fullStars; i++) starsHTML += '⭐';
-                if (hasHalfStar) starsHTML += '½';
-                for (let i = 0; i < 5 - fullStars - (hasHalfStar ? 1 : 0); i++) starsHTML += '☆';
-                
-                // Texto de estado de verificación
-                let verificationStatus = '';
-                if (prof.approvedCertifications && prof.approvedCertifications.length > 0) {
-                    verificationStatus = '<span class="verification-status">✓ Certificaciones técnicas</span>';
-                }
-                
-                // Sección de certificaciones
-                let certificationsHTML = '';
-                if (prof.approvedCertifications && prof.approvedCertifications.length > 0) {
-                    certificationsHTML = `
-                        <div class="certifications-section">
-                            <div class="certifications-title">
-                                <span>📜 Certificaciones:</span>
-                            </div>
-                            <div class="certifications-list">
-                                ${prof.approvedCertifications.map(cert => {
-                                    const certTitle = cert.title || 'Certificado';
-                                    return `<span class="certification-badge">✓ ${certTitle}</span>`;
-                                }).join('')}
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                // Crear badges
-                const badges = [];
-                
-                const hasApprovedCertifications = prof.approvedCertifications && prof.approvedCertifications.length > 0;
-                if (hasApprovedCertifications) {
-                    badges.push('<span class="badge badge-verified">VERIFICADO</span>');
                 }
                 
                 const now = new Date();
-                const isFeaturedActive = prof.isFeatured && prof.featuredUntil && 
-                    (prof.featuredUntil.toDate ? prof.featuredUntil.toDate() : new Date(prof.featuredUntil)) > now;
-                if (isFeaturedActive) {
-                    badges.push('<span class="badge badge-featured">DESTACADO</span>');
-                }
-                
-                if (prof.rankingScore >= 85) {
-                    badges.push('<span class="badge badge-top">TOP</span>');
-                }
-                
-                card.innerHTML = `
-                    <div class="professional-header">
-                        <div class="professional-photo-container">
-                            <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80/2563eb/ffffff?text=T'}" 
-                                 alt="${prof.name}"
-                                 class="professional-photo">
-                        </div>
-                        <div class="professional-info">
-                            <h3 class="professional-name">${prof.name}</h3>
-                            <div class="professional-rating">
-                                ${starsHTML} ${rating.toFixed(1)}
-                                <span>(${prof.totalRatings || 0})</span>
-                            </div>
-                            <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.3rem;">
-                                📍 ${prof.ciudad || ''}, ${prof.provincia || ''}
-                            </div>
-                            <div class="professional-badges">
-                                ${badges.join('')}
-                            </div>
-                            <div style="margin-top: 5px;">
-                                ${verificationStatus}
-                            </div>
-                            <div class="ranking-stats">
-                                <div class="stat-item">🏆 ${prof.rankingScore || 0}/100</div>
-                                ${prof.totalRatings ? `<div class="stat-item">✅ ${prof.totalRatings} trabajos</div>` : ''}
-                                ${prof.experienceYears ? `<div class="stat-item">📅 ${prof.experienceYears} años</div>` : ''}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="professional-body">
-                        <div class="professional-skills">
-                            ${prof.rubros ? prof.rubros.map(r => `<span class="skill-tag">${r}</span>`).join('') : ''}
-                        </div>
-                        <p class="professional-bio">${prof.bio || 'Técnico especializado con experiencia comprobada.'}</p>
+                snapshot.forEach(doc => {
+                    const job = { id: doc.id, ...doc.data() };
+                    const jobDate = job.createdAt?.toDate ? job.createdAt.toDate() : new Date(job.createdAt);
+                    
+                    let html = `
+                        <div class="job-card">
+                            <h4>${job.professionalName || 'Profesional'}</h4>
+                            <p><strong>Servicio:</strong> ${job.serviceType || 'Servicio'}</p>
+                            <p><strong>Fecha:</strong> ${jobDate.toLocaleDateString('es-AR')}</p>
+                            <p><strong>Estado:</strong> ${job.status === 'completado' ? '✅ Completado' : 
+                                                        job.status === 'cancelado' ? '❌ Cancelado' : job.status}</p>
+                    `;
+                    
+                    if (job.status === 'completado' || job.status === 'cancelado') {
+                        const ratingSnapshot = db.collection('ratings')
+                            .where('jobId', '==', job.id)
+                            .where('userId', '==', currentUser.uid)
+                            .get();
                         
-                        ${certificationsHTML}
-                    </div>
-                    <div class="professional-footer">
-                        <span style="font-size: 0.9rem;">${prof.zonas ? prof.zonas.join(', ') : 'Toda la ciudad'}</span>
-                        <div style="display: flex; gap: 8px;">
-                            <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
-                               target="_blank"
-                               class="btn btn-whatsapp">
-                                📱 Contactar
-                            </a>
-                            <button onclick="openRatingModal('${prof.id}', '${prof.name}')" 
-                                    class="btn" 
-                                    style="background: #64748b; color: white; font-size: 0.9rem;">
-                                ⭐ Calificar
-                            </button>
-                        </div>
-                    </div>
-                `;
+                        ratingSnapshot.then(ratingDoc => {
+                            if (ratingDoc.empty) {
+                                // Trabajo pendiente de calificación
+                                html += `
+                                    <p style="color: var(--accent); margin: 0.5rem 0;">
+                                        ⭐ Pendiente de calificación
+                                    </p>
+                                    <button onclick="openRatingModal('${job.id}', '${job.professionalId}', '${job.professionalName}')" 
+                                            class="btn btn-primary" style="margin-top: 10px;">
+                                        Calificar
+                                    </button>
+                                `;
+                            }
+                        });
+                    }
+                    
+                    html += '</div>';
+                    
+                    if ((job.status === 'completado' || job.status === 'cancelado') && 
+                        !job.rated) {
+                        jobsList.innerHTML += html;
+                    } else {
+                        historyList.innerHTML += html;
+                    }
+                });
                 
-                container.appendChild(card);
-            });
-            
-            document.getElementById('resultsHeader').style.display = 'flex';
-            document.getElementById('resultsCount').textContent = `${professionals.length} técnicos`;
-            
-            // Reiniciar animaciones
-            initScrollAnimations();
-        }
-
-        function displayNoResults() {
-            const container = document.getElementById('resultsContainer');
-            container.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1; background: white; border-radius: var(--radius); box-shadow: var(--shadow);">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">😔</div>
-                    <h3 style="margin-bottom: 1rem; color: var(--dark);">No se encontraron técnicos</h3>
-                    <p style="color: var(--gray);">Intenta cambiar los filtros de búsqueda</p>
-                </div>
-            `;
-            document.getElementById('resultsHeader').style.display = 'none';
-        }
-
-        function displayError() {
-            const container = document.getElementById('resultsContainer');
-            container.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1; background: white; border-radius: var(--radius); box-shadow: var(--shadow);">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
-                    <h3 style="margin-bottom: 1rem; color: var(--dark);">Error al cargar</h3>
-                    <p style="color: var(--gray);">Por favor, intenta nuevamente</p>
-                </div>
-            `;
-        }
-
-        // ============================================
-        // SISTEMA DE CALIFICACIONES (CON AUTENTICACIÓN)
-        // ============================================
-        function openRatingModal(professionalId, professionalName) {
-            // Verificar si el usuario está autenticado
-            if (!currentUser) {
-                showAuthMessage('Debés iniciar sesión para calificar técnicos', 'error');
-                openAuthModal('login');
-                return;
+            } catch (error) {
+                console.error('Error cargando trabajos:', error);
             }
+        }
+
+        // Cargar calificaciones del usuario
+        async function loadUserRatings() {
+            const ratingsList = document.getElementById('userRatingsList');
             
-            currentRatingProfessional = { id: professionalId, name: professionalName };
-            selectedRating = 0;
+            try {
+                const snapshot = await db.collection('ratings')
+                    .where('userId', '==', currentUser.uid)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                ratingsList.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    ratingsList.innerHTML = '<p style="color: var(--gray);">No realizaste calificaciones aún.</p>';
+                    return;
+                }
+                
+                snapshot.forEach(doc => {
+                    const rating = doc.data();
+                    const date = rating.createdAt?.toDate ? rating.createdAt.toDate().toLocaleDateString('es-AR') : '';
+                    const stars = '⭐'.repeat(rating.rating) + '☆'.repeat(5 - rating.rating);
+                    
+                    ratingsList.innerHTML += `
+                        <div class="rating-card">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h4>${rating.professionalName || 'Profesional'}</h4>
+                                    <p><strong>Calificación:</strong> ${stars} (${rating.rating}/5)</p>
+                                    <p><strong>Fecha:</strong> ${date}</p>
+                                </div>
+                            </div>
+                            ${rating.comment ? `<p style="margin-top: 10px;">"${rating.comment}"</p>` : ''}
+                        </div>
+                    `;
+                });
+                
+            } catch (error) {
+                console.error('Error cargando calificaciones:', error);
+            }
+        }
+
+        // Modal de calificación
+        window.openRatingModal = function(jobId, professionalId, professionalName) {
+            currentRatingJob = { jobId, professionalId, professionalName };
             
-            const modalBody = document.getElementById('ratingModalBody');
-            modalBody.innerHTML = `
-                <p style="text-align: center; margin-bottom: 1.5rem; color: var(--gray);">
-                    Calificá a <strong>${professionalName}</strong>
-                </p>
-                
-                <div class="rating-stars">
-                    <span class="rating-star" data-value="1">★</span>
-                    <span class="rating-star" data-value="2">★</span>
-                    <span class="rating-star" data-value="3">★</span>
-                    <span class="rating-star" data-value="4">★</span>
-                    <span class="rating-star" data-value="5">★</span>
+            document.getElementById('ratingModalTitle').textContent = `Calificar a ${professionalName}`;
+            
+            document.getElementById('ratingModalBody').innerHTML = `
+                <div class="star-rating" id="starContainer" style="font-size: 2rem; text-align: center; margin: 1rem 0;">
+                    <span class="star" data-value="1">☆</span>
+                    <span class="star" data-value="2">☆</span>
+                    <span class="star" data-value="3">☆</span>
+                    <span class="star" data-value="4">☆</span>
+                    <span class="star" data-value="5">☆</span>
                 </div>
-                
-                <div class="rating-text" id="ratingText">
-                    Seleccioná una calificación
-                </div>
-                
-                <div class="auth-form-group">
-                    <label class="auth-form-label">Comentario (opcional)</label>
-                    <textarea id="ratingComment" class="auth-form-input" 
-                              placeholder="Contanos tu experiencia con este técnico..."
-                              rows="3" maxlength="500"></textarea>
-                </div>
-                
-                <div class="auth-btn-container">
-                    <button onclick="submitRating()" class="btn btn-primary auth-btn-full">
-                        ✅ Enviar Calificación
-                    </button>
-                    <button onclick="closeRatingModal()" class="btn auth-btn-full" style="background: #64748b; color: white;">
-                        Cancelar
-                    </button>
+                <p id="ratingText" style="text-align: center; margin: 1rem 0; color: var(--gray);">Seleccioná una calificación</p>
+                <textarea id="ratingComment" placeholder="Contanos tu experiencia (opcional)" 
+                          style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--light-gray); margin: 1rem 0; min-height: 100px;"></textarea>
+                <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                    <button id="submitRatingBtn" class="btn btn-primary" style="flex: 1;">Enviar Calificación</button>
+                    <button onclick="closeRatingModal()" class="btn btn-secondary">Cancelar</button>
                 </div>
             `;
             
-            // Configurar estrellas interactivas
-            const stars = modalBody.querySelectorAll('.rating-star');
+            // Configurar estrellas
+            const stars = document.querySelectorAll('#starContainer .star');
+            let selectedRating = 0;
+            
             stars.forEach(star => {
                 star.addEventListener('mouseover', function() {
                     const value = parseInt(this.dataset.value);
-                    highlightRatingStars(value);
+                    highlightStars(value);
                     updateRatingText(value);
                 });
                 
                 star.addEventListener('click', function() {
                     selectedRating = parseInt(this.dataset.value);
-                    highlightRatingStars(selectedRating);
+                    highlightStars(selectedRating);
                     updateRatingText(selectedRating);
                 });
             });
             
-            modalBody.querySelector('.rating-stars').addEventListener('mouseleave', function() {
-                highlightRatingStars(selectedRating);
+            document.getElementById('starContainer').addEventListener('mouseleave', function() {
+                highlightStars(selectedRating);
                 updateRatingText(selectedRating);
             });
             
-            document.getElementById('ratingModal').style.display = 'flex';
-        }
+            document.getElementById('submitRatingBtn').addEventListener('click', submitRating);
+            
+            document.getElementById('ratingModal').classList.add('active');
+        };
 
         function closeRatingModal() {
-            document.getElementById('ratingModal').style.display = 'none';
-            currentRatingProfessional = null;
-            selectedRating = 0;
+            document.getElementById('ratingModal').classList.remove('active');
+            currentRatingJob = null;
         }
 
-        function highlightRatingStars(rating) {
-            const stars = document.querySelectorAll('#ratingModal .rating-star');
+        function highlightStars(rating) {
+            const stars = document.querySelectorAll('#starContainer .star');
             stars.forEach(star => {
                 const value = parseInt(star.dataset.value);
-                if (value <= rating) {
-                    star.classList.add('active');
-                } else {
-                    star.classList.remove('active');
-                }
+                star.textContent = value <= rating ? '⭐' : '☆';
             });
         }
 
@@ -2201,114 +894,166 @@
         }
 
         async function submitRating() {
-            if (!currentRatingProfessional || !selectedRating) {
-                showAuthMessage('Seleccioná una calificación', 'error');
-                return;
-            }
+            const stars = document.querySelectorAll('#starContainer .star');
+            let selectedRating = 0;
+            
+            stars.forEach(star => {
+                if (star.textContent === '⭐') {
+                    const value = parseInt(star.dataset.value);
+                    if (value > selectedRating) selectedRating = value;
+                }
+            });
             
             const comment = document.getElementById('ratingComment').value.trim();
             
+            if (!selectedRating) {
+                alert('Por favor seleccioná una calificación');
+                return;
+            }
+            
+            if (!currentUser) {
+                alert('Debés iniciar sesión para calificar');
+                return;
+            }
+            
             try {
-                // Verificar si el usuario ya calificó a este profesional
-                const existingRating = await db.collection('ratings')
-                    .where('professionalId', '==', currentRatingProfessional.id)
-                    .where('userId', '==', currentUser.uid)
-                    .limit(1)
-                    .get();
-                
-                if (!existingRating.empty) {
-                    showAuthMessage('Ya calificaste a este técnico', 'error');
-                    closeRatingModal();
-                    return;
-                }
-                
-                // Crear la calificación
+                // Crear calificación
                 await db.collection('ratings').add({
-                    professionalId: currentRatingProfessional.id,
-                    professionalName: currentRatingProfessional.name,
                     userId: currentUser.uid,
-                    userName: currentUser.displayName || currentUser.email,
+                    userName: currentUser.displayName,
                     userEmail: currentUser.email,
+                    professionalId: currentRatingJob.professionalId,
+                    professionalName: currentRatingJob.professionalName,
+                    jobId: currentRatingJob.jobId,
                     rating: selectedRating,
                     comment: comment,
-                    status: 'approved', // Aprobada automáticamente
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'approved'
                 });
                 
-                // Actualizar estadísticas del profesional
-                await updateProfessionalStats(currentRatingProfessional.id, selectedRating);
+                // Marcar trabajo como calificado
+                await db.collection('jobs').doc(currentRatingJob.jobId).update({
+                    rated: true,
+                    ratedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
                 
-                showAuthMessage('✅ Calificación enviada correctamente. ¡Gracias!', 'success');
+                alert('¡Gracias por tu calificación!');
                 closeRatingModal();
-                
-                // Recargar profesionales para mostrar la nueva calificación
-                if (document.getElementById('provinciaSelect').value || 
-                    document.getElementById('ciudadSelect').value || 
-                    document.getElementById('rubroSelect').value) {
-                    searchProfessionals();
-                } else {
-                    loadAllProfessionals();
-                }
+                loadPendingJobs();
+                loadUserRatings();
                 
             } catch (error) {
                 console.error('Error enviando calificación:', error);
-                showAuthMessage('Error al enviar calificación', 'error');
+                alert('Error al enviar. Por favor intentá nuevamente.');
             }
         }
 
-        async function updateProfessionalStats(professionalId, newRating) {
-            try {
-                // Obtener el profesional
-                const professionalRef = db.collection('professionals').doc(professionalId);
-                const professionalDoc = await professionalRef.get();
-                
-                if (professionalDoc.exists) {
-                    const professional = professionalDoc.data();
-                    const currentRating = professional.averageRating || 0;
-                    const currentCount = professional.totalRatings || 0;
-                    
-                    // Calcular nuevo promedio
-                    const newAverage = ((currentRating * currentCount) + newRating) / (currentCount + 1);
-                    
-                    // Actualizar en Firestore
-                    await professionalRef.update({
-                        averageRating: parseFloat(newAverage.toFixed(1)),
-                        totalRatings: currentCount + 1,
-                        rankingUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                }
-            } catch (error) {
-                console.error('Error actualizando estadísticas:', error);
-            }
-        }
-
-        // ============================================
-        // UTILIDADES
-        // ============================================
-        function showLoader() {
-            document.getElementById('loader').style.display = 'flex';
-        }
-
-        function hideLoader() {
-            document.getElementById('loader').style.display = 'none';
-        }
-
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Cerrar modales al hacer clic fuera
-        window.onclick = function(event) {
-            const ratingModal = document.getElementById('ratingModal');
-            const authModal = document.getElementById('authModal');
+        // Búsqueda de profesionales
+        async function searchProfessionals() {
+            const provincia = document.getElementById('provinciaSelect').value;
+            const ciudad = document.getElementById('ciudadSelect').value;
+            const rubro = document.getElementById('rubroSelect').value;
             
-            if (event.target == ratingModal) {
+            try {
+                let query = db.collection('professionals').where('active', '==', true);
+                
+                if (provincia) query = query.where('provincia', '==', provincia);
+                if (ciudad && ciudad !== '') query = query.where('ciudad', '==', ciudad);
+                if (rubro) query = query.where('rubros', 'array-contains', rubro);
+                
+                const snapshot = await query.limit(50).get();
+                displayProfessionals(snapshot);
+                
+            } catch (error) {
+                console.error('Error buscando:', error);
+                displayError();
+            }
+        }
+
+        async function loadAllProfessionals() {
+            try {
+                const snapshot = await db.collection('professionals')
+                    .where('active', '==', true)
+                    .limit(50)
+                    .get();
+                displayProfessionals(snapshot);
+            } catch (error) {
+                console.error('Error cargando profesionales:', error);
+                displayError();
+            }
+        }
+
+        function displayProfessionals(snapshot) {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '';
+            
+            if (snapshot.empty) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; grid-column: 1 / -1;">
+                        <p style="color: var(--gray);">No se encontraron técnicos con los filtros seleccionados.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            snapshot.forEach(doc => {
+                const prof = doc.data();
+                const rating = prof.averageRating || 0;
+                const stars = '⭐'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
+                
+                html += `
+                    <div class="professional-card">
+                        <div class="professional-header">
+                            <img src="${prof.photoUrl || 'https://via.placeholder.com/80x80/2563eb/ffffff?text=T'}" 
+                                 class="professional-photo"
+                                 alt="${prof.name}"
+                                 onerror="this.src='https://via.placeholder.com/80x80/2563eb/ffffff?text=T'">
+                            <div>
+                                <h3>${prof.name}</h3>
+                                <p style="color: var(--gray); margin: 5px 0;">${prof.ciudad || ''}, ${prof.provincia || ''}</p>
+                                <div style="color: var(--accent);">${stars} ${rating.toFixed(1)}</div>
+                            </div>
+                        </div>
+                        <div style="padding: 0 1.5rem 1.5rem;">
+                            <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 1rem;">
+                                ${prof.rubros ? prof.rubros.map(r => `<span style="background: var(--primary-light); color: var(--primary); padding: 4px 8px; border-radius: 12px; font-size: 0.9rem;">${r}</span>`).join('') : ''}
+                            </div>
+                            <p style="color: var(--gray); margin-bottom: 1rem;">${prof.bio || 'Técnico especializado'}</p>
+                            <a href="https://wa.me/${prof.phone}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
+                               target="_blank"
+                               class="btn btn-whatsapp" style="width: 100%;">
+                                📱 Contactar por WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            document.getElementById('resultsHeader').style.display = 'flex';
+            document.getElementById('resultsCount').textContent = `${snapshot.size} técnicos`;
+        }
+
+        function displayError() {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px; grid-column: 1 / -1;">
+                    <p style="color: var(--danger);">Error al cargar los técnicos. Por favor intentá nuevamente.</p>
+                </div>
+            `;
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.addEventListener('click', (e) => {
+            if (e.target.id === 'authModal') {
+                document.getElementById('authModal').classList.remove('active');
+            }
+            if (e.target.id === 'ratingModal') {
                 closeRatingModal();
             }
-            if (event.target == authModal) {
-                closeAuthModal();
-            }
-        }
+        });
     </script>
 </body>
 </html>
