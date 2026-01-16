@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TecniYa - Panel Administrador Nacional</title>
-    <!-- Favicon inline -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>">
+    <title>TecniYa - Panel Administrador</title>
+    <meta name="description" content="Panel de administración para gestionar profesionales, trabajos y sistema.">
     
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23dc3545'/><text x='50' y='70' text-anchor='middle' font-size='60' fill='white'>🔧</text></svg>">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    
+    <!-- CSS -->
     <style>
-        /* ===== VARIABLES & RESET ===== */
         :root {
             --primary: #0a4fd8;
             --primary-dark: #083bb5;
             --secondary: #1db954;
-            --secondary-dark: #17a344;
             --danger: #dc3545;
             --warning: #ffc107;
             --info: #17a2b8;
@@ -23,23 +29,22 @@
             --light-gray: #e1e5e9;
             --shadow: 0 4px 12px rgba(10, 79, 216, 0.15);
             --radius: 12px;
-            --transition: all 0.3s ease;
         }
         
         * { 
             margin: 0; 
             padding: 0; 
             box-sizing: border-box; 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; 
         }
         
-        body { 
-            background-color: var(--light); 
-            color: var(--dark); 
-            line-height: 1.6; 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--dark);
+            line-height: 1.6;
         }
         
-        /* ===== LAYOUT ===== */
+        /* Layout */
         .container { 
             width: 100%; 
             max-width: 1400px; 
@@ -47,16 +52,7 @@
             padding: 20px; 
         }
         
-        a { 
-            text-decoration: none; 
-            color: var(--primary); 
-        }
-        
-        ul { 
-            list-style: none; 
-        }
-        
-        /* ===== HEADER ===== */
+        /* Header */
         .header { 
             background: linear-gradient(135deg, var(--dark) 0%, #555 100%); 
             color: white; 
@@ -70,11 +66,23 @@
             font-weight: 800; 
         }
         
-        .header-subtitle { 
-            opacity: 0.9; 
+        /* Login */
+        .login-container { 
+            max-width: 500px; 
+            margin: 80px auto; 
+            padding: 40px; 
+            background: white; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
         }
         
-        /* ===== TABS ===== */
+        .login-title { 
+            text-align: center; 
+            font-size: 1.8rem; 
+            margin-bottom: 30px; 
+        }
+        
+        /* Tabs */
         .tabs { 
             display: flex; 
             background: white; 
@@ -89,12 +97,6 @@
             cursor: pointer; 
             border-bottom: 3px solid transparent; 
             white-space: nowrap; 
-            transition: var(--transition);
-        }
-        
-        .tab:hover {
-            background-color: #f8f9fa;
-            color: var(--primary);
         }
         
         .tab.active { 
@@ -103,49 +105,20 @@
             background-color: #fff5f5; 
         }
         
-        .tab-logout { 
-            margin-left: auto; 
-            background: var(--dark); 
-            color: white; 
-        }
-        
-        /* ===== PANELS ===== */
+        /* Panels */
         .panel { 
             display: none; 
             background: white; 
             padding: 30px; 
             border-radius: 0 0 var(--radius) var(--radius); 
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         
         .panel.active { 
             display: block; 
         }
         
-        /* ===== LOGIN ===== */
-        .login-container { 
-            max-width: 500px; 
-            margin: 80px auto; 
-            padding: 40px; 
-            background: white; 
-            border-radius: 16px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-        }
-        
-        .login-title { 
-            text-align: center; 
-            font-size: 1.8rem; 
-            margin-bottom: 30px; 
-            color: var(--dark); 
-        }
-        
-        /* ===== FORMS ===== */
+        /* Forms */
         .form-group { 
             margin-bottom: 25px; 
         }
@@ -154,43 +127,21 @@
             display: block; 
             font-weight: 600; 
             margin-bottom: 10px; 
-            color: #444; 
         }
         
-        .form-input, .form-select, .form-textarea { 
+        .form-input, .form-select { 
             width: 100%; 
             padding: 15px; 
             border: 2px solid var(--light-gray); 
             border-radius: 10px; 
             font-size: 1rem; 
-            transition: border 0.3s; 
         }
         
-        .form-input:focus, .form-select:focus, .form-textarea:focus { 
-            border-color: var(--primary); 
-            outline: none; 
-        }
-        
-        .form-textarea { 
-            min-height: 120px; 
-            resize: vertical; 
-        }
-        
-        .form-row { 
-            display: flex; 
-            gap: 20px; 
-        }
-        
-        .form-row .form-group { 
-            flex: 1; 
-        }
-        
-        /* ===== TABLES ===== */
+        /* Tables */
         .data-table { 
             width: 100%; 
             border-collapse: collapse; 
             margin-top: 20px; 
-            font-size: 0.95rem; 
         }
         
         .data-table th, .data-table td { 
@@ -202,12 +153,6 @@
         .data-table th { 
             background-color: #f8f9fa; 
             font-weight: 700; 
-            position: sticky; 
-            top: 0; 
-        }
-        
-        .data-table tr:hover { 
-            background-color: #f8f9fa; 
         }
         
         .table-container { 
@@ -217,50 +162,69 @@
             border-radius: var(--radius); 
         }
         
-        .table-photo { 
-            width: 50px; 
-            height: 50px; 
-            object-fit: cover; 
-            border-radius: 6px; 
+        /* Stats */
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 25px; 
+            margin: 30px 0; 
         }
         
-        /* ===== RANKING BADGES ===== */
-        .ranking-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            gap: 5px;
+        .stat-card { 
+            background: #f8f9fa; 
+            padding: 25px; 
+            border-radius: var(--radius); 
+            text-align: center; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
         
-        .ranking-platinum { 
-            background: linear-gradient(135deg, #e5e4e2 0%, #b4b4b4 100%); 
-            color: #333; 
+        .stat-number { 
+            font-size: 2.5rem; 
+            font-weight: 700; 
+            color: var(--primary); 
         }
         
-        .ranking-gold { 
-            background: linear-gradient(135deg, #ffd700 0%, #daa520 100%); 
-            color: #333; 
+        /* Buttons */
+        .btn { 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            border: none; 
+            transition: all 0.3s; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
         }
         
-        .ranking-silver { 
-            background: linear-gradient(135deg, #c0c0c0 0%, #a9a9a9 100%); 
-            color: #333; 
-        }
-        
-        .ranking-bronze { 
-            background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%); 
+        .btn-primary { 
+            background-color: var(--primary); 
             color: white; 
         }
         
-        .ranking-beginner { 
-            background: #6c757d; 
+        .btn-danger { 
+            background-color: var(--danger); 
             color: white; 
         }
         
-        /* ===== BADGES ===== */
+        .btn-success { 
+            background-color: var(--secondary); 
+            color: white; 
+        }
+        
+        .btn-sm { 
+            padding: 8px 16px; 
+            font-size: 0.9rem; 
+        }
+        
+        .btn-group { 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: wrap; 
+        }
+        
+        /* Badges */
         .badge { 
             display: inline-block; 
             padding: 5px 12px; 
@@ -284,200 +248,25 @@
             color: #721c24; 
         }
         
-        .badge-info { 
-            background: #d1ecf1; 
-            color: #0c5460; 
-        }
-        
-        .badge-primary { 
-            background: #d1e7ff; 
-            color: var(--primary); 
-        }
-        
-        /* ===== BUTTONS ===== */
-        .btn { 
-            padding: 12px 24px; 
-            border-radius: 8px; 
-            font-size: 1rem; 
-            font-weight: 600; 
-            cursor: pointer; 
-            border: none; 
-            transition: all 0.3s; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px; 
-        }
-        
-        .btn-sm { 
-            padding: 8px 16px; 
-            font-size: 0.9rem; 
-        }
-        
-        .btn-primary { 
-            background-color: var(--primary); 
-            color: white; 
-        }
-        
-        .btn-primary:hover { 
-            background-color: var(--primary-dark); 
-        }
-        
-        .btn-success { 
-            background-color: var(--secondary); 
-            color: white; 
-        }
-        
-        .btn-success:hover { 
-            background-color: var(--secondary-dark); 
-        }
-        
-        .btn-danger { 
-            background-color: var(--danger); 
-            color: white; 
-        }
-        
-        .btn-danger:hover { 
-            background-color: #c82333; 
-        }
-        
-        .btn-warning { 
-            background-color: var(--warning); 
-            color: #333; 
-        }
-        
-        .btn-warning:hover { 
-            background-color: #e0a800; 
-        }
-        
-        .btn-block { 
-            width: 100%; 
-        }
-        
-        .btn-group { 
-            display: flex; 
-            gap: 10px; 
-            flex-wrap: wrap; 
-        }
-        
-        /* ===== CARDS ===== */
-        .stats-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-            gap: 25px; 
-            margin: 30px 0; 
-        }
-        
-        .stat-card { 
-            background: #f8f9fa; 
-            padding: 25px; 
-            border-radius: var(--radius); 
-            text-align: center; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: var(--transition);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-        
-        .stat-number { 
-            font-size: 2.5rem; 
-            font-weight: 700; 
-            color: var(--primary); 
-        }
-        
-        .stat-label { 
-            margin-top: 10px; 
-            color: var(--gray); 
-        }
-        
-        /* ===== RANKING PROGRESS ===== */
-        .ranking-progress {
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 5px 0;
-        }
-        
-        .ranking-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary) 0%, #1a60f0 100%);
-            border-radius: 4px;
-        }
-        
-        /* ===== MESSAGES ===== */
+        /* Messages */
         .message {
             padding: 1.5rem;
             border-radius: var(--radius);
             margin-bottom: 1.5rem;
             font-weight: 600;
-            animation: slideIn 0.3s ease;
-        }
-        
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         
         .message-success {
             background: #d4edda;
             color: #155724;
-            border-left: 4px solid #28a745;
         }
         
         .message-error {
             background: #f8d7da;
             color: #721c24;
-            border-left: 4px solid var(--danger);
         }
         
-        .message-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-left: 4px solid var(--info);
-        }
-        
-        /* ===== BANNER PREVIEW ===== */
-        .banner-preview { 
-            max-width: 800px; 
-            margin: 20px 0; 
-            border-radius: var(--radius); 
-            overflow: hidden; 
-            border: 2px solid #eaeaea; 
-        }
-        
-        .banner-preview-img { 
-            width: 100%; 
-            height: auto; 
-            display: block; 
-        }
-        
-        /* ===== LOADER ===== */
-        .loader { 
-            border: 5px solid #f3f3f3; 
-            border-top: 5px solid var(--danger); 
-            border-radius: 50%; 
-            width: 50px; 
-            height: 50px; 
-            animation: spin 1s linear infinite; 
-            margin: 40px auto; 
-            display: none; 
-        }
-        
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-        
-        /* ===== FILTERS ===== */
+        /* Filters */
         .filters { 
             background: #f8f9fa; 
             padding: 20px; 
@@ -494,45 +283,9 @@
             gap: 10px; 
         }
         
-        /* ===== MODAL ===== */
-        .modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.5); 
-            z-index: 1000; 
-        }
-        
-        .modal-content { 
-            background: white; 
-            width: 90%; 
-            max-width: 600px; 
-            margin: 50px auto; 
-            padding: 30px; 
-            border-radius: 16px; 
-            max-height: 80vh; 
-            overflow-y: auto; 
-        }
-        
-        .modal-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 25px; 
-        }
-        
-        .modal-close { 
-            font-size: 2rem; 
-            cursor: pointer; 
-            color: var(--gray); 
-        }
-        
-        /* ===== RESPONSIVE ===== */
+        /* Responsive */
         @media (max-width: 768px) {
-            .form-row { 
+            .filters { 
                 flex-direction: column; 
             }
             
@@ -543,19 +296,11 @@
             .tab { 
                 text-align: center; 
             }
-            
-            .filters { 
-                flex-direction: column; 
-            }
-            
-            .btn-group {
-                flex-direction: column;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- LOGIN -->
+    <!-- Login -->
     <div id="loginContainer" class="login-container">
         <h2 class="login-title">🔐 Admin TecniYa</h2>
         <div class="form-group">
@@ -566,168 +311,90 @@
             <label class="form-label">Contraseña</label>
             <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
         </div>
-        <button id="loginBtn" class="btn btn-primary btn-block">Ingresar</button>
+        <button id="loginBtn" class="btn btn-primary" style="width: 100%;">Ingresar</button>
         <div id="loginMessage" class="message" style="display: none;"></div>
     </div>
     
-    <!-- MAIN ADMIN -->
+    <!-- Admin Panel -->
     <div id="adminPanel" style="display: none;">
         <header class="header">
-            <h1>⚙ Panel Administrador TecniYa Nacional</h1>
-            <p class="header-subtitle">Gestión completa de profesionales, ranking, banners y configuración</p>
+            <h1>⚙ Panel Administrador TecniYa</h1>
+            <p style="opacity: 0.9;">Gestión completa del sistema</p>
         </header>
         
         <div class="container">
-            <!-- TABS -->
+            <!-- Tabs -->
             <div class="tabs">
                 <div class="tab active" data-tab="dashboard">📊 Dashboard</div>
                 <div class="tab" data-tab="professionals">👨‍🔧 Profesionales</div>
-                <div class="tab" data-tab="ranking">🏆 Ranking</div>
-                <div class="tab" data-tab="ratings">⭐ Calificaciones</div>
-                <div class="tab" data-tab="featuredTransactions">💰 Transacciones</div>
+                <div class="tab" data-tab="jobs">🛠️ Trabajos</div>
+                <div class="tab" data-tab="notifications">🔔 Notificaciones</div>
+                <div class="tab" data-tab="certifications">📜 Certificaciones</div>
                 <div class="tab" data-tab="banners">🎯 Banners</div>
-                <div class="tab" data-tab="config">⚙ Configuración</div>
-                <div class="tab tab-logout" id="logoutBtn">🚪 Cerrar Sesión</div>
+                <div class="tab" id="logoutBtn">🚪 Cerrar Sesión</div>
             </div>
             
-            <!-- DASHBOARD -->
+            <!-- Dashboard -->
             <div id="dashboardPanel" class="panel active">
-                <h2 style="margin-bottom: 30px; color: var(--dark);">Dashboard Nacional</h2>
+                <h2>Dashboard del Sistema</h2>
                 
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-number" id="totalProfessionals">0</div>
-                        <div class="stat-label">Total Profesionales</div>
+                        <div>Total Profesionales</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="activeCities">0</div>
-                        <div class="stat-label">Ciudades Activas</div>
+                        <div class="stat-number" id="activeJobs">0</div>
+                        <div>Trabajos Activos</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="featuredProfessionals">0</div>
-                        <div class="stat-label">Destacados Activos</div>
+                        <div class="stat-number" id="pendingCertifications">0</div>
+                        <div>Cert. Pendientes</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="avgRankingScore">0</div>
-                        <div class="stat-label">Puntaje Ranking Prom.</div>
+                        <div class="stat-number" id="blockedAccounts">0</div>
+                        <div>Cuentas Bloqueadas</div>
                     </div>
                 </div>
                 
                 <div style="margin-top: 50px;">
-                    <h3 style="margin-bottom: 20px;">📍 Distribución por Provincia</h3>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Provincia</th>
-                                    <th>Profesionales</th>
-                                    <th>Avg. Ranking</th>
-                                    <th>Destacados</th>
-                                    <th>TOP 10</th>
-                                </tr>
-                            </thead>
-                            <tbody id="provinceDistribution">
-                                <!-- JS llenará esto -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 50px;">
-                    <h3 style="margin-bottom: 20px;">📊 Estadísticas de Banners</h3>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-number" id="totalBanners">0</div>
-                            <div class="stat-label">Total Banners</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="activeBanners">0</div>
-                            <div class="stat-label">Banners Activos</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="nationalBanners">0</div>
-                            <div class="stat-label">Banners Nacionales</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="provincialBanners">0</div>
-                            <div class="stat-label">Banners Provinciales</div>
-                        </div>
-                    </div>
+                    <h3>📈 Actividad Reciente</h3>
+                    <div id="recentActivity"></div>
                 </div>
             </div>
             
-            <!-- PROFESSIONALS -->
+            <!-- Professionals -->
             <div id="professionalsPanel" class="panel">
-                <h2 style="margin-bottom: 25px; color: var(--dark);">Gestión de Profesionales</h2>
+                <h2>Gestión de Profesionales</h2>
                 
                 <div class="filters">
                     <div class="filter-group">
-                        <label>Provincia:</label>
-                        <select id="filterProvincia" class="form-select" style="width: 200px;">
-                            <option value="">Todas</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Ciudad:</label>
-                        <select id="filterCiudad" class="form-select" style="width: 200px;">
-                            <option value="">Todas</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Rubro:</label>
-                        <select id="filterRubro" class="form-select" style="width: 200px;">
-                            <option value="">Todos</option>
-                            <option value="plomeria">Plomería</option>
-                            <option value="gas">Gas</option>
-                            <option value="electricidad">Electricidad</option>
-                            <option value="aire">Aire Acondicionado</option>
-                            <option value="albanileria">Albañilería</option>
-                            <option value="pintura">Pintura</option>
-                            <option value="cerrajeria">Cerrajería</option>
-                            <option value="jardineria">Jardinería</option>
-                            <option value="herreria">Herrería</option>
-                            <option value="carpinteria">Carpintería</option>
-                            <option value="limpieza">Limpieza</option>
-                            <option value="mudanzas">Mudanzas</option>
-                            <option value="otros">Otros</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
                         <label>Estado:</label>
-                        <select id="filterStatus" class="form-select" style="width: 200px;">
+                        <select id="filterProfessionalStatus" class="form-select" style="width: 200px;">
                             <option value="">Todos</option>
                             <option value="active">Activos</option>
-                            <option value="incomplete">Incompletos</option>
                             <option value="blocked">Bloqueados</option>
-                            <option value="featured">Destacados</option>
-                            <option value="professional">Profesionales</option>
+                            <option value="incomplete">Incompletos</option>
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label>Ordenar por:</label>
-                        <select id="filterSort" class="form-select" style="width: 200px;">
-                            <option value="name">Nombre A-Z</option>
-                            <option value="ranking_desc">Ranking (Alto)</option>
-                            <option value="ranking_asc">Ranking (Bajo)</option>
-                            <option value="created_desc">Nuevos primero</option>
-                            <option value="created_asc">Antiguos primero</option>
+                        <label>Provincia:</label>
+                        <select id="filterProfessionalProvincia" class="form-select" style="width: 200px;">
+                            <option value="">Todas</option>
                         </select>
                     </div>
-                    <button id="applyFilters" class="btn btn-primary">🔍 Filtrar</button>
-                    <button id="resetFilters" class="btn">🔄 Reiniciar</button>
+                    <button id="applyProfessionalFilters" class="btn btn-primary">🔍 Filtrar</button>
                 </div>
                 
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Foto</th>
                                 <th>Nombre</th>
-                                <th>Ubicación</th>
                                 <th>Contacto</th>
-                                <th>Rubros</th>
-                                <th>Ranking</th>
+                                <th>Ubicación</th>
                                 <th>Estado</th>
+                                <th>Rating</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -736,108 +403,28 @@
                         </tbody>
                     </table>
                 </div>
-                
-                <div id="professionalDetailModal" class="modal">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3>Detalle del Profesional</h3>
-                            <span class="modal-close" onclick="closeModal()">×</span>
-                        </div>
-                        <div id="professionalDetailContent">
-                            <!-- JS llenará esto -->
-                        </div>
-                    </div>
-                </div>
             </div>
             
-            <!-- RANKING -->
-            <div id="rankingPanel" class="panel">
-                <h2 style="margin-bottom: 25px; color: var(--dark);">🏆 Gestión de Rankings</h2>
-                
-                <div class="filters">
-                    <div class="filter-group">
-                        <label>Ordenar por:</label>
-                        <select id="sortRanking" class="form-select" style="width: 200px;">
-                            <option value="rankingScore_desc">Ranking (Alto → Bajo)</option>
-                            <option value="rankingScore_asc">Ranking (Bajo → Alto)</option>
-                            <option value="averageRating_desc">Rating (Alto → Bajo)</option>
-                            <option value="totalRatings_desc">Calificaciones (Muchas → Pocas)</option>
-                            <option value="lastActive_desc">Actividad (Reciente)</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Provincia:</label>
-                        <select id="filterRankingProvincia" class="form-select" style="width: 200px;">
-                            <option value="">Todas</option>
-                        </select>
-                    </div>
-                    <button id="applyRankingFilters" class="btn btn-primary">🔍 Filtrar</button>
-                    <button id="resetRankingFilters" class="btn">🔄 Reiniciar</button>
-                </div>
-                
-                <div class="btn-group" style="margin-bottom: 20px;">
-                    <button onclick="recalculateAllRankings()" class="btn btn-warning">🔄 Recalcular todos los rankings</button>
-                    <button onclick="updateRankingPositions()" class="btn btn-primary">📊 Actualizar posiciones</button>
-                    <button onclick="exportRankingData()" class="btn btn-success">📄 Exportar datos</button>
-                </div>
-                
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Pos.</th>
-                                <th>Nombre</th>
-                                <th>Ubicación</th>
-                                <th>Puntaje</th>
-                                <th>Rating</th>
-                                <th>Últ. Act.</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rankingTable">
-                            <!-- JS llenará esto -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div style="margin-top: 30px; background: #f8f9fa; padding: 20px; border-radius: var(--radius);">
-                    <h3>📊 Estadísticas del Ranking</h3>
-                    <div id="rankingStats" style="margin-top: 15px;">
-                        <!-- JS llenará esto -->
-                    </div>
-                </div>
-            </div>
-            
-            <!-- RATINGS -->
-            <div id="ratingsPanel" class="panel">
-                <h2 style="margin-bottom: 25px; color: var(--dark);">⭐ Gestión de Calificaciones</h2>
+            <!-- Jobs -->
+            <div id="jobsPanel" class="panel">
+                <h2>Gestión de Trabajos</h2>
                 
                 <div class="filters">
                     <div class="filter-group">
                         <label>Estado:</label>
-                        <select id="filterRatingStatus" class="form-select" style="width: 200px;">
-                            <option value="pending">Pendientes</option>
-                            <option value="approved">Aprobadas</option>
-                            <option value="rejected">Rechazadas</option>
-                            <option value="all">Todas</option>
+                        <select id="filterJobStatus" class="form-select" style="width: 200px;">
+                            <option value="">Todos</option>
+                            <option value="pendiente">Pendientes</option>
+                            <option value="en_progreso">En Progreso</option>
+                            <option value="completado">Completados</option>
+                            <option value="cancelado">Cancelados</option>
                         </select>
                     </div>
                     <div class="filter-group">
                         <label>Desde:</label>
-                        <input type="date" id="filterRatingDateFrom" class="form-input" style="width: 150px;">
+                        <input type="date" id="filterJobDateFrom" class="form-input" style="width: 150px;">
                     </div>
-                    <div class="filter-group">
-                        <label>Hasta:</label>
-                        <input type="date" id="filterRatingDateTo" class="form-input" style="width: 150px;">
-                    </div>
-                    <div class="filter-group">
-                        <label>Profesional:</label>
-                        <select id="filterRatingProfessional" class="form-select" style="width: 200px;">
-                            <option value="">Todos</option>
-                        </select>
-                    </div>
-                    <button id="applyRatingFilters" class="btn btn-primary">🔍 Filtrar</button>
-                    <button id="resetRatingFilters" class="btn">🔄 Reiniciar</button>
+                    <button id="applyJobFilters" class="btn btn-primary">🔍 Filtrar</button>
                 </div>
                 
                 <div class="table-container">
@@ -847,202 +434,105 @@
                                 <th>Fecha</th>
                                 <th>Profesional</th>
                                 <th>Cliente</th>
-                                <th>Calificación</th>
-                                <th>Comentario</th>
-                                <th>Trabajo Completado</th>
+                                <th>Servicio</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="ratingsTable">
+                        <tbody id="jobsTable">
                             <!-- JS llenará esto -->
                         </tbody>
                     </table>
                 </div>
             </div>
             
-            <!-- FEATURED TRANSACTIONS -->
-            <div id="featuredTransactionsPanel" class="panel">
-                <h2 style="margin-bottom: 25px; color: var(--dark);">💰 Transacciones de Destacados</h2>
-                
-                <div class="filters">
-                    <div class="filter-group">
-                        <label>Estado:</label>
-                        <select id="filterTransactionStatus" class="form-select" style="width: 200px;">
-                            <option value="pendiente">Pendientes</option>
-                            <option value="activo">Activos</option>
-                            <option value="expirado">Expirados</option>
-                            <option value="all">Todos</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Desde:</label>
-                        <input type="date" id="filterTransactionDateFrom" class="form-input" style="width: 150px;">
-                    </div>
-                    <div class="filter-group">
-                        <label>Hasta:</label>
-                        <input type="date" id="filterTransactionDateTo" class="form-input" style="width: 150px;">
-                    </div>
-                    <div class="filter-group">
-                        <label>Método:</label>
-                        <select id="filterTransactionMethod" class="form-select" style="width: 200px;">
-                            <option value="">Todos</option>
-                            <option value="transferencia">Transferencia</option>
-                        </select>
-                    </div>
-                    <button id="applyTransactionFilters" class="btn btn-primary">🔍 Filtrar</button>
-                    <button id="resetTransactionFilters" class="btn">🔄 Reiniciar</button>
-                </div>
-                
-                <div class="btn-group" style="margin-bottom: 20px;">
-                    <button onclick="markAllAsPaid()" class="btn btn-success">✅ Marcar seleccionados como pagados</button>
-                    <button onclick="exportTransactions()" class="btn btn-secondary">📄 Exportar transacciones</button>
-                </div>
-                
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th><input type="checkbox" id="selectAllTransactions"></th>
-                                <th>Fecha</th>
-                                <th>Profesional</th>
-                                <th>Duración</th>
-                                <th>Monto</th>
-                                <th>Método</th>
-                                <th>Estado</th>
-                                <th>Vence</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="transactionsTable">
-                            <!-- JS llenará esto -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- BANNERS -->
-            <div id="bannersPanel" class="panel">
-                <h2 style="margin-bottom: 25px; color: var(--dark);">🎯 Gestión de Banners</h2>
-                
-                <div style="background: #f8f9fa; padding: 25px; border-radius: var(--radius); margin-bottom: 30px;">
-                    <h3 style="margin-bottom: 20px;">📢 Crear Nuevo Banner</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Título del Banner</label>
-                            <input type="text" id="bannerTitle" class="form-input" placeholder="Ej: Promoción Verano 2024">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Tipo de Banner</label>
-                            <select id="bannerType" class="form-select">
-                                <option value="nacional">Nacional</option>
-                                <option value="provincial">Provincial</option>
-                                <option value="ciudad">Ciudad</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row" id="provinciaField" style="display: none;">
-                        <div class="form-group">
-                            <label class="form-label">Provincia</label>
-                            <select id="bannerProvincia" class="form-select">
-                                <option value="">Seleccionar provincia</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row" id="ciudadField" style="display: none;">
-                        <div class="form-group">
-                            <label class="form-label">Ciudad</label>
-                            <select id="bannerCiudad" class="form-select" disabled>
-                                <option value="">Seleccionar ciudad</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">URL de la Imagen</label>
-                            <input type="text" id="bannerImageUrl" class="form-input" placeholder="https://ejemplo.com/banner.jpg">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">URL de Enlace</label>
-                            <input type="text" id="bannerLinkUrl" class="form-input" placeholder="https://ejemplo.com/promocion">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Fecha de Inicio</label>
-                            <input type="date" id="bannerStartDate" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Fecha de Fin</label>
-                            <input type="date" id="bannerEndDate" class="form-input">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Prioridad (1-10)</label>
-                            <input type="number" id="bannerPriority" class="form-input" min="1" max="10" value="5">
-                            <small>Más alto = Más visible</small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Estado</label>
-                            <select id="bannerStatus" class="form-select">
-                                <option value="active">Activo</option>
-                                <option value="inactive">Inactivo</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="banner-preview" id="bannerPreview" style="display: none;">
-                        <h4>Vista Previa:</h4>
-                        <img id="bannerPreviewImg" src="" class="banner-preview-img" alt="Vista previa del banner">
-                    </div>
-                    
-                    <button onclick="createBanner()" class="btn btn-primary">🎯 Crear Banner</button>
-                    <button onclick="clearBannerForm()" class="btn">🔄 Limpiar Formulario</button>
-                </div>
+            <!-- Notifications -->
+            <div id="notificationsPanel" class="panel">
+                <h2>Sistema de Notificaciones</h2>
                 
                 <div class="filters">
                     <div class="filter-group">
                         <label>Tipo:</label>
-                        <select id="filterBannerType" class="form-select" style="width: 200px;">
-                            <option value="">Todos</option>
-                            <option value="nacional">Nacional</option>
-                            <option value="provincial">Provincial</option>
-                            <option value="ciudad">Ciudad</option>
+                        <select id="filterNotificationType" class="form-select" style="width: 200px;">
+                            <option value="">Todas</option>
+                            <option value="account_blocked">Cuentas Bloqueadas</option>
+                            <option value="job_overdue">Trabajos Vencidos</option>
+                            <option value="system">Sistema</option>
                         </select>
                     </div>
+                    <button id="applyNotificationFilters" class="btn btn-primary">🔍 Filtrar</button>
+                    <button onclick="clearAllNotifications()" class="btn btn-danger">🗑️ Limpiar Todas</button>
+                </div>
+                
+                <div id="notificationsList"></div>
+            </div>
+            
+            <!-- Certifications -->
+            <div id="certificationsPanel" class="panel">
+                <h2>Gestión de Certificaciones</h2>
+                
+                <div class="filters">
                     <div class="filter-group">
                         <label>Estado:</label>
-                        <select id="filterBannerStatus" class="form-select" style="width: 200px;">
-                            <option value="active">Activos</option>
-                            <option value="inactive">Inactivos</option>
-                            <option value="all">Todos</option>
+                        <select id="filterCertificationStatus" class="form-select" style="width: 200px;">
+                            <option value="pendiente">Pendientes</option>
+                            <option value="aprobada">Aprobadas</option>
+                            <option value="rechazada">Rechazadas</option>
                         </select>
                     </div>
-                    <div class="filter-group">
-                        <label>Provincia:</label>
-                        <select id="filterBannerProvincia" class="form-select" style="width: 200px;">
-                            <option value="">Todas</option>
-                        </select>
-                    </div>
-                    <button id="applyBannerFilters" class="btn btn-primary">🔍 Filtrar</button>
-                    <button id="resetBannerFilters" class="btn">🔄 Reiniciar</button>
+                    <button id="applyCertificationFilters" class="btn btn-primary">🔍 Filtrar</button>
                 </div>
                 
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Vista Previa</th>
-                                <th>Título</th>
-                                <th>Tipo y Ubicación</th>
-                                <th>Fechas</th>
-                                <th>Prioridad</th>
+                                <th>Profesional</th>
+                                <th>Certificación</th>
+                                <th>Institución</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="certificationsTable">
+                            <!-- JS llenará esto -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Banners -->
+            <div id="bannersPanel" class="panel">
+                <h2>Gestión de Banners</h2>
+                
+                <div style="background: #f8f9fa; padding: 25px; border-radius: var(--radius); margin-bottom: 30px;">
+                    <h3>Crear Nuevo Banner</h3>
+                    <div class="form-group">
+                        <label class="form-label">URL de la Imagen</label>
+                        <input type="text" id="bannerImageUrl" class="form-input" placeholder="https://ejemplo.com/banner.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">URL de Enlace</label>
+                        <input type="text" id="bannerLinkUrl" class="form-input" placeholder="https://ejemplo.com/promocion">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo</label>
+                        <select id="bannerType" class="form-select">
+                            <option value="nacional">Nacional</option>
+                            <option value="provincial">Provincial</option>
+                        </select>
+                    </div>
+                    <button onclick="createBanner()" class="btn btn-primary">🎯 Crear Banner</button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Enlace</th>
+                                <th>Tipo</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
@@ -1053,450 +543,245 @@
                     </table>
                 </div>
             </div>
-            
-            <!-- CONFIG -->
-            <div id="configPanel" class="panel">
-                <h2 style="margin-bottom: 30px; color: var(--dark);">Configuración del Sistema</h2>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
-                    <div>
-                        <h3 style="margin-bottom: 20px;">⚙ Sistema de Ranking</h3>
-                        <div class="form-group">
-                            <label class="form-label">Puntaje mínimo para aparecer</label>
-                            <input type="number" id="minRankingScore" class="form-input" min="0" max="100" value="30">
-                            <small style="color: var(--gray);">Los profesionales con menos puntaje no aparecen en búsquedas</small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Puntaje para destacado automático</label>
-                            <input type="number" id="autoFeaturedScore" class="form-input" min="0" max="100" value="85">
-                            <small style="color: var(--gray);">Los profesionales que superen este puntaje se destacan automáticamente</small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Días para considerar "Activo"</label>
-                            <input type="number" id="activeDaysThreshold" class="form-input" min="1" max="365" value="30">
-                        </div>
-                        <button onclick="updateRankingConfig()" class="btn btn-primary">💾 Guardar configuración</button>
-                    </div>
-                    
-                    <div>
-                        <h3 style="margin-bottom: 20px;">💰 Precios Destacados</h3>
-                        <div class="form-group">
-                            <label class="form-label">1 mes (ARS)</label>
-                            <input type="number" id="price1Month" class="form-input" min="0" value="5000">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">3 meses (ARS) - Promo/mes</label>
-                            <input type="number" id="price3Months" class="form-input" min="0" value="13500">
-                            <small style="color: var(--gray);">$4,500 por mes</small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">6 meses (ARS) - Promo/mes</label>
-                            <input type="number" id="price6Months" class="form-input" min="0" value="24000">
-                            <small style="color: var(--gray);">$4,000 por mes</small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">12 meses (ARS) - Promo/mes</label>
-                            <input type="number" id="price12Months" class="form-input" min="0" value="42000">
-                            <small style="color: var(--gray);">$3,500 por mes - Habilita certificaciones y Plan Profesional</small>
-                        </div>
-                        <button onclick="updateFeaturedPrices()" class="btn btn-primary">💾 Actualizar precios</button>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 50px; border-top: 2px solid var(--light-gray); padding-top: 30px;">
-                    <h3 style="margin-bottom: 20px;">🛠 Herramientas de Administración</h3>
-                    <div class="btn-group">
-                        <button onclick="forceHideNoPhoto()" class="btn btn-warning">👁 Ocultar profesionales sin foto</button>
-                        <button onclick="deactivateExpiredFeatured()" class="btn btn-warning">📅 Desactivar destacados vencidos</button>
-                        <button onclick="activateProfessionalPlans()" class="btn btn-success">⭐ Activar planes profesionales</button>
-                        <button onclick="recalculateAllRankings()" class="btn btn-warning">📊 Recalcular rankings</button>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 50px; background: #f8f9fa; padding: 25px; border-radius: var(--radius);">
-                    <h3 style="margin-bottom: 15px;">📋 Exportar Datos</h3>
-                    <div class="btn-group">
-                        <button onclick="exportProfessionals()" class="btn">📄 Exportar profesionales</button>
-                        <button onclick="exportBudgets()" class="btn">📋 Exportar presupuestos</button>
-                        <button onclick="exportTransactions()" class="btn">💰 Exportar transacciones</button>
-                        <button onclick="exportRankingData()" class="btn btn-success">🏆 Exportar ranking</button>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-    
-    <div id="loader" class="loader"></div>
-    
-    <!-- SCRIPTS DE FIREBASE -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-    <!-- SCRIPT PRINCIPAL -->
     <script>
-        // ============================================
-        // DATOS DE PROVINCIAS Y CIUDADES
-        // ============================================
-        const provinciasCiudades = {
-            "Buenos Aires": ["La Plata", "Mar del Plata", "Bahía Blanca", "Quilmes", "Lomas de Zamora", "San Isidro", "Tigre", "Pilar", "Merlo", "Moreno"],
-            "CABA": ["Capital Federal"],
-            "Catamarca": ["San Fernando del Valle de Catamarca", "Valle Viejo", "Andalgalá"],
-            "Chaco": ["Resistencia", "Barranqueras", "Fontana", "Presidencia Roque Sáenz Peña"],
-            "Chubut": ["Rawson", "Comodoro Rivadavia", "Trelew", "Puerto Madryn"],
-            "Córdoba": ["Córdoba", "Villa María", "Río Cuarto", "Alta Gracia", "Villa Carlos Paz", "Jesús María"],
-            "Corrientes": ["Corrientes", "Goya", "Mercedes", "Curuzú Cuatiá"],
-            "Entre Ríos": ["Paraná", "Concordia", "Gualeguaychú", "Concepción del Uruguay"],
-            "Formosa": ["Formosa", "Clorinda", "Pirané"],
-            "Jujuy": ["San Salvador de Jujuy", "Palpalá", "San Pedro de Jujuy", "Libertador General San Martín"],
-            "La Pampa": ["Santa Rosa", "General Pico", "Toay", "Realicó"],
-            "La Rioja": ["La Rioja", "Chilecito", "Aimogasta", "Chamical"],
-            "Mendoza": ["Mendoza", "San Rafael", "Godoy Cruz", "Guaymallén", "Las Heras", "Maipú"],
-            "Misiones": ["Posadas", "Oberá", "Eldorado", "Apóstoles"],
-            "Neuquén": ["Neuquén", "Cutral-Có", "Plottier", "Centenario"],
-            "Río Negro": ["Viedma", "Bariloche", "General Roca", "Cipolletti"],
-            "Salta": ["Salta", "San Ramón de la Nueva Orán", "Tartagal", "Metán"],
-            "San Juan": ["San Juan", "Rivadavia", "Chimbas", "Rawson"],
-            "San Luis": ["San Luis", "Villa Mercedes", "Juana Koslay", "La Punta"],
-            "Santa Cruz": ["Río Gallegos", "Caleta Olivia", "Puerto Deseado", "Río Turbio"],
-            "Santa Fe": ["Rosario", "Santa Fe", "Rafaela", "Venado Tuerto", "Reconquista", "Sunchales"],
-            "Santiago del Estero": ["Santiago del Estero", "La Banda", "Frías", "Añatuya"],
-            "Tierra del Fuego": ["Ushuaia", "Río Grande"],
-            "Tucumán": ["San Miguel de Tucumán", "Yerba Buena", "Tafí Viejo", "Concepción"]
-        };
-
-        // ============================================
-        // CONFIGURACIÓN FIREBASE - CERTIFICADO NUEVO 12 MESES
-        // ============================================
+        // Configuración Firebase
         const firebaseConfig = {
-          apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
-          authDomain: "tecniya-b4206.firebaseapp.com",
-          projectId: "tecniya-b4206",
-          storageBucket: "tecniya-b4206.firebasestorage.app",
-          messagingSenderId: "166424133304",
-          appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
+            apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
+            authDomain: "tecniya-b4206.firebaseapp.com",
+            projectId: "tecniya-b4206",
+            storageBucket: "tecniya-b4206.firebasestorage.app",
+            messagingSenderId: "166424133304",
+            appId: "1:166424133304:web:d1ad23bd4ea1af10437e4d"
         };
 
-        // ============================================
-        // VARIABLES GLOBALES
-        // ============================================
-        let db, auth;
-        let allProfessionalsData = [];
-        let allTransactionsData = [];
-        let rankingConfig = {
-            minScore: 30,
-            autoFeaturedScore: 85,
-            activeDays: 30
-        };
-        let featuredPrices = {
-            1: 5000,
-            3: 13500,
-            6: 24000,
-            12: 42000
-        };
+        // Variables globales
+        let auth, db;
 
-        // ============================================
-        // INICIALIZACIÓN
-        // ============================================
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
-        auth = firebase.auth();
-
-        // ============================================
-        // VERIFICAR ADMIN AL CARGAR
-        // ============================================
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                const adminSnapshot = await db.collection('admin_users').where('email', '==', user.email).get();
-                if (!adminSnapshot.empty) {
-                    document.getElementById('loginContainer').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    loadDashboard();
-                    loadProvinciasSelect();
-                    loadConfig();
-                    loadBannersTable();
-                } else {
-                    auth.signOut();
-                    showMessage('loginMessage', '❌ No tenés permisos de administrador', 'error');
-                }
-            } else {
-                document.getElementById('loginContainer').style.display = 'block';
-                document.getElementById('adminPanel').style.display = 'none';
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                
+                // Event listeners
+                document.getElementById('loginBtn').addEventListener('click', handleLogin);
+                document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+                
+                // Tabs
+                document.querySelectorAll('.tab[data-tab]').forEach(tab => {
+                    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+                });
+                
+                // Filtros
+                document.getElementById('applyProfessionalFilters').addEventListener('click', loadProfessionals);
+                document.getElementById('applyJobFilters').addEventListener('click', loadJobs);
+                document.getElementById('applyNotificationFilters').addEventListener('click', loadNotifications);
+                document.getElementById('applyCertificationFilters').addEventListener('click', loadCertifications);
+                
+                // Cargar provincias
+                loadProvincias();
+                
+                // Verificar autenticación
+                auth.onAuthStateChanged(handleAuthStateChange);
+                
+            } catch (error) {
+                console.error('Error inicializando:', error);
             }
         });
 
-        // ============================================
-        // DASHBOARD
-        // ============================================
-        async function loadDashboard() {
-            showLoader();
+        // Autenticación
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
             
             try {
-                // Obtener todos los profesionales
-                const snapshot = await db.collection('professionals').get();
-                allProfessionalsData = [];
-                snapshot.forEach(doc => {
-                    allProfessionalsData.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Calcular estadísticas
-                const totalProfessionals = allProfessionalsData.length;
-                const activeProfessionals = allProfessionalsData.filter(p => p.active).length;
-                
-                // Ciudades activas
-                const citiesSet = new Set();
-                allProfessionalsData.forEach(p => {
-                    if (p.ciudad) citiesSet.add(p.ciudad);
-                });
-                
-                // Destacados activos
-                const now = new Date();
-                const featuredActive = allProfessionalsData.filter(p => {
-                    if (!p.isFeatured || !p.featuredUntil) return false;
-                    const featuredUntil = p.featuredUntil.toDate ? p.featuredUntil.toDate() : new Date(p.featuredUntil);
-                    return featuredUntil > now;
-                }).length;
-                
-                // Planes profesionales activos
-                const professionalPlans = allProfessionalsData.filter(p => p.hasProfessionalPlan).length;
-                
-                // Promedio de ranking
-                const totalScore = allProfessionalsData.reduce((sum, p) => sum + (p.rankingScore || 0), 0);
-                const avgRanking = totalProfessionals > 0 ? Math.round(totalScore / totalProfessionals) : 0;
-                
-                // Obtener estadísticas de banners
-                const bannersSnapshot = await db.collection('banners').get();
-                const totalBanners = bannersSnapshot.size;
-                const activeBanners = bannersSnapshot.docs.filter(doc => {
-                    const banner = doc.data();
-                    return banner.active === true;
-                }).length;
-                
-                const nationalBanners = bannersSnapshot.docs.filter(doc => {
-                    const banner = doc.data();
-                    return banner.type === 'nacional';
-                }).length;
-                
-                const provincialBanners = bannersSnapshot.docs.filter(doc => {
-                    const banner = doc.data();
-                    return banner.type === 'provincial';
-                }).length;
-                
-                // Actualizar estadísticas
-                document.getElementById('totalProfessionals').textContent = activeProfessionals;
-                document.getElementById('activeCities').textContent = citiesSet.size;
-                document.getElementById('featuredProfessionals').textContent = featuredActive;
-                document.getElementById('avgRankingScore').textContent = avgRanking;
-                document.getElementById('totalBanners').textContent = totalBanners;
-                document.getElementById('activeBanners').textContent = activeBanners;
-                document.getElementById('nationalBanners').textContent = nationalBanners;
-                document.getElementById('provincialBanners').textContent = provincialBanners;
-                
-                // Distribución por provincia
-                await loadProvinceDistribution();
-                
-                hideLoader();
+                await auth.signInWithEmailAndPassword(email, password);
             } catch (error) {
-                console.error("Error cargando dashboard:", error);
-                hideLoader();
-                showMessage('loginMessage', '❌ Error cargando dashboard', 'error');
+                showMessage('loginMessage', '❌ Error: ' + error.message, 'error');
             }
         }
 
-        async function loadProvinceDistribution() {
-            const distribution = {};
-            const now = new Date();
-            
-            allProfessionalsData.forEach(prof => {
-                if (prof.provincia) {
-                    if (!distribution[prof.provincia]) {
-                        distribution[prof.provincia] = {
-                            profesionales: 0,
-                            totalScore: 0,
-                            destacados: 0,
-                            top10: 0
-                        };
-                    }
-                    distribution[prof.provincia].profesionales++;
-                    distribution[prof.provincia].totalScore += prof.rankingScore || 0;
-                    
-                    if (prof.isFeatured && prof.featuredUntil) {
-                        const featuredUntil = prof.featuredUntil.toDate ? prof.featuredUntil.toDate() : new Date(prof.featuredUntil);
-                        if (featuredUntil > now) {
-                            distribution[prof.provincia].destacados++;
-                        }
-                    }
-                    
-                    if (prof.rankingScore >= 90) {
-                        distribution[prof.provincia].top10++;
-                    }
-                }
+        function handleLogout() {
+            auth.signOut();
+        }
+
+        function handleAuthStateChange(user) {
+            if (user && user.email === 'admin@tecniya.com') {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                loadDashboard();
+                loadProfessionals();
+            } else {
+                document.getElementById('loginContainer').style.display = 'block';
+                document.getElementById('adminPanel').style.display = 'none';
+                if (user) auth.signOut();
+            }
+        }
+
+        // Navegación
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
             });
             
-            const tbody = document.getElementById('provinceDistribution');
-            tbody.innerHTML = '';
+            document.querySelectorAll('.panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
             
-            Object.keys(distribution).sort().forEach(provincia => {
-                const data = distribution[provincia];
-                const avgScore = data.profesionales > 0 ? Math.round(data.totalScore / data.profesionales) : 0;
+            document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(`${tabId}Panel`).classList.add('active');
+            
+            if (tabId === 'dashboard') loadDashboard();
+            if (tabId === 'professionals') loadProfessionals();
+            if (tabId === 'jobs') loadJobs();
+            if (tabId === 'notifications') loadNotifications();
+            if (tabId === 'certifications') loadCertifications();
+            if (tabId === 'banners') loadBanners();
+        }
+
+        // Dashboard
+        async function loadDashboard() {
+            try {
+                // Total profesionales
+                const professionalsSnapshot = await db.collection('professionals').get();
+                document.getElementById('totalProfessionals').textContent = professionalsSnapshot.size;
                 
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><strong>${provincia}</strong></td>
-                    <td>${data.profesionales}</td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span>${avgScore}/100</span>
-                            <div style="flex: 1; height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden;">
-                                <div style="width: ${avgScore}%; height: 100%; background: var(--primary);"></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>${data.destacados}</td>
-                    <td>${data.top10}</td>
-                `;
-                tbody.appendChild(row);
+                // Trabajos activos
+                const jobsSnapshot = await db.collection('jobs')
+                    .where('status', 'in', ['pendiente', 'en_progreso'])
+                    .get();
+                document.getElementById('activeJobs').textContent = jobsSnapshot.size;
+                
+                // Certificaciones pendientes
+                const certsSnapshot = await db.collection('certifications')
+                    .where('status', '==', 'pendiente')
+                    .get();
+                document.getElementById('pendingCertifications').textContent = certsSnapshot.size;
+                
+                // Cuentas bloqueadas
+                const blockedSnapshot = await db.collection('professionals')
+                    .where('blocked', '==', true)
+                    .get();
+                document.getElementById('blockedAccounts').textContent = blockedSnapshot.size;
+                
+                // Actividad reciente
+                loadRecentActivity();
+                
+            } catch (error) {
+                console.error('Error cargando dashboard:', error);
+            }
+        }
+
+        async function loadRecentActivity() {
+            const container = document.getElementById('recentActivity');
+            
+            try {
+                // Últimos trabajos
+                const jobsSnapshot = await db.collection('jobs')
+                    .orderBy('createdAt', 'desc')
+                    .limit(10)
+                    .get();
+                
+                let html = '<table class="data-table">';
+                html += '<tr><th>Fecha</th><th>Profesional</th><th>Cliente</th><th>Estado</th></tr>';
+                
+                jobsSnapshot.forEach(doc => {
+                    const job = doc.data();
+                    const date = job.createdAt?.toDate ? job.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                    
+                    html += `
+                        <tr>
+                            <td>${date}</td>
+                            <td>${job.professionalName || '-'}</td>
+                            <td>${job.userName || '-'}</td>
+                            <td>${job.status}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</table>';
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error cargando actividad:', error);
+            }
+        }
+
+        // Profesionales
+        function loadProvincias() {
+            const provincias = [
+                "Buenos Aires", "CABA", "Catamarca", "Chaco", "Chubut",
+                "Córdoba", "Corrientes", "Entre Ríos", "Formosa", "Jujuy",
+                "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquén",
+                "Río Negro", "Salta", "San Juan", "San Luis", "Santa Cruz",
+                "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucumán"
+            ];
+            
+            const select = document.getElementById('filterProfessionalProvincia');
+            provincias.sort().forEach(provincia => {
+                const option = document.createElement('option');
+                option.value = provincia;
+                option.textContent = provincia;
+                select.appendChild(option);
             });
         }
 
-        // ============================================
-        // PROFESIONALES - MEJORADO
-        // ============================================
         async function loadProfessionals() {
-            showLoader();
+            const statusFilter = document.getElementById('filterProfessionalStatus').value;
+            const provinciaFilter = document.getElementById('filterProfessionalProvincia').value;
             
             try {
                 let query = db.collection('professionals');
                 
-                // Aplicar filtros
-                const provinciaFilter = document.getElementById('filterProvincia').value;
-                const ciudadFilter = document.getElementById('filterCiudad').value;
-                const rubroFilter = document.getElementById('filterRubro').value;
-                const statusFilter = document.getElementById('filterStatus').value;
-                const sortFilter = document.getElementById('filterSort').value;
+                if (statusFilter === 'blocked') {
+                    query = query.where('blocked', '==', true);
+                } else if (statusFilter === 'active') {
+                    query = query.where('active', '==', true);
+                } else if (statusFilter === 'incomplete') {
+                    query = query.where('profileCompleted', '==', false);
+                }
                 
                 if (provinciaFilter) {
                     query = query.where('provincia', '==', provinciaFilter);
-                    
-                    // Cargar ciudades de la provincia seleccionada
-                    const ciudadSelect = document.getElementById('filterCiudad');
-                    ciudadSelect.innerHTML = '<option value="">Todas</option>';
-                    if (provinciasCiudades[provinciaFilter]) {
-                        provinciasCiudades[provinciaFilter].forEach(ciudad => {
-                            const option = document.createElement('option');
-                            option.value = ciudad;
-                            option.textContent = ciudad;
-                            ciudadSelect.appendChild(option);
-                        });
-                    }
-                }
-                
-                if (ciudadFilter) {
-                    query = query.where('ciudad', '==', ciudadFilter);
-                }
-                
-                if (rubroFilter) {
-                    query = query.where('rubros', 'array-contains', rubroFilter);
                 }
                 
                 const snapshot = await query.get();
-                let professionals = [];
-                
-                snapshot.forEach(doc => {
-                    professionals.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Aplicar filtro de estado
-                const now = new Date();
-                professionals = professionals.filter(p => {
-                    if (statusFilter === 'active' && !p.active) return false;
-                    if (statusFilter === 'incomplete' && p.profileCompleted) return false;
-                    if (statusFilter === 'blocked' && !p.blocked) return false;
-                    if (statusFilter === 'featured') {
-                        const isFeaturedActive = p.isFeatured && p.featuredUntil && 
-                            (p.featuredUntil.toDate ? p.featuredUntil.toDate() : new Date(p.featuredUntil)) > now;
-                        if (!isFeaturedActive) return false;
-                    }
-                    if (statusFilter === 'professional' && !p.hasProfessionalPlan) return false;
-                    return true;
-                });
-                
-                // Ordenar
-                professionals.sort((a, b) => {
-                    switch(sortFilter) {
-                        case 'name':
-                            return (a.name || '').localeCompare(b.name || '');
-                        case 'ranking_desc':
-                            return (b.rankingScore || 0) - (a.rankingScore || 0);
-                        case 'ranking_asc':
-                            return (a.rankingScore || 0) - (b.rankingScore || 0);
-                        case 'created_desc':
-                            const dateA = a.createdAt ? (a.createdAt.toDate ? a.createdAt.toDate() : new Date(a.createdAt)) : new Date(0);
-                            const dateB = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt)) : new Date(0);
-                            return dateB - dateA;
-                        case 'created_asc':
-                            const dateA2 = a.createdAt ? (a.createdAt.toDate ? a.createdAt.toDate() : new Date(a.createdAt)) : new Date(0);
-                            const dateB2 = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt)) : new Date(0);
-                            return dateA2 - dateB2;
-                        default:
-                            return 0;
-                    }
-                });
-                
-                // Actualizar tabla
                 const tbody = document.getElementById('professionalsTable');
                 tbody.innerHTML = '';
                 
-                const currentDate = new Date();
-                
-                professionals.forEach((prof) => {
-                    const photoUrl = prof.photoUrl || 'https://via.placeholder.com/50x50/0a4fd8/ffffff?text=NO+FOTO';
-                    const isFeaturedActive = prof.isFeatured && prof.featuredUntil && 
-                        (prof.featuredUntil.toDate ? prof.featuredUntil.toDate() : new Date(prof.featuredUntil)) > currentDate;
+                snapshot.forEach(doc => {
+                    const prof = doc.data();
+                    const id = doc.id;
+                    
+                    let statusBadge = '';
+                    if (prof.blocked) {
+                        statusBadge = '<span class="badge badge-danger">BLOQUEADO</span>';
+                    } else if (!prof.profileCompleted) {
+                        statusBadge = '<span class="badge badge-warning">INCOMPLETO</span>';
+                    } else {
+                        statusBadge = '<span class="badge badge-success">ACTIVO</span>';
+                    }
                     
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td><img src="${photoUrl}" class="table-photo" alt="Foto" onerror="this.src='https://via.placeholder.com/50x50/0a4fd8/ffffff?text=NO+FOTO'"></td>
                         <td>
                             <strong>${prof.name || 'Sin nombre'}</strong><br>
-                            <small style="color: var(--gray);">${prof.email || ''}</small>
+                            <small>${prof.email || ''}</small>
                         </td>
-                        <td>
-                            ${prof.ciudad || 'Sin ciudad'},<br>
-                            ${prof.provincia || 'Sin provincia'}
-                        </td>
-                        <td>
-                            ${prof.phone || 'Sin teléfono'}<br>
-                            <small>${prof.zonas ? prof.zonas.join(', ') : ''}</small>
-                        </td>
-                        <td>${prof.rubros ? prof.rubros.map(r => getRubroName(r)).join(', ') : ''}</td>
-                        <td>
-                            <strong>${prof.rankingScore || 0}/100</strong><br>
-                            <div class="ranking-progress">
-                                <div class="ranking-progress-bar" style="width: ${prof.rankingScore || 0}%"></div>
-                            </div>
-                        </td>
-                        <td>
-                            ${prof.blocked ? '<span class="badge badge-danger">BLOQUEADO</span>' : ''}
-                            ${!prof.profileCompleted ? '<span class="badge badge-warning">INCOMPLETO</span>' : ''}
-                            ${isFeaturedActive ? '<span class="badge badge-success">DESTACADO</span>' : ''}
-                            ${prof.hasProfessionalPlan ? '<span class="badge badge-primary">PROFESIONAL</span>' : ''}
-                            ${prof.profileCompleted && !prof.blocked && !isFeaturedActive && !prof.hasProfessionalPlan ? '<span class="badge badge-info">ACTIVO</span>' : ''}
-                        </td>
+                        <td>${prof.phone || 'Sin teléfono'}</td>
+                        <td>${prof.ciudad || ''}, ${prof.provincia || ''}</td>
+                        <td>${statusBadge}</td>
+                        <td>${prof.averageRating ? prof.averageRating.toFixed(1) : '0.0'} ⭐</td>
                         <td>
                             <div class="btn-group">
-                                <button onclick="viewProfessionalDetail('${prof.id}')" class="btn btn-sm">👁 Ver</button>
-                                ${isFeaturedActive ? 
-                                    `<button onclick="deactivateFeatured('${prof.id}')" class="btn btn-warning btn-sm">⭐ Desactivar</button>` : 
-                                    `<button onclick="activateFeaturedModal('${prof.id}')" class="btn btn-success btn-sm">⭐ Destacar</button>`
-                                }
-                                ${prof.hasProfessionalPlan ?
-                                    `<button onclick="removeProfessionalPlan('${prof.id}')" class="btn btn-warning btn-sm">✓ Remover plan</button>` :
-                                    `<button onclick="addProfessionalPlan('${prof.id}')" class="btn btn-primary btn-sm">✓ Plan Prof.</button>`
-                                }
+                                <button onclick="viewProfessional('${id}')" class="btn btn-sm">👁 Ver</button>
                                 ${prof.blocked ? 
-                                    `<button onclick="unblockProfessional('${prof.id}')" class="btn btn-success btn-sm">🔓 Desbloquear</button>` : 
-                                    `<button onclick="blockProfessional('${prof.id}')" class="btn btn-danger btn-sm">🚫 Bloquear</button>`
+                                    `<button onclick="unblockProfessional('${id}')" class="btn btn-success btn-sm">🔓 Desbloquear</button>` :
+                                    `<button onclick="blockProfessional('${id}')" class="btn btn-danger btn-sm">🚫 Bloquear</button>`
                                 }
                             </div>
                         </td>
@@ -1504,576 +789,221 @@
                     tbody.appendChild(row);
                 });
                 
-                hideLoader();
             } catch (error) {
-                console.error("Error cargando profesionales:", error);
-                hideLoader();
-                showMessage('loginMessage', '❌ Error cargando profesionales', 'error');
+                console.error('Error cargando profesionales:', error);
             }
         }
 
-        function getRubroName(rubroKey) {
-            const rubros = {
-                'plomeria': 'Plomería',
-                'gas': 'Gas',
-                'electricidad': 'Electricidad',
-                'aire': 'Aire Acondicionado',
-                'albanileria': 'Albañilería',
-                'pintura': 'Pintura',
-                'cerrajeria': 'Cerrajería',
-                'jardineria': 'Jardinería',
-                'herreria': 'Herrería',
-                'carpinteria': 'Carpintería',
-                'limpieza': 'Limpieza',
-                'mudanzas': 'Mudanzas',
-                'otros': 'Otros servicios'
-            };
-            return rubros[rubroKey] || rubroKey;
-        }
-
-        window.viewProfessionalDetail = async function(id) {
+        window.viewProfessional = async function(id) {
             const doc = await db.collection('professionals').doc(id).get();
             if (!doc.exists) return;
             
-            const data = doc.data();
-            const now = new Date();
-            
-            // CORRECCIÓN: Verificar correctamente si está destacado
-            let featuredActive = false;
-            if (data.isFeatured && data.featuredUntil) {
-                const featuredUntil = data.featuredUntil.toDate ? 
-                    data.featuredUntil.toDate() : new Date(data.featuredUntil);
-                featuredActive = featuredUntil > now;
-            }
+            const prof = doc.data();
             
             let html = `
-                <div style="display: flex; gap: 30px; margin-bottom: 30px;">
-                    <div>
-                        <img src="${data.photoUrl || 'https://via.placeholder.com/150x150/0a4fd8/ffffff?text=NO+FOTO'}" 
-                             style="width: 150px; height: 150px; object-fit: cover; border-radius: 12px;"
-                             onerror="this.src='https://via.placeholder.com/150x150/0a4fd8/ffffff?text=NO+FOTO'">
-                    </div>
-                    <div>
-                        <h4>${data.name || 'Sin nombre'}</h4>
-                        <p><strong>📍 Ubicación:</strong> ${data.ciudad || ''}, ${data.provincia || ''}</p>
-                        <p><strong>📞 Teléfono:</strong> ${data.phone || 'No especificado'}</p>
-                        <p><strong>📧 Email:</strong> ${data.email || 'No especificado'}</p>
-                        <p><strong>⭐ Rating:</strong> ${data.averageRating || '0'} (${data.totalRatings || 0} calificaciones)</p>
-                        <p><strong>🏆 Ranking:</strong> ${data.rankingScore || 0}/100</p>
-                        <p><strong>✅ Trabajos completados:</strong> ${data.completedJobs || '0'}</p>
-                        <p><strong>📅 Registrado:</strong> ${data.createdAt ? (data.createdAt.toDate ? data.createdAt.toDate().toLocaleDateString('es-AR') : new Date(data.createdAt).toLocaleDateString('es-AR')) : 'No disponible'}</p>
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <p><strong>Rubros:</strong> ${data.rubros ? data.rubros.map(r => getRubroName(r)).join(', ') : ''}</p>
-                    <p><strong>Zonas:</strong> ${data.zonas ? data.zonas.join(', ') : ''}</p>
-                    <p><strong>Descripción:</strong> ${data.bio || 'Sin descripción'}</p>
-                    <p><strong>Experiencia:</strong> ${data.experienceYears || 0} años</p>
-                    <p><strong>Certificaciones:</strong> ${data.certifications && data.certifications.length > 0 ? data.certifications.map(c => typeof c === 'string' ? c : (c.title || 'Certificado')).join(', ') : 'Sin certificaciones'}</p>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px;">
-                        <h5>Estado del perfil</h5>
-                        <p>${data.profileCompleted ? '✅ COMPLETO' : '❌ INCOMPLETO'}</p>
-                        <p>${data.blocked ? '🚫 BLOQUEADO' : '✅ ACTIVO'}</p>
-                        <p>${data.certifications && data.certifications.length > 0 ? '✅ CERTIFICADO' : '❌ NO CERTIFICADO'}</p>
-                        <p>${data.hasProfessionalPlan ? '✅ PLAN PROFESIONAL' : '❌ SIN PLAN PROFESIONAL'}</p>
-                    </div>
-                    
-                    <div style="background: ${featuredActive ? '#fff3cd' : '#f8f9fa'}; padding: 20px; border-radius: 12px;">
-                        <h5>Servicio destacado</h5>
-                        <p>${featuredActive ? '✅ ACTIVO' : '❌ INACTIVO'}</p>
-                        ${data.featuredUntil ? 
-                            `<p><strong>Válido hasta:</strong> ${data.featuredUntil.toDate ? data.featuredUntil.toDate().toLocaleDateString('es-AR') : new Date(data.featuredUntil).toLocaleDateString('es-AR')}</p>` : 
-                            ''
-                        }
-                    </div>
-                </div>
-                
-                <div class="btn-group" style="margin-top: 30px;">
-                    <button onclick="contactProfessional('${data.phone}')" class="btn btn-success">📱 Contactar por WhatsApp</button>
-                    <button onclick="closeModal()" class="btn">Cerrar</button>
-                </div>
+                <h3>${prof.name || 'Sin nombre'}</h3>
+                <p><strong>Email:</strong> ${prof.email || '-'}</p>
+                <p><strong>Teléfono:</strong> ${prof.phone || '-'}</p>
+                <p><strong>Ubicación:</strong> ${prof.ciudad || ''}, ${prof.provincia || ''}</p>
+                <p><strong>Rubros:</strong> ${prof.rubros ? prof.rubros.join(', ') : '-'}</p>
+                <p><strong>Rating:</strong> ${prof.averageRating ? prof.averageRating.toFixed(1) : '0.0'} ⭐ (${prof.totalRatings || 0} calificaciones)</p>
+                <p><strong>Trabajos completados:</strong> ${prof.completedJobs || 0}</p>
+                <p><strong>Perfil completo:</strong> ${prof.profileCompleted ? '✅ Sí' : '❌ No'}</p>
+                <p><strong>Cuenta bloqueada:</strong> ${prof.blocked ? '✅ Sí' : '❌ No'}</p>
+                <p><strong>Última actividad:</strong> ${prof.lastActive ? new Date(prof.lastActive).toLocaleDateString('es-AR') : '-'}</p>
             `;
             
-            document.getElementById('professionalDetailContent').innerHTML = html;
-            document.getElementById('professionalDetailModal').style.display = 'block';
-        };
-
-        window.closeModal = function() {
-            document.getElementById('professionalDetailModal').style.display = 'none';
-        };
-
-        window.contactProfessional = function(phone) {
-            if (phone) {
-                window.open(`https://wa.me/549${phone}`, '_blank');
-            }
+            alert(html);
         };
 
         window.blockProfessional = async function(id) {
-            if (confirm('¿Estás seguro de bloquear a este profesional? No podrá acceder a su panel.')) {
-                await db.collection('professionals').doc(id).update({ blocked: true });
+            if (confirm('¿Bloquear esta cuenta?')) {
+                await db.collection('professionals').doc(id).update({
+                    blocked: true,
+                    blockedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
                 loadProfessionals();
-                showMessage('loginMessage', '✅ Profesional bloqueado', 'success');
             }
         };
 
         window.unblockProfessional = async function(id) {
-            await db.collection('professionals').doc(id).update({ blocked: false });
-            loadProfessionals();
-            showMessage('loginMessage', '✅ Profesional desbloqueado', 'success');
-        };
-
-        window.activateFeaturedModal = async function(id) {
-            const months = prompt('¿Por cuántos meses activar el servicio destacado?', '1');
-            if (!months || isNaN(months) || months < 1) return;
-            
-            const amount = featuredPrices[parseInt(months)] || (5000 * parseInt(months));
-            const now = new Date();
-            const expiresAt = new Date(now.setMonth(now.getMonth() + parseInt(months)));
-            
-            // Crear transacción
-            const professionalDoc = await db.collection('professionals').doc(id).get();
-            const professionalData = professionalDoc.data();
-            
-            await db.collection('featuredTransactions').add({
-                professionalId: id,
-                professionalName: professionalData.name,
-                duration: parseInt(months),
-                amount: amount,
-                paymentMethod: 'admin',
-                status: 'activo',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                expiresAt: expiresAt,
-                activatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            
-            // Activar destacado en el profesional
-            await db.collection('professionals').doc(id).update({
-                isFeatured: true,
-                featuredUntil: expiresAt,
-                featuredAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            
-            // Si es 12 meses, activar Plan Profesional
-            if (parseInt(months) >= 12) {
+            if (confirm('¿Desbloquear esta cuenta?')) {
                 await db.collection('professionals').doc(id).update({
-                    hasProfessionalPlan: true,
-                    professionalPlanEnabledAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            }
-            
-            loadProfessionals();
-            showMessage('loginMessage', '✅ Servicio destacado activado', 'success');
-        };
-
-        window.deactivateFeatured = async function(id) {
-            if (confirm('¿Desactivar servicio destacado?')) {
-                await db.collection('professionals').doc(id).update({
-                    isFeatured: false,
-                    featuredUntil: null,
-                    featuredAt: null
+                    blocked: false,
+                    blockedAt: null
                 });
                 loadProfessionals();
-                showMessage('loginMessage', '✅ Servicio destacado desactivado', 'success');
             }
         };
 
-        window.addProfessionalPlan = async function(id) {
-            if (confirm('¿Activar Plan Profesional para este profesional?')) {
-                await db.collection('professionals').doc(id).update({ 
-                    hasProfessionalPlan: true,
-                    professionalPlanEnabledAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                loadProfessionals();
-                showMessage('loginMessage', '✅ Plan Profesional activado', 'success');
-            }
-        };
-
-        window.removeProfessionalPlan = async function(id) {
-            if (confirm('¿Remover Plan Profesional a este profesional?')) {
-                await db.collection('professionals').doc(id).update({ 
-                    hasProfessionalPlan: false,
-                    professionalPlanEnabledAt: null
-                });
-                loadProfessionals();
-                showMessage('loginMessage', '✅ Plan Profesional removido', 'success');
-            }
-        };
-
-        // ============================================
-        // RANKING
-        // ============================================
-        async function loadRankingTable() {
-            showLoader();
+        // Trabajos
+        async function loadJobs() {
+            const statusFilter = document.getElementById('filterJobStatus').value;
+            const dateFilter = document.getElementById('filterJobDateFrom').value;
             
             try {
-                let query = db.collection('professionals');
+                let query = db.collection('jobs').orderBy('createdAt', 'desc');
                 
-                // Aplicar filtros
-                const provincia = document.getElementById('filterRankingProvincia').value;
-                const sortBy = document.getElementById('sortRanking').value;
-                
-                if (provincia) {
-                    query = query.where('provincia', '==', provincia);
+                if (statusFilter) {
+                    query = query.where('status', '==', statusFilter);
                 }
                 
-                const snapshot = await query.get();
-                let professionals = [];
-                
-                snapshot.forEach(doc => {
-                    professionals.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Ordenar
-                const [field, order] = sortBy.split('_');
-                professionals.sort((a, b) => {
-                    let aVal = a[field] || 0;
-                    let bVal = b[field] || 0;
-                    
-                    // Para fechas
-                    if (field === 'lastActive') {
-                        aVal = a.lastActive ? (a.lastActive.toDate ? a.lastActive.toDate().getTime() : new Date(a.lastActive).getTime()) : 0;
-                        bVal = b.lastActive ? (b.lastActive.toDate ? b.lastActive.toDate().getTime() : new Date(b.lastActive).getTime()) : 0;
-                    }
-                    
-                    return order === 'desc' ? bVal - aVal : aVal - bVal;
-                });
-                
-                // Actualizar tabla
-                const tbody = document.getElementById('rankingTable');
+                const snapshot = await query.limit(100).get();
+                const tbody = document.getElementById('jobsTable');
                 tbody.innerHTML = '';
                 
-                professionals.forEach((prof, index) => {
-                    const position = index + 1;
-                    const lastActive = prof.lastActive ? 
-                        (prof.lastActive.toDate ? prof.lastActive.toDate().toLocaleDateString('es-AR') : new Date(prof.lastActive).toLocaleDateString('es-AR')) : 'Nunca';
+                snapshot.forEach(doc => {
+                    const job = doc.data();
+                    const id = doc.id;
+                    
+                    // Filtrar por fecha
+                    if (dateFilter && job.createdAt) {
+                        const jobDate = job.createdAt?.toDate ? job.createdAt.toDate() : new Date(job.createdAt);
+                        const filterDate = new Date(dateFilter);
+                        if (jobDate < filterDate) return;
+                    }
+                    
+                    const date = job.createdAt?.toDate ? job.createdAt.toDate().toLocaleDateString('es-AR') : '-';
                     
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${date}</td>
+                        <td>${job.professionalName || '-'}</td>
+                        <td>${job.userName || '-'}</td>
+                        <td>${job.serviceType || '-'}</td>
+                        <td>${job.status}</td>
                         <td>
-                            <strong style="font-size: 1.2rem;">${position}</strong>
-                            ${position <= 3 ? '🔥' : ''}
-                        </td>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <img src="${prof.photoUrl || 'https://via.placeholder.com/40x40/0a4fd8/ffffff?text=NO+FOTO'}" 
-                                     style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;"
-                                     onerror="this.src='https://via.placeholder.com/40x40/0a4fd8/ffffff?text=NO+FOTO'">
-                                <div>
-                                    <strong>${prof.name || 'Sin nombre'}</strong><br>
-                                    <small style="color: var(--gray);">${prof.email || ''}</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            ${prof.ciudad || 'Sin ciudad'},<br>
-                            ${prof.provincia || 'Sin provincia'}
-                        </td>
-                        <td>
-                            <strong style="font-size: 1.2rem;">${prof.rankingScore || 0}</strong>/100
-                            <div class="ranking-progress">
-                                <div class="ranking-progress-bar" style="width: ${prof.rankingScore || 0}%"></div>
-                            </div>
-                        </td>
-                        <td>
-                            <strong>${prof.averageRating ? prof.averageRating.toFixed(1) : '0.0'}</strong> ⭐<br>
-                            <small>${prof.totalRatings || 0} calificaciones</small>
-                        </td>
-                        <td>
-                            ${lastActive}
-                        </td>
-                        <td>
-                            <div class="btn-group">
-                                <button onclick="viewProfessionalDetail('${prof.id}')" class="btn btn-sm">👁 Ver</button>
-                                <button onclick="recalculateProfessionalRanking('${prof.id}')" class="btn btn-warning btn-sm">🔄 Recalcular</button>
-                            </div>
+                            <button onclick="viewJob('${id}')" class="btn btn-sm">👁 Ver</button>
                         </td>
                     `;
                     tbody.appendChild(row);
                 });
                 
-                // Actualizar estadísticas
-                updateRankingStats(professionals);
-                
-                hideLoader();
             } catch (error) {
-                console.error("Error cargando tabla de ranking:", error);
-                hideLoader();
-                showMessage('loginMessage', '❌ Error cargando ranking', 'error');
+                console.error('Error cargando trabajos:', error);
             }
         }
 
-        function updateRankingStats(professionals) {
-            const total = professionals.length;
-            if (total === 0) {
-                document.getElementById('rankingStats').innerHTML = '<p>No hay datos para mostrar</p>';
-                return;
-            }
+        window.viewJob = async function(id) {
+            const doc = await db.collection('jobs').doc(id).get();
+            if (!doc.exists) return;
             
-            const totalScore = professionals.reduce((sum, p) => sum + (p.rankingScore || 0), 0);
-            const avgScore = Math.round(totalScore / total);
+            const job = doc.data();
+            const date = job.createdAt?.toDate ? job.createdAt.toDate().toLocaleDateString('es-AR') : '-';
             
-            const top10 = professionals.filter(p => p.rankingScore >= 90).length;
-            const now = new Date();
-            const featured = professionals.filter(p => {
-                if (!p.isFeatured || !p.featuredUntil) return false;
-                const featuredUntil = p.featuredUntil.toDate ? p.featuredUntil.toDate() : new Date(p.featuredUntil);
-                return featuredUntil > now;
-            }).length;
-            const professional = professionals.filter(p => p.hasProfessionalPlan).length;
-            
-            document.getElementById('rankingStats').innerHTML = `
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">${avgScore}</div>
-                        <div style="color: var(--gray);">Puntaje promedio</div>
-                    </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--warning);">${top10}</div>
-                        <div style="color: var(--gray);">TOP 10 (90+ puntos)</div>
-                    </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--secondary);">${featured}</div>
-                        <div style="color: var(--gray);">Destacados activos</div>
-                    </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--info);">${professional}</div>
-                        <div style="color: var(--gray);">Planes profesionales</div>
-                    </div>
-                </div>
+            let html = `
+                <h3>Detalle del Trabajo</h3>
+                <p><strong>Servicio:</strong> ${job.serviceType || '-'}</p>
+                <p><strong>Fecha:</strong> ${date}</p>
+                <p><strong>Estado:</strong> ${job.status}</p>
+                <p><strong>Profesional:</strong> ${job.professionalName || '-'} (${job.professionalPhone || '-'})</p>
+                <p><strong>Cliente:</strong> ${job.userName || '-'} (${job.userPhone || '-'})</p>
+                <p><strong>Descripción:</strong> ${job.description || '-'}</p>
+                ${job.price ? `<p><strong>Precio:</strong> $${job.price.toLocaleString('es-AR')}</p>` : ''}
             `;
-        }
+            
+            alert(html);
+        };
 
-        window.recalculateProfessionalRanking = async function(id) {
-            showLoader();
+        // Notificaciones
+        async function loadNotifications() {
+            const typeFilter = document.getElementById('filterNotificationType').value;
+            const container = document.getElementById('notificationsList');
             
             try {
-                // Obtener profesional
-                const doc = await db.collection('professionals').doc(id).get();
-                if (!doc.exists) {
-                    alert('Profesional no encontrado');
+                let query = db.collection('admin_notifications').orderBy('createdAt', 'desc');
+                
+                if (typeFilter) {
+                    query = query.where('type', '==', typeFilter);
+                }
+                
+                const snapshot = await query.limit(50).get();
+                container.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 2rem;">No hay notificaciones.</p>';
                     return;
                 }
                 
-                const professional = { id: doc.id, ...doc.data() };
-                
-                // Recalcular calificaciones
-                const threeMonthsAgo = new Date();
-                threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-                
-                let totalRatings = 0;
-                let sumRatings = 0;
-                let completedJobs = 0;
-                
-                const ratingsSnapshot = await db.collection('ratings')
-                    .where('professionalId', '==', id)
-                    .where('status', '==', 'approved')
-                    .where('createdAt', '>=', threeMonthsAgo)
-                    .get();
-                
-                ratingsSnapshot.forEach(doc => {
-                    totalRatings++;
-                    sumRatings += doc.data().rating || 0;
-                    if (doc.data().jobCompleted) {
-                        completedJobs++;
+                snapshot.forEach(doc => {
+                    const notif = doc.data();
+                    const id = doc.id;
+                    const date = notif.createdAt?.toDate ? notif.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                    
+                    let typeText = '';
+                    switch(notif.type) {
+                        case 'account_blocked':
+                            typeText = '🔴 Cuenta Bloqueada';
+                            break;
+                        case 'job_overdue':
+                            typeText = '⚠️ Trabajo Vencido';
+                            break;
+                        default:
+                            typeText = 'ℹ️ Sistema';
                     }
+                    
+                    container.innerHTML += `
+                        <div style="background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid var(--warning);">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h4 style="margin: 0;">${typeText}</h4>
+                                    <p style="margin: 0.5rem 0;">${notif.reason || notif.message || ''}</p>
+                                    <small style="color: var(--gray);">${date}</small>
+                                </div>
+                                <button onclick="deleteNotification('${id}')" class="btn btn-sm btn-danger">🗑️</button>
+                            </div>
+                            ${notif.professionalName ? `<p><strong>Profesional:</strong> ${notif.professionalName}</p>` : ''}
+                        </div>
+                    `;
                 });
-                
-                // Actualizar trabajos completados
-                if (completedJobs > professional.completedJobs) {
-                    await db.collection('professionals').doc(id).update({
-                        completedJobs: completedJobs
-                    });
-                }
-                
-                // Recalcular ranking (simplificado)
-                const averageRating = totalRatings > 0 ? (sumRatings / totalRatings) : 0;
-                let score = 0;
-                score += averageRating * 5;
-                score += Math.min(totalRatings * 0.2, 20);
-                score += Math.min(completedJobs * 0.1, 10);
-                
-                if (professional.photoUrl) score += 5;
-                if (professional.bio && professional.bio.length > 50) score += 5;
-                if (professional.zonas && professional.zonas.length > 0) score += 5;
-                if (professional.rubros && professional.rubros.length > 0) score += 5;
-                
-                if (professional.experienceYears) {
-                    score += Math.min(professional.experienceYears, 10);
-                }
-                
-                // Puntos por certificaciones
-                if (professional.certifications && professional.certifications.length > 0) {
-                    score += professional.certifications.length * 5;
-                }
-                
-                if (professional.hasProfessionalPlan) score += 10;
-                
-                const now = new Date();
-                if (professional.isFeatured && professional.featuredUntil) {
-                    const featuredUntil = professional.featuredUntil.toDate ? 
-                        professional.featuredUntil.toDate() : new Date(professional.featuredUntil);
-                    if (featuredUntil > now) {
-                        score += 5;
-                    }
-                }
-                
-                score = Math.min(Math.max(score, 0), 100);
-                const rankingScore = Math.round(score);
-                
-                // Actualizar en la base de datos
-                await db.collection('professionals').doc(id).update({
-                    averageRating: averageRating,
-                    totalRatings: totalRatings,
-                    rankingScore: rankingScore,
-                    rankingUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                hideLoader();
-                showMessage('loginMessage', `✅ Ranking recalculado: ${rankingScore} puntos`, 'success');
-                
-                const activeTab = document.querySelector('.tab.active').dataset.tab;
-                if (activeTab === 'ranking') {
-                    loadRankingTable();
-                } else if (activeTab === 'professionals') {
-                    loadProfessionals();
-                }
                 
             } catch (error) {
-                hideLoader();
-                showMessage('loginMessage', '❌ Error recalculando ranking: ' + error.message, 'error');
+                console.error('Error cargando notificaciones:', error);
+            }
+        }
+
+        window.deleteNotification = async function(id) {
+            if (confirm('¿Eliminar esta notificación?')) {
+                await db.collection('admin_notifications').doc(id).delete();
+                loadNotifications();
             }
         };
 
-        window.recalculateAllRankings = async function() {
-            if (!confirm('¿Estás seguro de recalcular todos los rankings? Esto puede tomar unos minutos.')) return;
-            
-            showLoader();
-            
-            try {
-                const snapshot = await db.collection('professionals').get();
-                let count = 0;
-                let errors = 0;
-                
-                for (const doc of snapshot.docs) {
-                    try {
-                        await recalculateProfessionalRanking(doc.id);
-                        count++;
-                    } catch (error) {
-                        errors++;
-                        console.error(`Error updating professional ${doc.id}:`, error);
-                    }
-                }
-                
-                hideLoader();
-                showMessage('loginMessage', `✅ Rankings recalculados: ${count} profesionales actualizados, ${errors} errores.`, 'success');
-                
-                // Recargar datos
-                const activeTab = document.querySelector('.tab.active').dataset.tab;
-                if (activeTab === 'ranking') {
-                    loadRankingTable();
-                } else if (activeTab === 'dashboard') {
-                    loadDashboard();
-                } else if (activeTab === 'professionals') {
-                    loadProfessionals();
-                }
-                
-            } catch (error) {
-                hideLoader();
-                showMessage('loginMessage', '❌ Error recalculando rankings: ' + error.message, 'error');
-            }
-        };
-
-        window.updateRankingPositions = async function() {
-            showLoader();
-            
-            try {
-                // Obtener todos los profesionales
-                const snapshot = await db.collection('professionals').get();
-                const professionals = [];
+        window.clearAllNotifications = async function() {
+            if (confirm('¿Eliminar todas las notificaciones?')) {
+                const snapshot = await db.collection('admin_notifications').get();
+                const batch = db.batch();
                 
                 snapshot.forEach(doc => {
-                    professionals.push({ id: doc.id, ...doc.data() });
+                    batch.delete(doc.ref);
                 });
                 
-                // Ordenar por ranking score
-                professionals.sort((a, b) => (b.rankingScore || 0) - (a.rankingScore || 0));
-                
-                // Actualizar posiciones
-                let updatedCount = 0;
-                for (let i = 0; i < professionals.length; i++) {
-                    const position = i + 1;
-                    await db.collection('professionals').doc(professionals[i].id).update({
-                        rankingPosition: position
-                    });
-                    updatedCount++;
-                }
-                
-                hideLoader();
-                showMessage('loginMessage', `✅ Posiciones actualizadas para ${updatedCount} profesionales`, 'success');
-                
-                const activeTab = document.querySelector('.tab.active').dataset.tab;
-                if (activeTab === 'ranking') {
-                    loadRankingTable();
-                }
-                
-            } catch (error) {
-                hideLoader();
-                showMessage('loginMessage', '❌ Error actualizando posiciones: ' + error.message, 'error');
+                await batch.commit();
+                loadNotifications();
             }
         };
 
-        // ============================================
-        // CALIFICACIONES
-        // ============================================
-        async function loadRatings() {
-            showLoader();
+        // Certificaciones
+        async function loadCertifications() {
+            const statusFilter = document.getElementById('filterCertificationStatus').value;
             
             try {
-                const status = document.getElementById('filterRatingStatus').value;
-                const dateFrom = document.getElementById('filterRatingDateFrom').value;
-                const dateTo = document.getElementById('filterRatingDateTo').value;
-                const professionalFilter = document.getElementById('filterRatingProfessional').value;
+                const query = db.collection('certifications')
+                    .where('status', '==', statusFilter)
+                    .orderBy('createdAt', 'desc');
                 
-                let query = db.collection('ratings').orderBy('createdAt', 'desc');
-                
-                if (status !== 'all') {
-                    query = query.where('status', '==', status);
-                }
-                
-                if (professionalFilter) {
-                    query = query.where('professionalId', '==', professionalFilter);
-                }
-                
-                const snapshot = await query.limit(100).get();
-                const tbody = document.getElementById('ratingsTable');
+                const snapshot = await query.get();
+                const tbody = document.getElementById('certificationsTable');
                 tbody.innerHTML = '';
                 
                 for (const doc of snapshot.docs) {
-                    const rating = doc.data();
+                    const cert = doc.data();
                     const id = doc.id;
-                    
-                    // Filtrar por fecha si es necesario
-                    if (dateFrom && rating.createdAt) {
-                        const ratingDate = rating.createdAt.toDate ? rating.createdAt.toDate() : new Date(rating.createdAt);
-                        const fromDate = new Date(dateFrom);
-                        if (ratingDate < fromDate) continue;
-                    }
-                    
-                    if (dateTo && rating.createdAt) {
-                        const ratingDate = rating.createdAt.toDate ? rating.createdAt.toDate() : new Date(rating.createdAt);
-                        const toDate = new Date(dateTo);
-                        toDate.setHours(23, 59, 59, 999);
-                        if (ratingDate > toDate) continue;
-                    }
                     
                     // Obtener información del profesional
                     let professionalName = 'Desconocido';
                     try {
-                        const profDoc = await db.collection('professionals').doc(rating.professionalId).get();
+                        const profDoc = await db.collection('professionals').doc(cert.professionalId).get();
                         if (profDoc.exists) {
                             professionalName = profDoc.data().name || 'Desconocido';
                         }
@@ -2081,1194 +1011,170 @@
                         console.error('Error obteniendo profesional:', error);
                     }
                     
-                    const date = rating.createdAt ? 
-                        (rating.createdAt.toDate ? rating.createdAt.toDate().toLocaleDateString('es-AR') : new Date(rating.createdAt).toLocaleDateString('es-AR')) : 'Fecha desconocida';
-                    const stars = '⭐'.repeat(rating.rating) + '☆'.repeat(5 - rating.rating);
+                    const date = cert.createdAt?.toDate ? cert.createdAt.toDate().toLocaleDateString('es-AR') : '-';
                     
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${date}</td>
                         <td>${professionalName}</td>
-                        <td>${rating.clientPhone || 'No especificado'}</td>
+                        <td>${cert.title}</td>
+                        <td>${cert.institution}</td>
+                        <td>${date}</td>
                         <td>
-                            <div style="font-size: 1.2rem; color: var(--warning);">${stars}</div>
-                            <small>${rating.rating}/5</small>
-                        </td>
-                        <td>
-                            ${rating.comment ? 
-                                `<div style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${rating.comment}</div>` : 
-                                '<span style="color: var(--gray); font-style: italic;">Sin comentario</span>'
-                            }
-                        </td>
-                        <td>
-                            ${rating.jobCompleted ? '✅ Sí' : '❌ No'}
-                        </td>
-                        <td>
-                            ${rating.status === 'approved' ? '<span class="badge badge-success">APROBADA</span>' : 
-                              rating.status === 'rejected' ? '<span class="badge badge-danger">RECHAZADA</span>' : 
-                              '<span class="badge badge-warning">PENDIENTE</span>'}
+                            <span class="badge ${cert.status === 'aprobada' ? 'badge-success' : cert.status === 'rechazada' ? 'badge-danger' : 'badge-warning'}">
+                                ${cert.status === 'aprobada' ? 'APROBADA' : cert.status === 'rechazada' ? 'RECHAZADA' : 'PENDIENTE'}
+                            </span>
                         </td>
                         <td>
                             <div class="btn-group">
-                                ${rating.status === 'pending' ? 
-                                    `<button onclick="approveRating('${id}')" class="btn btn-success btn-sm">✅ Aprobar</button>
-                                     <button onclick="rejectRating('${id}')" class="btn btn-danger btn-sm">❌ Rechazar</button>` : 
-                                    `<button onclick="deleteRating('${id}')" class="btn btn-danger btn-sm">🗑 Eliminar</button>`
-                                }
+                                ${cert.status === 'pendiente' ? `
+                                    <button onclick="approveCertification('${id}')" class="btn btn-success btn-sm">✅ Aprobar</button>
+                                    <button onclick="rejectCertification('${id}')" class="btn btn-danger btn-sm">❌ Rechazar</button>
+                                ` : ''}
+                                ${cert.documentUrl ? `
+                                    <button onclick="window.open('${cert.documentUrl}', '_blank')" class="btn btn-sm">📄 Ver</button>
+                                ` : ''}
                             </div>
                         </td>
                     `;
                     tbody.appendChild(row);
                 }
                 
-                hideLoader();
             } catch (error) {
-                console.error("Error cargando calificaciones:", error);
-                hideLoader();
-                showMessage('loginMessage', '❌ Error cargando calificaciones', 'error');
+                console.error('Error cargando certificaciones:', error);
             }
         }
 
-        async function approveRating(ratingId) {
-            if (confirm('¿Aprobar esta calificación?')) {
+        window.approveCertification = async function(id) {
+            if (confirm('¿Aprobar esta certificación?')) {
                 try {
-                    await db.collection('ratings').doc(ratingId).update({
-                        status: 'approved',
+                    const certDoc = await db.collection('certifications').doc(id).get();
+                    const cert = certDoc.data();
+                    
+                    await db.collection('certifications').doc(id).update({
+                        status: 'aprobada',
                         approvedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     
-                    // Incrementar trabajos completados del profesional si corresponde
-                    const ratingDoc = await db.collection('ratings').doc(ratingId).get();
-                    const rating = ratingDoc.data();
-                    
-                    if (rating.jobCompleted && rating.professionalId) {
-                        const profDoc = await db.collection('professionals').doc(rating.professionalId).get();
-                        const profData = profDoc.data();
-                        const newCount = (profData.completedJobs || 0) + 1;
-                        
-                        await db.collection('professionals').doc(rating.professionalId).update({
-                            completedJobs: newCount
-                        });
-                    }
-                    
-                    loadRatings();
-                    showMessage('loginMessage', '✅ Calificación aprobada', 'success');
-                } catch (error) {
-                    showMessage('loginMessage', '❌ Error aprobando calificación', 'error');
-                }
-            }
-        }
-
-        async function rejectRating(ratingId) {
-            if (confirm('¿Rechazar esta calificación?')) {
-                try {
-                    await db.collection('ratings').doc(ratingId).update({
-                        status: 'rejected',
-                        rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    // Actualizar perfil del profesional
+                    await db.collection('professionals').doc(cert.professionalId).update({
+                        certifications: firebase.firestore.FieldValue.arrayUnion({
+                            title: cert.title,
+                            institution: cert.institution,
+                            documentUrl: cert.documentUrl,
+                            approvedAt: new Date().toISOString()
+                        })
                     });
-                    loadRatings();
-                    showMessage('loginMessage', '✅ Calificación rechazada', 'success');
+                    
+                    loadCertifications();
+                    
                 } catch (error) {
-                    showMessage('loginMessage', '❌ Error rechazando calificación', 'error');
+                    console.error('Error aprobando certificación:', error);
                 }
             }
-        }
+        };
 
-        async function deleteRating(ratingId) {
-            if (confirm('¿Eliminar permanentemente esta calificación?')) {
-                try {
-                    await db.collection('ratings').doc(ratingId).delete();
-                    loadRatings();
-                    showMessage('loginMessage', '✅ Calificación eliminada', 'success');
-                } catch (error) {
-                    showMessage('loginMessage', '❌ Error eliminando calificación', 'error');
-                }
-            }
-        }
-
-        // ============================================
-        // TRANSACCIONES DE DESTACADOS
-        // ============================================
-        async function loadTransactions() {
-            showLoader();
-            
-            try {
-                const status = document.getElementById('filterTransactionStatus').value;
-                const dateFrom = document.getElementById('filterTransactionDateFrom').value;
-                const dateTo = document.getElementById('filterTransactionDateTo').value;
-                const method = document.getElementById('filterTransactionMethod').value;
-                
-                let query = db.collection('featuredTransactions').orderBy('createdAt', 'desc');
-                
-                if (status !== 'all') {
-                    query = query.where('status', '==', status);
-                }
-                
-                if (method) {
-                    query = query.where('paymentMethod', '==', method);
-                }
-                
-                const snapshot = await query.limit(100).get();
-                const tbody = document.getElementById('transactionsTable');
-                tbody.innerHTML = '';
-                
-                allTransactionsData = [];
-                
-                snapshot.forEach(doc => {
-                    const transaction = { id: doc.id, ...doc.data() };
-                    allTransactionsData.push(transaction);
-                    
-                    // Filtrar por fecha si es necesario
-                    if (dateFrom && transaction.createdAt) {
-                        const transDate = transaction.createdAt.toDate ? transaction.createdAt.toDate() : new Date(transaction.createdAt);
-                        const fromDate = new Date(dateFrom);
-                        if (transDate < fromDate) return;
-                    }
-                    
-                    if (dateTo && transaction.createdAt) {
-                        const transDate = transaction.createdAt.toDate ? transaction.createdAt.toDate() : new Date(transaction.createdAt);
-                        const toDate = new Date(dateTo);
-                        toDate.setHours(23, 59, 59, 999);
-                        if (transDate > toDate) return;
-                    }
-                    
-                    const date = transaction.createdAt ? 
-                        (transaction.createdAt.toDate ? transaction.createdAt.toDate().toLocaleDateString('es-AR') : new Date(transaction.createdAt).toLocaleDateString('es-AR')) : '-';
-                    const expires = transaction.expiresAt ? 
-                        (transaction.expiresAt.toDate ? transaction.expiresAt.toDate().toLocaleDateString('es-AR') : new Date(transaction.expiresAt).toLocaleDateString('es-AR')) : '-';
-                    
-                    let statusBadge = '';
-                    switch(transaction.status) {
-                        case 'activo':
-                            statusBadge = '<span class="badge badge-success">ACTIVO</span>';
-                            break;
-                        case 'expirado':
-                            statusBadge = '<span class="badge badge-danger">EXPIRADO</span>';
-                            break;
-                        case 'pendiente':
-                            statusBadge = '<span class="badge badge-warning">PENDIENTE</span>';
-                            break;
-                    }
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><input type="checkbox" class="transaction-checkbox" data-id="${doc.id}"></td>
-                        <td>${date}</td>
-                        <td>${transaction.professionalName || 'Sin nombre'}</td>
-                        <td>${transaction.duration} meses</td>
-                        <td>$${(transaction.amount || '0').toLocaleString('es-AR')}</td>
-                        <td>${transaction.paymentMethod || 'Transferencia'}</td>
-                        <td>${statusBadge}</td>
-                        <td>${expires}</td>
-                        <td>
-                            <div class="btn-group">
-                                ${transaction.status === 'pendiente' ? 
-                                    `<button onclick="activateTransaction('${doc.id}')" class="btn btn-success btn-sm">✅ Activar</button>` : 
-                                    `<button onclick="deactivateTransaction('${doc.id}')" class="btn btn-warning btn-sm">❌ Desactivar</button>`
-                                }
-                                <button onclick="deleteTransaction('${doc.id}')" class="btn btn-danger btn-sm">🗑 Eliminar</button>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
+        window.rejectCertification = async function(id) {
+            if (confirm('¿Rechazar esta certificación?')) {
+                await db.collection('certifications').doc(id).update({
+                    status: 'rechazada',
+                    rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                
-                // Configurar checkbox de selección total
-                document.getElementById('selectAllTransactions').addEventListener('change', function() {
-                    const checkboxes = document.querySelectorAll('.transaction-checkbox');
-                    checkboxes.forEach(checkbox => {
-                        checkbox.checked = this.checked;
-                    });
-                });
-                
-                hideLoader();
-            } catch (error) {
-                console.error("Error cargando transacciones:", error);
-                hideLoader();
-                showMessage('loginMessage', '❌ Error cargando transacciones', 'error');
+                loadCertifications();
             }
-        }
+        };
 
-        async function activateTransaction(transactionId) {
-            if (confirm('¿Marcar esta transacción como activa y pagada?')) {
-                try {
-                    const transactionDoc = await db.collection('featuredTransactions').doc(transactionId).get();
-                    const transaction = transactionDoc.data();
-                    
-                    // Actualizar transacción
-                    await db.collection('featuredTransactions').doc(transactionId).update({
-                        status: 'activo',
-                        activatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    
-                    // Activar destacado en el profesional
-                    const expiresAt = transaction.expiresAt ? 
-                        (transaction.expiresAt.toDate ? transaction.expiresAt.toDate() : new Date(transaction.expiresAt)) : 
-                        new Date(new Date().setMonth(new Date().getMonth() + parseInt(transaction.duration)));
-                    
-                    await db.collection('professionals').doc(transaction.professionalId).update({
-                        isFeatured: true,
-                        featuredUntil: expiresAt,
-                        featuredAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    
-                    // Verificar si califica para Plan Profesional
-                    if (parseInt(transaction.duration) >= 12) {
-                        await db.collection('professionals').doc(transaction.professionalId).update({
-                            hasProfessionalPlan: true,
-                            professionalPlanEnabledAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    }
-                    
-                    loadTransactions();
-                    showMessage('loginMessage', '✅ Transacción activada y destacado habilitado', 'success');
-                    
-                } catch (error) {
-                    showMessage('loginMessage', '❌ Error activando transacción', 'error');
-                }
-            }
-        }
-
-        async function markAllAsPaid() {
-            const checkboxes = document.querySelectorAll('.transaction-checkbox:checked');
-            if (checkboxes.length === 0) {
-                showMessage('loginMessage', 'Seleccioná al menos una transacción', 'error');
-                return;
-            }
-            
-            if (!confirm(`¿Marcar ${checkboxes.length} transacciones como pagadas?`)) {
-                return;
-            }
-            
-            showLoader();
-            
+        // Banners
+        async function loadBanners() {
             try {
-                for (const checkbox of checkboxes) {
-                    const transactionId = checkbox.getAttribute('data-id');
-                    const transaction = allTransactionsData.find(t => t.id === transactionId);
-                    
-                    if (transaction && transaction.status === 'pendiente') {
-                        // Actualizar transacción
-                        await db.collection('featuredTransactions').doc(transactionId).update({
-                            status: 'activo',
-                            activatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        
-                        // Activar destacado en el profesional
-                        const expiresAt = transaction.expiresAt ? 
-                            (transaction.expiresAt.toDate ? transaction.expiresAt.toDate() : new Date(transaction.expiresAt)) : 
-                            new Date(new Date().setMonth(new Date().getMonth() + parseInt(transaction.duration)));
-                        
-                        await db.collection('professionals').doc(transaction.professionalId).update({
-                            isFeatured: true,
-                            featuredUntil: expiresAt,
-                            featuredAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        
-                        // Verificar si califica para Plan Profesional
-                        if (parseInt(transaction.duration) >= 12) {
-                            await db.collection('professionals').doc(transaction.professionalId).update({
-                                hasProfessionalPlan: true,
-                                professionalPlanEnabledAt: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                        }
-                    }
-                }
-                
-                hideLoader();
-                loadTransactions();
-                showMessage('loginMessage', `✅ ${checkboxes.length} transacciones marcadas como pagadas`, 'success');
-                
-            } catch (error) {
-                hideLoader();
-                showMessage('loginMessage', '❌ Error actualizando transacciones', 'error');
-            }
-        }
-
-        async function deactivateTransaction(transactionId) {
-            if (confirm('¿Desactivar esta transacción?')) {
-                try {
-                    const transactionDoc = await db.collection('featuredTransactions').doc(transactionId).get();
-                    const transaction = transactionDoc.data();
-                    
-                    // Actualizar transacción
-                    await db.collection('featuredTransactions').doc(transactionId).update({
-                        status: 'expirado'
-                    });
-                    
-                    // Desactivar destacado en el profesional
-                    await db.collection('professionals').doc(transaction.professionalId).update({
-                        isFeatured: false,
-                        featuredUntil: null
-                    });
-                    
-                    loadTransactions();
-                    showMessage('loginMessage', '✅ Transacción desactivada', 'success');
-                    
-                } catch (error) {
-                    showMessage('loginMessage', '❌ Error desactivando transacción', 'error');
-                }
-            }
-        }
-
-        async function deleteTransaction(transactionId) {
-            if (confirm('¿Eliminar permanentemente esta transacción?')) {
-                try {
-                    await db.collection('featuredTransactions').doc(transactionId).delete();
-                    loadTransactions();
-                    showMessage('loginMessage', '✅ Transacción eliminada', 'success');
-                } catch (error) {
-                    showMessage('loginMessage', '❌ Error eliminando transacción', 'error');
-                }
-            }
-        }
-
-        // ============================================
-        // BANNERS - SISTEMA COMPLETO - CORREGIDO
-        // ============================================
-        function setupBannerForm() {
-            const bannerType = document.getElementById('bannerType');
-            const provinciaField = document.getElementById('provinciaField');
-            const ciudadField = document.getElementById('ciudadField');
-            const bannerProvincia = document.getElementById('bannerProvincia');
-            const bannerCiudad = document.getElementById('bannerCiudad');
-            
-            // Cargar provincias en el select
-            bannerProvincia.innerHTML = '<option value="">Seleccionar provincia</option>';
-            Object.keys(provinciasCiudades).sort().forEach(provincia => {
-                const option = document.createElement('option');
-                option.value = provincia;
-                option.textContent = provincia;
-                bannerProvincia.appendChild(option);
-            });
-            
-            bannerType.addEventListener('change', function() {
-                const type = this.value;
-                
-                if (type === 'provincial' || type === 'ciudad') {
-                    provinciaField.style.display = 'flex';
-                    
-                    if (type === 'ciudad') {
-                        ciudadField.style.display = 'flex';
-                        bannerCiudad.disabled = false;
-                    } else {
-                        ciudadField.style.display = 'none';
-                        bannerCiudad.disabled = true;
-                    }
-                } else {
-                    provinciaField.style.display = 'none';
-                    ciudadField.style.display = 'none';
-                    bannerCiudad.disabled = true;
-                }
-            });
-            
-            bannerProvincia.addEventListener('change', function() {
-                const provincia = this.value;
-                bannerCiudad.innerHTML = '<option value="">Seleccionar ciudad</option>';
-                
-                if (provincia && provinciasCiudades[provincia]) {
-                    provinciasCiudades[provincia].forEach(ciudad => {
-                        const option = document.createElement('option');
-                        option.value = ciudad;
-                        option.textContent = ciudad;
-                        bannerCiudad.appendChild(option);
-                    });
-                    bannerCiudad.disabled = false;
-                } else {
-                    bannerCiudad.disabled = true;
-                }
-            });
-            
-            // Vista previa de imagen
-            document.getElementById('bannerImageUrl').addEventListener('input', function() {
-                const preview = document.getElementById('bannerPreview');
-                const previewImg = document.getElementById('bannerPreviewImg');
-                
-                if (this.value) {
-                    previewImg.src = this.value;
-                    preview.style.display = 'block';
-                } else {
-                    preview.style.display = 'none';
-                }
-            });
-        }
-
-        async function loadBannersTable() {
-            showLoader();
-            
-            try {
-                const type = document.getElementById('filterBannerType').value;
-                const status = document.getElementById('filterBannerStatus').value;
-                const provincia = document.getElementById('filterBannerProvincia').value;
-                
-                let query = db.collection('banners').orderBy('createdAt', 'desc');
-                
-                if (type) {
-                    query = query.where('type', '==', type);
-                }
-                
-                if (status !== 'all') {
-                    query = query.where('active', '==', (status === 'active'));
-                }
-                
-                if (provincia) {
-                    query = query.where('provincia', '==', provincia);
-                }
-                
-                const snapshot = await query.limit(100).get();
+                const snapshot = await db.collection('banners').orderBy('createdAt', 'desc').get();
                 const tbody = document.getElementById('bannersTable');
                 tbody.innerHTML = '';
-                
-                const now = new Date();
                 
                 snapshot.forEach(doc => {
                     const banner = doc.data();
                     const id = doc.id;
-                    
-                    const startDate = banner.startDate ? 
-                        (banner.startDate.toDate ? banner.startDate.toDate().toLocaleDateString('es-AR') : new Date(banner.startDate).toLocaleDateString('es-AR')) : '-';
-                    const endDate = banner.endDate ? 
-                        (banner.endDate.toDate ? banner.endDate.toDate().toLocaleDateString('es-AR') : new Date(banner.endDate).toLocaleDateString('es-AR')) : '-';
-                    
-                    // CORRECCIÓN: Crear texto combinado de Tipo y Ubicación
-                    let tipoUbicacion = '';
-                    if (banner.type === 'nacional') {
-                        tipoUbicacion = '🌎 Nacional';
-                    } else if (banner.type === 'provincial') {
-                        tipoUbicacion = `📍 Provincial: ${banner.provincia || ''}`;
-                    } else if (banner.type === 'ciudad') {
-                        tipoUbicacion = `🏙️ Ciudad: ${banner.ciudad || ''}, ${banner.provincia || ''}`;
-                    }
-                    
-                    // Verificar si está activo por fechas
-                    let fechaStatus = '✅ Vigente';
-                    if (banner.startDate && banner.endDate) {
-                        const start = banner.startDate.toDate ? banner.startDate.toDate() : new Date(banner.startDate);
-                        const end = banner.endDate.toDate ? banner.endDate.toDate() : new Date(banner.endDate);
-                        
-                        if (now < start) {
-                            fechaStatus = '⏳ Programado';
-                        } else if (now > end) {
-                            fechaStatus = '❌ Expirado';
-                        }
-                    }
                     
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>
                             <img src="${banner.imageUrl}" 
                                  style="width: 100px; height: 60px; object-fit: cover; border-radius: 4px;"
-                                 onerror="this.src='https://via.placeholder.com/100x60/0a4fd8/ffffff?text=Banner'"
-                                 alt="${banner.title || 'Banner'}">
+                                 onerror="this.src='https://via.placeholder.com/100x60'">
                         </td>
+                        <td>${banner.link || '-'}</td>
+                        <td>${banner.type || 'nacional'}</td>
                         <td>
-                            <strong>${banner.title || 'Sin título'}</strong><br>
-                            <small>${banner.link || 'Sin enlace'}</small>
-                        </td>
-                        <td>
-                            ${tipoUbicacion}
-                        </td>
-                        <td>
-                            ${startDate} al ${endDate}<br>
-                            <small>${fechaStatus}</small>
-                        </td>
-                        <td>
-                            <span style="background: ${banner.priority >= 8 ? '#28a745' : banner.priority >= 5 ? '#ffc107' : '#dc3545'}; 
-                                  color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem;">
-                                ${banner.priority || 5}/10
+                            <span class="badge ${banner.active ? 'badge-success' : 'badge-danger'}">
+                                ${banner.active ? 'ACTIVO' : 'INACTIVO'}
                             </span>
                         </td>
                         <td>
-                            ${banner.active ? 
-                                '<span class="badge badge-success">ACTIVO</span>' : 
-                                '<span class="badge badge-danger">INACTIVO</span>'}
-                        </td>
-                        <td>
                             <div class="btn-group">
-                                <button onclick="editBanner('${id}')" class="btn btn-sm btn-primary">✏️ Editar</button>
                                 ${banner.active ? 
-                                    `<button onclick="toggleBannerStatus('${id}', false)" class="btn btn-sm btn-warning">🚫 Desactivar</button>` : 
-                                    `<button onclick="toggleBannerStatus('${id}', true)" class="btn btn-sm btn-success">✅ Activar</button>`
+                                    `<button onclick="toggleBanner('${id}', false)" class="btn btn-warning btn-sm">🚫 Desactivar</button>` :
+                                    `<button onclick="toggleBanner('${id}', true)" class="btn btn-success btn-sm">✅ Activar</button>`
                                 }
-                                <button onclick="deleteBanner('${id}')" class="btn btn-sm btn-danger">🗑️ Eliminar</button>
+                                <button onclick="deleteBanner('${id}')" class="btn btn-danger btn-sm">🗑️ Eliminar</button>
                             </div>
                         </td>
                     `;
                     tbody.appendChild(row);
                 });
                 
-                hideLoader();
             } catch (error) {
-                console.error("Error cargando banners:", error);
-                hideLoader();
-                showMessage('loginMessage', '❌ Error cargando banners', 'error');
+                console.error('Error cargando banners:', error);
             }
         }
 
-        async function createBanner() {
-            const title = document.getElementById('bannerTitle').value.trim();
-            const type = document.getElementById('bannerType').value;
+        window.createBanner = async function() {
             const imageUrl = document.getElementById('bannerImageUrl').value.trim();
             const linkUrl = document.getElementById('bannerLinkUrl').value.trim();
-            const startDate = document.getElementById('bannerStartDate').value;
-            const endDate = document.getElementById('bannerEndDate').value;
-            const priority = parseInt(document.getElementById('bannerPriority').value) || 5;
-            const status = document.getElementById('bannerStatus').value === 'active';
-            
-            if (!title || !imageUrl || !startDate || !endDate) {
-                showMessage('loginMessage', '❌ Completa todos los campos obligatorios', 'error');
-                return;
-            }
-            
-            const bannerData = {
-                title,
-                type,
-                imageUrl,
-                link: linkUrl,
-                startDate: firebase.firestore.Timestamp.fromDate(new Date(startDate)),
-                endDate: firebase.firestore.Timestamp.fromDate(new Date(endDate)),
-                priority,
-                active: status,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            if (type === 'provincial' || type === 'ciudad') {
-                const provincia = document.getElementById('bannerProvincia').value;
-                if (!provincia) {
-                    showMessage('loginMessage', '❌ Selecciona una provincia', 'error');
-                    return;
-                }
-                bannerData.provincia = provincia;
-                
-                if (type === 'ciudad') {
-                    const ciudad = document.getElementById('bannerCiudad').value;
-                    if (!ciudad) {
-                        showMessage('loginMessage', '❌ Selecciona una ciudad', 'error');
-                        return;
-                    }
-                    bannerData.ciudad = ciudad;
-                }
-            }
-            
-            try {
-                await db.collection('banners').add(bannerData);
-                showMessage('loginMessage', '✅ Banner creado exitosamente', 'success');
-                clearBannerForm();
-                loadBannersTable();
-            } catch (error) {
-                showMessage('loginMessage', '❌ Error creando banner: ' + error.message, 'error');
-            }
-        }
-
-        function clearBannerForm() {
-            document.getElementById('bannerTitle').value = '';
-            document.getElementById('bannerType').value = 'nacional';
-            document.getElementById('bannerImageUrl').value = '';
-            document.getElementById('bannerLinkUrl').value = '';
-            document.getElementById('bannerStartDate').value = '';
-            document.getElementById('bannerEndDate').value = '';
-            document.getElementById('bannerPriority').value = '5';
-            document.getElementById('bannerStatus').value = 'active';
-            document.getElementById('bannerPreview').style.display = 'none';
-            
-            // Disparar evento para ocultar campos
-            document.getElementById('bannerType').dispatchEvent(new Event('change'));
-        }
-
-        async function toggleBannerStatus(bannerId, activate) {
-            try {
-                await db.collection('banners').doc(bannerId).update({
-                    active: activate,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                showMessage('loginMessage', `✅ Banner ${activate ? 'activado' : 'desactivado'}`, 'success');
-                loadBannersTable();
-            } catch (error) {
-                showMessage('loginMessage', '❌ Error actualizando banner', 'error');
-            }
-        }
-
-        async function deleteBanner(bannerId) {
-            if (confirm('¿Estás seguro de eliminar este banner?')) {
-                try {
-                    await db.collection('banners').doc(bannerId).delete();
-                    showMessage('loginMessage', '✅ Banner eliminado', 'success');
-                    loadBannersTable();
-                } catch (error) {
-                    showMessage('loginMessage', '❌ Error eliminando banner', 'error');
-                }
-            }
-        }
-
-        async function editBanner(bannerId) {
-            const bannerDoc = await db.collection('banners').doc(bannerId).get();
-            if (!bannerDoc.exists) return;
-            
-            const banner = bannerDoc.data();
-            
-            // Llenar el formulario con los datos del banner
-            document.getElementById('bannerTitle').value = banner.title || '';
-            document.getElementById('bannerType').value = banner.type || 'nacional';
-            document.getElementById('bannerImageUrl').value = banner.imageUrl || '';
-            document.getElementById('bannerLinkUrl').value = banner.link || '';
-            
-            // Convertir fechas
-            if (banner.startDate) {
-                const startDate = banner.startDate.toDate ? banner.startDate.toDate() : new Date(banner.startDate);
-                document.getElementById('bannerStartDate').value = startDate.toISOString().split('T')[0];
-            }
-            
-            if (banner.endDate) {
-                const endDate = banner.endDate.toDate ? banner.endDate.toDate() : new Date(banner.endDate);
-                document.getElementById('bannerEndDate').value = endDate.toISOString().split('T')[0];
-            }
-            
-            document.getElementById('bannerPriority').value = banner.priority || 5;
-            document.getElementById('bannerStatus').value = banner.active ? 'active' : 'inactive';
-            
-            // Mostrar vista previa
-            if (banner.imageUrl) {
-                document.getElementById('bannerPreviewImg').src = banner.imageUrl;
-                document.getElementById('bannerPreview').style.display = 'block';
-            }
-            
-            // Disparar evento para mostrar campos
-            document.getElementById('bannerType').dispatchEvent(new Event('change'));
-            
-            // Si tiene provincia/ciudad, seleccionarlas
-            if (banner.provincia) {
-                document.getElementById('bannerProvincia').value = banner.provincia;
-                document.getElementById('bannerProvincia').dispatchEvent(new Event('change'));
-                
-                if (banner.ciudad) {
-                    setTimeout(() => {
-                        document.getElementById('bannerCiudad').value = banner.ciudad;
-                    }, 100);
-                }
-            }
-            
-            // Cambiar el botón a "Actualizar"
-            const createBtn = document.querySelector('button[onclick="createBanner()"]');
-            createBtn.textContent = '🔄 Actualizar Banner';
-            createBtn.onclick = function() { updateBanner(bannerId); };
-            
-            // Agregar botón cancelar
-            const cancelBtn = document.createElement('button');
-            cancelBtn.className = 'btn btn-warning';
-            cancelBtn.textContent = '❌ Cancelar';
-            cancelBtn.onclick = function() {
-                clearBannerForm();
-                createBtn.textContent = '🎯 Crear Banner';
-                createBtn.onclick = function() { createBanner(); };
-                cancelBtn.remove();
-            };
-            
-            createBtn.parentNode.appendChild(cancelBtn);
-            
-            showMessage('loginMessage', '✏️ Editando banner. Completa los cambios y haz clic en "Actualizar"', 'info');
-        }
-
-        async function updateBanner(bannerId) {
-            const title = document.getElementById('bannerTitle').value.trim();
             const type = document.getElementById('bannerType').value;
-            const imageUrl = document.getElementById('bannerImageUrl').value.trim();
-            const linkUrl = document.getElementById('bannerLinkUrl').value.trim();
-            const startDate = document.getElementById('bannerStartDate').value;
-            const endDate = document.getElementById('bannerEndDate').value;
-            const priority = parseInt(document.getElementById('bannerPriority').value) || 5;
-            const status = document.getElementById('bannerStatus').value === 'active';
             
-            if (!title || !imageUrl || !startDate || !endDate) {
-                showMessage('loginMessage', '❌ Completa todos los campos obligatorios', 'error');
+            if (!imageUrl || !linkUrl) {
+                alert('Completá todos los campos');
                 return;
             }
             
-            const bannerData = {
-                title,
-                type,
-                imageUrl,
-                link: linkUrl,
-                startDate: firebase.firestore.Timestamp.fromDate(new Date(startDate)),
-                endDate: firebase.firestore.Timestamp.fromDate(new Date(endDate)),
-                priority,
-                active: status,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            if (type === 'provincial' || type === 'ciudad') {
-                const provincia = document.getElementById('bannerProvincia').value;
-                if (!provincia) {
-                    showMessage('loginMessage', '❌ Selecciona una provincia', 'error');
-                    return;
-                }
-                bannerData.provincia = provincia;
-                
-                if (type === 'ciudad') {
-                    const ciudad = document.getElementById('bannerCiudad').value;
-                    if (!ciudad) {
-                        showMessage('loginMessage', '❌ Selecciona una ciudad', 'error');
-                        return;
-                    }
-                    bannerData.ciudad = ciudad;
-                } else {
-                    bannerData.ciudad = null;
-                }
-            } else {
-                bannerData.provincia = null;
-                bannerData.ciudad = null;
-            }
-            
             try {
-                await db.collection('banners').doc(bannerId).update(bannerData);
-                showMessage('loginMessage', '✅ Banner actualizado exitosamente', 'success');
-                clearBannerForm();
-                loadBannersTable();
-                
-                // Restaurar botón original
-                const createBtn = document.querySelector('button[onclick="updateBanner(\'' + bannerId + '\')"]');
-                createBtn.textContent = '🎯 Crear Banner';
-                createBtn.onclick = function() { createBanner(); };
-                
-                // Remover botón cancelar si existe
-                const cancelBtn = createBtn.parentNode.querySelector('.btn-warning');
-                if (cancelBtn) cancelBtn.remove();
-                
-            } catch (error) {
-                showMessage('loginMessage', '❌ Error actualizando banner: ' + error.message, 'error');
-            }
-        }
-
-        // ============================================
-        // CONFIGURACIÓN
-        // ============================================
-        async function loadConfig() {
-            try {
-                // Cargar configuración de ranking
-                const rankingDoc = await db.collection('admin_config').doc('ranking').get();
-                if (rankingDoc.exists) {
-                    const data = rankingDoc.data();
-                    rankingConfig.minScore = data.minScore || 30;
-                    rankingConfig.autoFeaturedScore = data.autoFeaturedScore || 85;
-                    rankingConfig.activeDays = data.activeDays || 30;
-                    
-                    document.getElementById('minRankingScore').value = rankingConfig.minScore;
-                    document.getElementById('autoFeaturedScore').value = rankingConfig.autoFeaturedScore;
-                    document.getElementById('activeDaysThreshold').value = rankingConfig.activeDays;
-                }
-                
-                // Cargar precios de destacados
-                const pricesDoc = await db.collection('admin_config').doc('featured_prices').get();
-                if (pricesDoc.exists) {
-                    const data = pricesDoc.data();
-                    featuredPrices[1] = data.price1Month || 5000;
-                    featuredPrices[3] = data.price3Months || 13500;
-                    featuredPrices[6] = data.price6Months || 24000;
-                    featuredPrices[12] = data.price12Months || 42000;
-                    
-                    document.getElementById('price1Month').value = featuredPrices[1];
-                    document.getElementById('price3Months').value = featuredPrices[3];
-                    document.getElementById('price6Months').value = featuredPrices[6];
-                    document.getElementById('price12Months').value = featuredPrices[12];
-                }
-                
-                // Cargar profesionales para filtro de calificaciones
-                loadProfessionalsForFilter();
-                
-            } catch (error) {
-                console.error("Error cargando configuración:", error);
-            }
-        }
-
-        async function loadProfessionalsForFilter() {
-            try {
-                const snapshot = await db.collection('professionals').orderBy('name').get();
-                const select = document.getElementById('filterRatingProfessional');
-                select.innerHTML = '<option value="">Todos</option>';
-                
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const option = document.createElement('option');
-                    option.value = doc.id;
-                    option.textContent = `${data.name} - ${data.email}`;
-                    select.appendChild(option);
-                });
-            } catch (error) {
-                console.error("Error cargando profesionales para filtro:", error);
-            }
-        }
-
-        async function updateRankingConfig() {
-            try {
-                rankingConfig.minScore = parseInt(document.getElementById('minRankingScore').value) || 30;
-                rankingConfig.autoFeaturedScore = parseInt(document.getElementById('autoFeaturedScore').value) || 85;
-                rankingConfig.activeDays = parseInt(document.getElementById('activeDaysThreshold').value) || 30;
-                
-                await db.collection('admin_config').doc('ranking').set(rankingConfig, { merge: true });
-                showMessage('loginMessage', '✅ Configuración de ranking actualizada', 'success');
-            } catch (error) {
-                showMessage('loginMessage', '❌ Error actualizando configuración: ' + error.message, 'error');
-            }
-        }
-
-        async function updateFeaturedPrices() {
-            try {
-                featuredPrices[1] = parseInt(document.getElementById('price1Month').value) || 5000;
-                featuredPrices[3] = parseInt(document.getElementById('price3Months').value) || 13500;
-                featuredPrices[6] = parseInt(document.getElementById('price6Months').value) || 24000;
-                featuredPrices[12] = parseInt(document.getElementById('price12Months').value) || 42000;
-                
-                await db.collection('admin_config').doc('featured_prices').set({
-                    price1Month: featuredPrices[1],
-                    price3Months: featuredPrices[3],
-                    price6Months: featuredPrices[6],
-                    price12Months: featuredPrices[12],
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-                
-                showMessage('loginMessage', '✅ Precios de destacados actualizados', 'success');
-            } catch (error) {
-                showMessage('loginMessage', '❌ Error actualizando precios: ' + error.message, 'error');
-            }
-        }
-
-        // ============================================
-        // HERRAMIENTAS ADMIN
-        // ============================================
-        window.forceHideNoPhoto = async function() {
-            if (confirm('¿Ocultar profesionales sin foto? Esto los marcará como perfil incompleto.')) {
-                showLoader();
-                
-                const snapshot = await db.collection('professionals').where('photoUrl', '==', '').get();
-                const batch = db.batch();
-                
-                snapshot.forEach(doc => {
-                    batch.update(doc.ref, { profileCompleted: false });
+                await db.collection('banners').add({
+                    imageUrl,
+                    link: linkUrl,
+                    type,
+                    active: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                await batch.commit();
-                hideLoader();
-                showMessage('loginMessage', `✅ ${snapshot.size} profesionales actualizados`, 'success');
-                loadProfessionals();
+                document.getElementById('bannerImageUrl').value = '';
+                document.getElementById('bannerLinkUrl').value = '';
+                loadBanners();
+                
+            } catch (error) {
+                console.error('Error creando banner:', error);
             }
         };
 
-        window.deactivateExpiredFeatured = async function() {
-            showLoader();
-            
-            const now = new Date();
-            const snapshot = await db.collection('professionals')
-                .where('isFeatured', '==', true)
-                .get();
-            
-            const batch = db.batch();
-            let count = 0;
-            
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                if (data.featuredUntil) {
-                    const featuredUntil = data.featuredUntil.toDate ? 
-                        data.featuredUntil.toDate() : new Date(data.featuredUntil);
-                    if (featuredUntil < now) {
-                        batch.update(doc.ref, { 
-                            isFeatured: false,
-                            featuredUntil: null 
-                        });
-                        count++;
-                    }
-                }
+        window.toggleBanner = async function(id, activate) {
+            await db.collection('banners').doc(id).update({
+                active: activate
             });
-            
-            await batch.commit();
-            hideLoader();
-            showMessage('loginMessage', `✅ ${count} destacados vencidos desactivados`, 'success');
-            loadProfessionals();
+            loadBanners();
         };
 
-        window.activateProfessionalPlans = async function() {
-            if (!confirm('¿Activar Plan Profesional para todos los que tienen 12 meses de destacado?')) return;
-            
-            showLoader();
-            
-            try {
-                const snapshot = await db.collection('professionals')
-                    .where('isFeatured', '==', true)
-                    .get();
-                
-                const now = new Date();
-                let count = 0;
-                
-                for (const doc of snapshot.docs) {
-                    const data = doc.data();
-                    if (data.featuredUntil && !data.hasProfessionalPlan) {
-                        const featuredUntil = data.featuredUntil.toDate ? 
-                            data.featuredUntil.toDate() : new Date(data.featuredUntil);
-                        
-                        // Verificar si tiene al menos 12 meses restantes
-                        const monthsRemaining = (featuredUntil.getFullYear() - now.getFullYear()) * 12 + 
-                                               (featuredUntil.getMonth() - now.getMonth());
-                        
-                        if (monthsRemaining >= 12) {
-                            await db.collection('professionals').doc(doc.id).update({
-                                hasProfessionalPlan: true,
-                                professionalPlanEnabledAt: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                            count++;
-                        }
-                    }
-                }
-                
-                hideLoader();
-                showMessage('loginMessage', `✅ ${count} planes profesionales activados`, 'success');
-                loadProfessionals();
-                
-            } catch (error) {
-                hideLoader();
-                showMessage('loginMessage', '❌ Error activando planes profesionales', 'error');
+        window.deleteBanner = async function(id) {
+            if (confirm('¿Eliminar este banner?')) {
+                await db.collection('banners').doc(id).delete();
+                loadBanners();
             }
         };
 
-        // ============================================
-        // EXPORTAR DATOS
-        // ============================================
-        window.exportProfessionals = async function() {
-            const snapshot = await db.collection('professionals').get();
-            const data = [];
-            
-            snapshot.forEach(doc => {
-                const docData = doc.data();
-                data.push({ 
-                    id: doc.id, 
-                    ...docData,
-                    createdAt: docData.createdAt ? (docData.createdAt.toDate ? docData.createdAt.toDate().toISOString() : new Date(docData.createdAt).toISOString()) : null,
-                    lastActive: docData.lastActive ? (docData.lastActive.toDate ? docData.lastActive.toDate().toISOString() : new Date(docData.lastActive).toISOString()) : null,
-                    featuredUntil: docData.featuredUntil ? (docData.featuredUntil.toDate ? docData.featuredUntil.toDate().toISOString() : new Date(docData.featuredUntil).toISOString()) : null
-                });
-            });
-            
-            downloadJSON(data, 'profesionales_tecniya.json');
-        };
-
-        window.exportBudgets = async function() {
-            const snapshot = await db.collection('budgets').get();
-            const data = [];
-            
-            snapshot.forEach(doc => {
-                const budgetData = doc.data();
-                data.push({ 
-                    id: doc.id, 
-                    ...budgetData,
-                    createdAt: budgetData.createdAt ? (budgetData.createdAt.toDate ? budgetData.createdAt.toDate().toISOString() : new Date(budgetData.createdAt).toISOString()) : null
-                });
-            });
-            
-            downloadJSON(data, 'presupuestos_tecniya.json');
-        };
-
-        window.exportTransactions = async function() {
-            const snapshot = await db.collection('featuredTransactions').get();
-            const data = [];
-            
-            snapshot.forEach(doc => {
-                const transactionData = doc.data();
-                data.push({ 
-                    id: doc.id, 
-                    ...transactionData,
-                    createdAt: transactionData.createdAt ? (transactionData.createdAt.toDate ? transactionData.createdAt.toDate().toISOString() : new Date(transactionData.createdAt).toISOString()) : null,
-                    expiresAt: transactionData.expiresAt ? (transactionData.expiresAt.toDate ? transactionData.expiresAt.toDate().toISOString() : new Date(transactionData.expiresAt).toISOString()) : null
-                });
-            });
-            
-            downloadJSON(data, 'transacciones_tecniya.json');
-        };
-
-        window.exportRankingData = function() {
-            if (allProfessionalsData.length === 0) {
-                showMessage('loginMessage', 'No hay datos de ranking para exportar', 'error');
-                return;
-            }
-            
-            const rankingData = allProfessionalsData.map(prof => ({
-                nombre: prof.name,
-                email: prof.email,
-                ciudad: prof.ciudad,
-                provincia: prof.provincia,
-                rubros: prof.rubros ? prof.rubros.join(', ') : '',
-                rankingScore: prof.rankingScore || 0,
-                averageRating: prof.averageRating || 0,
-                totalRatings: prof.totalRatings || 0,
-                trabajosCompletados: prof.completedJobs || 0,
-                experiencia: prof.experienceYears || 0,
-                certificaciones: prof.certifications ? prof.certifications.map(c => c.title).join(', ') : '',
-                planProfesional: prof.hasProfessionalPlan ? 'Sí' : 'No',
-                destacado: prof.isFeatured ? 'Sí' : 'No'
-            }));
-            
-            downloadJSON(rankingData, 'ranking_tecniya.json');
-        };
-
-        function downloadJSON(data, filename) {
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showMessage('loginMessage', `✅ Datos exportados a ${filename}`, 'success');
-        }
-
-        // ============================================
-        // FUNCIONES DE UTILIDAD
-        // ============================================
-        function showLoader() {
-            document.getElementById('loader').style.display = 'block';
-        }
-
-        function hideLoader() {
-            document.getElementById('loader').style.display = 'none';
-        }
-
+        // Utilidades
         function showMessage(elementId, text, type) {
             const el = document.getElementById(elementId);
             el.textContent = text;
             el.className = `message message-${type}`;
             el.style.display = 'block';
-            
-            setTimeout(() => {
-                el.style.display = 'none';
-            }, 5000);
         }
-
-        function loadProvinciasSelect() {
-            const selects = [
-                'filterProvincia',
-                'filterRankingProvincia',
-                'filterBannerProvincia'
-            ];
-            
-            selects.forEach(selectId => {
-                const select = document.getElementById(selectId);
-                if (select) {
-                    // Ordenar provincias alfabéticamente
-                    const provinciasOrdenadas = Object.keys(provinciasCiudades).sort();
-                    
-                    provinciasOrdenadas.forEach(provincia => {
-                        const option = document.createElement('option');
-                        option.value = provincia;
-                        option.textContent = provincia;
-                        select.appendChild(option);
-                    });
-                }
-            });
-        }
-
-        // ============================================
-        // EVENT LISTENERS
-        // ============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            // Login
-            document.getElementById('loginBtn').addEventListener('click', async () => {
-                const email = document.getElementById('loginEmail').value;
-                const password = document.getElementById('loginPassword').value;
-                
-                try {
-                    await auth.signInWithEmailAndPassword(email, password);
-                } catch (error) {
-                    showMessage('loginMessage', '❌ Error: ' + error.message, 'error');
-                }
-            });
-
-            // Logout
-            document.getElementById('logoutBtn').addEventListener('click', () => {
-                auth.signOut();
-            });
-
-            // Tabs
-            document.querySelectorAll('.tab:not(.tab-logout)').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabId = tab.getAttribute('data-tab');
-                    
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-                    
-                    tab.classList.add('active');
-                    document.getElementById(`${tabId}Panel`).classList.add('active');
-                    
-                    if (tabId === 'dashboard') loadDashboard();
-                    if (tabId === 'professionals') loadProfessionals();
-                    if (tabId === 'ranking') loadRankingTable();
-                    if (tabId === 'ratings') loadRatings();
-                    if (tabId === 'featuredTransactions') loadTransactions();
-                    if (tabId === 'banners') {
-                        loadBannersTable();
-                        setupBannerForm();
-                    }
-                    if (tabId === 'config') loadConfig();
-                });
-            });
-
-            // Configurar formulario de banners
-            setupBannerForm();
-
-            // Filtros de profesionales
-            document.getElementById('applyFilters').addEventListener('click', loadProfessionals);
-            document.getElementById('resetFilters').addEventListener('click', () => {
-                document.getElementById('filterProvincia').value = '';
-                document.getElementById('filterCiudad').value = '';
-                document.getElementById('filterRubro').value = '';
-                document.getElementById('filterStatus').value = '';
-                document.getElementById('filterSort').value = 'name';
-                loadProfessionals();
-            });
-
-            // Filtros de ranking
-            document.getElementById('applyRankingFilters').addEventListener('click', loadRankingTable);
-            document.getElementById('resetRankingFilters').addEventListener('click', () => {
-                document.getElementById('sortRanking').value = 'rankingScore_desc';
-                document.getElementById('filterRankingProvincia').value = '';
-                loadRankingTable();
-            });
-
-            // Filtros de calificaciones
-            document.getElementById('applyRatingFilters').addEventListener('click', loadRatings);
-            document.getElementById('resetRatingFilters').addEventListener('click', () => {
-                document.getElementById('filterRatingStatus').value = 'pending';
-                document.getElementById('filterRatingDateFrom').value = '';
-                document.getElementById('filterRatingDateTo').value = '';
-                document.getElementById('filterRatingProfessional').value = '';
-                loadRatings();
-            });
-
-            // Filtros de transacciones
-            document.getElementById('applyTransactionFilters').addEventListener('click', loadTransactions);
-            document.getElementById('resetTransactionFilters').addEventListener('click', () => {
-                document.getElementById('filterTransactionStatus').value = 'pendiente';
-                document.getElementById('filterTransactionDateFrom').value = '';
-                document.getElementById('filterTransactionDateTo').value = '';
-                document.getElementById('filterTransactionMethod').value = '';
-                loadTransactions();
-            });
-
-            // Filtros de banners
-            document.getElementById('applyBannerFilters').addEventListener('click', loadBannersTable);
-            document.getElementById('resetBannerFilters').addEventListener('click', () => {
-                document.getElementById('filterBannerType').value = '';
-                document.getElementById('filterBannerStatus').value = 'active';
-                document.getElementById('filterBannerProvincia').value = '';
-                loadBannersTable();
-            });
-
-            // Configurar fecha por defecto en formulario de banner
-            const today = new Date().toISOString().split('T')[0];
-            const nextMonth = new Date();
-            nextMonth.setMonth(nextMonth.getMonth() + 1);
-            const nextMonthStr = nextMonth.toISOString().split('T')[0];
-            
-            document.getElementById('bannerStartDate').value = today;
-            document.getElementById('bannerEndDate').value = nextMonthStr;
-        });
     </script>
 </body>
 </html>
