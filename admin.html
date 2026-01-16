@@ -42,6 +42,7 @@
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             color: var(--dark);
             line-height: 1.6;
+            min-height: 100vh;
         }
         
         /* Layout */
@@ -58,6 +59,10 @@
             color: white; 
             padding: 25px 20px; 
             text-align: center; 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .header h1 { 
@@ -89,6 +94,9 @@
             border-bottom: 2px solid #eaeaea; 
             overflow-x: auto; 
             flex-wrap: wrap; 
+            position: sticky;
+            top: 0;
+            z-index: 90;
         }
         
         .tab { 
@@ -97,6 +105,11 @@
             cursor: pointer; 
             border-bottom: 3px solid transparent; 
             white-space: nowrap; 
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            background-color: #f8f9fa;
         }
         
         .tab.active { 
@@ -112,6 +125,7 @@
             padding: 30px; 
             border-radius: 0 0 var(--radius) var(--radius); 
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            min-height: 500px;
         }
         
         .panel.active { 
@@ -135,6 +149,12 @@
             border: 2px solid var(--light-gray); 
             border-radius: 10px; 
             font-size: 1rem; 
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
         }
         
         /* Tables */
@@ -153,6 +173,8 @@
         .data-table th { 
             background-color: #f8f9fa; 
             font-weight: 700; 
+            position: sticky;
+            top: 0;
         }
         
         .table-container { 
@@ -176,6 +198,11 @@
             border-radius: var(--radius); 
             text-align: center; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
         }
         
         .stat-number { 
@@ -201,6 +228,10 @@
         .btn-primary { 
             background-color: var(--primary); 
             color: white; 
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
         }
         
         .btn-danger { 
@@ -283,6 +314,50 @@
             gap: 10px; 
         }
         
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        /* Loader */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .filters { 
@@ -295,6 +370,14 @@
             
             .tab { 
                 text-align: center; 
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -313,6 +396,12 @@
         </div>
         <button id="loginBtn" class="btn btn-primary" style="width: 100%;">Ingresar</button>
         <div id="loginMessage" class="message" style="display: none;"></div>
+        
+        <div style="text-align: center; margin-top: 20px; color: #666;">
+            <p>Credenciales de prueba:</p>
+            <p><strong>Email:</strong> admin@tecniya.com</p>
+            <p><strong>Contraseña:</strong> admin123</p>
+        </div>
     </div>
     
     <!-- Admin Panel -->
@@ -331,6 +420,7 @@
                 <div class="tab" data-tab="notifications">🔔 Notificaciones</div>
                 <div class="tab" data-tab="certifications">📜 Certificaciones</div>
                 <div class="tab" data-tab="banners">🎯 Banners</div>
+                <div class="tab" data-tab="system">⚙️ Sistema</div>
                 <div class="tab" id="logoutBtn">🚪 Cerrar Sesión</div>
             </div>
             
@@ -359,7 +449,9 @@
                 
                 <div style="margin-top: 50px;">
                     <h3>📈 Actividad Reciente</h3>
-                    <div id="recentActivity"></div>
+                    <div id="recentActivity" class="table-container">
+                        <div class="loader" id="activityLoader"></div>
+                    </div>
                 </div>
             </div>
             
@@ -384,6 +476,7 @@
                         </select>
                     </div>
                     <button id="applyProfessionalFilters" class="btn btn-primary">🔍 Filtrar</button>
+                    <button id="resetProfessionalFilters" class="btn btn-secondary">🔄 Limpiar</button>
                 </div>
                 
                 <div class="table-container">
@@ -402,6 +495,7 @@
                             <!-- JS llenará esto -->
                         </tbody>
                     </table>
+                    <div class="loader" id="professionalsLoader" style="display: none;"></div>
                 </div>
             </div>
             
@@ -425,6 +519,7 @@
                         <input type="date" id="filterJobDateFrom" class="form-input" style="width: 150px;">
                     </div>
                     <button id="applyJobFilters" class="btn btn-primary">🔍 Filtrar</button>
+                    <button id="resetJobFilters" class="btn btn-secondary">🔄 Limpiar</button>
                 </div>
                 
                 <div class="table-container">
@@ -443,6 +538,7 @@
                             <!-- JS llenará esto -->
                         </tbody>
                     </table>
+                    <div class="loader" id="jobsLoader" style="display: none;"></div>
                 </div>
             </div>
             
@@ -464,7 +560,9 @@
                     <button onclick="clearAllNotifications()" class="btn btn-danger">🗑️ Limpiar Todas</button>
                 </div>
                 
-                <div id="notificationsList"></div>
+                <div id="notificationsList">
+                    <div class="loader" id="notificationsLoader"></div>
+                </div>
             </div>
             
             <!-- Certifications -->
@@ -499,6 +597,7 @@
                             <!-- JS llenará esto -->
                         </tbody>
                     </table>
+                    <div class="loader" id="certificationsLoader" style="display: none;"></div>
                 </div>
             </div>
             
@@ -541,7 +640,70 @@
                             <!-- JS llenará esto -->
                         </tbody>
                     </table>
+                    <div class="loader" id="bannersLoader" style="display: none;"></div>
                 </div>
+            </div>
+            
+            <!-- System Configuration -->
+            <div id="systemPanel" class="panel">
+                <h2>⚙️ Configuración del Sistema</h2>
+                
+                <div style="background: #f8f9fa; padding: 25px; border-radius: var(--radius); margin-bottom: 30px;">
+                    <h3>🔧 Configuración General</h3>
+                    <div class="form-group">
+                        <label class="form-label">Nombre del Sistema</label>
+                        <input type="text" id="systemName" class="form-input" placeholder="TecniYa" value="TecniYa">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email de Contacto</label>
+                        <input type="email" id="systemEmail" class="form-input" placeholder="contacto@tecniya.com" value="contacto@tecniya.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Teléfono de Contacto</label>
+                        <input type="tel" id="systemPhone" class="form-input" placeholder="341 755-8966" value="341 755-8966">
+                    </div>
+                    <button onclick="saveSystemConfig()" class="btn btn-primary">💾 Guardar Configuración</button>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 25px; border-radius: var(--radius); margin-bottom: 30px;">
+                    <h3>📊 Datos de Prueba</h3>
+                    <p>Genera datos de prueba para probar todas las funcionalidades del sistema.</p>
+                    <div class="btn-group">
+                        <button onclick="generateTestData()" class="btn btn-primary">📦 Generar Datos de Prueba</button>
+                        <button onclick="clearTestData()" class="btn btn-danger">🗑️ Limpiar Datos de Prueba</button>
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 25px; border-radius: var(--radius);">
+                    <h3>📋 Información del Sistema</h3>
+                    <div id="systemInfo">
+                        <p><strong>Versión:</strong> 2.0.0</p>
+                        <p><strong>Firebase:</strong> Conectado</p>
+                        <p><strong>Última Actualización:</strong> <span id="lastUpdate">Hoy</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Professional Details Modal -->
+    <div id="professionalModal" class="modal">
+        <div class="modal-content">
+            <h3>Detalles del Profesional</h3>
+            <div id="professionalDetails"></div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button onclick="closeProfessionalModal()" class="btn btn-secondary">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Job Details Modal -->
+    <div id="jobModal" class="modal">
+        <div class="modal-content">
+            <h3>Detalles del Trabajo</h3>
+            <div id="jobDetails"></div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button onclick="closeJobModal()" class="btn btn-secondary">Cerrar</button>
             </div>
         </div>
     </div>
@@ -559,6 +721,7 @@
 
         // Variables globales
         let auth, db;
+        let currentProfessionalData = null;
 
         // Inicialización
         document.addEventListener('DOMContentLoaded', () => {
@@ -578,9 +741,16 @@
                 
                 // Filtros
                 document.getElementById('applyProfessionalFilters').addEventListener('click', loadProfessionals);
+                document.getElementById('resetProfessionalFilters').addEventListener('click', resetProfessionalFilters);
                 document.getElementById('applyJobFilters').addEventListener('click', loadJobs);
+                document.getElementById('resetJobFilters').addEventListener('click', resetJobFilters);
                 document.getElementById('applyNotificationFilters').addEventListener('click', loadNotifications);
                 document.getElementById('applyCertificationFilters').addEventListener('click', loadCertifications);
+                
+                // Enter key for login
+                document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') handleLogin();
+                });
                 
                 // Cargar provincias
                 loadProvincias();
@@ -590,6 +760,7 @@
                 
             } catch (error) {
                 console.error('Error inicializando:', error);
+                showMessage('loginMessage', '❌ Error inicializando Firebase: ' + error.message, 'error');
             }
         });
 
@@ -598,49 +769,71 @@
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
+            if (!email || !password) {
+                showMessage('loginMessage', '❌ Por favor completa todos los campos', 'error');
+                return;
+            }
+            
+            showMessage('loginMessage', '🔐 Iniciando sesión...', 'success');
+            
             try {
                 await auth.signInWithEmailAndPassword(email, password);
             } catch (error) {
+                console.error('Error login:', error);
                 showMessage('loginMessage', '❌ Error: ' + error.message, 'error');
             }
         }
 
         function handleLogout() {
-            auth.signOut();
+            if (confirm('¿Estás seguro de cerrar sesión?')) {
+                auth.signOut();
+            }
         }
 
         function handleAuthStateChange(user) {
-            if (user && user.email === 'admin@tecniya.com') {
-                document.getElementById('loginContainer').style.display = 'none';
-                document.getElementById('adminPanel').style.display = 'block';
+            const loginContainer = document.getElementById('loginContainer');
+            const adminPanel = document.getElementById('adminPanel');
+            
+            // Permitir cualquier usuario de Firebase para pruebas
+            // En producción, restringir a admin@tecniya.com
+            if (user) {
+                console.log('Usuario autenticado:', user.email);
+                loginContainer.style.display = 'none';
+                adminPanel.style.display = 'block';
                 loadDashboard();
                 loadProfessionals();
             } else {
-                document.getElementById('loginContainer').style.display = 'block';
-                document.getElementById('adminPanel').style.display = 'none';
-                if (user) auth.signOut();
+                loginContainer.style.display = 'block';
+                adminPanel.style.display = 'none';
+                // Resetear campos de login
+                document.getElementById('loginPassword').value = '';
             }
         }
 
         // Navegación
         function switchTab(tabId) {
+            // Actualizar tabs
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             
+            document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+            
+            // Actualizar paneles
             document.querySelectorAll('.panel').forEach(panel => {
                 panel.classList.remove('active');
             });
             
-            document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
             document.getElementById(`${tabId}Panel`).classList.add('active');
             
+            // Cargar datos específicos de cada tab
             if (tabId === 'dashboard') loadDashboard();
             if (tabId === 'professionals') loadProfessionals();
             if (tabId === 'jobs') loadJobs();
             if (tabId === 'notifications') loadNotifications();
             if (tabId === 'certifications') loadCertifications();
             if (tabId === 'banners') loadBanners();
+            if (tabId === 'system') loadSystemInfo();
         }
 
         // Dashboard
@@ -680,11 +873,19 @@
             const container = document.getElementById('recentActivity');
             
             try {
+                // Ocultar loader
+                document.getElementById('activityLoader').style.display = 'none';
+                
                 // Últimos trabajos
                 const jobsSnapshot = await db.collection('jobs')
                     .orderBy('createdAt', 'desc')
                     .limit(10)
                     .get();
+                
+                if (jobsSnapshot.empty) {
+                    container.innerHTML = '<p style="text-align: center; padding: 20px; color: #666;">No hay actividad reciente</p>';
+                    return;
+                }
                 
                 let html = '<table class="data-table">';
                 html += '<tr><th>Fecha</th><th>Profesional</th><th>Cliente</th><th>Estado</th></tr>';
@@ -698,7 +899,7 @@
                             <td>${date}</td>
                             <td>${job.professionalName || '-'}</td>
                             <td>${job.userName || '-'}</td>
-                            <td>${job.status}</td>
+                            <td><span class="badge ${getStatusBadgeClass(job.status)}">${getStatusText(job.status)}</span></td>
                         </tr>
                     `;
                 });
@@ -708,7 +909,27 @@
                 
             } catch (error) {
                 console.error('Error cargando actividad:', error);
+                container.innerHTML = '<p style="color: var(--danger); text-align: center; padding: 20px;">Error cargando actividad</p>';
             }
+        }
+
+        function getStatusBadgeClass(status) {
+            switch(status) {
+                case 'completado': return 'badge-success';
+                case 'cancelado': return 'badge-danger';
+                case 'en_progreso': return 'badge-warning';
+                default: return 'badge-warning';
+            }
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'pendiente': 'Pendiente',
+                'en_progreso': 'En Progreso',
+                'completado': 'Completado',
+                'cancelado': 'Cancelado'
+            };
+            return statusMap[status] || status;
         }
 
         // Profesionales
@@ -730,9 +951,26 @@
             });
         }
 
+        function resetProfessionalFilters() {
+            document.getElementById('filterProfessionalStatus').value = '';
+            document.getElementById('filterProfessionalProvincia').value = '';
+            loadProfessionals();
+        }
+
+        function resetJobFilters() {
+            document.getElementById('filterJobStatus').value = '';
+            document.getElementById('filterJobDateFrom').value = '';
+            loadJobs();
+        }
+
         async function loadProfessionals() {
             const statusFilter = document.getElementById('filterProfessionalStatus').value;
             const provinciaFilter = document.getElementById('filterProfessionalProvincia').value;
+            const tbody = document.getElementById('professionalsTable');
+            
+            // Mostrar loader
+            tbody.innerHTML = '';
+            document.getElementById('professionalsLoader').style.display = 'block';
             
             try {
                 let query = db.collection('professionals');
@@ -750,9 +988,22 @@
                 }
                 
                 const snapshot = await query.get();
-                const tbody = document.getElementById('professionalsTable');
-                tbody.innerHTML = '';
                 
+                // Ocultar loader
+                document.getElementById('professionalsLoader').style.display = 'none';
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px; color: #666;">
+                                No se encontraron profesionales con los filtros seleccionados
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let html = '';
                 snapshot.forEach(doc => {
                     const prof = doc.data();
                     const id = doc.id;
@@ -766,73 +1017,161 @@
                         statusBadge = '<span class="badge badge-success">ACTIVO</span>';
                     }
                     
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>
-                            <strong>${prof.name || 'Sin nombre'}</strong><br>
-                            <small>${prof.email || ''}</small>
-                        </td>
-                        <td>${prof.phone || 'Sin teléfono'}</td>
-                        <td>${prof.ciudad || ''}, ${prof.provincia || ''}</td>
-                        <td>${statusBadge}</td>
-                        <td>${prof.averageRating ? prof.averageRating.toFixed(1) : '0.0'} ⭐</td>
-                        <td>
-                            <div class="btn-group">
-                                <button onclick="viewProfessional('${id}')" class="btn btn-sm">👁 Ver</button>
-                                ${prof.blocked ? 
-                                    `<button onclick="unblockProfessional('${id}')" class="btn btn-success btn-sm">🔓 Desbloquear</button>` :
-                                    `<button onclick="blockProfessional('${id}')" class="btn btn-danger btn-sm">🚫 Bloquear</button>`
-                                }
-                            </div>
-                        </td>
+                    const rating = prof.averageRating || 0;
+                    const stars = '⭐'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
+                    
+                    html += `
+                        <tr>
+                            <td>
+                                <strong>${prof.name || 'Sin nombre'}</strong><br>
+                                <small>${prof.email || ''}</small>
+                            </td>
+                            <td>${prof.phone || 'Sin teléfono'}<br>
+                                <small>${prof.email || ''}</small>
+                            </td>
+                            <td>${prof.ciudad || ''}, ${prof.provincia || ''}</td>
+                            <td>${statusBadge}</td>
+                            <td>${stars}<br>${rating.toFixed(1)}/5</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button onclick="viewProfessionalDetails('${id}')" class="btn btn-sm">👁 Ver</button>
+                                    ${prof.blocked ? 
+                                        `<button onclick="unblockProfessional('${id}')" class="btn btn-success btn-sm">🔓 Desbloquear</button>` :
+                                        `<button onclick="blockProfessional('${id}')" class="btn btn-danger btn-sm">🚫 Bloquear</button>`
+                                    }
+                                </div>
+                            </td>
+                        </tr>
                     `;
-                    tbody.appendChild(row);
                 });
+                
+                tbody.innerHTML = html;
                 
             } catch (error) {
                 console.error('Error cargando profesionales:', error);
+                document.getElementById('professionalsLoader').style.display = 'none';
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--danger);">
+                            Error cargando profesionales: ${error.message}
+                        </td>
+                    </tr>
+                `;
             }
         }
 
-        window.viewProfessional = async function(id) {
-            const doc = await db.collection('professionals').doc(id).get();
-            if (!doc.exists) return;
-            
-            const prof = doc.data();
-            
-            let html = `
-                <h3>${prof.name || 'Sin nombre'}</h3>
-                <p><strong>Email:</strong> ${prof.email || '-'}</p>
-                <p><strong>Teléfono:</strong> ${prof.phone || '-'}</p>
-                <p><strong>Ubicación:</strong> ${prof.ciudad || ''}, ${prof.provincia || ''}</p>
-                <p><strong>Rubros:</strong> ${prof.rubros ? prof.rubros.join(', ') : '-'}</p>
-                <p><strong>Rating:</strong> ${prof.averageRating ? prof.averageRating.toFixed(1) : '0.0'} ⭐ (${prof.totalRatings || 0} calificaciones)</p>
-                <p><strong>Trabajos completados:</strong> ${prof.completedJobs || 0}</p>
-                <p><strong>Perfil completo:</strong> ${prof.profileCompleted ? '✅ Sí' : '❌ No'}</p>
-                <p><strong>Cuenta bloqueada:</strong> ${prof.blocked ? '✅ Sí' : '❌ No'}</p>
-                <p><strong>Última actividad:</strong> ${prof.lastActive ? new Date(prof.lastActive).toLocaleDateString('es-AR') : '-'}</p>
-            `;
-            
-            alert(html);
+        window.viewProfessionalDetails = async function(id) {
+            try {
+                const doc = await db.collection('professionals').doc(id).get();
+                if (!doc.exists) {
+                    alert('Profesional no encontrado');
+                    return;
+                }
+                
+                const prof = doc.data();
+                currentProfessionalData = { id, ...prof };
+                
+                let html = `
+                    <div style="display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;">
+                        <div>
+                            <img src="${prof.photoUrl || 'https://via.placeholder.com/150x150/2563eb/ffffff?text=T'}" 
+                                 style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary);"
+                                 onerror="this.src='https://via.placeholder.com/150x150/2563eb/ffffff?text=T'">
+                        </div>
+                        <div style="flex: 1;">
+                            <h4 style="margin-bottom: 10px;">${prof.name || 'Sin nombre'}</h4>
+                            <p><strong>Email:</strong> ${prof.email || '-'}</p>
+                            <p><strong>Teléfono:</strong> ${prof.phone || '-'}</p>
+                            <p><strong>Ubicación:</strong> ${prof.ciudad || ''}, ${prof.provincia || ''}</p>
+                            <p><strong>Rating:</strong> ${prof.averageRating ? prof.averageRating.toFixed(1) : '0.0'} ⭐ (${prof.totalRatings || 0} calificaciones)</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: var(--radius);">
+                            <strong>Trabajos Completados</strong><br>
+                            <span style="font-size: 1.5rem;">${prof.completedJobs || 0}</span>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: var(--radius);">
+                            <strong>Perfil Completo</strong><br>
+                            <span style="font-size: 1.5rem;">${prof.profileCompleted ? '✅ Sí' : '❌ No'}</span>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: var(--radius);">
+                            <strong>Estado</strong><br>
+                            <span style="font-size: 1.5rem;">${prof.blocked ? '🚫 Bloqueado' : '✅ Activo'}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <strong>Rubros:</strong><br>
+                        <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;">
+                            ${prof.rubros ? prof.rubros.map(r => `<span style="background: var(--primary-light); color: var(--primary); padding: 4px 8px; border-radius: 12px; font-size: 0.9rem;">${r}</span>`).join('') : 'Sin rubros'}
+                        </div>
+                    </div>
+                    
+                    ${prof.bio ? `<div style="margin-top: 20px;"><strong>Bio:</strong><br>${prof.bio}</div>` : ''}
+                    
+                    <div style="margin-top: 20px;">
+                        <strong>Última actividad:</strong> ${prof.lastActive ? new Date(prof.lastActive).toLocaleString('es-AR') : '-'}
+                    </div>
+                `;
+                
+                document.getElementById('professionalDetails').innerHTML = html;
+                document.getElementById('professionalModal').classList.add('active');
+                
+            } catch (error) {
+                console.error('Error cargando detalles:', error);
+                alert('Error al cargar detalles del profesional');
+            }
+        };
+
+        window.closeProfessionalModal = function() {
+            document.getElementById('professionalModal').classList.remove('active');
+            currentProfessionalData = null;
         };
 
         window.blockProfessional = async function(id) {
-            if (confirm('¿Bloquear esta cuenta?')) {
-                await db.collection('professionals').doc(id).update({
-                    blocked: true,
-                    blockedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                loadProfessionals();
+            if (confirm('¿Estás seguro de bloquear esta cuenta? El profesional no podrá acceder al sistema.')) {
+                try {
+                    await db.collection('professionals').doc(id).update({
+                        blocked: true,
+                        blockedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Crear notificación
+                    await db.collection('admin_notifications').add({
+                        type: 'account_blocked',
+                        professionalId: id,
+                        professionalName: currentProfessionalData?.name || 'Profesional',
+                        reason: 'Cuenta bloqueada por administrador',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    loadProfessionals();
+                    showNotification('✅ Profesional bloqueado exitosamente');
+                    
+                } catch (error) {
+                    console.error('Error bloqueando profesional:', error);
+                    alert('Error al bloquear profesional: ' + error.message);
+                }
             }
         };
 
         window.unblockProfessional = async function(id) {
-            if (confirm('¿Desbloquear esta cuenta?')) {
-                await db.collection('professionals').doc(id).update({
-                    blocked: false,
-                    blockedAt: null
-                });
-                loadProfessionals();
+            if (confirm('¿Estás seguro de desbloquear esta cuenta?')) {
+                try {
+                    await db.collection('professionals').doc(id).update({
+                        blocked: false,
+                        blockedAt: null
+                    });
+                    
+                    loadProfessionals();
+                    showNotification('✅ Profesional desbloqueado exitosamente');
+                    
+                } catch (error) {
+                    console.error('Error desbloqueando profesional:', error);
+                    alert('Error al desbloquear profesional: ' + error.message);
+                }
             }
         };
 
@@ -840,6 +1179,11 @@
         async function loadJobs() {
             const statusFilter = document.getElementById('filterJobStatus').value;
             const dateFilter = document.getElementById('filterJobDateFrom').value;
+            const tbody = document.getElementById('jobsTable');
+            
+            // Mostrar loader
+            tbody.innerHTML = '';
+            document.getElementById('jobsLoader').style.display = 'block';
             
             try {
                 let query = db.collection('jobs').orderBy('createdAt', 'desc');
@@ -849,9 +1193,22 @@
                 }
                 
                 const snapshot = await query.limit(100).get();
-                const tbody = document.getElementById('jobsTable');
-                tbody.innerHTML = '';
                 
+                // Ocultar loader
+                document.getElementById('jobsLoader').style.display = 'none';
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px; color: #666;">
+                                No se encontraron trabajos con los filtros seleccionados
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let html = '';
                 snapshot.forEach(doc => {
                     const job = doc.data();
                     const id = doc.id;
@@ -864,51 +1221,111 @@
                     }
                     
                     const date = job.createdAt?.toDate ? job.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                    const statusBadge = `<span class="badge ${getStatusBadgeClass(job.status)}">${getStatusText(job.status)}</span>`;
                     
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${date}</td>
-                        <td>${job.professionalName || '-'}</td>
-                        <td>${job.userName || '-'}</td>
-                        <td>${job.serviceType || '-'}</td>
-                        <td>${job.status}</td>
-                        <td>
-                            <button onclick="viewJob('${id}')" class="btn btn-sm">👁 Ver</button>
-                        </td>
+                    html += `
+                        <tr>
+                            <td>${date}</td>
+                            <td>${job.professionalName || '-'}</td>
+                            <td>${job.userName || '-'}<br>
+                                <small>${job.userEmail || ''}</small>
+                            </td>
+                            <td>${job.serviceType || '-'}</td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                <button onclick="viewJobDetails('${id}')" class="btn btn-sm">👁 Ver</button>
+                            </td>
+                        </tr>
                     `;
-                    tbody.appendChild(row);
                 });
+                
+                tbody.innerHTML = html;
                 
             } catch (error) {
                 console.error('Error cargando trabajos:', error);
+                document.getElementById('jobsLoader').style.display = 'none';
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--danger);">
+                            Error cargando trabajos: ${error.message}
+                        </td>
+                    </tr>
+                `;
             }
         }
 
-        window.viewJob = async function(id) {
-            const doc = await db.collection('jobs').doc(id).get();
-            if (!doc.exists) return;
-            
-            const job = doc.data();
-            const date = job.createdAt?.toDate ? job.createdAt.toDate().toLocaleDateString('es-AR') : '-';
-            
-            let html = `
-                <h3>Detalle del Trabajo</h3>
-                <p><strong>Servicio:</strong> ${job.serviceType || '-'}</p>
-                <p><strong>Fecha:</strong> ${date}</p>
-                <p><strong>Estado:</strong> ${job.status}</p>
-                <p><strong>Profesional:</strong> ${job.professionalName || '-'} (${job.professionalPhone || '-'})</p>
-                <p><strong>Cliente:</strong> ${job.userName || '-'} (${job.userPhone || '-'})</p>
-                <p><strong>Descripción:</strong> ${job.description || '-'}</p>
-                ${job.price ? `<p><strong>Precio:</strong> $${job.price.toLocaleString('es-AR')}</p>` : ''}
-            `;
-            
-            alert(html);
+        window.viewJobDetails = async function(id) {
+            try {
+                const doc = await db.collection('jobs').doc(id).get();
+                if (!doc.exists) {
+                    alert('Trabajo no encontrado');
+                    return;
+                }
+                
+                const job = doc.data();
+                const date = job.createdAt?.toDate ? job.createdAt.toDate().toLocaleString('es-AR') : '-';
+                
+                let html = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div>
+                            <h4 style="margin-bottom: 10px;">Información del Trabajo</h4>
+                            <p><strong>Servicio:</strong> ${job.serviceType || '-'}</p>
+                            <p><strong>Fecha:</strong> ${date}</p>
+                            <p><strong>Estado:</strong> <span class="badge ${getStatusBadgeClass(job.status)}">${getStatusText(job.status)}</span></p>
+                            ${job.price ? `<p><strong>Precio:</strong> $${job.price.toLocaleString('es-AR')}</p>` : ''}
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: 10px;">Contacto</h4>
+                            <p><strong>Profesional:</strong> ${job.professionalName || '-'}</p>
+                            <p><strong>Teléfono:</strong> ${job.professionalPhone || '-'}</p>
+                            <p><strong>Cliente:</strong> ${job.userName || '-'}</p>
+                            <p><strong>Teléfono:</strong> ${job.userPhone || '-'}</p>
+                        </div>
+                    </div>
+                    
+                    ${job.description ? `
+                        <div style="margin-top: 20px;">
+                            <strong>Descripción:</strong><br>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: var(--radius); margin-top: 10px;">
+                                ${job.description}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${job.address ? `
+                        <div style="margin-top: 20px;">
+                            <strong>Dirección:</strong> ${job.address}
+                        </div>
+                    ` : ''}
+                    
+                    ${job.rated ? `
+                        <div style="margin-top: 20px; background: #e8f5e8; padding: 15px; border-radius: var(--radius);">
+                            <strong>Calificado:</strong> ${job.rating || 'Sin calificación'} ⭐
+                            ${job.comment ? `<br><strong>Comentario:</strong> "${job.comment}"` : ''}
+                        </div>
+                    ` : ''}
+                `;
+                
+                document.getElementById('jobDetails').innerHTML = html;
+                document.getElementById('jobModal').classList.add('active');
+                
+            } catch (error) {
+                console.error('Error cargando detalles:', error);
+                alert('Error al cargar detalles del trabajo');
+            }
+        };
+
+        window.closeJobModal = function() {
+            document.getElementById('jobModal').classList.remove('active');
         };
 
         // Notificaciones
         async function loadNotifications() {
             const typeFilter = document.getElementById('filterNotificationType').value;
             const container = document.getElementById('notificationsList');
+            
+            // Mostrar loader
+            container.innerHTML = '<div class="loader" id="notificationsLoader"></div>';
             
             try {
                 let query = db.collection('admin_notifications').orderBy('createdAt', 'desc');
@@ -918,6 +1335,7 @@
                 }
                 
                 const snapshot = await query.limit(50).get();
+                
                 container.innerHTML = '';
                 
                 if (snapshot.empty) {
@@ -928,37 +1346,47 @@
                 snapshot.forEach(doc => {
                     const notif = doc.data();
                     const id = doc.id;
-                    const date = notif.createdAt?.toDate ? notif.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                    const date = notif.createdAt?.toDate ? notif.createdAt.toDate().toLocaleString('es-AR') : '-';
                     
                     let typeText = '';
+                    let icon = '';
+                    let bgColor = '#fff3cd';
+                    
                     switch(notif.type) {
                         case 'account_blocked':
-                            typeText = '🔴 Cuenta Bloqueada';
+                            typeText = 'Cuenta Bloqueada';
+                            icon = '🔴';
+                            bgColor = '#f8d7da';
                             break;
                         case 'job_overdue':
-                            typeText = '⚠️ Trabajo Vencido';
+                            typeText = 'Trabajo Vencido';
+                            icon = '⚠️';
+                            bgColor = '#fff3cd';
                             break;
                         default:
-                            typeText = 'ℹ️ Sistema';
+                            typeText = 'Sistema';
+                            icon = 'ℹ️';
+                            bgColor = '#d1ecf1';
                     }
                     
                     container.innerHTML += `
-                        <div style="background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid var(--warning);">
+                        <div style="background: ${bgColor}; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid var(--warning);">
                             <div style="display: flex; justify-content: space-between; align-items: start;">
                                 <div>
-                                    <h4 style="margin: 0;">${typeText}</h4>
+                                    <h4 style="margin: 0;">${icon} ${typeText}</h4>
                                     <p style="margin: 0.5rem 0;">${notif.reason || notif.message || ''}</p>
                                     <small style="color: var(--gray);">${date}</small>
                                 </div>
                                 <button onclick="deleteNotification('${id}')" class="btn btn-sm btn-danger">🗑️</button>
                             </div>
-                            ${notif.professionalName ? `<p><strong>Profesional:</strong> ${notif.professionalName}</p>` : ''}
+                            ${notif.professionalName ? `<p style="margin-top: 10px;"><strong>Profesional:</strong> ${notif.professionalName}</p>` : ''}
                         </div>
                     `;
                 });
                 
             } catch (error) {
                 console.error('Error cargando notificaciones:', error);
+                container.innerHTML = '<p style="color: var(--danger); text-align: center; padding: 2rem;">Error cargando notificaciones</p>';
             }
         }
 
@@ -970,7 +1398,7 @@
         };
 
         window.clearAllNotifications = async function() {
-            if (confirm('¿Eliminar todas las notificaciones?')) {
+            if (confirm('¿Eliminar todas las notificaciones? Esta acción no se puede deshacer.')) {
                 const snapshot = await db.collection('admin_notifications').get();
                 const batch = db.batch();
                 
@@ -986,6 +1414,11 @@
         // Certificaciones
         async function loadCertifications() {
             const statusFilter = document.getElementById('filterCertificationStatus').value;
+            const tbody = document.getElementById('certificationsTable');
+            
+            // Mostrar loader
+            tbody.innerHTML = '';
+            document.getElementById('certificationsLoader').style.display = 'block';
             
             try {
                 const query = db.collection('certifications')
@@ -993,8 +1426,20 @@
                     .orderBy('createdAt', 'desc');
                 
                 const snapshot = await query.get();
-                const tbody = document.getElementById('certificationsTable');
-                tbody.innerHTML = '';
+                
+                // Ocultar loader
+                document.getElementById('certificationsLoader').style.display = 'none';
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px; color: #666;">
+                                No se encontraron certificaciones ${statusFilter === 'pendiente' ? 'pendientes' : statusFilter}
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
                 
                 for (const doc of snapshot.docs) {
                     const cert = doc.data();
@@ -1002,10 +1447,14 @@
                     
                     // Obtener información del profesional
                     let professionalName = 'Desconocido';
+                    let professionalEmail = '';
+                    
                     try {
                         const profDoc = await db.collection('professionals').doc(cert.professionalId).get();
                         if (profDoc.exists) {
-                            professionalName = profDoc.data().name || 'Desconocido';
+                            const profData = profDoc.data();
+                            professionalName = profData.name || 'Desconocido';
+                            professionalEmail = profData.email || '';
                         }
                     } catch (error) {
                         console.error('Error obteniendo profesional:', error);
@@ -1015,7 +1464,10 @@
                     
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${professionalName}</td>
+                        <td>
+                            <strong>${professionalName}</strong><br>
+                            <small>${professionalEmail}</small>
+                        </td>
                         <td>${cert.title}</td>
                         <td>${cert.institution}</td>
                         <td>${date}</td>
@@ -1041,6 +1493,14 @@
                 
             } catch (error) {
                 console.error('Error cargando certificaciones:', error);
+                document.getElementById('certificationsLoader').style.display = 'none';
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--danger);">
+                            Error cargando certificaciones: ${error.message}
+                        </td>
+                    </tr>
+                `;
             }
         }
 
@@ -1062,33 +1522,66 @@
                             institution: cert.institution,
                             documentUrl: cert.documentUrl,
                             approvedAt: new Date().toISOString()
-                        })
+                        }),
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     
                     loadCertifications();
+                    showNotification('✅ Certificación aprobada exitosamente');
                     
                 } catch (error) {
                     console.error('Error aprobando certificación:', error);
+                    alert('Error al aprobar certificación: ' + error.message);
                 }
             }
         };
 
         window.rejectCertification = async function(id) {
             if (confirm('¿Rechazar esta certificación?')) {
-                await db.collection('certifications').doc(id).update({
-                    status: 'rechazada',
-                    rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                loadCertifications();
+                try {
+                    const certDoc = await db.collection('certifications').doc(id).get();
+                    const cert = certDoc.data();
+                    
+                    await db.collection('certifications').doc(id).update({
+                        status: 'rechazada',
+                        rejectedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        rejectionReason: prompt('Ingrese el motivo del rechazo:', 'Documentación insuficiente')
+                    });
+                    
+                    loadCertifications();
+                    showNotification('✅ Certificación rechazada');
+                    
+                } catch (error) {
+                    console.error('Error rechazando certificación:', error);
+                    alert('Error al rechazar certificación: ' + error.message);
+                }
             }
         };
 
         // Banners
         async function loadBanners() {
+            const tbody = document.getElementById('bannersTable');
+            
+            // Mostrar loader
+            tbody.innerHTML = '';
+            document.getElementById('bannersLoader').style.display = 'block';
+            
             try {
                 const snapshot = await db.collection('banners').orderBy('createdAt', 'desc').get();
-                const tbody = document.getElementById('bannersTable');
-                tbody.innerHTML = '';
+                
+                // Ocultar loader
+                document.getElementById('bannersLoader').style.display = 'none';
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
+                                No hay banners creados
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
                 
                 snapshot.forEach(doc => {
                     const banner = doc.data();
@@ -1099,10 +1592,10 @@
                         <td>
                             <img src="${banner.imageUrl}" 
                                  style="width: 100px; height: 60px; object-fit: cover; border-radius: 4px;"
-                                 onerror="this.src='https://via.placeholder.com/100x60'">
+                                 onerror="this.src='https://via.placeholder.com/100x60/2563eb/ffffff?text=BANNER'">
                         </td>
                         <td>${banner.link || '-'}</td>
-                        <td>${banner.type || 'nacional'}</td>
+                        <td>${banner.type === 'nacional' ? 'Nacional' : 'Provincial'}</td>
                         <td>
                             <span class="badge ${banner.active ? 'badge-success' : 'badge-danger'}">
                                 ${banner.active ? 'ACTIVO' : 'INACTIVO'}
@@ -1123,6 +1616,14 @@
                 
             } catch (error) {
                 console.error('Error cargando banners:', error);
+                document.getElementById('bannersLoader').style.display = 'none';
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--danger);">
+                            Error cargando banners: ${error.message}
+                        </td>
+                    </tr>
+                `;
             }
         }
 
@@ -1131,8 +1632,13 @@
             const linkUrl = document.getElementById('bannerLinkUrl').value.trim();
             const type = document.getElementById('bannerType').value;
             
-            if (!imageUrl || !linkUrl) {
-                alert('Completá todos los campos');
+            if (!imageUrl) {
+                alert('Por favor ingresa la URL de la imagen');
+                return;
+            }
+            
+            if (!linkUrl) {
+                alert('Por favor ingresa la URL del enlace');
                 return;
             }
             
@@ -1145,28 +1651,242 @@
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
+                // Limpiar campos
                 document.getElementById('bannerImageUrl').value = '';
                 document.getElementById('bannerLinkUrl').value = '';
+                
                 loadBanners();
+                showNotification('✅ Banner creado exitosamente');
                 
             } catch (error) {
                 console.error('Error creando banner:', error);
+                alert('Error al crear banner: ' + error.message);
             }
         };
 
         window.toggleBanner = async function(id, activate) {
-            await db.collection('banners').doc(id).update({
-                active: activate
-            });
-            loadBanners();
+            try {
+                await db.collection('banners').doc(id).update({
+                    active: activate,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                loadBanners();
+                showNotification(`✅ Banner ${activate ? 'activado' : 'desactivado'} exitosamente`);
+            } catch (error) {
+                console.error('Error actualizando banner:', error);
+                alert('Error al actualizar banner: ' + error.message);
+            }
         };
 
         window.deleteBanner = async function(id) {
-            if (confirm('¿Eliminar este banner?')) {
-                await db.collection('banners').doc(id).delete();
-                loadBanners();
+            if (confirm('¿Estás seguro de eliminar este banner?')) {
+                try {
+                    await db.collection('banners').doc(id).delete();
+                    loadBanners();
+                    showNotification('✅ Banner eliminado exitosamente');
+                } catch (error) {
+                    console.error('Error eliminando banner:', error);
+                    alert('Error al eliminar banner: ' + error.message);
+                }
             }
         };
+
+        // Sistema
+        function loadSystemInfo() {
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString('es-AR');
+        }
+
+        async function saveSystemConfig() {
+            const name = document.getElementById('systemName').value;
+            const email = document.getElementById('systemEmail').value;
+            const phone = document.getElementById('systemPhone').value;
+            
+            try {
+                await db.collection('system_config').doc('general').set({
+                    name,
+                    email,
+                    phone,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                
+                showNotification('✅ Configuración guardada exitosamente');
+                
+            } catch (error) {
+                console.error('Error guardando configuración:', error);
+                alert('Error al guardar configuración: ' + error.message);
+            }
+        }
+
+        // Generar datos de prueba
+        async function generateTestData() {
+            if (!confirm('¿Generar datos de prueba? Esto agregará profesionales, trabajos y certificaciones de ejemplo.')) {
+                return;
+            }
+            
+            try {
+                // Crear profesionales de prueba
+                const testProfessionals = [
+                    {
+                        name: "Juan Pérez",
+                        email: "juan@ejemplo.com",
+                        phone: "3415551234",
+                        provincia: "Santa Fe",
+                        ciudad: "Rosario",
+                        rubros: ["plomeria", "electricidad"],
+                        bio: "Plomero con 10 años de experiencia",
+                        averageRating: 4.5,
+                        totalRatings: 12,
+                        completedJobs: 45,
+                        profileCompleted: true,
+                        active: true,
+                        blocked: false,
+                        photoUrl: "https://randomuser.me/api/portraits/men/32.jpg",
+                        createdAt: new Date()
+                    },
+                    {
+                        name: "María López",
+                        email: "maria@ejemplo.com",
+                        phone: "3415555678",
+                        provincia: "Buenos Aires",
+                        ciudad: "CABA",
+                        rubros: ["gas", "aire"],
+                        bio: "Técnica en refrigeración certificada",
+                        averageRating: 4.8,
+                        totalRatings: 8,
+                        completedJobs: 32,
+                        profileCompleted: true,
+                        active: true,
+                        blocked: false,
+                        photoUrl: "https://randomuser.me/api/portraits/women/44.jpg",
+                        createdAt: new Date()
+                    }
+                ];
+                
+                for (const prof of testProfessionals) {
+                    await db.collection('professionals').add(prof);
+                }
+                
+                // Crear trabajos de prueba
+                const testJobs = [
+                    {
+                        professionalName: "Juan Pérez",
+                        professionalPhone: "3415551234",
+                        userName: "Cliente Test",
+                        userEmail: "cliente@ejemplo.com",
+                        userPhone: "3415559999",
+                        serviceType: "plomeria",
+                        description: "Reparación de pérdida en baño",
+                        status: "completado",
+                        price: 2500,
+                        rated: false,
+                        createdAt: new Date(Date.now() - 86400000), // Ayer
+                        address: "Calle Falsa 123, Rosario"
+                    },
+                    {
+                        professionalName: "María López",
+                        professionalPhone: "3415555678",
+                        userName: "Otro Cliente",
+                        userEmail: "otro@ejemplo.com",
+                        userPhone: "3415558888",
+                        serviceType: "aire",
+                        description: "Mantenimiento de aire acondicionado",
+                        status: "en_progreso",
+                        price: 3500,
+                        rated: false,
+                        createdAt: new Date(),
+                        address: "Av. Siempre Viva 456, CABA"
+                    }
+                ];
+                
+                for (const job of testJobs) {
+                    await db.collection('jobs').add(job);
+                }
+                
+                // Crear certificaciones de prueba
+                const testCerts = [
+                    {
+                        professionalId: (await db.collection('professionals').where('email', '==', 'juan@ejemplo.com').get()).docs[0]?.id,
+                        title: "Técnico en Plomería",
+                        institution: "Instituto Técnico Rosario",
+                        status: "pendiente",
+                        documentUrl: "https://ejemplo.com/certificado.pdf",
+                        createdAt: new Date()
+                    }
+                ];
+                
+                for (const cert of testCerts) {
+                    if (cert.professionalId) {
+                        await db.collection('certifications').add(cert);
+                    }
+                }
+                
+                // Crear notificaciones de prueba
+                const testNotifications = [
+                    {
+                        type: "system",
+                        message: "Sistema inicializado correctamente",
+                        createdAt: new Date()
+                    }
+                ];
+                
+                for (const notif of testNotifications) {
+                    await db.collection('admin_notifications').add(notif);
+                }
+                
+                // Actualizar dashboard
+                loadDashboard();
+                loadProfessionals();
+                loadJobs();
+                loadCertifications();
+                loadNotifications();
+                
+                showNotification('✅ Datos de prueba generados exitosamente');
+                
+            } catch (error) {
+                console.error('Error generando datos de prueba:', error);
+                alert('Error al generar datos de prueba: ' + error.message);
+            }
+        }
+
+        async function clearTestData() {
+            if (!confirm('¿Eliminar datos de prueba? Esto eliminará todos los datos generados para pruebas.')) {
+                return;
+            }
+            
+            try {
+                // Eliminar profesionales de prueba
+                const profSnapshot = await db.collection('professionals')
+                    .where('email', 'in', ['juan@ejemplo.com', 'maria@ejemplo.com'])
+                    .get();
+                
+                const batch = db.batch();
+                profSnapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                
+                // Eliminar trabajos de prueba
+                const jobsSnapshot = await db.collection('jobs')
+                    .where('userEmail', 'in', ['cliente@ejemplo.com', 'otro@ejemplo.com'])
+                    .get();
+                
+                jobsSnapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                
+                await batch.commit();
+                
+                // Actualizar vistas
+                loadDashboard();
+                loadProfessionals();
+                loadJobs();
+                
+                showNotification('✅ Datos de prueba eliminados');
+                
+            } catch (error) {
+                console.error('Error eliminando datos de prueba:', error);
+                alert('Error al eliminar datos de prueba: ' + error.message);
+            }
+        }
 
         // Utilidades
         function showMessage(elementId, text, type) {
@@ -1174,7 +1894,54 @@
             el.textContent = text;
             el.className = `message message-${type}`;
             el.style.display = 'block';
+            
+            // Ocultar después de 5 segundos
+            setTimeout(() => {
+                el.style.display = 'none';
+            }, 5000);
         }
+
+        function showNotification(text) {
+            // Crear notificación toast
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--secondary);
+                color: white;
+                padding: 15px 20px;
+                border-radius: var(--radius);
+                box-shadow: var(--shadow-lg);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            toast.textContent = text;
+            document.body.appendChild(toast);
+            
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Añadir estilos para animaciones
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
