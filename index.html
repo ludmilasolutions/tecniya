@@ -51,44 +51,114 @@
             padding: 0 20px; 
         }
         
-        /* Header moderno */
+        /* Header mejorado con autenticación */
         .header {
             background: white;
             padding: 1rem 0;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
             border-bottom: 1px solid var(--light-gray);
             box-shadow: var(--shadow-sm);
             backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
         }
         
         .header-content {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.75rem;
-            text-align: center;
+            gap: 1.5rem;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
         
         .logo-img {
-            height: 70px;
+            height: 50px;
             width: auto;
             object-fit: contain;
             filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.2));
         }
         
         .tagline { 
-            font-size: 1.05rem; 
+            font-size: 0.95rem; 
             color: var(--gray);
-            max-width: 600px; 
-            margin: 0 auto;
+            max-width: 400px;
             font-weight: 500;
             letter-spacing: -0.01em;
         }
         
-        /* Banners Container - Sin cambios en funcionalidad */
+        /* Auth Section en Header */
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--primary-light);
+            border-radius: 8px;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+        
+        /* Botones de Auth */
+        .auth-btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .auth-btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        .auth-btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        
+        /* Banners Container - Sin cambios */
         .banners-container {
             margin: 2rem auto;
             display: flex;
@@ -315,7 +385,7 @@
             margin-top: 2rem;
         }
         
-        /* Professional Cards - Rediseñadas */
+        /* Professional Cards - Mejoradas */
         .professional-grid {
             display: grid;
             gap: 1.5rem;
@@ -634,6 +704,188 @@
             font-size: 0.9rem;
         }
         
+        /* Modal de Auth */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .auth-modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            max-width: 450px;
+            width: 90%;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s ease;
+        }
+        
+        .auth-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .auth-modal-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+            font-weight: 700;
+        }
+        
+        .auth-modal-close {
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: color 0.2s ease;
+            line-height: 1;
+            background: none;
+            border: none;
+        }
+        
+        .auth-modal-close:hover {
+            color: var(--dark);
+        }
+        
+        .auth-form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .auth-form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+        
+        .auth-form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .auth-form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .auth-btn-container {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .auth-btn-full {
+            width: 100%;
+        }
+        
+        .auth-toggle {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--light-gray);
+            color: var(--gray);
+        }
+        
+        .auth-toggle-link {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .auth-toggle-link:hover {
+            text-decoration: underline;
+        }
+        
+        .auth-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        
+        .auth-message-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .auth-message-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        /* Rating Modal Mejorado */
+        .rating-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .rating-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 90%;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s ease;
+        }
+        
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 1.5rem 0;
+        }
+        
+        .rating-star {
+            font-size: 2.5rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .rating-star:hover,
+        .rating-star.active {
+            color: #f59e0b;
+            transform: scale(1.2);
+        }
+        
+        .rating-text {
+            text-align: center;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+            color: var(--gray);
+        }
+        
         /* Floating Action Button */
         .fab {
             position: fixed;
@@ -642,12 +894,12 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: var(--gradient-primary);
             color: white;
             border: none;
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
             cursor: pointer;
-            z-index: 1000;
+            z-index: 999;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -657,7 +909,7 @@
         
         .fab:hover {
             transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.4);
         }
         
         /* Loader animado */
@@ -682,35 +934,9 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Modal mejorado */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-        }
-        
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
-        }
-        
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: var(--radius);
-            max-width: 500px;
-            width: 90%;
-            box-shadow: var(--shadow-lg);
-            animation: slideUp 0.3s ease;
         }
         
         @keyframes slideUp {
@@ -718,75 +944,26 @@
             to { transform: translateY(0); opacity: 1; }
         }
         
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light-gray);
-        }
-        
-        .modal-close {
-            font-size: 2rem;
-            cursor: pointer;
-            color: var(--gray);
-            transition: color 0.2s ease;
-            line-height: 1;
-        }
-        
-        .modal-close:hover {
-            color: var(--dark);
-        }
-        
-        /* Install Prompt */
-        .install-prompt {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--gradient-primary);
-            color: white;
-            padding: 1.2rem;
-            text-align: center;
-            z-index: 1000;
-            display: none;
-            animation: slideUp 0.3s ease;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
-        }
-        
-        .install-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1200px;
-            margin: 0 auto;
-            gap: 1rem;
-        }
-        
-        .install-close {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.25rem 0.75rem;
-            border-radius: 50%;
-            transition: background 0.2s ease;
-        }
-        
-        .install-close:hover {
-            background: rgba(255,255,255,0.3);
-        }
-        
         /* Responsive */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
+                gap: 1rem;
             }
             
-            .logo-img {
-                height: 60px;
+            .logo-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+            
+            .tagline {
+                max-width: 100%;
+            }
+            
+            .auth-section {
+                width: 100%;
+                justify-content: center;
             }
             
             .search-section { 
@@ -816,16 +993,18 @@
                 font-size: 1.25rem;
             }
             
-            .install-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 0.5rem;
+            .auth-modal-content {
+                padding: 1.5rem;
             }
         }
         
         @media (max-width: 480px) {
             .professional-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .auth-btn-container {
+                flex-direction: column;
             }
         }
         
@@ -865,12 +1044,35 @@
     </style>
 </head>
 <body>
-    <!-- Header con Logo -->
+    <!-- Header con Logo y Auth -->
     <header class="header">
         <div class="container header-content">
-            <img src="logo.png" alt="TecniYa" class="logo-img" 
-                 onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"%232563eb\"/><text x=\"50\" y=\"70\" text-anchor=\"middle\" font-size=\"60\" fill=\"white\">🔧</text></svg>';">
-            <p class="tagline">Encontrá técnicos verificados en toda Argentina. Contacto directo por WhatsApp.</p>
+            <div class="logo-section">
+                <img src="logo.png" alt="TecniYa" class="logo-img" 
+                     onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"%232563eb\"/><text x=\"50\" y=\"70\" text-anchor=\"middle\" font-size=\"60\" fill=\"white\">🔧</text></svg>';">
+                <p class="tagline">Encontrá técnicos verificados en toda Argentina. Contacto directo por WhatsApp.</p>
+            </div>
+            
+            <div class="auth-section">
+                <div id="userContainer" style="display: none;">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar"></div>
+                        <span class="user-name" id="userName"></span>
+                        <button onclick="handleLogout()" class="auth-btn auth-btn-secondary">
+                            Cerrar sesión
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="guestContainer">
+                    <button onclick="openAuthModal('login')" class="auth-btn auth-btn-primary">
+                        Iniciar sesión
+                    </button>
+                    <button onclick="openAuthModal('register')" class="auth-btn auth-btn-secondary">
+                        Registrarse
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -939,22 +1141,90 @@
         <div class="professional-grid" id="resultsContainer"></div>
     </section>
 
-    <!-- Rating Modal -->
-    <div id="ratingModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>⭐ Calificar Técnico</h3>
-                <span class="modal-close" onclick="closeRatingModal()">×</span>
+    <!-- Auth Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-header">
+                <h2 class="auth-modal-title" id="authModalTitle">Iniciar Sesión</h2>
+                <button class="auth-modal-close" onclick="closeAuthModal()">×</button>
             </div>
-            <div id="ratingModalBody"></div>
+            
+            <div id="authMessage" class="auth-message"></div>
+            
+            <div id="loginForm">
+                <div class="auth-form-group">
+                    <label class="auth-form-label">Email</label>
+                    <input type="email" id="loginEmail" class="auth-form-input" 
+                           placeholder="tu@email.com" required>
+                </div>
+                <div class="auth-form-group">
+                    <label class="auth-form-label">Contraseña</label>
+                    <input type="password" id="loginPassword" class="auth-form-input" 
+                           placeholder="••••••••" required minlength="6">
+                </div>
+                <div class="auth-btn-container">
+                    <button onclick="handleLogin()" class="btn btn-primary auth-btn-full">
+                        🔐 Iniciar Sesión
+                    </button>
+                </div>
+                <div class="auth-toggle">
+                    ¿No tenés cuenta? 
+                    <span class="auth-toggle-link" onclick="switchAuthForm('register')">
+                        Registrate aquí
+                    </span>
+                </div>
+            </div>
+            
+            <div id="registerForm" style="display: none;">
+                <div class="auth-form-group">
+                    <label class="auth-form-label">Nombre completo</label>
+                    <input type="text" id="registerName" class="auth-form-input" 
+                           placeholder="Juan Pérez" required>
+                </div>
+                <div class="auth-form-group">
+                    <label class="auth-form-label">Teléfono WhatsApp</label>
+                    <input type="tel" id="registerPhone" class="auth-form-input" 
+                           placeholder="3417558966" required pattern="[0-9]{10,13}">
+                    <small style="color: var(--gray); font-size: 0.85rem; display: block; margin-top: 0.25rem;">
+                        Ej: 3417558966 (sin 0 ni 15)
+                    </small>
+                </div>
+                <div class="auth-form-group">
+                    <label class="auth-form-label">Email</label>
+                    <input type="email" id="registerEmail" class="auth-form-input" 
+                           placeholder="tu@email.com" required>
+                </div>
+                <div class="auth-form-group">
+                    <label class="auth-form-label">Contraseña</label>
+                    <input type="password" id="registerPassword" class="auth-form-input" 
+                           placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+                <div class="auth-btn-container">
+                    <button onclick="handleRegister()" class="btn btn-primary auth-btn-full">
+                        📝 Registrarme
+                    </button>
+                </div>
+                <div class="auth-toggle">
+                    ¿Ya tenés cuenta? 
+                    <span class="auth-toggle-link" onclick="switchAuthForm('login')">
+                        Iniciá sesión aquí
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Install Prompt -->
-    <div id="installPrompt" class="install-prompt">
-        <div class="install-content">
-            <span>📱 Instalá TecniYa en tu teléfono para acceder rápido</span>
-            <button onclick="closeInstallPrompt()" class="install-close">×</button>
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="rating-modal">
+        <div class="rating-modal-content">
+            <div class="auth-modal-header">
+                <h2 class="auth-modal-title">⭐ Calificar Técnico</h2>
+                <button class="auth-modal-close" onclick="closeRatingModal()">×</button>
+            </div>
+            
+            <div id="ratingModalBody">
+                <!-- Contenido dinámico -->
+            </div>
         </div>
     </div>
 
@@ -991,6 +1261,7 @@
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     
     <!-- Main Script -->
@@ -1010,12 +1281,14 @@
         // ============================================
         // VARIABLES GLOBALES
         // ============================================
-        let db;
+        let auth, db;
+        let currentUser = null;
         let currentRatingProfessional = null;
         let allProfessionals = [];
-        let deferredPrompt;
         let currentProvincia = '';
         let currentCiudad = '';
+        let selectedRating = 0;
+        let googleProvider;
 
         // ============================================
         // DATOS DE PROVINCIAS Y CIUDADES
@@ -1055,10 +1328,10 @@
                 initApp();
                 loadBanners();
                 loadAllProfessionals();
-                checkInstallPrompt();
                 initScrollAnimations();
             } catch (error) {
                 console.error('Error inicial:', error);
+                showAuthMessage('Error inicializando la aplicación', 'error');
             }
         });
 
@@ -1067,25 +1340,27 @@
                 if (!firebase.apps.length) {
                     firebase.initializeApp(firebaseConfig);
                 }
+                auth = firebase.auth();
                 db = firebase.firestore();
+                
+                // Configurar proveedor de Google
+                googleProvider = new firebase.auth.GoogleAuthProvider();
+                googleProvider.addScope('email');
+                googleProvider.addScope('profile');
+                
             } catch (error) {
                 console.error('Error Firebase:', error);
+                throw error;
             }
         }
 
         function initApp() {
             loadProvincias();
             
+            // Event listeners para búsqueda
             document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
             document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
             document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
-            
-            // Evento para PWA
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                showInstallPrompt();
-            });
             
             // Configurar FAB
             window.addEventListener('scroll', () => {
@@ -1096,6 +1371,9 @@
                     fab.style.display = 'none';
                 }
             });
+            
+            // Verificar estado de autenticación
+            auth.onAuthStateChanged(handleAuthStateChanged);
         }
 
         function initScrollAnimations() {
@@ -1112,12 +1390,202 @@
                 });
             }, observerOptions);
             
-            // Observar tarjetas de profesionales cuando se carguen
             setTimeout(() => {
                 document.querySelectorAll('.professional-card').forEach(card => {
                     observer.observe(card);
                 });
             }, 100);
+        }
+
+        // ============================================
+        // AUTENTICACIÓN
+        // ============================================
+        function handleAuthStateChanged(user) {
+            currentUser = user;
+            updateAuthUI();
+            
+            if (user) {
+                // Verificar si el usuario existe en la colección users
+                checkUserInDatabase(user);
+            }
+        }
+
+        async function checkUserInDatabase(user) {
+            try {
+                const snapshot = await db.collection('users')
+                    .where('email', '==', user.email)
+                    .limit(1)
+                    .get();
+                
+                if (snapshot.empty) {
+                    // Crear usuario si no existe
+                    await db.collection('users').add({
+                        userId: user.uid,
+                        email: user.email,
+                        name: user.displayName || user.email.split('@')[0],
+                        phone: '',
+                        profileCompleted: false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            } catch (error) {
+                console.error('Error verificando usuario:', error);
+            }
+        }
+
+        function updateAuthUI() {
+            const userContainer = document.getElementById('userContainer');
+            const guestContainer = document.getElementById('guestContainer');
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            
+            if (currentUser) {
+                userContainer.style.display = 'block';
+                guestContainer.style.display = 'none';
+                
+                // Mostrar iniciales del usuario
+                const name = currentUser.displayName || currentUser.email;
+                const initials = name.charAt(0).toUpperCase();
+                userAvatar.textContent = initials;
+                userName.textContent = name;
+            } else {
+                userContainer.style.display = 'none';
+                guestContainer.style.display = 'flex';
+            }
+        }
+
+        function openAuthModal(type = 'login') {
+            const modal = document.getElementById('authModal');
+            const title = document.getElementById('authModalTitle');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            
+            if (type === 'login') {
+                title.textContent = 'Iniciar Sesión';
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            } else {
+                title.textContent = 'Registrarse';
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            }
+            
+            modal.style.display = 'flex';
+            document.getElementById('authMessage').style.display = 'none';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+            clearAuthForm();
+        }
+
+        function switchAuthForm(type) {
+            openAuthModal(type);
+        }
+
+        function clearAuthForm() {
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('registerName').value = '';
+            document.getElementById('registerPhone').value = '';
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPassword').value = '';
+        }
+
+        function showAuthMessage(message, type = 'error') {
+            const messageEl = document.getElementById('authMessage');
+            messageEl.textContent = message;
+            messageEl.className = `auth-message auth-message-${type}`;
+            messageEl.style.display = 'block';
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showAuthMessage('Ingresá email y contraseña', 'error');
+                return;
+            }
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                showAuthMessage('✅ Inicio de sesión exitoso', 'success');
+                setTimeout(() => closeAuthModal(), 1500);
+            } catch (error) {
+                console.error('Error login:', error);
+                let message = 'Error al iniciar sesión';
+                if (error.code === 'auth/user-not-found') message = 'Usuario no encontrado';
+                else if (error.code === 'auth/wrong-password') message = 'Contraseña incorrecta';
+                else if (error.code === 'auth/invalid-email') message = 'Email inválido';
+                showAuthMessage('❌ ' + message, 'error');
+            }
+        }
+
+        async function handleRegister() {
+            const name = document.getElementById('registerName').value.trim();
+            const phone = document.getElementById('registerPhone').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            
+            if (!name || !phone || !email || !password) {
+                showAuthMessage('Completá todos los campos', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAuthMessage('La contraseña debe tener al menos 6 caracteres', 'error');
+                return;
+            }
+            
+            if (!/^\d{10,13}$/.test(phone)) {
+                showAuthMessage('Teléfono inválido. Ejemplo: 3417558966', 'error');
+                return;
+            }
+            
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                
+                // Actualizar perfil del usuario
+                await userCredential.user.updateProfile({ displayName: name });
+                
+                // Crear registro en users
+                await db.collection('users').add({
+                    userId: userCredential.user.uid,
+                    email,
+                    name,
+                    phone,
+                    profileCompleted: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showAuthMessage('✅ Registro exitoso. Ya podés iniciar sesión.', 'success');
+                setTimeout(() => closeAuthModal(), 1500);
+                
+            } catch (error) {
+                console.error('Error registro:', error);
+                let message = 'Error en el registro';
+                if (error.code === 'auth/email-already-in-use') message = 'El email ya está registrado';
+                else if (error.code === 'auth/invalid-email') message = 'Email inválido';
+                else if (error.code === 'auth/weak-password') message = 'Contraseña demasiado débil';
+                showAuthMessage('❌ ' + message, 'error');
+            }
+        }
+
+        async function handleGoogleLogin() {
+            try {
+                await auth.signInWithPopup(googleProvider);
+                closeAuthModal();
+            } catch (error) {
+                console.error('Error Google login:', error);
+                showAuthMessage('Error al iniciar sesión con Google', 'error');
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('¿Estás seguro de querer cerrar sesión?')) {
+                auth.signOut();
+            }
         }
 
         // ============================================
@@ -1267,29 +1735,6 @@
                     </a>
                 </div>
             `;
-        }
-
-        // ============================================
-        // INSTALL PROMPT
-        // ============================================
-        function showInstallPrompt() {
-            const prompt = document.getElementById('installPrompt');
-            prompt.style.display = 'block';
-            localStorage.setItem('installPromptShown', 'true');
-        }
-
-        function closeInstallPrompt() {
-            const prompt = document.getElementById('installPrompt');
-            prompt.style.display = 'none';
-        }
-
-        function checkInstallPrompt() {
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const alreadyShown = localStorage.getItem('installPromptShown');
-            
-            if (isMobile && !alreadyShown && deferredPrompt) {
-                setTimeout(() => showInstallPrompt(), 3000);
-            }
         }
 
         // ============================================
@@ -1651,48 +2096,72 @@
         }
 
         // ============================================
-        // SISTEMA DE CALIFICACIONES (SIN CAMBIOS)
+        // SISTEMA DE CALIFICACIONES (CON AUTENTICACIÓN)
         // ============================================
         function openRatingModal(professionalId, professionalName) {
-            currentRatingProfessional = { id: professionalId, name: professionalName };
+            // Verificar si el usuario está autenticado
+            if (!currentUser) {
+                showAuthMessage('Debés iniciar sesión para calificar técnicos', 'error');
+                openAuthModal('login');
+                return;
+            }
             
-            document.getElementById('ratingModalBody').innerHTML = `
-                <p>Calificá a <strong>${professionalName}</strong></p>
-                <div class="star-rating" id="starContainer">
-                    <span class="star" data-value="5">★</span>
-                    <span class="star" data-value="4">★</span>
-                    <span class="star" data-value="3">★</span>
-                    <span class="star" data-value="2">★</span>
-                    <span class="star" data-value="1">★</span>
+            currentRatingProfessional = { id: professionalId, name: professionalName };
+            selectedRating = 0;
+            
+            const modalBody = document.getElementById('ratingModalBody');
+            modalBody.innerHTML = `
+                <p style="text-align: center; margin-bottom: 1.5rem; color: var(--gray);">
+                    Calificá a <strong>${professionalName}</strong>
+                </p>
+                
+                <div class="rating-stars">
+                    <span class="rating-star" data-value="1">★</span>
+                    <span class="rating-star" data-value="2">★</span>
+                    <span class="rating-star" data-value="3">★</span>
+                    <span class="rating-star" data-value="4">★</span>
+                    <span class="rating-star" data-value="5">★</span>
                 </div>
-                <p id="ratingText" style="text-align: center; margin: 10px 0; color: #666;">Seleccioná una calificación</p>
-                <textarea id="ratingComment" placeholder="Contanos tu experiencia (opcional)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin: 10px 0; min-height: 80px; font-size: 0.95rem;"></textarea>
-                <input type="tel" id="clientPhone" placeholder="Tu número de WhatsApp (ej: 3415555555)" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 15px; font-size: 0.95rem;">
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="submitRating()" class="btn btn-primary" style="flex: 1;">Enviar Calificación</button>
-                    <button onclick="closeRatingModal()" class="btn" style="background: #64748b; color: white; flex: 1;">Cancelar</button>
+                
+                <div class="rating-text" id="ratingText">
+                    Seleccioná una calificación
+                </div>
+                
+                <div class="auth-form-group">
+                    <label class="auth-form-label">Comentario (opcional)</label>
+                    <textarea id="ratingComment" class="auth-form-input" 
+                              placeholder="Contanos tu experiencia con este técnico..."
+                              rows="3" maxlength="500"></textarea>
+                </div>
+                
+                <div class="auth-btn-container">
+                    <button onclick="submitRating()" class="btn btn-primary auth-btn-full">
+                        ✅ Enviar Calificación
+                    </button>
+                    <button onclick="closeRatingModal()" class="btn auth-btn-full" style="background: #64748b; color: white;">
+                        Cancelar
+                    </button>
                 </div>
             `;
             
-            const stars = document.querySelectorAll('#starContainer .star');
-            let selectedRating = 0;
-            
+            // Configurar estrellas interactivas
+            const stars = modalBody.querySelectorAll('.rating-star');
             stars.forEach(star => {
                 star.addEventListener('mouseover', function() {
                     const value = parseInt(this.dataset.value);
-                    highlightStars(value);
+                    highlightRatingStars(value);
                     updateRatingText(value);
                 });
                 
                 star.addEventListener('click', function() {
                     selectedRating = parseInt(this.dataset.value);
-                    highlightStars(selectedRating);
+                    highlightRatingStars(selectedRating);
                     updateRatingText(selectedRating);
                 });
             });
             
-            document.getElementById('starContainer').addEventListener('mouseleave', function() {
-                highlightStars(selectedRating);
+            modalBody.querySelector('.rating-stars').addEventListener('mouseleave', function() {
+                highlightRatingStars(selectedRating);
                 updateRatingText(selectedRating);
             });
             
@@ -1702,13 +2171,18 @@
         function closeRatingModal() {
             document.getElementById('ratingModal').style.display = 'none';
             currentRatingProfessional = null;
+            selectedRating = 0;
         }
 
-        function highlightStars(rating) {
-            const stars = document.querySelectorAll('#starContainer .star');
+        function highlightRatingStars(rating) {
+            const stars = document.querySelectorAll('#ratingModal .rating-star');
             stars.forEach(star => {
                 const value = parseInt(star.dataset.value);
-                star.style.color = value <= rating ? '#f59e0b' : '#ddd';
+                if (value <= rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
             });
         }
 
@@ -1727,45 +2201,84 @@
         }
 
         async function submitRating() {
-            const stars = document.querySelectorAll('#starContainer .star');
-            let selectedRating = 0;
-            
-            stars.forEach(star => {
-                if (star.style.color === 'rgb(245, 158, 11)') {
-                    const value = parseInt(star.dataset.value);
-                    if (value > selectedRating) selectedRating = value;
-                }
-            });
+            if (!currentRatingProfessional || !selectedRating) {
+                showAuthMessage('Seleccioná una calificación', 'error');
+                return;
+            }
             
             const comment = document.getElementById('ratingComment').value.trim();
-            const clientPhone = document.getElementById('clientPhone').value.trim();
-            
-            if (!selectedRating) {
-                alert('Por favor seleccioná una calificación');
-                return;
-            }
-            
-            if (!clientPhone || clientPhone.length < 10) {
-                alert('Por favor ingresá un número de WhatsApp válido');
-                return;
-            }
             
             try {
+                // Verificar si el usuario ya calificó a este profesional
+                const existingRating = await db.collection('ratings')
+                    .where('professionalId', '==', currentRatingProfessional.id)
+                    .where('userId', '==', currentUser.uid)
+                    .limit(1)
+                    .get();
+                
+                if (!existingRating.empty) {
+                    showAuthMessage('Ya calificaste a este técnico', 'error');
+                    closeRatingModal();
+                    return;
+                }
+                
+                // Crear la calificación
                 await db.collection('ratings').add({
                     professionalId: currentRatingProfessional.id,
+                    professionalName: currentRatingProfessional.name,
+                    userId: currentUser.uid,
+                    userName: currentUser.displayName || currentUser.email,
+                    userEmail: currentUser.email,
                     rating: selectedRating,
                     comment: comment,
-                    clientPhone: clientPhone,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    status: 'pending'
+                    status: 'approved', // Aprobada automáticamente
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                alert('¡Gracias por tu calificación! Será revisada antes de publicarse.');
+                // Actualizar estadísticas del profesional
+                await updateProfessionalStats(currentRatingProfessional.id, selectedRating);
+                
+                showAuthMessage('✅ Calificación enviada correctamente. ¡Gracias!', 'success');
                 closeRatingModal();
+                
+                // Recargar profesionales para mostrar la nueva calificación
+                if (document.getElementById('provinciaSelect').value || 
+                    document.getElementById('ciudadSelect').value || 
+                    document.getElementById('rubroSelect').value) {
+                    searchProfessionals();
+                } else {
+                    loadAllProfessionals();
+                }
                 
             } catch (error) {
                 console.error('Error enviando calificación:', error);
-                alert('Error al enviar. Por favor intentá nuevamente.');
+                showAuthMessage('Error al enviar calificación', 'error');
+            }
+        }
+
+        async function updateProfessionalStats(professionalId, newRating) {
+            try {
+                // Obtener el profesional
+                const professionalRef = db.collection('professionals').doc(professionalId);
+                const professionalDoc = await professionalRef.get();
+                
+                if (professionalDoc.exists) {
+                    const professional = professionalDoc.data();
+                    const currentRating = professional.averageRating || 0;
+                    const currentCount = professional.totalRatings || 0;
+                    
+                    // Calcular nuevo promedio
+                    const newAverage = ((currentRating * currentCount) + newRating) / (currentCount + 1);
+                    
+                    // Actualizar en Firestore
+                    await professionalRef.update({
+                        averageRating: parseFloat(newAverage.toFixed(1)),
+                        totalRatings: currentCount + 1,
+                        rankingUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            } catch (error) {
+                console.error('Error actualizando estadísticas:', error);
             }
         }
 
@@ -1784,19 +2297,18 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Cerrar modales al hacer clic fuera
         window.onclick = function(event) {
-            const modal = document.getElementById('ratingModal');
-            if (event.target == modal) {
+            const ratingModal = document.getElementById('ratingModal');
+            const authModal = document.getElementById('authModal');
+            
+            if (event.target == ratingModal) {
                 closeRatingModal();
             }
-        }
-        
-        window.addEventListener('click', function(event) {
-            const prompt = document.getElementById('installPrompt');
-            if (event.target === prompt) {
-                closeInstallPrompt();
+            if (event.target == authModal) {
+                closeAuthModal();
             }
-        });
+        }
     </script>
 </body>
 </html>
