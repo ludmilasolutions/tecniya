@@ -652,6 +652,79 @@
             margin-bottom: 1rem;
             color: var(--light-gray);
         }
+
+        /* Distance Badge */
+        .distance-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Favorites */
+        .favorite-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #ccc;
+            transition: color 0.3s;
+        }
+
+        .favorite-btn.active {
+            color: #f59e0b;
+        }
+
+        /* Search History */
+        .search-history {
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .history-item {
+            display: inline-block;
+            background: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: 1px solid var(--light-gray);
+        }
+
+        /* FAQ */
+        .faq-item {
+            border-bottom: 1px solid var(--light-gray);
+            padding: 1.5rem 0;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            display: none;
+            margin-top: 1rem;
+            color: var(--gray);
+        }
+
+        /* Professional Registration CTA */
+        .registration-cta {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            text-align: center;
+            margin: 2rem 0;
+        }
     </style>
 </head>
 <body>
@@ -666,6 +739,9 @@
             <div class="auth-buttons" id="authButtons">
                 <button id="loginBtn" class="btn btn-primary">
                     <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </button>
+                <button id="registerProfessionalBtn" class="btn btn-secondary">
+                    <i class="fas fa-user-plus"></i> Soy Técnico
                 </button>
                 <a href="admin.html" class="btn btn-admin" target="_blank">
                     <i class="fas fa-cog"></i> Admin
@@ -732,6 +808,20 @@
                 <input type="text" id="nombreSearch" class="form-input" placeholder="Nombre del técnico">
             </div>
         </div>
+        
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-ruler"></i> Distancia máxima (km)
+            </label>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="range" id="distanceRange" min="0" max="50" value="25" style="flex: 1;">
+                <span id="distanceValue">25 km</span>
+                <button id="useLocationBtn" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-location-dot"></i> Usar mi ubicación
+                </button>
+            </div>
+        </div>
+        
         <div class="search-buttons">
             <button id="searchBtn" class="btn btn-primary">
                 <i class="fas fa-search"></i> Buscar técnico
@@ -740,6 +830,21 @@
                 <i class="fas fa-list"></i> Ver todos
             </button>
         </div>
+
+        <!-- Search History -->
+        <div id="searchHistory" class="search-history" style="display: none;">
+            <p style="font-weight: 600; margin-bottom: 10px;">Búsquedas recientes:</p>
+            <div id="historyList"></div>
+        </div>
+    </section>
+
+    <!-- Registration CTA -->
+    <section class="container registration-cta" id="professionalRegistrationCTA">
+        <h3 style="margin-bottom: 1rem;">¿Sos técnico o tenés un servicio?</h3>
+        <p style="margin-bottom: 1.5rem;">Registrate en TecniYa y conseguí más clientes en tu zona</p>
+        <button id="registerProfessionalMainBtn" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Registrarme como profesional
+        </button>
     </section>
 
     <!-- Featured Banner -->
@@ -750,14 +855,39 @@
         </div>
     </section>
 
+    <!-- FAQ Section -->
+    <section class="container" id="faqSection" style="display: none;">
+        <h2 style="margin-bottom: 2rem;">Preguntas Frecuentes</h2>
+        <div id="faqList"></div>
+    </section>
+
     <!-- Results Section -->
     <section class="container">
         <div class="results-header" id="resultsHeader" style="display: none;">
-            <h2>Técnicos Disponibles</h2>
-            <span class="results-count" id="resultsCount"></span>
+            <div>
+                <h2>Técnicos Disponibles</h2>
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <button id="sortRating" class="btn btn-sm">⭐ Por rating</button>
+                    <button id="sortDistance" class="btn btn-sm">📍 Por distancia</button>
+                    <button id="sortPrice" class="btn btn-sm">💰 Por precio</button>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="results-count" id="resultsCount"></span>
+                <button id="toggleFavorites" class="btn btn-sm">
+                    <i class="fas fa-star"></i> Favoritos
+                </button>
+            </div>
         </div>
         <div class="professional-grid" id="resultsContainer">
             <div class="loader" id="resultsLoader"></div>
+        </div>
+        
+        <!-- Pagination -->
+        <div id="pagination" style="display: none; text-align: center; margin-top: 2rem;">
+            <button id="prevPage" class="btn btn-secondary">← Anterior</button>
+            <span id="pageInfo" style="margin: 0 1rem;"></span>
+            <button id="nextPage" class="btn btn-secondary">Siguiente →</button>
         </div>
     </section>
 
@@ -783,6 +913,9 @@
             <button class="tab" data-tab="ratings">
                 <i class="fas fa-star"></i> Mis Calificaciones
             </button>
+            <button class="tab" data-tab="favorites">
+                <i class="fas fa-heart"></i> Favoritos
+            </button>
             <button class="tab" data-tab="profile">
                 <i class="fas fa-user"></i> Mi Perfil
             </button>
@@ -801,6 +934,11 @@
             <div id="userRatingsList"></div>
         </div>
         
+        <div class="tab-content" id="favoritesTab">
+            <h3>Mis Técnicos Favoritos</h3>
+            <div id="favoritesList"></div>
+        </div>
+        
         <div class="tab-content" id="profileTab">
             <h3>Mi Perfil</h3>
             <div style="background: #f8f9fa; padding: 1.5rem; border-radius: var(--radius);">
@@ -808,6 +946,7 @@
                 <p><strong>Email:</strong> <span id="profileEmail"></span></p>
                 <p><strong>Miembro desde:</strong> <span id="profileSince"></span></p>
                 <p><strong>Trabajos calificados:</strong> <span id="profileRatingsCount"></span></p>
+                <p><strong>Favoritos guardados:</strong> <span id="profileFavoritesCount"></span></p>
             </div>
         </div>
     </div>
@@ -825,29 +964,94 @@
                 <i class="fab fa-google"></i> Continuar con Google
             </button>
             
-            <button id="emailLoginBtn" class="btn btn-secondary" style="margin-bottom: 1rem;">
-                <i class="fas fa-envelope"></i> Continuar con Email
+            <div style="text-align: center; margin: 1rem 0; color: var(--gray);">
+                o
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="emailInput" class="form-input" placeholder="tu@email.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Contraseña</label>
+                <input type="password" id="passwordInput" class="form-input" placeholder="••••••••">
+            </div>
+            
+            <button id="emailSignInBtn" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
+                Iniciar Sesión
             </button>
             
-            <div id="emailLoginForm" style="display: none;">
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" id="emailInput" class="form-input" placeholder="tu@email.com">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Contraseña</label>
-                    <input type="password" id="passwordInput" class="form-input" placeholder="••••••••">
-                </div>
-                <button id="emailSignInBtn" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
-                    Iniciar Sesión
-                </button>
-                <button id="emailSignUpBtn" class="btn btn-secondary" style="width: 100%;">
-                    Crear Cuenta
-                </button>
-            </div>
+            <p style="text-align: center; margin-top: 1rem;">
+                <a href="#" id="forgotPassword" style="color: var(--primary); text-decoration: none;">
+                    ¿Olvidaste tu contraseña?
+                </a>
+            </p>
             
             <p style="text-align: center; margin-top: 1.5rem; color: var(--gray); font-size: 0.9rem;">
                 Al iniciar sesión aceptás nuestros términos y condiciones
+            </p>
+        </div>
+    </div>
+
+    <!-- Professional Registration Modal -->
+    <div id="professionalRegistrationModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeProfessionalModal">&times;</button>
+            <h3 style="text-align: center; margin-bottom: 1.5rem;">Registro de Profesional</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Nombre completo</label>
+                <input type="text" id="regName" class="form-input" placeholder="Tu nombre completo">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="regEmail" class="form-input" placeholder="tu@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Teléfono</label>
+                <input type="tel" id="regPhone" class="form-input" placeholder="341 555-1234">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Provincia</label>
+                <select id="regProvincia" class="form-select">
+                    <option value="">Seleccioná provincia</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Ciudad</label>
+                <select id="regCiudad" class="form-select" disabled>
+                    <option value="">Seleccioná ciudad</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Servicios que ofrecés</label>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="checkbox" value="plomeria"> Plomería
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="checkbox" value="electricidad"> Electricidad
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="checkbox" value="gas"> Gas
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="checkbox" value="aire"> Aire Acondicionado
+                    </label>
+                </div>
+            </div>
+            
+            <button id="submitProfessionalRegistration" class="btn btn-primary" style="width: 100%;">
+                <i class="fas fa-paper-plane"></i> Enviar Registro
+            </button>
+            
+            <p style="text-align: center; margin-top: 1.5rem; color: var(--gray); font-size: 0.9rem;">
+                Te contactaremos en 24 horas para completar tu registro
             </p>
         </div>
     </div>
@@ -858,6 +1062,15 @@
             <button class="modal-close" onclick="closeRatingModal()">&times;</button>
             <h3 id="ratingModalTitle" style="text-align: center;">Calificar Trabajo</h3>
             <div id="ratingModalBody"></div>
+        </div>
+    </div>
+
+    <!-- Job Request Modal -->
+    <div id="jobRequestModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeJobRequestModal()">&times;</button>
+            <h3 id="jobRequestTitle" style="text-align: center;">Solicitar Servicio</h3>
+            <div id="jobRequestBody"></div>
         </div>
     </div>
 
@@ -873,11 +1086,11 @@
                 <div class="footer-section">
                     <h3>Servicios</h3>
                     <ul class="footer-links">
-                        <li><a href="#">Plomería</a></li>
-                        <li><a href="#">Electricidad</a></li>
-                        <li><a href="#">Gas</a></li>
-                        <li><a href="#">Aire Acondicionado</a></li>
-                        <li><a href="#">Albañilería</a></li>
+                        <li><a href="#" data-filter="plomeria">Plomería</a></li>
+                        <li><a href="#" data-filter="electricidad">Electricidad</a></li>
+                        <li><a href="#" data-filter="gas">Gas</a></li>
+                        <li><a href="#" data-filter="aire">Aire Acondicionado</a></li>
+                        <li><a href="#" data-filter="albanileria">Albañilería</a></li>
                     </ul>
                 </div>
                 
@@ -892,12 +1105,12 @@
                 </div>
                 
                 <div class="footer-section">
-                    <h3>Legal</h3>
+                    <h3>Para Técnicos</h3>
                     <ul class="footer-links">
-                        <li><a href="#">Términos y condiciones</a></li>
-                        <li><a href="#">Política de privacidad</a></li>
-                        <li><a href="#">Garantía de servicio</a></li>
-                        <li><a href="#">Ayuda y soporte</a></li>
+                        <li><a href="#" id="footerRegister">Registrarse</a></li>
+                        <li><a href="profesional.html" target="_blank">Panel de control</a></li>
+                        <li><a href="#">Beneficios</a></li>
+                        <li><a href="#">Preguntas frecuentes</a></li>
                     </ul>
                 </div>
             </div>
@@ -925,6 +1138,15 @@
         let provinciasCiudades = {};
         let currentRatingJob = null;
         let allProfessionals = [];
+        let userLocation = null;
+        let searchHistory = [];
+        let favorites = new Set();
+        let currentPage = 1;
+        const professionalsPerPage = 10;
+        let totalProfessionals = 0;
+        let lastVisibleDoc = null;
+        let currentSearchParams = {};
+        let debounceTimer;
 
         // Inicialización
         document.addEventListener('DOMContentLoaded', async () => {
@@ -934,16 +1156,27 @@
                 auth = firebase.auth();
                 db = firebase.firestore();
                 
-                // Configurar Google Provider
+                // Configurar proveedores de autenticación
                 const googleProvider = new firebase.auth.GoogleAuthProvider();
+                
+                // Cargar datos del localStorage
+                loadFromLocalStorage();
                 
                 // Event listeners básicos
                 document.getElementById('loginBtn').addEventListener('click', () => {
                     document.getElementById('authModal').classList.add('active');
                 });
                 
+                document.getElementById('registerProfessionalBtn').addEventListener('click', openProfessionalRegistration);
+                document.getElementById('registerProfessionalMainBtn').addEventListener('click', openProfessionalRegistration);
+                document.getElementById('footerRegister').addEventListener('click', openProfessionalRegistration);
+                
                 document.getElementById('closeAuthModal').addEventListener('click', () => {
                     document.getElementById('authModal').classList.remove('active');
+                });
+                
+                document.getElementById('closeProfessionalModal').addEventListener('click', () => {
+                    document.getElementById('professionalRegistrationModal').classList.remove('active');
                 });
                 
                 document.getElementById('googleLoginBtn').addEventListener('click', () => {
@@ -952,19 +1185,33 @@
                     });
                 });
                 
-                document.getElementById('emailLoginBtn').addEventListener('click', () => {
-                    document.getElementById('emailLoginForm').style.display = 'block';
-                    document.getElementById('emailLoginBtn').style.display = 'none';
-                });
-                
                 document.getElementById('emailSignInBtn').addEventListener('click', handleEmailLogin);
-                document.getElementById('emailSignUpBtn').addEventListener('click', handleEmailSignUp);
+                document.getElementById('forgotPassword').addEventListener('click', handleForgotPassword);
                 
                 document.getElementById('logoutBtn')?.addEventListener('click', () => {
                     auth.signOut();
                 });
                 
-                // Tabs del panel de usuario
+                // Event listeners de búsqueda
+                document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
+                document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
+                document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
+                document.getElementById('nombreSearch').addEventListener('input', handleSearchInput);
+                document.getElementById('rubroSelect').addEventListener('change', searchProfessionals);
+                document.getElementById('distanceRange').addEventListener('input', updateDistanceValue);
+                document.getElementById('useLocationBtn').addEventListener('click', getUserLocation);
+                
+                // Event listeners de ordenamiento
+                document.getElementById('sortRating').addEventListener('click', () => sortProfessionals('rating'));
+                document.getElementById('sortDistance').addEventListener('click', () => sortProfessionals('distance'));
+                document.getElementById('sortPrice').addEventListener('click', () => sortProfessionals('price'));
+                document.getElementById('toggleFavorites').addEventListener('click', toggleFavoritesView);
+                
+                // Event listeners de paginación
+                document.getElementById('prevPage').addEventListener('click', goToPreviousPage);
+                document.getElementById('nextPage').addEventListener('click', goToNextPage);
+                
+                // Event listeners de pestañas
                 document.querySelectorAll('.tab').forEach(tab => {
                     tab.addEventListener('click', () => {
                         const tabId = tab.dataset.tab;
@@ -975,32 +1222,75 @@
                         
                         if (tabId === 'profile') {
                             loadProfileInfo();
+                        } else if (tabId === 'favorites') {
+                            loadFavorites();
                         }
                     });
                 });
                 
-                // Cargar datos de provincias
+                // Event listeners de FAQ
+                document.querySelectorAll('.footer-links a[data-filter]').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const rubro = link.dataset.filter;
+                        document.getElementById('rubroSelect').value = rubro;
+                        searchProfessionals();
+                    });
+                });
+                
+                // Event listener para registro de profesional
+                document.getElementById('submitProfessionalRegistration').addEventListener('click', submitProfessionalRegistration);
+                document.getElementById('regProvincia').addEventListener('change', handleRegProvinciaChange);
+                
+                // Cargar datos de provincias desde Firestore
                 await loadProvinciasData();
                 loadProvinciasSelect();
-                
-                // Event listeners de búsqueda
-                document.getElementById('searchBtn').addEventListener('click', searchProfessionals);
-                document.getElementById('showAllBtn').addEventListener('click', loadAllProfessionals);
-                document.getElementById('provinciaSelect').addEventListener('change', handleProvinciaChange);
-                document.getElementById('nombreSearch').addEventListener('input', searchProfessionals);
+                loadRegistrationProvincias();
                 
                 // Cargar datos iniciales
                 loadAllProfessionals();
                 loadFeaturedBanner();
+                loadFAQ();
                 
                 // Verificar estado de autenticación
                 auth.onAuthStateChanged(handleAuthStateChange);
+                
+                // Configurar debounce para búsqueda
+                setupDebouncedSearch();
                 
             } catch (error) {
                 console.error('Error inicializando:', error);
                 showToast('❌ Error inicializando la aplicación', 'error');
             }
         });
+
+        // Cargar datos del localStorage
+        function loadFromLocalStorage() {
+            const savedHistory = localStorage.getItem('tecniya_search_history');
+            if (savedHistory) {
+                searchHistory = JSON.parse(savedHistory);
+                updateSearchHistoryUI();
+            }
+            
+            const savedFavorites = localStorage.getItem('tecniya_favorites');
+            if (savedFavorites) {
+                favorites = new Set(JSON.parse(savedFavorites));
+            }
+            
+            const savedLocation = localStorage.getItem('tecniya_user_location');
+            if (savedLocation) {
+                userLocation = JSON.parse(savedLocation);
+            }
+        }
+
+        // Guardar en localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('tecniya_search_history', JSON.stringify(searchHistory));
+            localStorage.setItem('tecniya_favorites', JSON.stringify(Array.from(favorites)));
+            if (userLocation) {
+                localStorage.setItem('tecniya_user_location', JSON.stringify(userLocation));
+            }
+        }
 
         // Cargar datos de provincias desde Firestore
         async function loadProvinciasData() {
@@ -1046,7 +1336,16 @@
 
         function loadProvinciasSelect() {
             const select = document.getElementById('provinciaSelect');
-            select.innerHTML = '<option value="">Todas las provincias</option>';
+            Object.keys(provinciasCiudades).sort().forEach(provincia => {
+                const option = document.createElement('option');
+                option.value = provincia;
+                option.textContent = provincia;
+                select.appendChild(option);
+            });
+        }
+
+        function loadRegistrationProvincias() {
+            const select = document.getElementById('regProvincia');
             Object.keys(provinciasCiudades).sort().forEach(provincia => {
                 const option = document.createElement('option');
                 option.value = provincia;
@@ -1076,24 +1375,25 @@
             ciudadSelect.disabled = false;
         }
 
-        // Función getRubroName corregida
-        function getRubroName(rubro) {
-            const rubrosMap = {
-                'plomeria': 'Plomería',
-                'gas': 'Gas',
-                'electricidad': 'Electricidad',
-                'aire': 'Aire Acondicionado',
-                'albanileria': 'Albañilería',
-                'pintura': 'Pintura',
-                'cerrajeria': 'Cerrajería',
-                'jardineria': 'Jardinería',
-                'herreria': 'Herrería',
-                'carpinteria': 'Carpintería',
-                'limpieza': 'Limpieza',
-                'mudanzas': 'Mudanzas',
-                'otros': 'Otros servicios'
-            };
-            return rubrosMap[rubro] || rubro;
+        function handleRegProvinciaChange() {
+            const provincia = this.value;
+            const ciudadSelect = document.getElementById('regCiudad');
+            
+            if (!provincia) {
+                ciudadSelect.innerHTML = '<option value="">Seleccioná ciudad</option>';
+                ciudadSelect.disabled = true;
+                return;
+            }
+            
+            const ciudades = provinciasCiudades[provincia] || [];
+            ciudadSelect.innerHTML = '<option value="">Seleccioná ciudad</option>';
+            ciudades.forEach(ciudad => {
+                const option = document.createElement('option');
+                option.value = ciudad;
+                option.textContent = ciudad;
+                ciudadSelect.appendChild(option);
+            });
+            ciudadSelect.disabled = false;
         }
 
         // Autenticación con email
@@ -1115,24 +1415,17 @@
             }
         }
 
-        async function handleEmailSignUp() {
+        async function handleForgotPassword() {
             const email = document.getElementById('emailInput').value;
-            const password = document.getElementById('passwordInput').value;
             
-            if (!email || !password) {
-                showToast('❌ Por favor completa todos los campos', 'error');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showToast('❌ La contraseña debe tener al menos 6 caracteres', 'error');
+            if (!email) {
+                showToast('❌ Por favor ingresá tu email', 'error');
                 return;
             }
             
             try {
-                await auth.createUserWithEmailAndPassword(email, password);
-                document.getElementById('authModal').classList.remove('active');
-                showToast('✅ Cuenta creada correctamente', 'success');
+                await auth.sendPasswordResetEmail(email);
+                showToast('✅ Email de recuperación enviado', 'success');
             } catch (error) {
                 showToast('❌ Error: ' + error.message, 'error');
             }
@@ -1155,8 +1448,8 @@
                     <button id="viewPanelBtn" class="btn btn-secondary">
                         <i class="fas fa-user"></i> Mi Panel
                     </button>
-                    <a href="admin.html" class="btn btn-admin" target="_blank">
-                        <i class="fas fa-cog"></i> Admin
+                    <a href="profesional.html" class="btn btn-secondary" target="_blank">
+                        <i class="fas fa-tools"></i> Soy Técnico
                     </a>
                 `;
                 
@@ -1165,6 +1458,7 @@
                     loadUserPanelData();
                 });
                 
+                document.getElementById('professionalRegistrationCTA').style.display = 'none';
                 document.getElementById('authModal').classList.remove('active');
                 loadUserPanelData();
             } else {
@@ -1172,6 +1466,9 @@
                 document.getElementById('authButtons').innerHTML = `
                     <button id="loginBtn" class="btn btn-primary">
                         <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </button>
+                    <button id="registerProfessionalBtn" class="btn btn-secondary">
+                        <i class="fas fa-user-plus"></i> Soy Técnico
                     </button>
                     <a href="admin.html" class="btn btn-admin" target="_blank">
                         <i class="fas fa-cog"></i> Admin
@@ -1181,6 +1478,9 @@
                 document.getElementById('loginBtn').addEventListener('click', () => {
                     document.getElementById('authModal').classList.add('active');
                 });
+                
+                document.getElementById('registerProfessionalBtn').addEventListener('click', openProfessionalRegistration);
+                document.getElementById('professionalRegistrationCTA').style.display = 'block';
                 document.getElementById('userPanel').classList.remove('active');
             }
         }
@@ -1197,6 +1497,7 @@
             await loadPendingJobs();
             await loadUserRatings();
             loadProfileInfo();
+            loadFavorites();
         }
 
         // Cargar perfil del usuario
@@ -1207,6 +1508,13 @@
             document.getElementById('profileEmail').textContent = currentUser.email;
             document.getElementById('profileSince').textContent = currentUser.metadata.creationTime ? 
                 new Date(currentUser.metadata.creationTime).toLocaleDateString('es-AR') : 'Recientemente';
+            
+            // Cargar contadores
+            const ratingsCount = document.querySelectorAll('#userRatingsList .rating-card').length;
+            const favoritesCount = favorites.size;
+            
+            document.getElementById('profileRatingsCount').textContent = ratingsCount;
+            document.getElementById('profileFavoritesCount').textContent = favoritesCount;
         }
 
         // Cargar trabajos pendientes de calificación
@@ -1252,7 +1560,7 @@
                             <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
                                 <div>
                                     <h4 style="margin-bottom: 5px;">${job.professionalName || 'Profesional'}</h4>
-                                    <p><strong>Servicio:</strong> ${job.serviceType || 'Servicio'}</p>
+                                    <p><strong>Servicio:</strong> ${getRubroName(job.serviceType) || 'Servicio'}</p>
                                     <p><strong>Fecha:</strong> ${jobDate.toLocaleDateString('es-AR')}</p>
                                 </div>
                                 <div>
@@ -1312,9 +1620,6 @@
                     `;
                 }
                 
-                // Actualizar contador de calificaciones en perfil
-                document.getElementById('profileRatingsCount').textContent = historyCount;
-                
             } catch (error) {
                 console.error('Error cargando trabajos:', error);
                 jobsList.innerHTML = '<p style="color: var(--danger);">Error cargando trabajos</p>';
@@ -1339,6 +1644,25 @@
                 'cancelado': 'Cancelado'
             };
             return statusMap[status] || status;
+        }
+
+        function getRubroName(rubro) {
+            const rubrosMap = {
+                'plomeria': 'Plomería',
+                'gas': 'Gas',
+                'electricidad': 'Electricidad',
+                'aire': 'Aire Acondicionado',
+                'albanileria': 'Albañilería',
+                'pintura': 'Pintura',
+                'cerrajeria': 'Cerrajería',
+                'jardineria': 'Jardinería',
+                'herreria': 'Herrería',
+                'carpinteria': 'Carpintería',
+                'limpieza': 'Limpieza',
+                'mudanzas': 'Mudanzas',
+                'otros': 'Otros servicios'
+            };
+            return rubrosMap[rubro] || rubro;
         }
 
         // Cargar calificaciones del usuario
@@ -1393,6 +1717,124 @@
             } catch (error) {
                 console.error('Error cargando calificaciones:', error);
                 ratingsList.innerHTML = '<p style="color: var(--danger);">Error cargando calificaciones</p>';
+            }
+        }
+
+        // Cargar favoritos
+        function loadFavorites() {
+            const favoritesList = document.getElementById('favoritesList');
+            
+            if (favorites.size === 0) {
+                favoritesList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-heart"></i>
+                        <p>No tenés técnicos favoritos aún.</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px;">Agregá favoritos desde la búsqueda principal</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Filtrar profesionales que están en favoritos
+            const favoriteProfessionals = allProfessionals.filter(prof => favorites.has(prof.id));
+            
+            if (favoriteProfessionals.length === 0) {
+                favoritesList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-heart"></i>
+                        <p>Tus técnicos favoritos no están disponibles actualmente.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            favoriteProfessionals.forEach(prof => {
+                const rating = prof.averageRating || 0;
+                const stars = '⭐'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
+                const completedJobs = prof.completedJobs || 0;
+                
+                html += `
+                    <div class="professional-card">
+                        <div class="professional-header">
+                            <img src="${prof.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(prof.name)}&background=2563eb&color=fff&size=80`}" 
+                                 class="professional-photo"
+                                 alt="${prof.name}"
+                                 onerror="this.src='https://ui-avatars.com/api/?name=Tecnico&background=2563eb&color=fff&size=80'">
+                            <div style="flex: 1;">
+                                <h3 style="margin-bottom: 5px;">${prof.name}</h3>
+                                <p style="color: var(--gray); margin: 5px 0;">
+                                    <i class="fas fa-map-marker-alt"></i> ${prof.ciudad || ''}, ${prof.provincia || ''}
+                                </p>
+                                <div class="professional-rating">
+                                    ${stars} ${rating.toFixed(1)}
+                                    <span style="color: var(--gray); font-size: 0.9rem; margin-left: 5px;">
+                                        (${prof.totalRatings || 0} calificaciones)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 0 1.5rem 1.5rem;">
+                            ${prof.bio ? `<p style="color: var(--gray); margin-bottom: 1rem;">${prof.bio}</p>` : ''}
+                            
+                            <div class="professional-tags">
+                                ${prof.rubros ? prof.rubros.slice(0, 3).map(r => `<span class="tag">${getRubroName(r)}</span>`).join('') : ''}
+                                ${completedJobs > 0 ? `<span class="tag" style="background: #d1fae5; color: #065f46;"><i class="fas fa-check-circle"></i> ${completedJobs} trabajos</span>` : ''}
+                                ${prof.certifications ? `<span class="tag" style="background: #fef3c7; color: #92400e;"><i class="fas fa-certificate"></i> Certificado</span>` : ''}
+                            </div>
+                            
+                            <a href="https://wa.me/${prof.phone || '5493417558966'}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
+                               target="_blank"
+                               class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
+                            </a>
+                            
+                            <button onclick="removeFavorite('${prof.id}')" class="btn btn-secondary" style="width: 100%; margin-top: 10px;">
+                                <i class="fas fa-trash"></i> Quitar de favoritos
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            favoritesList.innerHTML = html;
+        }
+
+        // Toggle favoritos
+        function toggleFavorite(professionalId) {
+            if (favorites.has(professionalId)) {
+                favorites.delete(professionalId);
+                showToast('❌ Eliminado de favoritos', 'info');
+            } else {
+                favorites.add(professionalId);
+                showToast('✅ Agregado a favoritos', 'success');
+            }
+            saveToLocalStorage();
+            
+            // Actualizar UI
+            const favoriteBtns = document.querySelectorAll(`[data-professional-id="${professionalId}"]`);
+            favoriteBtns.forEach(btn => {
+                btn.classList.toggle('active');
+                btn.innerHTML = favorites.has(professionalId) ? '❤️' : '🤍';
+            });
+        }
+
+        function removeFavorite(professionalId) {
+            favorites.delete(professionalId);
+            saveToLocalStorage();
+            loadFavorites();
+            showToast('❌ Eliminado de favoritos', 'info');
+        }
+
+        function toggleFavoritesView() {
+            // Implementar vista solo de favoritos
+            const onlyFavorites = document.getElementById('toggleFavorites').classList.toggle('active');
+            if (onlyFavorites) {
+                currentSearchParams.onlyFavorites = true;
+                searchProfessionals();
+            } else {
+                delete currentSearchParams.onlyFavorites;
+                searchProfessionals();
             }
         }
 
@@ -1558,11 +2000,11 @@
                     const currentRating = profData.averageRating || 0;
                     const totalRatings = profData.totalRatings || 0;
                     
-                    // Calcular nuevo promedio
+                    // Calcular nuevo promedio sin Math.floor para mantener decimales
                     const newAverage = ((currentRating * totalRatings) + newRating) / (totalRatings + 1);
                     
                     await profRef.update({
-                        averageRating: newAverage,
+                        averageRating: parseFloat(newAverage.toFixed(1)),
                         totalRatings: totalRatings + 1,
                         lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                     });
@@ -1572,27 +2014,70 @@
             }
         }
 
-        // Búsqueda de profesionales
-        async function searchProfessionals() {
+        // Búsqueda de profesionales con paginación
+        async function searchProfessionals(resetPage = true) {
             const provincia = document.getElementById('provinciaSelect').value;
             const ciudad = document.getElementById('ciudadSelect').value;
             const rubro = document.getElementById('rubroSelect').value;
             const nombre = document.getElementById('nombreSearch').value.toLowerCase();
+            const distance = parseInt(document.getElementById('distanceRange').value);
+            
+            // Guardar parámetros de búsqueda
+            currentSearchParams = { provincia, ciudad, rubro, nombre, distance };
+            
+            if (resetPage) {
+                currentPage = 1;
+                lastVisibleDoc = null;
+            }
+            
+            // Guardar en historial
+            addToSearchHistory({ provincia, ciudad, rubro, nombre });
             
             // Mostrar loader
             const container = document.getElementById('resultsContainer');
             container.innerHTML = '<div class="loader" id="resultsLoader"></div>';
             document.getElementById('resultsHeader').style.display = 'none';
+            document.getElementById('pagination').style.display = 'none';
             
             try {
-                let query = db.collection('professionals').where('active', '==', true);
+                let query = db.collection('professionals')
+                    .where('active', '==', true)
+                    .where('profileCompleted', '==', true)
+                    .where('blocked', '==', false);
                 
                 if (provincia) query = query.where('provincia', '==', provincia);
                 if (ciudad && ciudad !== '') query = query.where('ciudad', '==', ciudad);
                 if (rubro) query = query.where('rubros', 'array-contains', rubro);
                 
-                const snapshot = await query.limit(50).get();
-                displayProfessionals(snapshot, nombre);
+                // Aplicar paginación
+                if (lastVisibleDoc && !resetPage) {
+                    query = query.startAfter(lastVisibleDoc);
+                }
+                
+                query = query.limit(professionalsPerPage);
+                
+                const snapshot = await query.get();
+                
+                // Guardar último documento para paginación
+                if (!snapshot.empty) {
+                    lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+                }
+                
+                // Contar total de resultados
+                const countQuery = db.collection('professionals')
+                    .where('active', '==', true)
+                    .where('profileCompleted', '==', true)
+                    .where('blocked', '==', false);
+                    
+                if (provincia) countQuery.where('provincia', '==', provincia);
+                if (ciudad && ciudad !== '') countQuery.where('ciudad', '==', ciudad);
+                if (rubro) countQuery.where('rubros', 'array-contains', rubro);
+                
+                const countSnapshot = await countQuery.get();
+                totalProfessionals = countSnapshot.size;
+                
+                displayProfessionals(snapshot, nombre, distance);
+                updatePaginationUI();
                 
             } catch (error) {
                 console.error('Error buscando:', error);
@@ -1601,25 +2086,23 @@
         }
 
         async function loadAllProfessionals() {
-            // Mostrar loader
-            const container = document.getElementById('resultsContainer');
-            container.innerHTML = '<div class="loader" id="resultsLoader"></div>';
+            // Resetear filtros
+            document.getElementById('provinciaSelect').value = '';
+            document.getElementById('ciudadSelect').value = '';
+            document.getElementById('ciudadSelect').disabled = true;
+            document.getElementById('rubroSelect').value = '';
+            document.getElementById('nombreSearch').value = '';
+            document.getElementById('distanceRange').value = 25;
+            document.getElementById('distanceValue').textContent = '25 km';
             
-            try {
-                const snapshot = await db.collection('professionals')
-                    .where('active', '==', true)
-                    .limit(50)
-                    .get();
-                    
-                allProfessionals = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                displayProfessionals(snapshot);
-            } catch (error) {
-                console.error('Error cargando profesionales:', error);
-                displayError();
-            }
+            currentSearchParams = {};
+            currentPage = 1;
+            lastVisibleDoc = null;
+            
+            await searchProfessionals(true);
         }
 
-        function displayProfessionals(snapshot, nombreFilter = '') {
+        function displayProfessionals(snapshot, nombreFilter = '', distanceFilter = 25) {
             const container = document.getElementById('resultsContainer');
             
             if (snapshot.empty) {
@@ -1634,24 +2117,56 @@
                     </div>
                 `;
                 document.getElementById('resultsHeader').style.display = 'none';
+                document.getElementById('pagination').style.display = 'none';
                 return;
             }
             
-            let html = '';
-            let count = 0;
-            
+            let professionals = [];
             snapshot.forEach(doc => {
-                const prof = doc.data();
-                const id = doc.id;
+                const prof = { id: doc.id, ...doc.data() };
+                professionals.push(prof);
+            });
+            
+            // Filtrar por nombre si se especifica
+            if (nombreFilter) {
+                professionals = professionals.filter(prof => 
+                    prof.name.toLowerCase().includes(nombreFilter)
+                );
+            }
+            
+            // Filtrar por distancia si hay ubicación
+            if (userLocation && distanceFilter > 0) {
+                professionals.forEach(prof => {
+                    prof.distance = calculateDistance(
+                        userLocation.lat,
+                        userLocation.lng,
+                        prof.lat || -34.6037,
+                        prof.lng || -58.3816
+                    );
+                });
                 
-                // Filtrar por nombre si se especifica
-                if (nombreFilter && !prof.name.toLowerCase().includes(nombreFilter)) {
-                    return;
-                }
+                professionals = professionals.filter(prof => prof.distance <= distanceFilter);
                 
+                // Ordenar por distancia por defecto
+                professionals.sort((a, b) => (a.distance || 999) - (b.distance || 999));
+            } else {
+                // Ordenar por rating por defecto
+                professionals.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+            }
+            
+            // Filtrar por favoritos si está activo
+            if (currentSearchParams.onlyFavorites) {
+                professionals = professionals.filter(prof => favorites.has(prof.id));
+            }
+            
+            allProfessionals = professionals;
+            
+            let html = '';
+            professionals.forEach(prof => {
                 const rating = prof.averageRating || 0;
                 const stars = '⭐'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
                 const completedJobs = prof.completedJobs || 0;
+                const isFavorite = favorites.has(prof.id);
                 
                 html += `
                     <div class="professional-card">
@@ -1661,10 +2176,19 @@
                                  alt="${prof.name}"
                                  onerror="this.src='https://ui-avatars.com/api/?name=Tecnico&background=2563eb&color=fff&size=80'">
                             <div style="flex: 1;">
-                                <h3 style="margin-bottom: 5px;">${prof.name}</h3>
-                                <p style="color: var(--gray); margin: 5px 0;">
-                                    <i class="fas fa-map-marker-alt"></i> ${prof.ciudad || ''}, ${prof.provincia || ''}
-                                </p>
+                                <div style="display: flex; justify-content: space-between; align-items: start;">
+                                    <div>
+                                        <h3 style="margin-bottom: 5px;">${prof.name}</h3>
+                                        <p style="color: var(--gray); margin: 5px 0;">
+                                            <i class="fas fa-map-marker-alt"></i> ${prof.ciudad || ''}, ${prof.provincia || ''}
+                                        </p>
+                                    </div>
+                                    <button class="favorite-btn ${isFavorite ? 'active' : ''}" 
+                                            data-professional-id="${prof.id}"
+                                            onclick="toggleFavorite('${prof.id}')">
+                                        ${isFavorite ? '❤️' : '🤍'}
+                                    </button>
+                                </div>
                                 <div class="professional-rating">
                                     ${stars} ${rating.toFixed(1)}
                                     <span style="color: var(--gray); font-size: 0.9rem; margin-left: 5px;">
@@ -1674,37 +2198,47 @@
                             </div>
                         </div>
                         <div style="padding: 0 1.5rem 1.5rem;">
+                            ${prof.distance ? `
+                                <div style="margin-bottom: 10px;">
+                                    <span class="distance-badge">
+                                        <i class="fas fa-location-dot"></i> A ${prof.distance.toFixed(1)} km
+                                    </span>
+                                </div>
+                            ` : ''}
+                            
                             ${prof.bio ? `<p style="color: var(--gray); margin-bottom: 1rem;">${prof.bio}</p>` : ''}
                             
                             <div class="professional-tags">
                                 ${prof.rubros ? prof.rubros.slice(0, 3).map(r => `<span class="tag">${getRubroName(r)}</span>`).join('') : ''}
                                 ${completedJobs > 0 ? `<span class="tag" style="background: #d1fae5; color: #065f46;"><i class="fas fa-check-circle"></i> ${completedJobs} trabajos</span>` : ''}
                                 ${prof.certifications ? `<span class="tag" style="background: #fef3c7; color: #92400e;"><i class="fas fa-certificate"></i> Certificado</span>` : ''}
+                                ${prof.isFeatured ? `<span class="tag" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;"><i class="fas fa-star"></i> Destacado</span>` : ''}
                             </div>
                             
-                            <a href="https://wa.me/${prof.phone || '5493417558966'}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
-                               target="_blank"
-                               class="btn-whatsapp">
-                                <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
-                            </a>
-                            
-                            ${currentUser ? `
-                                <button onclick="openJobRequestModal('${id}', '${prof.name}')" 
-                                        class="btn btn-secondary" style="width: 100%; margin-top: 10px;">
-                                    <i class="fas fa-calendar-check"></i> Solicitar Servicio
-                                </button>
-                            ` : ''}
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <a href="https://wa.me/${prof.phone || '5493417558966'}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
+                                   target="_blank"
+                                   class="btn-whatsapp" style="flex: 1;">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </a>
+                                ${currentUser ? `
+                                    <button onclick="openJobRequestModal('${prof.id}', '${prof.name}')" 
+                                            class="btn btn-secondary" style="flex: 1;">
+                                        <i class="fas fa-calendar-check"></i> Solicitar
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
                     </div>
                 `;
-                count++;
             });
             
             container.innerHTML = html;
             
-            if (count > 0) {
+            if (professionals.length > 0) {
                 document.getElementById('resultsHeader').style.display = 'flex';
-                document.getElementById('resultsCount').textContent = `${count} técnicos`;
+                document.getElementById('resultsCount').textContent = `${professionals.length} de ${totalProfessionals} técnicos`;
+                document.getElementById('pagination').style.display = 'flex';
             } else {
                 container.innerHTML = `
                     <div class="empty-state" style="grid-column: 1 / -1;">
@@ -1714,14 +2248,134 @@
                     </div>
                 `;
                 document.getElementById('resultsHeader').style.display = 'none';
+                document.getElementById('pagination').style.display = 'none';
+            }
+        }
+
+        // Ordenar profesionales
+        function sortProfessionals(criteria) {
+            const container = document.getElementById('resultsContainer');
+            let professionals = [...allProfessionals];
+            
+            switch(criteria) {
+                case 'rating':
+                    professionals.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+                    break;
+                case 'distance':
+                    if (userLocation) {
+                        professionals.sort((a, b) => (a.distance || 999) - (b.distance || 999));
+                    }
+                    break;
+                case 'price':
+                    // Ordenar por precio estimado (si estuviera disponible)
+                    professionals.sort((a, b) => (a.priceFrom || 0) - (b.priceFrom || 0));
+                    break;
+            }
+            
+            let html = '';
+            professionals.forEach(prof => {
+                const rating = prof.averageRating || 0;
+                const stars = '⭐'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
+                const completedJobs = prof.completedJobs || 0;
+                const isFavorite = favorites.has(prof.id);
+                
+                html += `
+                    <div class="professional-card">
+                        <div class="professional-header">
+                            <img src="${prof.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(prof.name)}&background=2563eb&color=fff&size=80`}" 
+                                 class="professional-photo"
+                                 alt="${prof.name}"
+                                 onerror="this.src='https://ui-avatars.com/api/?name=Tecnico&background=2563eb&color=fff&size=80'">
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: start;">
+                                    <div>
+                                        <h3 style="margin-bottom: 5px;">${prof.name}</h3>
+                                        <p style="color: var(--gray); margin: 5px 0;">
+                                            <i class="fas fa-map-marker-alt"></i> ${prof.ciudad || ''}, ${prof.provincia || ''}
+                                        </p>
+                                    </div>
+                                    <button class="favorite-btn ${isFavorite ? 'active' : ''}" 
+                                            data-professional-id="${prof.id}"
+                                            onclick="toggleFavorite('${prof.id}')">
+                                        ${isFavorite ? '❤️' : '🤍'}
+                                    </button>
+                                </div>
+                                <div class="professional-rating">
+                                    ${stars} ${rating.toFixed(1)}
+                                    <span style="color: var(--gray); font-size: 0.9rem; margin-left: 5px;">
+                                        (${prof.totalRatings || 0} calificaciones)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 0 1.5rem 1.5rem;">
+                            ${prof.distance ? `
+                                <div style="margin-bottom: 10px;">
+                                    <span class="distance-badge">
+                                        <i class="fas fa-location-dot"></i> A ${prof.distance.toFixed(1)} km
+                                    </span>
+                                </div>
+                            ` : ''}
+                            
+                            ${prof.bio ? `<p style="color: var(--gray); margin-bottom: 1rem;">${prof.bio}</p>` : ''}
+                            
+                            <div class="professional-tags">
+                                ${prof.rubros ? prof.rubros.slice(0, 3).map(r => `<span class="tag">${getRubroName(r)}</span>`).join('') : ''}
+                                ${completedJobs > 0 ? `<span class="tag" style="background: #d1fae5; color: #065f46;"><i class="fas fa-check-circle"></i> ${completedJobs} trabajos</span>` : ''}
+                                ${prof.certifications ? `<span class="tag" style="background: #fef3c7; color: #92400e;"><i class="fas fa-certificate"></i> Certificado</span>` : ''}
+                            </div>
+                            
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <a href="https://wa.me/${prof.phone || '5493417558966'}?text=Hola ${prof.name.split(' ')[0]}, te contacto desde TecniYa" 
+                                   target="_blank"
+                                   class="btn-whatsapp" style="flex: 1;">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </a>
+                                ${currentUser ? `
+                                    <button onclick="openJobRequestModal('${prof.id}', '${prof.name}')" 
+                                            class="btn btn-secondary" style="flex: 1;">
+                                        <i class="fas fa-calendar-check"></i> Solicitar
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Paginación
+        function updatePaginationUI() {
+            const totalPages = Math.ceil(totalProfessionals / professionalsPerPage);
+            document.getElementById('pageInfo').textContent = `Página ${currentPage} de ${totalPages}`;
+            
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages;
+        }
+
+        function goToPreviousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                // Implementar paginación real con startBefore
+                searchProfessionals(false);
+            }
+        }
+
+        function goToNextPage() {
+            const totalPages = Math.ceil(totalProfessionals / professionalsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                searchProfessionals(false);
             }
         }
 
         // Solicitar servicio
         window.openJobRequestModal = function(professionalId, professionalName) {
-            document.getElementById('ratingModalTitle').textContent = `Solicitar servicio a ${professionalName}`;
+            document.getElementById('jobRequestTitle').textContent = `Solicitar servicio a ${professionalName}`;
             
-            document.getElementById('ratingModalBody').innerHTML = `
+            document.getElementById('jobRequestBody').innerHTML = `
                 <div style="text-align: center; margin-bottom: 1.5rem;">
                     <p>Completá los datos para solicitar el servicio</p>
                 </div>
@@ -1763,7 +2417,7 @@
                             class="btn btn-primary" style="flex: 1;">
                         <i class="fas fa-paper-plane"></i> Enviar Solicitud
                     </button>
-                    <button onclick="closeRatingModal()" class="btn btn-secondary">Cancelar</button>
+                    <button onclick="closeJobRequestModal()" class="btn btn-secondary">Cancelar</button>
                 </div>
             `;
             
@@ -1771,7 +2425,11 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('serviceDate').min = today;
             
-            document.getElementById('ratingModal').classList.add('active');
+            document.getElementById('jobRequestModal').classList.add('active');
+        };
+
+        window.closeJobRequestModal = function() {
+            document.getElementById('jobRequestModal').classList.remove('active');
         };
 
         async function submitJobRequest(professionalId, professionalName) {
@@ -1809,7 +2467,7 @@
                 });
                 
                 showToast('✅ Solicitud enviada correctamente', 'success');
-                closeRatingModal();
+                closeJobRequestModal();
                 
                 // Notificar al administrador
                 await db.collection('admin_notifications').add({
@@ -1820,9 +2478,323 @@
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
+                // Notificar al profesional
+                await db.collection('professionals').doc(professionalId).update({
+                    notifications: firebase.firestore.FieldValue.arrayUnion({
+                        type: 'job',
+                        title: 'Nuevo trabajo solicitado',
+                        message: `${currentUser.displayName || currentUser.email} solicitó un servicio de ${serviceType}`,
+                        date: new Date().toISOString(),
+                        read: false,
+                        id: Date.now().toString()
+                    })
+                });
+                
             } catch (error) {
                 console.error('Error creando trabajo:', error);
                 showToast('❌ Error al enviar solicitud', 'error');
+            }
+        }
+
+        // Registro de profesional
+        function openProfessionalRegistration() {
+            document.getElementById('professionalRegistrationModal').classList.add('active');
+        }
+
+        async function submitProfessionalRegistration() {
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const provincia = document.getElementById('regProvincia').value;
+            const ciudad = document.getElementById('regCiudad').value;
+            
+            if (!name || !email || !phone || !provincia || !ciudad) {
+                showToast('❌ Por favor completá todos los campos obligatorios', 'error');
+                return;
+            }
+            
+            // Obtener servicios seleccionados
+            const servicios = [];
+            document.querySelectorAll('#professionalRegistrationModal input[type="checkbox"]:checked').forEach(cb => {
+                servicios.push(cb.value);
+            });
+            
+            if (servicios.length === 0) {
+                showToast('❌ Seleccioná al menos un servicio', 'error');
+                return;
+            }
+            
+            try {
+                // Guardar solicitud de registro
+                await db.collection('professional_registrations').add({
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    provincia: provincia,
+                    ciudad: ciudad,
+                    servicios: servicios,
+                    status: 'pendiente',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    processed: false
+                });
+                
+                // Notificar al administrador
+                await db.collection('admin_notifications').add({
+                    type: 'professional_registration',
+                    message: 'Nueva solicitud de registro de profesional',
+                    professionalName: name,
+                    professionalEmail: email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showToast('✅ Solicitud enviada. Te contactaremos en 24 horas.', 'success');
+                document.getElementById('professionalRegistrationModal').classList.remove('active');
+                
+                // Limpiar formulario
+                document.getElementById('regName').value = '';
+                document.getElementById('regEmail').value = '';
+                document.getElementById('regPhone').value = '';
+                document.getElementById('regProvincia').value = '';
+                document.getElementById('regCiudad').value = '';
+                document.getElementById('regCiudad').disabled = true;
+                document.querySelectorAll('#professionalRegistrationModal input[type="checkbox"]').forEach(cb => {
+                    cb.checked = false;
+                });
+                
+            } catch (error) {
+                console.error('Error enviando registro:', error);
+                showToast('❌ Error al enviar registro', 'error');
+            }
+        }
+
+        // Geolocalización
+        async function getUserLocation() {
+            if (!navigator.geolocation) {
+                showToast('❌ Tu navegador no soporta geolocalización', 'error');
+                return;
+            }
+            
+            showToast('📍 Detectando tu ubicación...', 'info');
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    
+                    saveToLocalStorage();
+                    showToast('✅ Ubicación detectada correctamente', 'success');
+                    
+                    // Recalcular distancias y buscar
+                    if (currentSearchParams.distance) {
+                        searchProfessionals(true);
+                    }
+                },
+                (error) => {
+                    console.error('Error obteniendo ubicación:', error);
+                    showToast('❌ No se pudo obtener tu ubicación', 'error');
+                },
+                { timeout: 10000 }
+            );
+        }
+
+        // Calcular distancia entre coordenadas
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radio de la Tierra en km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function updateDistanceValue() {
+            const value = document.getElementById('distanceRange').value;
+            document.getElementById('distanceValue').textContent = value + ' km';
+        }
+
+        // Historial de búsquedas
+        function addToSearchHistory(params) {
+            // Evitar duplicados
+            const existingIndex = searchHistory.findIndex(item => 
+                JSON.stringify(item) === JSON.stringify(params)
+            );
+            
+            if (existingIndex > -1) {
+                searchHistory.splice(existingIndex, 1);
+            }
+            
+            searchHistory.unshift(params);
+            
+            // Mantener solo las últimas 5 búsquedas
+            if (searchHistory.length > 5) {
+                searchHistory.pop();
+            }
+            
+            saveToLocalStorage();
+            updateSearchHistoryUI();
+        }
+
+        function updateSearchHistoryUI() {
+            const historyList = document.getElementById('historyList');
+            const searchHistorySection = document.getElementById('searchHistory');
+            
+            if (searchHistory.length === 0) {
+                searchHistorySection.style.display = 'none';
+                return;
+            }
+            
+            searchHistorySection.style.display = 'block';
+            
+            let html = '';
+            searchHistory.forEach((item, index) => {
+                let description = '';
+                if (item.provincia) description += item.provincia;
+                if (item.ciudad) description += `, ${item.ciudad}`;
+                if (item.rubro) description += ` - ${getRubroName(item.rubro)}`;
+                if (item.nombre) description += ` - ${item.nombre}`;
+                
+                if (!description) description = 'Búsqueda general';
+                
+                html += `
+                    <span class="history-item" onclick="loadFromHistory(${index})">
+                        ${description}
+                    </span>
+                `;
+            });
+            
+            historyList.innerHTML = html;
+        }
+
+        function loadFromHistory(index) {
+            const item = searchHistory[index];
+            
+            if (item.provincia) {
+                document.getElementById('provinciaSelect').value = item.provincia;
+                handleProvinciaChange.call(document.getElementById('provinciaSelect'));
+            }
+            
+            if (item.ciudad) {
+                document.getElementById('ciudadSelect').value = item.ciudad;
+            }
+            
+            if (item.rubro) {
+                document.getElementById('rubroSelect').value = item.rubro;
+            }
+            
+            if (item.nombre) {
+                document.getElementById('nombreSearch').value = item.nombre;
+            }
+            
+            searchProfessionals(true);
+        }
+
+        // Debounced search
+        function setupDebouncedSearch() {
+            document.getElementById('nombreSearch').addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    searchProfessionals(true);
+                }, 500);
+            });
+        }
+
+        function handleSearchInput() {
+            // Mostrar loader mientras espera
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '<div class="loader" id="resultsLoader"></div>';
+        }
+
+        // Cargar FAQ
+        async function loadFAQ() {
+            const faqList = document.getElementById('faqList');
+            const faqSection = document.getElementById('faqSection');
+            
+            const faqs = [
+                {
+                    question: "¿Cómo contacto a un técnico?",
+                    answer: "Podés contactar directamente al técnico a través del botón de WhatsApp en su perfil. El técnico responderá directamente a tu consulta."
+                },
+                {
+                    question: "¿Los técnicos están verificados?",
+                    answer: "Sí, todos los técnicos en TecniYa pasan por un proceso de verificación que incluye validación de datos, experiencia y, cuando corresponde, certificaciones."
+                },
+                {
+                    question: "¿Cómo se califica a los técnicos?",
+                    answer: "Los usuarios pueden calificar a los técnicos después de completar un trabajo. El rating promedio se muestra en el perfil de cada técnico."
+                },
+                {
+                    question: "¿Puedo solicitar presupuesto?",
+                    answer: "Sí, al contactar al técnico podés solicitar un presupuesto detallado para el trabajo que necesitás."
+                },
+                {
+                    question: "¿Qué pasa si tengo un problema con el servicio?",
+                    answer: "Podés contactarnos a través del formulario de contacto o WhatsApp. Actuamos como mediadores en caso de disputas."
+                }
+            ];
+            
+            let html = '';
+            faqs.forEach((faq, index) => {
+                html += `
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(${index})">
+                            ${faq.question}
+                            <span id="faqIcon${index}">+</span>
+                        </div>
+                        <div class="faq-answer" id="faqAnswer${index}">
+                            ${faq.answer}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            faqList.innerHTML = html;
+            faqSection.style.display = 'block';
+        }
+
+        window.toggleFAQ = function(index) {
+            const answer = document.getElementById(`faqAnswer${index}`);
+            const icon = document.getElementById(`faqIcon${index}`);
+            
+            if (answer.style.display === 'block') {
+                answer.style.display = 'none';
+                icon.textContent = '+';
+            } else {
+                answer.style.display = 'block';
+                icon.textContent = '-';
+            }
+        };
+
+        // Cargar banner destacado
+        async function loadFeaturedBanner() {
+            try {
+                const snapshot = await db.collection('banners')
+                    .where('active', '==', true)
+                    .where('type', '==', 'nacional')
+                    .limit(1)
+                    .get();
+                
+                if (!snapshot.empty) {
+                    const banner = snapshot.docs[0].data();
+                    const bannerEl = document.getElementById('featuredBanner');
+                    
+                    bannerEl.innerHTML = `
+                        <h3>${banner.title || '🔥 ¡Los mejores técnicos de la zona!'}</h3>
+                        <p>${banner.description || 'Contactá profesionales verificados con solo un clic'}</p>
+                        ${banner.link ? `<a href="${banner.link}" target="_blank" style="color: white; text-decoration: underline; margin-top: 10px; display: inline-block;">Ver más</a>` : ''}
+                    `;
+                    
+                    if (banner.imageUrl) {
+                        bannerEl.style.backgroundImage = `linear-gradient(135deg, rgba(245, 158, 11, 0.9) 0%, rgba(217, 119, 6, 0.9) 100%), url('${banner.imageUrl}')`;
+                        bannerEl.style.backgroundSize = 'cover';
+                        bannerEl.style.backgroundPosition = 'center';
+                    }
+                }
+            } catch (error) {
+                console.error('Error cargando banner:', error);
             }
         }
 
@@ -1839,35 +2811,7 @@
                 </div>
             `;
             document.getElementById('resultsHeader').style.display = 'none';
-        }
-
-        // Cargar banner destacado
-        async function loadFeaturedBanner() {
-            try {
-                const snapshot = await db.collection('banners')
-                    .where('active', '==', true)
-                    .limit(1)
-                    .get();
-                
-                if (!snapshot.empty) {
-                    const banner = snapshot.docs[0].data();
-                    const bannerEl = document.getElementById('featuredBanner');
-                    
-                    bannerEl.innerHTML = `
-                        <h3>${banner.title || '🔥 ¡Los mejores técnicos de la zona!'}</h3>
-                        <p>${banner.subtitle || 'Contactá profesionales verificados con solo un clic'}</p>
-                        ${banner.link ? `<a href="${banner.link}" target="_blank" style="color: white; text-decoration: underline; margin-top: 10px; display: inline-block;">Ver más</a>` : ''}
-                    `;
-                    
-                    if (banner.imageUrl) {
-                        bannerEl.style.backgroundImage = `linear-gradient(135deg, rgba(245, 158, 11, 0.9) 0%, rgba(217, 119, 6, 0.9) 100%), url('${banner.imageUrl}')`;
-                        bannerEl.style.backgroundSize = 'cover';
-                        bannerEl.style.backgroundPosition = 'center';
-                    }
-                }
-            } catch (error) {
-                console.error('Error cargando banner:', error);
-            }
+            document.getElementById('pagination').style.display = 'none';
         }
 
         // Toast notifications
@@ -1916,7 +2860,7 @@
         // Enter key para búsqueda
         document.getElementById('nombreSearch').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                searchProfessionals();
+                searchProfessionals(true);
             }
         });
     </script>
