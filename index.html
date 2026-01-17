@@ -1046,6 +1046,7 @@
 
         function loadProvinciasSelect() {
             const select = document.getElementById('provinciaSelect');
+            select.innerHTML = '<option value="">Todas las provincias</option>';
             Object.keys(provinciasCiudades).sort().forEach(provincia => {
                 const option = document.createElement('option');
                 option.value = provincia;
@@ -1073,6 +1074,26 @@
                 ciudadSelect.appendChild(option);
             });
             ciudadSelect.disabled = false;
+        }
+
+        // Función getRubroName corregida
+        function getRubroName(rubro) {
+            const rubrosMap = {
+                'plomeria': 'Plomería',
+                'gas': 'Gas',
+                'electricidad': 'Electricidad',
+                'aire': 'Aire Acondicionado',
+                'albanileria': 'Albañilería',
+                'pintura': 'Pintura',
+                'cerrajeria': 'Cerrajería',
+                'jardineria': 'Jardinería',
+                'herreria': 'Herrería',
+                'carpinteria': 'Carpintería',
+                'limpieza': 'Limpieza',
+                'mudanzas': 'Mudanzas',
+                'otros': 'Otros servicios'
+            };
+            return rubrosMap[rubro] || rubro;
         }
 
         // Autenticación con email
@@ -1694,25 +1715,6 @@
                 `;
                 document.getElementById('resultsHeader').style.display = 'none';
             }
-        }
-
-        function getRubroName(rubro) {
-            const rubrosMap = {
-                'plomeria': 'Plomería',
-                'gas': 'Gas',
-                'electricidad': 'Electricidad',
-                'aire': 'Aire Acondicionado',
-                'albanileria': 'Albañilería',
-                'pintura': 'Pintura',
-                'cerrajeria': 'Cerrajería',
-                'jardineria': 'Jardinería',
-                'herreria': 'Herrería',
-                'carpinteria': 'Carpintería',
-                'limpieza': 'Limpieza',
-                'mudanzas': 'Mudanzas',
-                'otros': 'Otros servicios'
-            };
-            return rubrosMap[rubro] || rubro;
         }
 
         // Solicitar servicio
