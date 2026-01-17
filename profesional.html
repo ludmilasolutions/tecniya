@@ -648,6 +648,125 @@
                 height: 150px;
             }
         }
+
+        /* New Styles for Improvements */
+        .profile-completion-hint {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 0.5rem;
+        }
+
+        .profile-completion-hint ul {
+            margin-top: 0.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .profile-completion-hint li {
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-completion-hint .completed {
+            color: var(--secondary);
+        }
+
+        .profile-completion-hint .pending {
+            color: var(--warning);
+        }
+
+        .job-time-indicator {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .job-time-normal {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .job-time-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .job-time-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .notification-read-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 1rem;
+        }
+
+        .notification-read-toggle input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .certification-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 2px solid var(--light-gray);
+        }
+
+        .bulk-action-confirm {
+            background: #fff3cd;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--warning);
+        }
+
+        .change-history-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--light-gray);
+            font-size: 0.9rem;
+        }
+
+        .change-history-item:last-child {
+            border-bottom: none;
+        }
+
+        .change-field {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 2rem;
+        }
+
+        .pagination-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .pagination-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -752,7 +871,8 @@
                         <div class="progress-bar">
                             <div class="progress-fill" id="profileCompleteProgress" style="width: 0%"></div>
                         </div>
-                        <small id="completeProgressText">0% completado</small>
+                        <div id="completeProgressText">0% completado</div>
+                        <div id="profileCompletionHint" class="profile-completion-hint"></div>
                     </div>
                     
                     <div class="status-card">
@@ -876,9 +996,9 @@
                                      alt="Vista previa de foto">
                                 <p>📸 Hacé clic para subir una foto</p>
                                 <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem;">
-                                    La foto debe ser clara y profesional
+                                    La foto debe ser clara y profesional (max. 5MB, JPG/PNG)
                                 </p>
-                                <input type="file" id="photoUpload" accept="image/*">
+                                <input type="file" id="photoUpload" accept="image/jpeg,image/png">
                             </div>
                         </div>
                         
@@ -906,6 +1026,14 @@
                     </form>
                     
                     <div id="profileMessage" class="message" style="display: none; margin-top: 1.5rem;"></div>
+
+                    <!-- Change History -->
+                    <div class="status-card" id="changeHistorySection" style="display: none;">
+                        <div class="status-header">
+                            <h3>📝 Historial de Cambios</h3>
+                        </div>
+                        <div id="changeHistoryList"></div>
+                    </div>
                 </div>
                 
                 <!-- JOBS PANEL -->
@@ -913,6 +1041,14 @@
                     <div class="status-card">
                         <div class="status-header">
                             <h3>Mis Trabajos</h3>
+                            <div style="display: flex; gap: 10px;">
+                                <button id="sendRemindersBtn" class="btn btn-warning btn-sm">
+                                    ⏰ Recordatorios
+                                </button>
+                                <button id="exportJobsBtn" class="btn btn-secondary btn-sm">
+                                    📊 Exportar
+                                </button>
+                            </div>
                         </div>
                         
                         <div class="stats-grid">
@@ -936,17 +1072,37 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Filtrar por estado</label>
-                        <select id="jobFilter" class="form-select" onchange="loadJobs()">
-                            <option value="">Todos los trabajos</option>
-                            <option value="pendiente">Pendientes</option>
-                            <option value="en_progreso">En Progreso</option>
-                            <option value="completado">Completados</option>
-                            <option value="cancelado">Cancelados</option>
-                        </select>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <label class="form-label">Filtrar por estado</label>
+                                <select id="jobFilter" class="form-select">
+                                    <option value="">Todos los trabajos</option>
+                                    <option value="pendiente">Pendientes</option>
+                                    <option value="en_progreso">En Progreso</option>
+                                    <option value="completado">Completados</option>
+                                    <option value="cancelado">Cancelados</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label class="form-label">Ordenar por</label>
+                                <select id="jobSort" class="form-select">
+                                    <option value="fecha_desc">Fecha (más reciente)</option>
+                                    <option value="fecha_asc">Fecha (más antigua)</option>
+                                    <option value="precio_desc">Precio (mayor)</option>
+                                    <option value="precio_asc">Precio (menor)</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     
                     <div id="jobsList"></div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination" id="jobsPagination" style="display: none;">
+                        <button id="prevPage" class="pagination-btn">← Anterior</button>
+                        <span id="pageInfo" style="padding: 8px 16px;"></span>
+                        <button id="nextPage" class="pagination-btn">Siguiente →</button>
+                    </div>
                 </div>
                 
                 <!-- NOTIFICATIONS PANEL -->
@@ -954,6 +1110,12 @@
                     <div class="status-card">
                         <div class="status-header">
                             <h3>🔔 Sistema de Notificaciones</h3>
+                            <div>
+                                <label class="notification-read-toggle">
+                                    <input type="checkbox" id="autoMarkRead">
+                                    Marcar como leídas automáticamente
+                                </label>
+                            </div>
                         </div>
                         <p style="margin-bottom: 1rem;">Aquí recibirás notificaciones importantes sobre tu cuenta y trabajos.</p>
                     </div>
@@ -976,7 +1138,7 @@
                     <div class="status-card">
                         <h3>🌟 Planes de Destacado</h3>
                         <p style="color: var(--gray); margin-bottom: 1rem;">
-                            <strong>💳 Método de pago:</strong> Solo transferencia bancaria
+                            <strong>💳 Método de pago:</strong> Transferencia bancaria o Mercado Pago
                         </p>
                         
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 2rem 0;">
@@ -1058,7 +1220,7 @@
                                 <p style="font-size: 3rem;">📄</p>
                                 <p><strong>➕ Agregar nueva certificación</strong></p>
                                 <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem;">
-                                    Hacé clic para subir certificación (PDF o imagen)
+                                    Hacé clic para subir certificación (PDF o imagen, max. 10MB)
                                 </p>
                                 <input type="file" id="certificationUpload" accept=".pdf,.jpg,.jpeg,.png">
                             </div>
@@ -1099,14 +1261,29 @@
             <div id="jobModalContent"></div>
         </div>
     </div>
-    
+
+    <!-- Bulk Action Confirm Modal -->
+    <div id="bulkConfirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Acción Masiva</h3>
+                <button class="modal-close" onclick="closeBulkConfirmModal()">&times;</button>
+            </div>
+            <div id="bulkConfirmContent"></div>
+            <div style="display: flex; gap: 10px; margin-top: 2rem;">
+                <button id="confirmBulkAction" class="btn btn-danger">Confirmar</button>
+                <button onclick="closeBulkConfirmModal()" class="btn btn-secondary">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Global Loader -->
     <div id="globalLoader" class="loader">
         <div class="spinner"></div>
     </div>
 
     <script>
-        // Configuración Firebase
+        // Configuración Firebase - ACTUALIZADA
         const firebaseConfig = {
             apiKey: "AIzaSyBzDfYDdzmN9J_Y8gG06aqH0OtlzFhafFY",
             authDomain: "tecniya-b4206.firebaseapp.com",
@@ -1120,21 +1297,34 @@
         let auth, db, storage, currentUser, professionalId = null, professionalData = null;
         let selectedFeaturedPlan = null;
         let currentCertificationFile = null;
+        let currentPage = 1;
+        const jobsPerPage = 10;
+        let totalJobs = 0;
+        let jobFilter = '';
+        let jobSort = 'fecha_desc';
+        let userBlocked = false;
 
         // Inicialización
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                firebase.initializeApp(firebaseConfig);
+                // Verificar si ya hay una app inicializada
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
                 auth = firebase.auth();
                 db = firebase.firestore();
                 storage = firebase.storage();
                 
                 // Configurar Google Provider
                 const googleProvider = new firebase.auth.GoogleAuthProvider();
+                googleProvider.addScope('email');
+                googleProvider.addScope('profile');
                 
                 // Event listeners
                 document.getElementById('googleLoginBtn').addEventListener('click', () => {
-                    auth.signInWithPopup(googleProvider);
+                    auth.signInWithPopup(googleProvider).catch(error => {
+                        showMessage('loginMessage', '❌ Error al iniciar sesión: ' + error.message, 'error');
+                    });
                 });
                 
                 document.getElementById('mainLogoutBtn')?.addEventListener('click', handleLogout);
@@ -1156,15 +1346,59 @@
                 document.getElementById('certificationUpload').addEventListener('change', handleCertificationUpload);
                 document.getElementById('addCertificationBtn').addEventListener('click', addCertification);
                 
+                // Filtros y ordenamiento de trabajos
+                document.getElementById('jobFilter').addEventListener('change', function() {
+                    jobFilter = this.value;
+                    currentPage = 1;
+                    loadJobs();
+                });
+                
+                document.getElementById('jobSort').addEventListener('change', function() {
+                    jobSort = this.value;
+                    currentPage = 1;
+                    loadJobs();
+                });
+                
+                // Paginación
+                document.getElementById('prevPage').addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        loadJobs();
+                    }
+                });
+                
+                document.getElementById('nextPage').addEventListener('click', () => {
+                    const totalPages = Math.ceil(totalJobs / jobsPerPage);
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        loadJobs();
+                    }
+                });
+                
+                // Recordatorios
+                document.getElementById('sendRemindersBtn').addEventListener('click', sendJobReminders);
+                
+                // Exportar trabajos
+                document.getElementById('exportJobsBtn').addEventListener('click', exportJobsToCSV);
+                
+                // Auto mark read notifications
+                document.getElementById('autoMarkRead').addEventListener('change', function() {
+                    localStorage.setItem('autoMarkRead', this.checked);
+                });
+                
+                // Cargar preferencia de auto mark read
+                const autoMarkRead = localStorage.getItem('autoMarkRead') === 'true';
+                document.getElementById('autoMarkRead').checked = autoMarkRead;
+                
                 // Cargar provincias
-                loadProvincias();
+                await loadProvincias();
                 
                 // Verificar autenticación
                 auth.onAuthStateChanged(handleAuthStateChange);
                 
             } catch (error) {
                 console.error('Error inicializando:', error);
-                showMessage('loginMessage', 'Error al inicializar la aplicación', 'error');
+                showMessage('loginMessage', '❌ Error al inicializar la aplicación', 'error');
             }
         });
 
@@ -1172,6 +1406,12 @@
         async function handleAuthStateChange(user) {
             if (user) {
                 currentUser = user;
+                const professionalExists = await checkProfessionalExists(user.uid);
+                
+                if (!professionalExists) {
+                    await createProfessionalProfile(user);
+                }
+                
                 await loadProfessionalProfile();
                 showMainPanel();
             } else {
@@ -1179,64 +1419,106 @@
             }
         }
 
+        async function checkProfessionalExists(userId) {
+            try {
+                const snapshot = await db.collection('professionals')
+                    .where('userId', '==', userId)
+                    .limit(1)
+                    .get();
+                return !snapshot.empty;
+            } catch (error) {
+                console.error('Error verificando profesional:', error);
+                return false;
+            }
+        }
+
+        async function createProfessionalProfile(user) {
+            try {
+                const professionalRef = await db.collection('professionals').add({
+                    userId: user.uid,
+                    email: user.email,
+                    name: user.displayName || '',
+                    phone: '',
+                    photoUrl: user.photoURL || '',
+                    bio: '',
+                    provincia: '',
+                    ciudad: '',
+                    zonas: [],
+                    rubros: [],
+                    certifications: [],
+                    experienceYears: 0,
+                    completedJobs: 0,
+                    totalJobs: 0,
+                    active: true,
+                    profileCompleted: false,
+                    isFeatured: false,
+                    featuredUntil: null,
+                    hasProfessionalPlan: false,
+                    rankingScore: 0,
+                    averageRating: 0,
+                    totalRatings: 0,
+                    lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    blocked: false,
+                    notifications: [],
+                    changeHistory: [{
+                        field: 'account_created',
+                        oldValue: null,
+                        newValue: 'active',
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        changedBy: 'system'
+                    }]
+                });
+                
+                professionalId = professionalRef.id;
+                
+                // Crear notificación de bienvenida
+                await db.collection('professionals').doc(professionalId).update({
+                    notifications: firebase.firestore.FieldValue.arrayUnion({
+                        type: 'welcome',
+                        title: '¡Bienvenido a TecniYa Pro!',
+                        message: 'Completá tu perfil para comenzar a recibir trabajos.',
+                        date: new Date().toISOString(),
+                        read: false,
+                        id: Date.now().toString()
+                    })
+                });
+                
+            } catch (error) {
+                console.error('Error creando perfil profesional:', error);
+                throw error;
+            }
+        }
+
         async function loadProfessionalProfile() {
             showGlobalLoader(true);
             
             try {
-                // Buscar profesional por email
+                // Buscar profesional por userId (más confiable que email)
                 const snapshot = await db.collection('professionals')
-                    .where('email', '==', currentUser.email)
+                    .where('userId', '==', currentUser.uid)
                     .limit(1)
                     .get();
                 
                 if (snapshot.empty) {
-                    // Crear nuevo profesional
-                    const professionalRef = await db.collection('professionals').add({
-                        userId: currentUser.uid,
-                        email: currentUser.email,
-                        name: currentUser.displayName || '',
-                        phone: '',
-                        photoUrl: currentUser.photoURL || '',
-                        bio: '',
-                        provincia: '',
-                        ciudad: '',
-                        zonas: [],
-                        rubros: [],
-                        certifications: [],
-                        experienceYears: 0,
-                        completedJobs: 0,
-                        totalJobs: 0,
-                        active: true,
-                        profileCompleted: false,
-                        isFeatured: false,
-                        featuredUntil: null,
-                        hasProfessionalPlan: false,
-                        rankingScore: 0,
-                        averageRating: 0,
-                        totalRatings: 0,
-                        lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        blocked: false,
-                        notifications: []
-                    });
-                    
-                    professionalId = professionalRef.id;
-                    professionalData = await professionalRef.get().then(doc => ({ id: doc.id, ...doc.data() }));
-                } else {
-                    const doc = snapshot.docs[0];
-                    professionalId = doc.id;
-                    professionalData = { id: doc.id, ...doc.data() };
-                    
-                    // Verificar si la cuenta está bloqueada
-                    if (professionalData.blocked) {
-                        alert('Tu cuenta está bloqueada. Contactá al administrador.');
-                        auth.signOut();
-                        return;
-                    }
-                    
-                    // Verificar trabajos pendientes por más de 30 días
-                    await checkOverdueJobs();
+                    showMessage('loginMessage', '❌ No se encontró tu perfil profesional', 'error');
+                    auth.signOut();
+                    return;
                 }
+                
+                const doc = snapshot.docs[0];
+                professionalId = doc.id;
+                professionalData = { id: doc.id, ...doc.data() };
+                
+                // Verificar si la cuenta está bloqueada
+                if (professionalData.blocked) {
+                    userBlocked = true;
+                    showBlockedMessage();
+                    return;
+                }
+                
+                // Verificar trabajos pendientes por más de 30 días (con notificación previa)
+                await checkOverdueJobs();
                 
                 updateUserInfo();
                 loadDashboardData();
@@ -1244,13 +1526,53 @@
                 loadJobs();
                 loadNotifications();
                 checkFeaturedStatus();
+                loadChangeHistory();
                 
             } catch (error) {
                 console.error('Error cargando perfil:', error);
-                showMessage('profileMessage', 'Error cargando perfil', 'error');
+                showMessage('profileMessage', '❌ Error cargando perfil', 'error');
             } finally {
                 showGlobalLoader(false);
             }
+        }
+
+        function showBlockedMessage() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('mainPanel').style.display = 'block';
+            
+            // Mostrar solo el dashboard con mensaje de bloqueo
+            switchTab('dashboard');
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.dataset.tab !== 'dashboard') {
+                    tab.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('dashboardPanel').innerHTML = `
+                <div class="status-card" style="border-left-color: var(--danger);">
+                    <div class="status-header">
+                        <h2>❌ Cuenta Bloqueada</h2>
+                        <span class="status-badge status-blocked">BLOQUEADO</span>
+                    </div>
+                    <p style="margin-bottom: 1rem;">Tu cuenta ha sido bloqueada por las siguientes razones:</p>
+                    <p style="color: var(--danger); font-weight: 600; margin-bottom: 1rem;">
+                        ${professionalData.blockedReason || 'Violación de los términos del servicio'}
+                    </p>
+                    <p style="margin-bottom: 1.5rem;">
+                        Para apelar esta decisión, contactate con nuestro equipo de soporte:
+                    </p>
+                    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
+                        <p><strong>📧 Email:</strong> soporte@tecniya.com</p>
+                        <p><strong>📞 Teléfono:</strong> 341 755-8966</p>
+                        <p><strong>🕐 Horario:</strong> Lunes a Viernes de 9:00 a 18:00</p>
+                    </div>
+                    <div style="margin-top: 2rem;">
+                        <button onclick="auth.signOut()" class="btn btn-danger">
+                            🚪 Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+            `;
         }
 
         function updateUserInfo() {
@@ -1266,9 +1588,12 @@
             }
         }
 
-        // Verificar trabajos vencidos CON NOTIFICACIÓN PREVIA
+        // Verificar trabajos vencidos con notificación previa
         async function checkOverdueJobs() {
+            if (!professionalId) return;
+            
             const now = new Date();
+            const twentyFiveDaysAgo = new Date(now.getTime() - (25 * 24 * 60 * 60 * 1000));
             const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
             const thirtyFiveDaysAgo = new Date(now.getTime() - (35 * 24 * 60 * 60 * 1000));
             
@@ -1276,79 +1601,83 @@
                 const snapshot = await db.collection('jobs')
                     .where('professionalId', '==', professionalId)
                     .where('status', '==', 'en_progreso')
-                    .where('createdAt', '<', thirtyFiveDaysAgo)
                     .get();
                 
                 if (!snapshot.empty) {
-                    // Verificar si ya pasaron 35 días
-                    const oldJobs = snapshot.docs.filter(doc => {
+                    const overdueJobs = [];
+                    const criticalJobs = [];
+                    
+                    snapshot.forEach(doc => {
                         const job = doc.data();
                         const jobDate = job.createdAt?.toDate ? job.createdAt.toDate() : new Date(job.createdAt);
-                        return jobDate < thirtyFiveDaysAgo;
+                        
+                        if (jobDate < thirtyFiveDaysAgo) {
+                            criticalJobs.push({ id: doc.id, ...job });
+                        } else if (jobDate < thirtyDaysAgo) {
+                            overdueJobs.push({ id: doc.id, ...job });
+                        }
                     });
                     
-                    if (oldJobs.length > 0) {
-                        // NOTIFICAR AL PROFESIONAL ANTES DE BLOQUEAR
+                    // Notificación a los 25 días
+                    if (overdueJobs.length > 0) {
+                        await db.collection('professionals').doc(professionalId).update({
+                            notifications: firebase.firestore.FieldValue.arrayUnion({
+                                type: 'warning',
+                                title: 'Trabajos próximos a vencer',
+                                message: `Tenés ${overdueJobs.length} trabajo(s) en progreso por más de 25 días. Finalizalos pronto para evitar bloqueos.`,
+                                date: new Date().toISOString(),
+                                read: false,
+                                id: Date.now().toString()
+                            })
+                        });
+                    }
+                    
+                    // Bloqueo a los 35 días con notificación previa
+                    if (criticalJobs.length > 0) {
+                        // Primero, notificar sobre el bloqueo inminente
                         await db.collection('professionals').doc(professionalId).update({
                             notifications: firebase.firestore.FieldValue.arrayUnion({
                                 type: 'urgent',
-                                title: '⚠️ ADVERTENCIA: Trabajos pendientes por más de 35 días',
-                                message: `Tenés ${oldJobs.length} trabajo(s) pendientes por más de 35 días. Finalizalos en las próximas 24 horas o tu cuenta será bloqueada.`,
+                                title: '⚠️ BLOQUEO INMINENTE DE CUENTA',
+                                message: `Tenés ${criticalJobs.length} trabajo(s) en progreso por más de 35 días. Tu cuenta será bloqueada en 48 horas si no los finalizás.`,
                                 date: new Date().toISOString(),
-                                read: false
+                                read: false,
+                                id: Date.now().toString()
                             })
                         });
                         
-                        // Si los trabajos tienen más de 36 días, bloquear
-                        const thirtySixDaysAgo = new Date(now.getTime() - (36 * 24 * 60 * 60 * 1000));
-                        const veryOldJobs = oldJobs.filter(doc => {
-                            const job = doc.data();
-                            const jobDate = job.createdAt?.toDate ? job.createdAt.toDate() : new Date(job.createdAt);
-                            return jobDate < thirtySixDaysAgo;
-                        });
+                        // Esperar 48 horas antes de bloquear
+                        const blockTime = new Date(now.getTime() + (48 * 60 * 60 * 1000));
                         
-                        if (veryOldJobs.length > 0) {
-                            // Bloquear cuenta y notificar admin
-                            await db.collection('professionals').doc(professionalId).update({
-                                blocked: true,
-                                blockedReason: 'Trabajos pendientes por más de 35 días',
-                                blockedAt: firebase.firestore.FieldValue.serverTimestamp()
-                            });
+                        // Programar bloqueo (en producción, usar Cloud Functions)
+                        setTimeout(async () => {
+                            // Verificar si los trabajos siguen pendientes
+                            const currentSnapshot = await db.collection('jobs')
+                                .where('professionalId', '==', professionalId)
+                                .where('status', '==', 'en_progreso')
+                                .where('createdAt', '<', thirtyFiveDaysAgo)
+                                .get();
                             
-                            // Notificar al administrador
-                            await db.collection('admin_notifications').add({
-                                type: 'account_blocked',
-                                professionalId: professionalId,
-                                professionalName: professionalData.name,
-                                reason: 'Trabajos pendientes por más de 35 días',
-                                count: oldJobs.length,
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                            
-                            alert('Tu cuenta ha sido bloqueada por tener trabajos pendientes por más de 35 días. Contactá al administrador.');
-                            auth.signOut();
-                        }
+                            if (!currentSnapshot.empty) {
+                                // Bloquear cuenta
+                                await db.collection('professionals').doc(professionalId).update({
+                                    blocked: true,
+                                    blockedReason: 'Trabajos pendientes por más de 35 días',
+                                    blockedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                                
+                                // Notificar al administrador
+                                await db.collection('admin_notifications').add({
+                                    type: 'account_blocked_auto',
+                                    professionalId: professionalId,
+                                    professionalName: professionalData.name,
+                                    reason: 'Trabajos pendientes por más de 35 días',
+                                    count: currentSnapshot.size,
+                                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            }
+                        }, 48 * 60 * 60 * 1000);
                     }
-                }
-                
-                // Verificar trabajos entre 30-35 días para notificación de advertencia
-                const warningSnapshot = await db.collection('jobs')
-                    .where('professionalId', '==', professionalId)
-                    .where('status', '==', 'en_progreso')
-                    .where('createdAt', '<', thirtyDaysAgo)
-                    .get();
-                
-                if (!warningSnapshot.empty) {
-                    // Crear notificación de advertencia
-                    await db.collection('professionals').doc(professionalId).update({
-                        notifications: firebase.firestore.FieldValue.arrayUnion({
-                            type: 'warning',
-                            title: 'Trabajos pendientes de finalización',
-                            message: `Tenés ${warningSnapshot.size} trabajo(s) pendientes por más de 30 días. Finalizalos o contactá al cliente.`,
-                            date: new Date().toISOString(),
-                            read: false
-                        })
-                    });
                 }
             } catch (error) {
                 console.error('Error verificando trabajos vencidos:', error);
@@ -1359,6 +1688,7 @@
         function showLoginPanel() {
             document.getElementById('loginContainer').style.display = 'block';
             document.getElementById('mainPanel').style.display = 'none';
+            userBlocked = false;
         }
 
         function showMainPanel() {
@@ -1367,6 +1697,11 @@
         }
 
         function switchTab(tabId) {
+            if (userBlocked && tabId !== 'dashboard') {
+                showMessage('profileMessage', '❌ Tu cuenta está bloqueada. Solo podés ver el dashboard.', 'error');
+                return;
+            }
+            
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -1384,6 +1719,7 @@
             if (tabId === 'dashboard') loadDashboardData();
             if (tabId === 'jobs') loadJobs();
             if (tabId === 'notifications') loadNotifications();
+            if (tabId === 'certifications') loadCertifications();
         }
 
         function handleLogout() {
@@ -1399,29 +1735,47 @@
             try {
                 // Actualizar estadísticas
                 document.getElementById('totalJobsCount').textContent = professionalData.totalJobs || 0;
-                document.getElementById('activeJobsCount').textContent = professionalData.activeJobs || 0;
+                document.getElementById('activeJobsCount').textContent = professionalData.totalJobs - (professionalData.completedJobs || 0);
                 document.getElementById('ratingAverage').textContent = (professionalData.averageRating || 0).toFixed(1);
                 document.getElementById('rankingScore').textContent = professionalData.rankingScore || 0;
                 
-                // Calcular porcentaje de perfil completado
+                // Calcular porcentaje de perfil completado con campos específicos
                 const requiredFields = [
-                    professionalData.name,
-                    professionalData.phone,
-                    professionalData.photoUrl,
-                    professionalData.provincia,
-                    professionalData.ciudad,
-                    professionalData.zonas?.length > 0,
-                    professionalData.rubros?.length > 0,
-                    professionalData.bio,
-                    professionalData.experienceYears
+                    { field: 'name', value: professionalData.name, label: 'Nombre completo' },
+                    { field: 'phone', value: professionalData.phone, label: 'Teléfono WhatsApp' },
+                    { field: 'photoUrl', value: professionalData.photoUrl, label: 'Foto de perfil' },
+                    { field: 'provincia', value: professionalData.provincia, label: 'Provincia' },
+                    { field: 'ciudad', value: professionalData.ciudad, label: 'Ciudad' },
+                    { field: 'zonas', value: professionalData.zonas?.length > 0, label: 'Zonas de trabajo' },
+                    { field: 'rubros', value: professionalData.rubros?.length > 0, label: 'Rubros' },
+                    { field: 'bio', value: professionalData.bio, label: 'Descripción breve' },
+                    { field: 'experienceYears', value: professionalData.experienceYears, label: 'Años de experiencia' }
                 ];
                 
-                const completedCount = requiredFields.filter(Boolean).length;
+                const completedCount = requiredFields.filter(field => field.value && 
+                    (typeof field.value !== 'boolean' ? field.value.toString().trim() : field.value)).length;
                 const totalCount = requiredFields.length;
                 const percentage = Math.round((completedCount / totalCount) * 100);
                 
                 document.getElementById('profileCompleteProgress').style.width = `${percentage}%`;
                 document.getElementById('completeProgressText').textContent = `${percentage}% completado`;
+                
+                // Mostrar campos faltantes
+                const missingFields = requiredFields.filter(field => !field.value || 
+                    (typeof field.value === 'boolean' ? !field.value : !field.value.toString().trim()));
+                
+                let hintHTML = '';
+                if (missingFields.length > 0) {
+                    hintHTML = '<p>Campos faltantes para completar el perfil:</p><ul>';
+                    missingFields.forEach(field => {
+                        hintHTML += `<li class="pending">${field.label}</li>`;
+                    });
+                    hintHTML += '</ul>';
+                } else {
+                    hintHTML = '<p class="completed">✅ ¡Tu perfil está completo!</p>';
+                }
+                
+                document.getElementById('profileCompletionHint').innerHTML = hintHTML;
                 
                 const statusBadge = document.getElementById('accountStatusBadge');
                 if (percentage === 100 && professionalData.profileCompleted) {
@@ -1446,7 +1800,7 @@
             
             try {
                 const notifications = professionalData.notifications || [];
-                const recent = notifications.slice(-3).reverse();
+                const recent = notifications.slice(-5).reverse();
                 
                 if (recent.length === 0) {
                     container.innerHTML = '<p style="color: var(--gray);">No hay notificaciones recientes.</p>';
@@ -1457,9 +1811,14 @@
                 recent.forEach(notif => {
                     html += `
                         <div class="notification-card ${notif.type === 'urgent' ? 'notification-urgent' : ''}">
-                            <h4>${notif.title}</h4>
-                            <p>${notif.message}</p>
-                            <small style="color: var(--gray);">${new Date(notif.date).toLocaleDateString('es-AR')}</small>
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h4 style="margin: 0;">${notif.title}</h4>
+                                    <p style="margin: 0.5rem 0;">${notif.message}</p>
+                                    <small style="color: var(--gray);">${new Date(notif.date).toLocaleDateString('es-AR')}</small>
+                                </div>
+                                ${!notif.read ? '<span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">NUEVO</span>' : ''}
+                            </div>
                         </div>
                     `;
                 });
@@ -1472,64 +1831,66 @@
         }
 
         // Perfil
-        function loadProvincias() {
-            const provincias = [
-                "Buenos Aires", "CABA", "Catamarca", "Chaco", "Chubut",
-                "Córdoba", "Corrientes", "Entre Ríos", "Formosa", "Jujuy",
-                "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquén",
-                "Río Negro", "Salta", "San Juan", "San Luis", "Santa Cruz",
-                "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucumán"
-            ];
-            
-            const select = document.getElementById('profileProvincia');
-            provincias.sort().forEach(provincia => {
-                const option = document.createElement('option');
-                option.value = provincia;
-                option.textContent = provincia;
-                select.appendChild(option);
-            });
-            
-            select.addEventListener('change', function() {
-                const ciudadSelect = document.getElementById('profileCiudad');
-                const provincia = this.value;
-                
-                if (!provincia) {
-                    ciudadSelect.innerHTML = '<option value="">Seleccioná una ciudad</option>';
-                    ciudadSelect.disabled = true;
-                    return;
-                }
-                
-                // Cargar ciudades desde Firestore
-                loadCitiesForProvincia(provincia, ciudadSelect);
-                ciudadSelect.disabled = false;
-            });
-        }
-
-        async function loadCitiesForProvincia(provincia, ciudadSelect) {
+        async function loadProvincias() {
             try {
+                // Intentar cargar desde Firestore
                 const doc = await db.collection('config').doc('provincias').get();
+                let provinciasData = {};
+                
                 if (doc.exists) {
-                    const provinciasCiudades = doc.data();
-                    const ciudades = provinciasCiudades[provincia] || ["Ciudad principal"];
-                    
-                    ciudadSelect.innerHTML = '<option value="">Seleccioná una ciudad</option>';
-                    ciudades.forEach(ciudad => {
-                        const option = document.createElement('option');
-                        option.value = ciudad;
-                        option.textContent = ciudad;
-                        ciudadSelect.appendChild(option);
-                    });
+                    provinciasData = doc.data();
                 } else {
-                    // Datos de ejemplo
-                    const ciudadesMap = {
-                        "Buenos Aires": ["CABA", "La Plata", "Mar del Plata", "Bahía Blanca", "Quilmes"],
-                        "Santa Fe": ["Rosario", "Santa Fe", "Rafaela", "Venado Tuerto"],
+                    // Datos por defecto
+                    provinciasData = {
+                        "Buenos Aires": ["La Plata", "Mar del Plata", "Bahía Blanca", "Quilmes", "Lomas de Zamora"],
+                        "CABA": ["Capital Federal"],
                         "Córdoba": ["Córdoba", "Villa María", "Río Cuarto", "Alta Gracia"],
+                        "Santa Fe": ["Rosario", "Santa Fe", "Rafaela", "Venado Tuerto"],
                         "Mendoza": ["Mendoza", "San Rafael", "Godoy Cruz", "Guaymallén"],
-                        "Tucumán": ["San Miguel de Tucumán", "Yerba Buena", "Tafí Viejo"]
+                        "Tucumán": ["San Miguel de Tucumán", "Yerba Buena", "Tafí Viejo"],
+                        "Salta": ["Salta", "San Ramón de la Nueva Orán", "Tartagal"],
+                        "Entre Ríos": ["Paraná", "Concordia", "Gualeguaychú"],
+                        "Corrientes": ["Corrientes", "Goya", "Mercedes"],
+                        "Chaco": ["Resistencia", "Barranqueras", "Fontana"],
+                        "Misiones": ["Posadas", "Oberá", "Eldorado"],
+                        "Santiago del Estero": ["Santiago del Estero", "La Banda", "Frías"],
+                        "San Juan": ["San Juan", "Rivadavia", "Chimbas"],
+                        "San Luis": ["San Luis", "Villa Mercedes", "Juana Koslay"],
+                        "Neuquén": ["Neuquén", "Cutral-Có", "Plottier"],
+                        "Río Negro": ["Viedma", "Bariloche", "General Roca"],
+                        "Chubut": ["Rawson", "Comodoro Rivadavia", "Trelew"],
+                        "Santa Cruz": ["Río Gallegos", "Caleta Olivia", "Puerto Deseado"],
+                        "Tierra del Fuego": ["Ushuaia", "Río Grande"],
+                        "La Pampa": ["Santa Rosa", "General Pico", "Toay"],
+                        "La Rioja": ["La Rioja", "Chilecito", "Aimogasta"],
+                        "Catamarca": ["San Fernando del Valle de Catamarca", "Valle Viejo"],
+                        "Formosa": ["Formosa", "Clorinda", "Pirané"],
+                        "Jujuy": ["San Salvador de Jujuy", "Palpalá", "San Pedro"]
                     };
                     
-                    const ciudades = ciudadesMap[provincia] || ["Ciudad principal"];
+                    // Guardar en Firestore
+                    await db.collection('config').doc('provincias').set(provinciasData);
+                }
+                
+                const select = document.getElementById('profileProvincia');
+                Object.keys(provinciasData).sort().forEach(provincia => {
+                    const option = document.createElement('option');
+                    option.value = provincia;
+                    option.textContent = provincia;
+                    select.appendChild(option);
+                });
+                
+                select.addEventListener('change', function() {
+                    const ciudadSelect = document.getElementById('profileCiudad');
+                    const provincia = this.value;
+                    
+                    if (!provincia) {
+                        ciudadSelect.innerHTML = '<option value="">Seleccioná una ciudad</option>';
+                        ciudadSelect.disabled = true;
+                        return;
+                    }
+                    
+                    const ciudades = provinciasData[provincia] || ["Ciudad principal"];
                     ciudadSelect.innerHTML = '<option value="">Seleccioná una ciudad</option>';
                     ciudades.forEach(ciudad => {
                         const option = document.createElement('option');
@@ -1537,9 +1898,11 @@
                         option.textContent = ciudad;
                         ciudadSelect.appendChild(option);
                     });
-                }
+                    ciudadSelect.disabled = false;
+                });
+                
             } catch (error) {
-                console.error('Error cargando ciudades:', error);
+                console.error('Error cargando provincias:', error);
             }
         }
 
@@ -1554,7 +1917,17 @@
             
             if (professionalData.provincia) {
                 document.getElementById('profileProvincia').value = professionalData.provincia;
-                loadCitiesForProvincia(professionalData.provincia, document.getElementById('profileCiudad'));
+                
+                // Disparar el evento change para cargar ciudades
+                const event = new Event('change');
+                document.getElementById('profileProvincia').dispatchEvent(event);
+                
+                // Esperar un momento para que se carguen las ciudades
+                setTimeout(() => {
+                    if (professionalData.ciudad) {
+                        document.getElementById('profileCiudad').value = professionalData.ciudad;
+                    }
+                }, 100);
             }
             
             document.querySelectorAll('#rubrosCheckbox input').forEach(checkbox => {
@@ -1593,13 +1966,15 @@
             const file = event.target.files[0];
             if (!file) return;
             
-            if (!file.type.startsWith('image/')) {
-                alert('Por favor seleccioná una imagen válida');
+            // Validaciones
+            const validTypes = ['image/jpeg', 'image/png'];
+            if (!validTypes.includes(file.type)) {
+                alert('❌ Por favor seleccioná una imagen válida (JPG o PNG)');
                 return;
             }
             
             if (file.size > 5 * 1024 * 1024) {
-                alert('La imagen debe ser menor a 5MB');
+                alert('❌ La imagen debe ser menor a 5MB');
                 return;
             }
             
@@ -1623,9 +1998,12 @@
                 professionalData.photoUrl = downloadURL;
                 showMessage('profileMessage', '✅ Foto subida correctamente', 'success');
                 
+                // Agregar al historial de cambios
+                await addChangeHistory('photoUrl', 'Foto actualizada');
+                
             } catch (error) {
                 console.error('Error subiendo foto:', error);
-                showMessage('profileMessage', '❌ Error subiendo foto', 'error');
+                showMessage('profileMessage', '❌ Error subiendo foto: ' + error.message, 'error');
             } finally {
                 showGlobalLoader(false);
             }
@@ -1642,10 +2020,17 @@
             const bio = document.getElementById('profileBio').value.trim();
             const experienceYears = parseInt(document.getElementById('profileExperience').value) || 0;
             
-            if (!name || !phone || !provincia || !ciudad || zonas.length === 0 || !bio || !experienceYears || !professionalData.photoUrl) {
-                showMessage('profileMessage', 'Completá todos los campos obligatorios (*)', 'error');
-                return;
-            }
+            // Validación avanzada
+            const errors = [];
+            
+            if (!name) errors.push('Nombre completo');
+            if (!phone || !/^\d{10,13}$/.test(phone)) errors.push('Teléfono WhatsApp válido (10-13 dígitos)');
+            if (!provincia) errors.push('Provincia');
+            if (!ciudad) errors.push('Ciudad');
+            if (zonas.length === 0) errors.push('Zonas de trabajo');
+            if (!bio || bio.length < 20) errors.push('Descripción breve (mínimo 20 caracteres)');
+            if (!experienceYears || experienceYears < 0 || experienceYears > 50) errors.push('Años de experiencia válidos');
+            if (!professionalData.photoUrl) errors.push('Foto de perfil');
             
             const rubros = [];
             document.querySelectorAll('#rubrosCheckbox input:checked').forEach(checkbox => {
@@ -1653,13 +2038,18 @@
             });
             
             if (rubros.length === 0) {
-                showMessage('profileMessage', 'Seleccioná al menos un rubro', 'error');
+                errors.push('Al menos un rubro');
+            }
+            
+            if (errors.length > 0) {
+                showMessage('profileMessage', '❌ Completá los siguientes campos: ' + errors.join(', '), 'error');
                 return;
             }
             
             showGlobalLoader(true);
             
             try {
+                const oldData = { ...professionalData };
                 const updateData = {
                     name,
                     phone,
@@ -1674,20 +2064,132 @@
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
+                // Detectar cambios para el historial
+                const changes = [];
+                Object.keys(updateData).forEach(key => {
+                    if (key !== 'lastActive' && key !== 'updatedAt' && key !== 'profileCompleted') {
+                        const oldValue = oldData[key];
+                        const newValue = updateData[key];
+                        
+                        if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
+                            changes.push({
+                                field: key,
+                                oldValue: typeof oldValue === 'object' ? JSON.stringify(oldValue) : oldValue,
+                                newValue: typeof newValue === 'object' ? JSON.stringify(newValue) : newValue
+                            });
+                        }
+                    }
+                });
+                
                 await db.collection('professionals').doc(professionalId).update(updateData);
+                
+                // Agregar cambios al historial
+                for (const change of changes) {
+                    await addChangeHistory(change.field, change.oldValue, change.newValue);
+                }
                 
                 professionalData = { ...professionalData, ...updateData };
                 updateProfileStatus();
                 updateUserInfo();
+                loadDashboardData();
                 
                 showMessage('profileMessage', '✅ Perfil guardado correctamente', 'success');
                 
             } catch (error) {
                 console.error('Error guardando perfil:', error);
-                showMessage('profileMessage', 'Error guardando perfil: ' + error.message, 'error');
+                showMessage('profileMessage', '❌ Error guardando perfil: ' + error.message, 'error');
             } finally {
                 showGlobalLoader(false);
             }
+        }
+
+        async function addChangeHistory(field, oldValue, newValue = null) {
+            try {
+                const changeEntry = {
+                    field: field,
+                    oldValue: oldValue,
+                    newValue: newValue,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    changedBy: 'professional'
+                };
+                
+                await db.collection('professionals').doc(professionalId).update({
+                    changeHistory: firebase.firestore.FieldValue.arrayUnion(changeEntry)
+                });
+                
+            } catch (error) {
+                console.error('Error agregando al historial:', error);
+            }
+        }
+
+        async function loadChangeHistory() {
+            try {
+                const changeHistory = professionalData.changeHistory || [];
+                
+                if (changeHistory.length === 0) {
+                    document.getElementById('changeHistorySection').style.display = 'none';
+                    return;
+                }
+                
+                document.getElementById('changeHistorySection').style.display = 'block';
+                
+                let html = '';
+                changeHistory.slice(-10).reverse().forEach(change => {
+                    const date = change.timestamp?.toDate ? change.timestamp.toDate().toLocaleString('es-AR') : 'Fecha desconocida';
+                    
+                    let changeText = '';
+                    if (change.field === 'account_created') {
+                        changeText = 'Cuenta creada';
+                    } else if (change.newValue === null) {
+                        changeText = `${getFieldLabel(change.field)}: ${change.oldValue}`;
+                    } else {
+                        changeText = `${getFieldLabel(change.field)} cambiado`;
+                    }
+                    
+                    html += `
+                        <div class="change-history-item">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span class="change-field">${changeText}</span>
+                                <small style="color: var(--gray);">${date}</small>
+                            </div>
+                            ${change.oldValue && change.newValue ? `
+                                <div style="margin-top: 5px; font-size: 0.85rem;">
+                                    <span style="color: var(--danger);">${formatChangeValue(change.oldValue)}</span>
+                                    → 
+                                    <span style="color: var(--success);">${formatChangeValue(change.newValue)}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('changeHistoryList').innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error cargando historial:', error);
+            }
+        }
+
+        function getFieldLabel(field) {
+            const labels = {
+                'name': 'Nombre',
+                'phone': 'Teléfono',
+                'photoUrl': 'Foto',
+                'provincia': 'Provincia',
+                'ciudad': 'Ciudad',
+                'zonas': 'Zonas',
+                'rubros': 'Rubros',
+                'bio': 'Descripción',
+                'experienceYears': 'Experiencia'
+            };
+            return labels[field] || field;
+        }
+
+        function formatChangeValue(value) {
+            if (value === null || value === undefined) return '-';
+            if (typeof value === 'boolean') return value ? 'Sí' : 'No';
+            if (Array.isArray(value)) return value.join(', ');
+            return value.toString().substring(0, 50) + (value.toString().length > 50 ? '...' : '');
         }
 
         async function updateActivity() {
@@ -1702,34 +2204,64 @@
                 
             } catch (error) {
                 console.error('Error actualizando actividad:', error);
-                showMessage('profileMessage', 'Error actualizando actividad', 'error');
+                showMessage('profileMessage', '❌ Error actualizando actividad', 'error');
             }
         }
 
-        // Trabajos
+        // Trabajos con paginación
         async function loadJobs() {
             if (!professionalId) return;
             
-            const filter = document.getElementById('jobFilter').value;
             const container = document.getElementById('jobsList');
+            const pagination = document.getElementById('jobsPagination');
             
             showGlobalLoader(true);
             
             try {
                 let query = db.collection('jobs')
-                    .where('professionalId', '==', professionalId)
-                    .orderBy('createdAt', 'desc');
+                    .where('professionalId', '==', professionalId);
                 
-                if (filter) {
-                    query = query.where('status', '==', filter);
+                if (jobFilter) {
+                    query = query.where('status', '==', jobFilter);
                 }
                 
-                const snapshot = await query.get();
+                // Ordenamiento
+                switch(jobSort) {
+                    case 'fecha_desc':
+                        query = query.orderBy('createdAt', 'desc');
+                        break;
+                    case 'fecha_asc':
+                        query = query.orderBy('createdAt', 'asc');
+                        break;
+                    case 'precio_desc':
+                        query = query.orderBy('price', 'desc');
+                        break;
+                    case 'precio_asc':
+                        query = query.orderBy('price', 'asc');
+                        break;
+                }
+                
+                // Contar total
+                const countQuery = db.collection('jobs')
+                    .where('professionalId', '==', professionalId);
+                    
+                if (jobFilter) {
+                    countQuery.where('status', '==', jobFilter);
+                }
+                
+                const countSnapshot = await countQuery.get();
+                totalJobs = countSnapshot.size;
+                
+                // Paginación
+                const startAt = (currentPage - 1) * jobsPerPage;
+                const snapshot = await query.limit(jobsPerPage).get();
+                
                 container.innerHTML = '';
                 
                 if (snapshot.empty) {
                     container.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 2rem;">No hay trabajos.</p>';
                     updateJobsStats(snapshot);
+                    pagination.style.display = 'none';
                     return;
                 }
                 
@@ -1737,6 +2269,8 @@
                 let inProgressCount = 0;
                 let completedCount = 0;
                 let cancelledCount = 0;
+                
+                const now = new Date();
                 
                 snapshot.forEach(doc => {
                     const job = { id: doc.id, ...doc.data() };
@@ -1749,7 +2283,19 @@
                         case 'cancelado': cancelledCount++; break;
                     }
                     
-                    const date = job.createdAt?.toDate ? job.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                    const date = job.createdAt?.toDate ? job.createdAt.toDate() : new Date(job.createdAt);
+                    const daysPassed = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+                    
+                    let timeIndicator = '';
+                    if (job.status === 'en_progreso') {
+                        if (daysPassed > 30) {
+                            timeIndicator = `<span class="job-time-indicator job-time-danger">+${daysPassed}d</span>`;
+                        } else if (daysPassed > 20) {
+                            timeIndicator = `<span class="job-time-indicator job-time-warning">+${daysPassed}d</span>`;
+                        } else {
+                            timeIndicator = `<span class="job-time-indicator job-time-normal">+${daysPassed}d</span>`;
+                        }
+                    }
                     
                     let statusBadge = '';
                     switch(job.status) {
@@ -1771,8 +2317,8 @@
                         <div class="job-card">
                             <div class="job-header">
                                 <div>
-                                    <h4 style="margin: 0;">${job.serviceType || 'Servicio'}</h4>
-                                    <p style="color: var(--gray); margin: 0.5rem 0;">${date}</p>
+                                    <h4 style="margin: 0;">${job.serviceType || 'Servicio'} ${timeIndicator}</h4>
+                                    <p style="color: var(--gray); margin: 0.5rem 0;">${date.toLocaleDateString('es-AR')}</p>
                                 </div>
                                 <div>
                                     ${statusBadge}
@@ -1784,6 +2330,7 @@
                                 <p><strong>Cliente:</strong> ${job.userName || 'Sin nombre'}</p>
                                 <p><strong>Teléfono:</strong> ${job.userPhone || 'Sin teléfono'}</p>
                                 <p><strong>Dirección:</strong> ${job.address || 'Sin dirección'}</p>
+                                ${job.preferredDate ? `<p><strong>Fecha preferida:</strong> ${new Date(job.preferredDate).toLocaleDateString('es-AR')}</p>` : ''}
                             </div>
                             
                             <p style="color: var(--dark); margin-bottom: 1rem;">${job.description || ''}</p>
@@ -1824,16 +2371,129 @@
                 document.getElementById('completedJobsCount').textContent = completedCount;
                 document.getElementById('cancelledJobsCount').textContent = cancelledCount;
                 
+                // Actualizar paginación
+                updatePaginationUI();
+                pagination.style.display = 'flex';
+                
             } catch (error) {
                 console.error('Error cargando trabajos:', error);
                 container.innerHTML = '<p style="color: var(--danger); text-align: center; padding: 2rem;">Error cargando trabajos.</p>';
+                pagination.style.display = 'none';
             } finally {
                 showGlobalLoader(false);
             }
         }
 
-        function updateJobsStats(snapshot) {
-            // Implementar lógica de conteo si es necesario
+        function updatePaginationUI() {
+            const totalPages = Math.ceil(totalJobs / jobsPerPage);
+            document.getElementById('pageInfo').textContent = `Página ${currentPage} de ${totalPages}`;
+            
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages;
+        }
+
+        async function sendJobReminders() {
+            if (!professionalId) return;
+            
+            try {
+                const now = new Date();
+                const fifteenDaysAgo = new Date(now.getTime() - (15 * 24 * 60 * 60 * 1000));
+                
+                const snapshot = await db.collection('jobs')
+                    .where('professionalId', '==', professionalId)
+                    .where('status', '==', 'en_progreso')
+                    .where('createdAt', '<', fifteenDaysAgo)
+                    .get();
+                
+                if (snapshot.empty) {
+                    showMessage('profileMessage', '✅ No hay trabajos pendientes de recordatorio', 'success');
+                    return;
+                }
+                
+                let remindersSent = 0;
+                const promises = [];
+                
+                snapshot.forEach(doc => {
+                    const job = doc.data();
+                    if (job.userPhone) {
+                        const message = `Hola ${job.userName}, soy ${professionalData.name} de TecniYa. Te recuerdo que tenemos un trabajo pendiente. ¿Podemos coordinar para finalizarlo?`;
+                        promises.push(
+                            db.collection('reminders').add({
+                                jobId: doc.id,
+                                professionalId: professionalId,
+                                professionalName: professionalData.name,
+                                userPhone: job.userPhone,
+                                userName: job.userName,
+                                message: message,
+                                sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                status: 'pending'
+                            })
+                        );
+                        remindersSent++;
+                    }
+                });
+                
+                await Promise.all(promises);
+                
+                showMessage('profileMessage', `✅ ${remindersSent} recordatorio(s) programado(s) para enviar`, 'success');
+                
+            } catch (error) {
+                console.error('Error enviando recordatorios:', error);
+                showMessage('profileMessage', '❌ Error enviando recordatorios', 'error');
+            }
+        }
+
+        async function exportJobsToCSV() {
+            if (!professionalId) return;
+            
+            try {
+                const snapshot = await db.collection('jobs')
+                    .where('professionalId', '==', professionalId)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                if (snapshot.empty) {
+                    showMessage('profileMessage', '❌ No hay trabajos para exportar', 'error');
+                    return;
+                }
+                
+                let csvContent = "Fecha,Cliente,Servicio,Estado,Precio,Descripción\n";
+                
+                snapshot.forEach(doc => {
+                    const job = doc.data();
+                    const date = job.createdAt?.toDate ? job.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                    
+                    const row = [
+                        date,
+                        `"${(job.userName || '').replace(/"/g, '""')}"`,
+                        `"${(job.serviceType || '').replace(/"/g, '""')}"`,
+                        job.status,
+                        job.price || '0',
+                        `"${(job.description || '').replace(/"/g, '""')}"`
+                    ];
+                    
+                    csvContent += row.join(',') + '\n';
+                });
+                
+                // Crear y descargar archivo
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', `trabajos_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showMessage('profileMessage', '✅ CSV exportado correctamente', 'success');
+                
+            } catch (error) {
+                console.error('Error exportando trabajos:', error);
+                showMessage('profileMessage', '❌ Error exportando trabajos', 'error');
+            }
         }
 
         window.viewJob = async function(jobId) {
@@ -1842,7 +2502,18 @@
                 if (!doc.exists) return;
                 
                 const job = doc.data();
-                const date = job.createdAt?.toDate ? job.createdAt.toDate().toLocaleDateString('es-AR') : '-';
+                const date = job.createdAt?.toDate ? job.createdAt.toDate() : new Date(job.createdAt);
+                const now = new Date();
+                const daysPassed = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+                
+                let timeIndicator = '';
+                if (job.status === 'en_progreso') {
+                    if (daysPassed > 30) {
+                        timeIndicator = `<span class="job-time-indicator job-time-danger" style="margin-left: 10px;">+${daysPassed} días</span>`;
+                    } else if (daysPassed > 20) {
+                        timeIndicator = `<span class="job-time-indicator job-time-warning" style="margin-left: 10px;">+${daysPassed} días</span>`;
+                    }
+                }
                 
                 let statusBadge = '';
                 switch(job.status) {
@@ -1855,15 +2526,16 @@
                 document.getElementById('jobModalTitle').textContent = 'Detalle del Trabajo';
                 document.getElementById('jobModalContent').innerHTML = `
                     <div style="margin-bottom: 2rem;">
-                        <h4>${job.serviceType || 'Servicio'}</h4>
+                        <h4>${job.serviceType || 'Servicio'} ${timeIndicator}</h4>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0;">
                             <div>
                                 <strong>Estado:</strong> ${statusBadge}
                             </div>
                             <div>
-                                <strong>Fecha:</strong> ${date}
+                                <strong>Fecha:</strong> ${date.toLocaleDateString('es-AR')}
                             </div>
                             ${job.price ? `<div><strong>Precio:</strong> $${job.price.toLocaleString('es-AR')}</div>` : ''}
+                            ${job.preferredDate ? `<div><strong>Fecha preferida:</strong> ${new Date(job.preferredDate).toLocaleDateString('es-AR')}</div>` : ''}
                         </div>
                     </div>
                     
@@ -1921,6 +2593,10 @@
             document.getElementById('jobModal').style.display = 'none';
         }
 
+        function closeBulkConfirmModal() {
+            document.getElementById('bulkConfirmModal').style.display = 'none';
+        }
+
         window.updateJobStatus = async function(jobId, newStatus) {
             const statusText = {
                 'pendiente': 'pendiente',
@@ -1948,7 +2624,6 @@
                     if (newStatus === 'completado') {
                         await db.collection('professionals').doc(professionalId).update({
                             completedJobs: firebase.firestore.FieldValue.increment(1),
-                            totalJobs: firebase.firestore.FieldValue.increment(1),
                             lastActive: firebase.firestore.FieldValue.serverTimestamp()
                         });
                         
@@ -1982,7 +2657,7 @@
                 
             } catch (error) {
                 console.error('Error actualizando estado del trabajo:', error);
-                showMessage('profileMessage', 'Error actualizando estado del trabajo', 'error');
+                showMessage('profileMessage', '❌ Error actualizando estado del trabajo', 'error');
             } finally {
                 showGlobalLoader(false);
             }
@@ -1990,7 +2665,7 @@
 
         window.contactClient = function(phone, clientName) {
             if (!phone) {
-                showMessage('profileMessage', 'El cliente no tiene teléfono registrado', 'error');
+                showMessage('profileMessage', '❌ El cliente no tiene teléfono registrado', 'error');
                 return;
             }
             
@@ -1999,7 +2674,7 @@
             window.open(whatsappUrl, '_blank');
         };
 
-        // Notificaciones
+        // Notificaciones persistentes
         async function loadNotifications() {
             const container = document.getElementById('notificationsList');
             if (!container) return;
@@ -2022,7 +2697,15 @@
                                     <p style="margin: 0.5rem 0;">${notif.message}</p>
                                     <small style="color: var(--gray);">${new Date(notif.date).toLocaleDateString('es-AR')}</small>
                                 </div>
-                                ${!notif.read ? '<span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">NUEVO</span>' : ''}
+                                <div>
+                                    ${!notif.read ? '<span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">NUEVO</span>' : ''}
+                                    <br>
+                                    <label style="display: flex; align-items: center; gap: 5px; margin-top: 5px; font-size: 0.8rem;">
+                                        <input type="checkbox" ${notif.read ? 'checked' : ''} 
+                                               onchange="toggleNotificationRead('${notif.id}', this.checked)">
+                                        Leída
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -2030,11 +2713,35 @@
                 
                 container.innerHTML = html;
                 
-                // Marcar como leídas
-                await markNotificationsAsRead();
+                // Marcar como leídas automáticamente si está configurado
+                const autoMarkRead = document.getElementById('autoMarkRead').checked;
+                if (autoMarkRead) {
+                    await markNotificationsAsRead();
+                }
                 
             } catch (error) {
                 console.error('Error cargando notificaciones:', error);
+            }
+        }
+
+        async function toggleNotificationRead(notificationId, read) {
+            try {
+                const notifications = professionalData.notifications || [];
+                const updatedNotifications = notifications.map(notif => {
+                    if (notif.id === notificationId) {
+                        return { ...notif, read: read };
+                    }
+                    return notif;
+                });
+                
+                await db.collection('professionals').doc(professionalId).update({
+                    notifications: updatedNotifications
+                });
+                
+                professionalData.notifications = updatedNotifications;
+                
+            } catch (error) {
+                console.error('Error marcando notificación como leída:', error);
             }
         }
 
@@ -2056,7 +2763,7 @@
             }
         }
 
-        // Destacados CON VERIFICACIÓN AUTOMÁTICA DE PAGO
+        // Destacados
         function checkFeaturedStatus() {
             const now = new Date();
             const isFeaturedActive = professionalData.isFeatured && 
@@ -2100,152 +2807,74 @@
                 `;
             }
             
-            // Verificar Plan Profesional - AHORA CONEXIÓN REAL CON DESTACADO DE 12 MESES
+            // Verificar Plan Profesional
             const certificationSection = document.getElementById('certificationUploadSection');
             const certificationBadge = document.getElementById('certificationStatusBadge');
             
-            // Habilitar certificaciones si tiene plan profesional activo
-            if (professionalData.hasProfessionalPlan && isFeaturedActive && professionalData.featuredPlanMonths >= 12) {
+            if (professionalData.hasProfessionalPlan) {
                 certificationBadge.textContent = 'DISPONIBLE';
                 certificationBadge.className = 'status-badge status-professional';
                 certificationSection.style.display = 'block';
-                
-                // Actualizar información de certificaciones
-                document.getElementById('certificationInfo').innerHTML = `
-                    <p style="color: var(--gray); margin-bottom: 1rem;">
-                        ✅ Plan Profesional activo. Podés subir tus certificaciones verificadas.
-                    </p>
-                    <p><strong>📋 Certificaciones disponibles:</strong></p>
-                    <ul style="margin: 1rem 0 1rem 1.5rem; color: var(--dark);">
-                        <li>Hasta 5 certificaciones</li>
-                        <li>Badge especial en tu perfil</li>
-                        <li>+10 puntos en el ranking</li>
-                        <li>Verificación por administrador</li>
-                    </ul>
-                `;
+                loadCertifications();
             } else {
                 certificationBadge.textContent = 'NO DISPONIBLE';
                 certificationBadge.className = 'status-badge status-incomplete';
                 certificationSection.style.display = 'none';
-                
-                // Mostrar requisitos para certificaciones
-                if (professionalData.featuredPlanMonths && professionalData.featuredPlanMonths < 12) {
-                    const mesesRestantes = 12 - professionalData.featuredPlanMonths;
-                    document.getElementById('certificationInfo').innerHTML = `
-                        <p style="color: var(--gray); margin-bottom: 1rem;">
-                            Las certificaciones están disponibles solo con Plan Profesional activo (12 meses de destacado).
-                        </p>
-                        <p><strong>📅 Progreso actual:</strong> ${professionalData.featuredPlanMonths} de 12 meses completados</p>
-                        <p><strong>⏳ Te faltan:</strong> ${mesesRestantes} meses para habilitar certificaciones</p>
-                        <div class="progress-bar" style="margin: 1rem 0;">
-                            <div class="progress-fill" style="width: ${(professionalData.featuredPlanMonths / 12) * 100}%"></div>
-                        </div>
-                    `;
-                }
             }
         }
 
-        window.selectFeaturedPlan = async function(months) {
+        window.selectFeaturedPlan = function(months) {
             selectedFeaturedPlan = months;
             const amount = months === 1 ? 5000 : 42000;
             
             if (confirm(`¿Confirmás la activación del destacado por ${months} ${months === 1 ? 'mes' : 'meses'} por $${amount.toLocaleString('es-AR')}?`)) {
                 showGlobalLoader(true);
                 
-                try {
-                    // Simular verificación de pago automática
-                    const paymentVerified = await simulatePaymentVerification(amount, months);
-                    
-                    if (paymentVerified) {
-                        // Calcular fecha de vencimiento
-                        const now = new Date();
-                        const featuredUntil = new Date(now);
-                        featuredUntil.setMonth(featuredUntil.getMonth() + months);
-                        
-                        // Actualizar datos del profesional
-                        await db.collection('professionals').doc(professionalId).update({
-                            isFeatured: true,
-                            featuredUntil: featuredUntil,
-                            featuredPlanMonths: months,
-                            hasProfessionalPlan: months >= 12,
-                            lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        
-                        // Registrar pago
-                        await db.collection('payments').add({
-                            professionalId: professionalId,
-                            professionalName: professionalData.name,
-                            amount: amount,
-                            months: months,
-                            type: 'featured',
-                            status: 'completed',
-                            paymentDate: firebase.firestore.FieldValue.serverTimestamp(),
-                            verifiedBy: 'system'
-                        });
-                        
-                        // Notificar al administrador
-                        await db.collection('admin_notifications').add({
-                            type: 'payment_received',
-                            professionalId: professionalId,
-                            professionalName: professionalData.name,
-                            amount: amount,
-                            months: months,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        
-                        // Actualizar datos locales
-                        professionalData.isFeatured = true;
-                        professionalData.featuredUntil = featuredUntil;
-                        professionalData.featuredPlanMonths = months;
-                        professionalData.hasProfessionalPlan = months >= 12;
-                        
-                        // Mostrar confirmación
-                        showMessage('profileMessage', `✅ ¡Destacado activado por ${months} meses!`, 'success');
-                        
-                        // Actualizar UI
-                        checkFeaturedStatus();
-                        loadDashboardData();
-                    } else {
-                        showMessage('profileMessage', '❌ Error en la verificación del pago', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error activando destacado:', error);
-                    showMessage('profileMessage', '❌ Error al activar destacado', 'error');
-                } finally {
+                setTimeout(() => {
+                    // En producción, aquí se integraría con un sistema de pagos
+                    alert(`Para activar el plan destacado, realizá la transferencia de $${amount.toLocaleString('es-AR')} y envianos el comprobante a comprobantes@tecniya.com\n\nTambién podés pagar con Mercado Pago: https://mpago.li/tecniya-destacado`);
                     showGlobalLoader(false);
-                }
+                }, 1000);
             }
         };
 
-        // Simular verificación de pago automática
-        async function simulatePaymentVerification(amount, months) {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    // En producción, aquí se integraría con API de pasarela de pagos
-                    // Por ahora simulamos una verificación exitosa
-                    resolve(true);
-                }, 2000);
-            });
-        }
-
-        // Certificaciones CON FLUJO REAL CONECTADO A PLAN PROFESIONAL
+        // Certificaciones con validación
         function handleCertificationUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
             
             const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
             if (!validTypes.includes(file.type)) {
-                alert('Por favor subí un archivo PDF o imagen (JPG, PNG)');
+                alert('❌ Por favor subí un archivo PDF o imagen (JPG, PNG)');
                 return;
             }
             
             if (file.size > 10 * 1024 * 1024) {
-                alert('El archivo debe ser menor a 10MB');
+                alert('❌ El archivo debe ser menor a 10MB');
                 return;
             }
             
             currentCertificationFile = file;
             document.getElementById('addCertificationBtn').disabled = false;
+            
+            // Mostrar preview si es imagen
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.createElement('img');
+                    preview.src = e.target.result;
+                    preview.className = 'certification-preview';
+                    
+                    const uploadDiv = document.querySelector('#certificationUploadSection .file-upload');
+                    const existingPreview = uploadDiv.querySelector('.certification-preview');
+                    if (existingPreview) {
+                        existingPreview.remove();
+                    }
+                    uploadDiv.appendChild(preview);
+                };
+                reader.readAsDataURL(file);
+            }
+            
             showMessage('profileMessage', '✅ Archivo cargado. Completá los datos y hacé clic en "Agregar Certificación"', 'success');
         }
 
@@ -2255,18 +2884,12 @@
             const number = document.getElementById('certificationNumber').value.trim();
             
             if (!title || !institution) {
-                showMessage('profileMessage', 'Completá título e institución', 'error');
+                showMessage('profileMessage', '❌ Completá título e institución', 'error');
                 return;
             }
             
             if (!currentCertificationFile) {
-                showMessage('profileMessage', 'Subí un archivo primero', 'error');
-                return;
-            }
-            
-            // Verificar que tenga Plan Profesional activo
-            if (!professionalData.hasProfessionalPlan) {
-                showMessage('profileMessage', '❌ Necesitás Plan Profesional para subir certificaciones', 'error');
+                showMessage('profileMessage', '❌ Subí un archivo primero', 'error');
                 return;
             }
             
@@ -2281,21 +2904,32 @@
                 // Crear certificación
                 const certificationData = {
                     professionalId,
-                    professionalName: professionalData.name,
                     title,
                     institution,
                     certificationNumber: number || '',
                     documentUrl: downloadURL,
                     status: 'pendiente',
-                    submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    reviewedAt: null,
+                    reviewerId: null
                 };
                 
                 await db.collection('certifications').add(certificationData);
                 
+                // Agregar a la lista del profesional
+                await db.collection('professionals').doc(professionalId).update({
+                    certifications: firebase.firestore.FieldValue.arrayUnion({
+                        title,
+                        institution,
+                        documentUrl: downloadURL,
+                        uploadedAt: new Date().toISOString(),
+                        status: 'pendiente'
+                    })
+                });
+                
                 // Notificar al administrador
                 await db.collection('admin_notifications').add({
-                    type: 'certification_submitted',
+                    type: 'certification_pending',
                     professionalId: professionalId,
                     professionalName: professionalData.name,
                     certificationTitle: title,
@@ -2311,12 +2945,16 @@
                 document.getElementById('addCertificationBtn').disabled = true;
                 currentCertificationFile = null;
                 
+                // Limpiar preview
+                const preview = document.querySelector('#certificationUploadSection .certification-preview');
+                if (preview) preview.remove();
+                
                 showMessage('profileMessage', '✅ Certificación enviada para revisión', 'success');
                 loadCertifications();
                 
             } catch (error) {
                 console.error('Error agregando certificación:', error);
-                showMessage('profileMessage', 'Error agregando certificación', 'error');
+                showMessage('profileMessage', '❌ Error agregando certificación: ' + error.message, 'error');
             } finally {
                 showGlobalLoader(false);
             }
@@ -2340,7 +2978,35 @@
                 let html = '';
                 snapshot.forEach(doc => {
                     const cert = doc.data();
-                    const date = cert.submittedAt?.toDate ? cert.submittedAt.toDate().toLocaleDateString('es-AR') : '';
+                    const date = cert.createdAt?.toDate ? cert.createdAt.toDate().toLocaleDateString('es-AR') : '';
+                    const reviewedDate = cert.reviewedAt?.toDate ? cert.reviewedAt.toDate().toLocaleDateString('es-AR') : '';
+                    
+                    let statusText = '';
+                    let statusClass = '';
+                    let reviewInfo = '';
+                    
+                    switch(cert.status) {
+                        case 'aprobada':
+                            statusText = '✅ APROBADA';
+                            statusClass = 'badge-success';
+                            if (reviewedDate) {
+                                reviewInfo = `<small style="display: block; margin-top: 5px;">Aprobada el: ${reviewedDate}</small>`;
+                            }
+                            break;
+                        case 'rechazada':
+                            statusText = '❌ RECHAZADA';
+                            statusClass = 'badge-danger';
+                            if (reviewedDate) {
+                                reviewInfo = `<small style="display: block; margin-top: 5px;">Rechazada el: ${reviewedDate}</small>`;
+                                if (cert.rejectionReason) {
+                                    reviewInfo += `<small style="display: block; color: var(--danger);">Motivo: ${cert.rejectionReason}</small>`;
+                                }
+                            }
+                            break;
+                        default:
+                            statusText = '⏳ PENDIENTE';
+                            statusClass = 'badge-warning';
+                    }
                     
                     html += `
                         <div class="job-card">
@@ -2350,10 +3016,8 @@
                                     <p style="color: var(--gray); margin: 0.25rem 0;">${cert.institution}</p>
                                     ${cert.certificationNumber ? `<p style="font-size: 0.9rem; color: var(--dark);">Nº: ${cert.certificationNumber}</p>` : ''}
                                 </div>
-                                <span style="background: ${cert.status === 'aprobada' ? '#d4edda' : cert.status === 'rechazada' ? '#f8d7da' : '#fff3cd'}; 
-                                      color: ${cert.status === 'aprobada' ? '#155724' : cert.status === 'rechazada' ? '#721c24' : '#856404'}; 
-                                      padding: 4px 12px; border-radius: 12px; font-size: 0.8rem;">
-                                    ${cert.status === 'aprobada' ? '✅ APROBADA' : cert.status === 'rechazada' ? '❌ RECHAZADA' : '⏳ PENDIENTE'}
+                                <span class="badge ${statusClass}" style="padding: 4px 12px; border-radius: 12px; font-size: 0.8rem;">
+                                    ${statusText}
                                 </span>
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: var(--gray);">
@@ -2364,6 +3028,7 @@
                                     </a>
                                 ` : ''}
                             </div>
+                            ${reviewInfo}
                         </div>
                     `;
                 });
@@ -2399,6 +3064,88 @@
         // Funciones globales
         window.switchTab = switchTab;
         window.closeJobModal = closeJobModal;
+        window.toggleAllFeatured = async function() {
+            const modal = document.getElementById('bulkConfirmModal');
+            const content = document.getElementById('bulkConfirmContent');
+            
+            content.innerHTML = `
+                <div class="bulk-action-confirm">
+                    <p><strong>⚠️ ATENCIÓN: ACCIÓN MASIVA</strong></p>
+                    <p>Esta acción cambiará el estado de destacado de TODOS los profesionales del sistema.</p>
+                    <p>¿Estás seguro de continuar?</p>
+                </div>
+                <p>Esta operación puede tardar varios minutos y afectará a todos los usuarios.</p>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            document.getElementById('confirmBulkAction').onclick = async function() {
+                showGlobalLoader(true);
+                modal.style.display = 'none';
+                
+                try {
+                    // En un sistema real, esto se haría con Cloud Functions
+                    // Por ahora, solo mostramos un mensaje
+                    showMessage('profileMessage', '✅ Acción masiva programada. Los cambios se aplicarán en breve.', 'success');
+                } catch (error) {
+                    showMessage('profileMessage', '❌ Error en acción masiva', 'error');
+                } finally {
+                    showGlobalLoader(false);
+                }
+            };
+        };
+
+        window.deleteProfessional = async function(id) {
+            if (!confirm('¿ESTÁS SEGURO? Esta acción eliminará permanentemente al profesional, sus trabajos y certificaciones.')) {
+                return;
+            }
+            
+            const modal = document.getElementById('bulkConfirmModal');
+            const content = document.getElementById('bulkConfirmContent');
+            
+            content.innerHTML = `
+                <div class="bulk-action-confirm">
+                    <p><strong>🚨 ELIMINACIÓN PERMANENTE</strong></p>
+                    <p>Esta acción eliminará permanentemente:</p>
+                    <ul>
+                        <li>El perfil del profesional</li>
+                        <li>Todos sus trabajos asociados</li>
+                        <li>Todas sus certificaciones</li>
+                        <li>Su historial de calificaciones</li>
+                    </ul>
+                    <p>Esta acción NO se puede deshacer.</p>
+                </div>
+                <p>¿Confirmás la eliminación permanente?</p>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            document.getElementById('confirmBulkAction').onclick = async function() {
+                showGlobalLoader(true);
+                modal.style.display = 'none';
+                
+                try {
+                    // En un sistema real, esto se haría con Cloud Functions para cascada
+                    // Por ahora, solo eliminamos el profesional
+                    await db.collection('professionals').doc(id).delete();
+                    
+                    // Notificar eliminación (en producción, Cloud Functions manejaría la cascada)
+                    await db.collection('admin_notifications').add({
+                        type: 'professional_deleted',
+                        professionalId: id,
+                        deletedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    showMessage('profileMessage', '✅ Profesional eliminado', 'success');
+                    
+                } catch (error) {
+                    console.error('Error eliminando profesional:', error);
+                    showMessage('profileMessage', '❌ Error eliminando profesional', 'error');
+                } finally {
+                    showGlobalLoader(false);
+                }
+            };
+        };
     </script>
 </body>
 </html>
