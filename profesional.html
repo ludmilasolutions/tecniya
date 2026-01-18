@@ -2260,7 +2260,11 @@
                 
                 if (snapshot.empty) {
                     container.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 2rem;">No hay trabajos.</p>';
-                    updateJobsStats(snapshot);
+                    // Actualizar contadores a 0 cuando no hay trabajos
+                    document.getElementById('pendingJobsCount').textContent = 0;
+                    document.getElementById('inProgressJobsCount').textContent = 0;
+                    document.getElementById('completedJobsCount').textContent = 0;
+                    document.getElementById('cancelledJobsCount').textContent = 0;
                     pagination.style.display = 'none';
                     return;
                 }
